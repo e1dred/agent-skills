@@ -20,7 +20,7 @@ Tested with WordCraft 0.10.0 on Linux (AppImage). Unofficial: not affiliated wit
 ## Install (Claude Code)
 
 ```sh
-git clone <this repository URL> ~/.claude/skills/wordcraft
+git clone https://gitlab.com/e1dred/wordcraft-skill.git ~/.claude/skills/wordcraft
 ```
 
 Claude Code picks up skills in `~/.claude/skills/` automatically. Then connect WordCraft itself
