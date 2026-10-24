@@ -26,7 +26,7 @@ Tested with ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux) and its A
 2. Clone the skill and register the connector:
 
    ```sh
-   git clone <this repository URL> ~/.claude/skills/onlyoffice
+   git clone https://gitlab.com/e1dred/onlyoffice-skill.git ~/.claude/skills/onlyoffice
    chmod +x ~/.claude/skills/onlyoffice/tools/onlyoffice-ai-mcp
    claude mcp add onlyoffice -- ~/.claude/skills/onlyoffice/tools/onlyoffice-ai-mcp
    ```
