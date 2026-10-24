@@ -1,0 +1,14 @@
+#!/bin/sh
+# ONLYOFFICE Desktop's AI-tools MCP server (stdio), run inside its flatpak.
+# While ONLYOFFICE is running it attaches to open documents live (via the
+# discovery file the app writes at startup); otherwise it works headless on files.
+D=$HOME/.var/app/org.onlyoffice.desktopeditors/data/onlyoffice/desktopeditors/data
+B=$D/addon/desktop-sdk-plugins/aitools-bridge
+C=/app/bin/opt/onlyoffice/desktopeditors/converter
+[ -x "$B/docbuilder-tools" ] || { echo "onlyoffice-ai-mcp: AI tools not installed (enable AI features in ONLYOFFICE)" >&2; exit 1; }
+exec env -u CLAUDE_CODE_MESSAGING_TOKEN flatpak run --command=sh org.onlyoffice.desktopeditors -c "
+export LD_LIBRARY_PATH=$C:/app/bin/opt/onlyoffice/desktopeditors
+export AI_TOOLS_DISCOVERY=$D/cache/work_temp/onlyoffice-ai-tools.json
+export DOCBUILDER_WORK_DIR=$C DOCBUILDER_SDKJS_PATH=$D/addon/sdkjs
+export DOCBUILDER_FONTS_PATH=$D/fonts/AllFonts.js DOCBUILDER_OUTPUT_DIR=$HOME/Documents/ONLYOFFICE
+cd /tmp && exec $B/docbuilder-tools"
