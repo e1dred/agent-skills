@@ -96,6 +96,9 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - Lists: `list.define {"levels":[{"format":"bullet","text":"•","alignedAt":4,"indentAt":15,"follow":"tab",
   "tabAt":15,"color":"1F3864"}],"apply":true,"name":…}` returns `"num":N`; then put later paragraphs in it
   with `para.set {"props":{"numbering":{"level":0,"num":N}}}`.
+- Numbered list: same command with `{"format":"decimal","text":"%1.","alignedAt":0,"indentAt":18,"follow":"tab",
+  "tabAt":18}` → "1. 2. 3." (in a blank document `num` came back 1). End the list on the next paragraph with
+  `para.set {"props":{"numbering":{"level":0,"num":0}}}`.
 - Selection + links: `select.text {"text":…}` then `insert.link {"url":"mailto:…"}` or `{"url":"https://…"}`
   keeps the selected text as the link text.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
@@ -109,8 +112,8 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - **`styles.create` also applies the new style to the current paragraph.** Reset with `para.style` afterwards.
 - **`format.bold {"value":false}` is direct formatting and overrides a style's bold.** For a bold label inside a
   line: `format.bold true` → insert → `format.resetChar` → insert the rest. Never set bold false "to be safe".
-- (Unverified precaution) A new paragraph may carry over the previous paragraph's numbering — the resume
-  recipe sets `numbering num 0` on every non-list paragraph. Confirm with `inspect` before calling it a trap.
+- **`text.newParagraph` carries the list over:** the new paragraph keeps the previous one's numbering
+  (verified with `inspect`). Set `numbering num 0` on the first paragraph after a list.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
 
@@ -132,3 +135,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Initial notes from building and linking an ATS résumé (WordCraft 0.10.0).
 - 2026-10-24: Linked the official docs (docs/mcp.md, docs/control-protocol.md); corrected path resolution.
 - 2026-10-24: Generalized for sharing; résumé recipe made data-driven with fictional sample content.
+- 2026-10-24: Numbered lists; confirmed that new paragraphs inherit list numbering.
