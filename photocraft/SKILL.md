@@ -160,6 +160,8 @@ contract 1) 0.9818, loose (no modify) 0.9821; mask area differs only 0.7%, and n
 So with an accurate trace use LIGHT (smooth 2, contract 1) or none; the heavier shrink was only needed for the
 loose first trace (about 8 px off), where it hid the fringe. The user noticed the marching-ants selection sat
 slightly "inside" the subject: that is the contract plus smoothing rounding convex curves inward.
+The user A/B-flipped the tight and light results by switching tabs: the light one was "very slightly better, almost
+imperceptible", matching the 0.7% area difference: the accurate trace, not these settings, made the big difference.
 Ready-to-reuse scoring: flood-fill the reference's near-white background (all channels ≥ 241) from the 4 corners,
 subject = the rest, crop to its bbox, resize to your alpha bbox, then intersection-over-union.
 (Without numpy, PIL's `ImageChops` + `ImageDraw.floodfill` do it.)
