@@ -76,6 +76,26 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
 - Read back: `p.ToHtml({RenderHTMLTags: true})` (shows `<strong>`, `<a href>`), `p.GetNumbering()`,
   `doc.GetStatistics()` → `{PageCount, WordsCount, ParagraphCount, …}` (works live).
 
+## Live editing of all four editors (verified on open documents)
+
+`list_editor_documents` first (it also names which folder each PDF/doc really lives in), then attach with the exact path.
+The same tools as headless work live, and the user sees the edits at once:
+- **Word:** `word_insert_paragraphs`, `word_add_table`, `word_page_setup` (footer + page numbers), `word_write_macro`
+  (`GetStatistics()` → words/pages) all applied live; the new-document empty first paragraph is not there on an
+  existing blank file's content, expect it anyway when counting elements.
+- **Spreadsheet:** `cell_set_cell_data` with a `copyTo` formula and `numberFormat`, `cell_add_chart`, `cell_get_range_data`
+  all worked live; `formulaChecks` still returns the computed values (10 and 8 for `=B2*C2`).
+- **Presentation:** the slide macro that adds a slide, `slide_set_text` (title/subtitle/notes) and
+  `slide_add_chart_to_slide` worked live; a blank saved deck starts with one title slide and `currentSlideIndex` follows
+  the last edit.
+- **PDF:** `pdf_get_page_info`, `pdf_get_all_pages_info`, `pdf_search_document` (reports `total` and `truncated` when
+  `max_results` cuts it off) and `pdf_get_text_quads` worked live. **`pdf_get_document_info` failed live** with
+  "returned a malformed reply: null": use `pdf_get_page_info` instead. Markup on a live PDF was not tried (it
+  would change the user's file in the editor).
+- `save_document` and `preview` are refused live ("NOTHING WAS SAVED … only the user can save it"): tell the user to
+  Ctrl+S, and remind them that test edits sit unsaved in their window (close without saving to discard).
+- Test files: ask the user to Save As blank files (docx/xlsx/pptx/pdf) first; a never-saved document cannot be attached.
+
 ## Word helper tools (verified headless; cheaper than macros)
 
 - A new docx starts with ONE empty paragraph (element 1); content tools append after it.
@@ -181,6 +201,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 
 ## Log
 
+- 2026-10-24: Live edits in all four editors (word, cell, slide, pdf).
 - 2026-10-24: Fillable forms (add, fill, save as form, reopen).
 - 2026-10-24: PDF search/markup/split, highlight colour trap.
 - 2026-10-24: Word helper tools (lists, table, page setup, comments, tracking), md/pdf export.
