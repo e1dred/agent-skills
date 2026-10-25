@@ -278,6 +278,31 @@ Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the
 - **Quick export**: `file.export.quickExport {"path":"/abs/out.jpg"}` → `{path,format,bytes,warnings}` (format by extension; honours Export Preferences). `layer.quickExportAsPng {"layer","path"}` for one layer.
 - Remaining unverified: `paint.mixerBrush`, `filter.cameraRaw`, Actions recording/`.atn` playback via the app, `droplet`, panorama/HDR merges.
 
+## Next-tier workflows (verified headless, 0.16.0; renders checked where noted)
+
+**Layer styles stack with `"add":true`** (without it a new style call replaces the layer's effects). Verified on a type layer over a gradient (render checked):
+`layer.layerStyle.stroke {"size":4,"position":"outside","color":"#0b1d3a"}` → `…outerGlow {"color":"#ffd966","opacity":70,"size":24,"spread":10,"add":true}` →
+`…bevelEmboss {"style":"inner","depth":120,"size":6,"add":true}` → `…dropShadow {"distance":10,"size":12,"opacity":55,"add":true}`; also `innerShadow`, `colorOverlay`, `gradientOverlay {"from","to","style":"linear|radial|…","angle"}`.
+Gradient fill on pixels: `paint.gradient {"from":[0,0],"to":[900,420],"style":"linear|radial|angle|reflected|diamond","colors":["#1F3864","#2E75B6"]}`; patterns: `pattern.list`, `edit.fill {"contents":"pattern","pattern":"Checkerboard"}`.
+
+**Photo-lab filters:** `filter.cameraRaw {"temperature":15,"exposure":0.3,"contrast":10,"highlights":-30,"shadows":25,"clarity":20,"vibrance":15}` (also texture, dehaze, whites/blacks, point curves per channel),
+`filter.lensCorrection {"profile":"generic|auto|none","correctVignette":true,"vignetteAmount":-30,"correctDistortion"…}`, `filter.blurGallery.tiltShift {"blur":12,"angle":0,"focus":0.25}`; colour looks `image.adjustments.colorLookup.list` (Warm Filter, Teal & Orange, Bleach Bypass, Faded Film…) with `layer.newAdjustmentLayer.colorLookup`.
+
+**Modes and output (all verified by `info` of the saved file):** `image.mode.grayscale` → Gray 8; `image.mode.cmyk` → saved TIFF reports CMYK 8 (and back with `image.mode.rgb`); `image.mode.bits16` → depth 16 (TIFF);
+`image.mode.indexedColor {"colors":32,"palette":"adaptive"}` → "written as an 8-bit palette PNG (32 colours)"; `image.imageSize {"width":2400,"resolution":300}` → 2400×1600 at 300 ppi.
+`convert in out` options: `--jpeg-format progressive --quality 85`, `--tiff-layers --tiff-compression lzw`, `.webp --quality 80`, `.bmp`, `.tga`, `.exr`, `.pdf` ("saved flattened"); BMP/TGA/PDF drop the DPI with a warning.
+
+**Actions (record, save, replay) and droplets:** in one `run`: `actions.record {"name":"Web look"}` → the commands to record → `actions.stop` (→ `{steps:3}`) → `actions.assignSet {"action":"Web look","set":"My Actions"}` →
+`actions.save {"path":"web.atn","set":"My Actions"}`. **`actions.save` with a `set` fails ("no actions in a set named …") unless the action was assigned to that set; with no `set` it saves everything as "PhotoCraft Actions".**
+Replay over a folder: `photocraft-cli batch --actions web.atn --action "Web look" --in DIR --out DIR2 --format jpg --quality 85` → "3 succeeded"; replay inside a document: `actions.load {"path"}` then `actions.play {"action"}` → `{ran:3}`.
+Droplets: `file.automate.createDroplet {"path":"web.pcdroplet","steps":[["image.imageSize",{"width":400}],["filter.sharpen.unsharpMask",{"amount":60,"radius":1}]],"name":"Web small","output":"DIR","format":"jpg","shim":false}`, run with `photocraft-cli droplet web.pcdroplet in-folder --out DIR`.
+Other automation: `file.automate.fitImage {"width":500,"height":500}` (keeps aspect: 1200×800 → 500×333), `file.automate.contactSheetII {"input":"DIR","width":8,"height":6,"columns":3,"rows":1,"resolution":100}` → one document with all pictures,
+`file.automate.photomerge {"paths":"DIR","layout":"auto"}` needs REAL overlapping photographs: my synthetic strips failed with "couldn't find enough matching detail" (untested on real photos).
+
+**Transforms and type:** `edit.contentAwareScale {"width":800}` scales the *layer content* (bounds `[0,0,800,800]`) and leaves the canvas size unchanged, so crop or `image.canvasSize` afterwards; `edit.transform {"scaleX":55,"scaleY":55,"rotate":-8,"dx":150,"dy":60}` on a duplicated layer makes a tilted "card" you can style;
+`type.warpText {"style":"arc|flag|wave|fish|…","bend":45}` (render checked); text on a path: create the shape layer first, then `type.attachToPath {"layer":5,"shape":4,"start":20}` (needs a shape layer id or a work path; the text then runs along the outline). `type.paragraphStyle.new/apply/list` manage reusable paragraph styles.
+`timeline.create {"duration":2,"fps":5}` + `timeline.info` work and a `.gif` is written (palette-quantized, 256 colours), but animated *frames* from layer keyframes were not tested.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -311,3 +336,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-25: everyday-edits table (crop/resize/rotate/adjustments/denoise/sharpen), selection→mask, watermark, batch webp, format support verified headless.
 - 2026-10-26: live bridge session (doc_open, command_batch steps, screenshot), paint/filters/content-aware fill, silent-unknown-param trap verified.
 - 2026-10-26: retouch (heal/clone/dodge/burn), selective colour, gradient map, clipping, saved selections, liquify, smart filters, perspective crop, layer comps, quick export verified.
+- 2026-10-25 (3): layer-style stacking, Camera Raw/lens/tilt-shift, colour modes and formats, Actions (.atn) + droplets + fit image + contact sheet, content-aware scale, transform, warped and path text verified headless.
