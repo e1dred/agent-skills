@@ -176,6 +176,32 @@ first cell `table.altText` + `table.repeatHeader`; real header text such as `ins
 - `convert x.docx x.pdf` produced a TAGGED PDF (`pdfinfo` → `Tagged: yes`) for both the flawed and fixed file, with the document
   title as the PDF title once `file.properties` has set it.
 
+## Paragraph formatting, lists and editing commands (verified headless; props read back with `inspect`, lists by `pdftotext`)
+
+Paragraph (one call each; `text.newParagraph` carries the settings forward, see traps):
+- `para.align {"value":"left|center|right|justify|distribute"}`; `para.indents {"left":36,"right":36,"firstLine":18}` (pt, negative
+  `firstLine` = hanging; props `indentLeft/indentRight/indentFirst`); `para.spacing {"before":24,"after":12}`;
+  `para.lineSpacing {"value":1.5}` | `{"atLeast":pt}` | `{"exactly":20}` (prop `lineSpacing {rule:multiple|exactly,value}`).
+- Pagination: `para.keepNext`, `para.keepLines`, `para.pageBreakBefore`, `para.widowControl` each `{"value":true}` (all read back
+  as props; `pageBreakBefore` made a 2-page document).
+- Tabs: `para.tabs {"set":[{"pos":300,"align":"right","leader":"dot"}]}` → "Item .......... $5.00" (also `clear`, `clearAll`).
+- Lists: `para.bullets {"kind":"bullet"}` (or one character; `"off":true` ends it), `para.numbering {"kind":"numbered|
+  numberedParen|upperLetter|lowerLetter|lowerRoman|outline"}` → "1.", "1)", "i."; `para.setNumberingValue {"value":5}` → 5., 6.;
+  `para.multilevel {"kind":"legal"}` + `para.listLevel {"level":1}` → "1. / 1.1. / 1.1.1. / 2."; bullet level 1 renders "○".
+  Also `para.restartNumbering`, `defineBullet {"char"}`, `defineNumber {"format","text","start"}`, `promote/demote`,
+  `moveUp/moveDown` (moved the caret's paragraph up one: untested otherwise), `para.reset`, `para.heading1…3`.
+- **`para.sort {"descending"?:true}` sorts only a real multi-paragraph selection**: `select.all`, or `caret.docStart` then
+  `caret.docEnd {"extend":true}` worked (case-insensitive: Apple, mango, Pear). `caret.paraUp {"extend":true}` did NOT select
+  paragraphs, so the sort silently did nothing.
+Editing:
+- `edit.copy`, `edit.cut`, `edit.paste {}` (the internal clipboard, kept after a cut), `edit.pasteText {"text"}` (plain),
+  `edit.paste {"html":"<p><b>Bold</b> and <i>italic</i></p>"}` → real bold/italic runs, `edit.pasteSpecial {"as":"text",
+  "text":"<b>raw</b>"}` → the tags as literal text.
+- `edit.copyFormat` + `select.text` + `edit.pasteFormat` copied bold + a colour onto another word (format painter).
+- `edit.undoTo {"count":2}` undoes the last 2 command steps; `edit.redo`; `edit.goto {"page":1}` (1-based) moved the caret to the
+  start of page 1; `edit.spike` cuts the selection into the spike, `edit.insertSpike` pastes it back (collects text, then
+  empties); `edit.replace`/`findNext`/`advancedFind` exist (not run).
+
 ## Choosing live vs headless
 
 - **Live** (user watches): bridge MCP / `tools/wcmcp.py`. Check `ui_inspect` first: `title`, `dirty`.
@@ -363,6 +389,11 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
 - Different headers per section: SOLVED, see "Headers and footers per section" below. The earlier failures came from passing `page` to `insert.createHeader` and from the call order.
+- **A new paragraph inherits the previous paragraph's formatting** (indents, spacing, alignment, line spacing came along: a
+  "Spaced" paragraph typed after a hanging-indent one still had the hanging indent). Set every property you care about on each
+  paragraph, or call `para.reset` first.
+- **AutoCorrect capitalises a one-word paragraph when you press `text.newParagraph`** ("pear" → "Pear"; list items too), while
+  multi-word lines were left alone. `tools.autocorrect {"enabled":false}` as the first command keeps your text as typed.
 - **`\n` in `text.insert` does not start a paragraph** — "Line A\nLine B" stays one paragraph with a line break.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
@@ -382,6 +413,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Log
 
+- 2026-10-24: Paragraph formatting, lists, tabs, sort, clipboard/paste, format painter, undoTo, goto, spike; two traps.
 - 2026-10-24: Per-section headers/footers SOLVED; accessibility checker and tagged PDF export.
 - 2026-10-24: Citations/bibliography (author string format), cross-references, document compare, templates.
 - 2026-10-24: Mail merge (recipients, filter, fields, address block, IF rule, partial finish).
