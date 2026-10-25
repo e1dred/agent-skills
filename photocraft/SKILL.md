@@ -166,6 +166,13 @@ Ready-to-reuse scoring: flood-fill the reference's near-white background (all ch
 subject = the rest, crop to its bbox, resize to your alpha bbox, then intersection-over-union.
 (Without numpy, PIL's `ImageChops` + `ImageDraw.floodfill` do it.)
 
+### Watch for AI selection (not available yet)
+
+photocraft-cli 0.15.1 has NO AI commands (`commands --filter ai`, `segment`, `neural` return nothing relevant); `select.subject`
+is classical. The Craft AI layer (https://github.com/storytold/craft-ai-integrations, Apache-2.0/MIT, "first draft") contains
+SAM 2.1/SAM 3 engines and a ComfyUI `image.segment` role that would give real subject selection. When a newer PhotoCraft
+exposes it, re-test the portrait background removal above before using the manual lasso method.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
