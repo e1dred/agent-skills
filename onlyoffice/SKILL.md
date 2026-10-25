@@ -102,6 +102,18 @@ The same tools as headless work live, and the user sees the edits at once:
   (`Text37`, `Check Box12`): use `tooltip` and `nearbyText` to pick the right one, and ask the user for real values.
   Unlike `form_fill` (documents you build, a LIST of `{key,value}`), this tool takes `{name,value}`; a checkbox's
   on-value is its `options[].export` (here `Yes`); an empty string unchecks.
+- **Adding content to a live PDF (`pdf_write_macro`; confirmed on a screenshot of the editor window):** existing page
+  text cannot be edited, only read, marked up, redacted or covered; new content is added with `page.AddObject(…)`
+  (page index 0-based; read `get_api_reference(editor="pdf", topic=…)`: `macro`, `shapes_text`, `stamps`, `markup`,
+  `redact`, `drawings`). Verified:
+  - Text box: `Api.CreateShape('rect', Api.PointsToEmus(w), Api.PointsToEmus(h), fill, stroke)`, `s.SetPosition(
+    Api.PointsToEmus(x), Api.PointsToEmus(y))`, text via `s.GetContent().GetElement(0).AddElement(run)`. Rendered with
+    the fill and border. **`run.SetFontSize(14)` gave 7 pt text** (half-points: use 28 for 14 pt).
+  - Stamp: `Api.CreateStampAnnot([x1,y1,x2,y2],'SB_Draft')` → an orange "DRAFT" stamp (rect in points, top-left origin).
+  - Highlight: `page.Search({text})` returns matches in document order, NOT reading order: the first match for a
+    form title was its footer copy at the bottom of the page, so check which match you mark. `Api.CreateHighlightAnnot(
+    quads)` drew a red-filled box; set the colour (`SetFillColor`/`SetColor` per `annotations`) if you want yellow.
+  - Live PDFs cannot be previewed from the agent: ask the user for a screenshot (the Read tool can view it).
 - `save_document` and `preview` are refused live ("NOTHING WAS SAVED … only the user can save it"): tell the user to
   Ctrl+S, and remind them that test edits sit unsaved in their window (close without saving to discard).
 - Test files: ask the user to Save As blank files (docx/xlsx/pptx/pdf) first; a never-saved document cannot be attached.
