@@ -140,6 +140,40 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   For anonymous output: `file.privacyOptions {"removePersonalInfo":true}` (untested).
 - Landscape page in a portrait document: `layout.break {"kind":"nextPage"}` then
   `layout.orientation {"value":"landscape"}` → only the new section turns (792×612); the first stays portrait.
+- Inline formatting (select with `select.text` first): `format.highlight {"color":"yellow"}`,
+  `format.subscript` / `format.superscript` (stored as `vertAlign`), `format.strikethrough {"value":true}`,
+  `format.spacing {"points":3}` (letter spacing), `format.color {"color":"C00000"}`. `insert.symbol {"char":"©"}`.
+- Paragraph look: `para.shading {"color":"E7E6E6"}` (null clears), `para.borders {"kind":"left","width":3,
+  "color":"1F3864"}` (kind `none` clears all); `line spacing` rules are `multiple|atLeast|exactly` (NOT `exact`).
+- Custom style: `styles.create {"name":"Callout","basedOn":"Normal"}` → `styles.modify {"style":"Callout",
+  "chr":{"italic":true,"color":"7F3F00","size":12},"para":{"indentLeft":24,"lineSpacing":{"rule":"multiple","value":1.5}}}`
+  → `para.style` back to Normal afterwards (create applies it to the caret paragraph).
+- Captions: `references.caption {"label":"Figure","text":"…","position":"below"}` after a picture adds a `Caption`
+  paragraph "Figure 1: …" with a `SEQ Figure` field (auto-numbered). Also `Table` and `Equation` labels.
+- Drop cap: `insert.dropCap {"lines":3}` on a paragraph (prop `dropCap` in `inspect`; renders as a large initial).
+- Shapes/text boxes: `insert.shape {"kind":"star","width":50,"height":50}` (also rectangle, ellipse, arrow, line…),
+  `insert.textBox {"text":"…","width":120,"height":40}`. **A text box leaves the caret inside it** (like headers):
+  get out with `caret.set {"pos":{"story":"body","path":[0],"off":0}}`.
+- Cover page: `insert.coverPage {"title","subtitle","author"}` inserts ~25 paragraphs at the top (spacer blanks, Title
+  with rule, Subtitle, author, auto-date ending in a page break). Following text lands after it.
+- Multilevel numbering: `list.multilevelPreset {"preset":"headings"}` returns `num`; the first paragraph becomes
+  Heading 1 numbered "1"; further paragraphs get `para.set {"props":{"numbering":{"level":1,"num":N}}}` → "1.1", "1.2";
+  level 0 again → "2". Presets: `headings|article|outlineHeadings|chapter`.
+- Page numbering style: `layout.pageNumberFormat {"format":"lowerRoman","start":1}` (also upperRoman, letters).
+- Different first page: `layout.differentFirstPage` (toggle). Footer/header created AFTER it (caret on page 1) goes to
+  the FIRST-page slot, so pages 2+ show nothing. To number pages 2+ only: `layout.differentFirstPage`, then
+  `insert.createFooter {"page":1}`, `text.insert "Page "`, `insert.pageField`, `insert.closeHeader` → page 1 blank,
+  page 2 "Page 2" (verified with pdftotext per page).
+- Charts: `insert.chart {"type":"column","data":{"categories":[…],"series":[{"name","values":[…]}]},"title"?,"legend"?}`
+  renders a native chart (checked). Equations: `insert.equation {"latex":"x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}"}`
+  renders as display math, and the caret stays in the math: `caret.docEnd` before more text.
+  Fields: `insert.field {"instr":"DATE \\@ \"yyyy\"","result":"2026"}`.
+- Table cells: merge across = `table.selectCell`, `caret.right {"extend":true}` per extra cell, `table.merge`
+  (`inspect` then shows a one-cell row). Also `table.borders {"kind":"inside","width":0.5,"color":…}`,
+  `table.cellMargins`, `table.look {"headerRow","bandedRows"}`, `table.rowHeight {"height","rule":"atLeast"}`,
+  `table.altText` (all accepted; only merge, shading and borders were checked visually).
+- Convert: `wordcraft-cli convert in.docx out.{pdf,odt,html,md}` all work; `.md` keeps only text and the equation's
+  linear form (charts, images and tables are not carried in the test document).
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
@@ -163,6 +197,8 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - **`edit.replaceAll` ignores case by default and does not keep it:** "colour"→"color" also turned "Colour" into
   "color". Use `"matchCase":true` and one call per capitalisation.
 - With tracked changes on, `inspect`/`text` show deleted text too ("graygrey"): runs carry `ins`/`del` ids.
+- Script failure message names the command index and the bad variant ("unknown variant `exact`, expected one of …"):
+  read it, the allowed values are listed. Nothing is saved when a script command fails.
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
@@ -189,3 +225,5 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Numbered lists; confirmed that new paragraphs inherit list numbering.
 - 2026-10-24: Tables (fill, header row shading/repeat, from text), headers/footers, x-of-y page numbers,
   page breaks, columns, links, TOC, footnotes, pictures, find/replace, comments, tracked changes.
+- 2026-10-24: Inline formatting, custom styles, captions, drop cap, shapes/text boxes, cover page, multilevel lists,
+  roman page numbers, first-page-different footers, charts, equations, table merge, convert formats.
