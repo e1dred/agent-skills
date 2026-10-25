@@ -32,7 +32,7 @@ Official docs: `docs/control-protocol.md`, `docs/mcp.md` in https://github.com/s
 - **MCP, live (watch edits in the window):** start the app with `--control PORT --control-token-file FILE
   --automation-read-root DIR --automation-write-root DIR`, then register
   `photocraft-cli mcp --bridge 127.0.0.1:PORT --control-token-file FILE`. Bridge-only tools: `ui_*`, `control_call`.
-  (Live mode itself is untested in this file.)
+  (Live mode verified: see the section below.)
 - Without MCP tools in the session, everything below works from a shell with `photocraft-cli`.
 
 ## CLI essentials (verified)
@@ -74,8 +74,42 @@ photocraft-cli commands --json --filter <text>               # find ids; each ha
   `layer.delete {"layer":id}`; reorder: `layer.moveTo {"layer":id,"target":id,"position":"above|below|into"}`.
 - Image: `image.imageSize {"width":400}` (keeps aspect: 800×500 → 400×250), `image.canvasSize`,
   `image.crop {"x","y","width","height"}`, `filter.blur.gaussianBlur {"radius":2}`, `filter.sharpen.sharpen {}`.
-- Selection (UNVERIFIED, signatures from `commands --json` only, not yet run): `select.rect {"x","y","width","height","feather"}`,
-  `select.subject {}`, `edit.fill {"contents":"color","color":"#rrggbb"}`.
+- Selection: `select.lasso`, `select.refineEdge`, `select.subject`, `select.object`, `select.focusArea`, `select.quick`,
+  `edit.fill {"contents":"black|white|color","layer":id,"target":"pixels|mask"}` all ran live: see the background-removal
+  section for which ones worked. `select.rect {"x","y","width","height","feather"}` is still unrun.
+
+## Live mode and removing a background (verified on a portrait with a blurred, busy background)
+
+Live mode: the app must be started with `--control PORT --control-token-file FILE --automation-read-root DIR
+--automation-write-root DIR` (the user runs it); then the MCP tools `command_run`, `command_batch`, `doc_save`,
+`ui_screenshot` work on the open document. **`session_list` in bridge mode returns the app's entire UI state
+(~10 KB of JSON): call it once, then use `ui_screenshot {"max_side":800}` and `command_run` results instead.**
+`ui_screenshot` is how you SEE the picture; `render_preview` in bridge mode is only the same window screenshot.
+To inspect pixels closely, `doc_save` a flattened PNG under the write root, crop it with Python and open the crop
+(delete the check file afterwards). The `--automation-*-root` folders confine all file access.
+
+Removing a background, non-destructively:
+1. `layer.duplicate {"name":"Cutout"}` first; never edit the original layer.
+2. Automatic selections FAILED on this photo (sharp subject, heavily blurred coloured background):
+   `select.subject {}` selected the background, not the person; `select.object {"rect":[x,y,w,h]}` cut through
+   the face; `select.focusArea` gave patchy strips; `select.quick` with positive then `mode:"subtract"` strokes
+   flipped the result. Each returns only `bounds`: **always look at a screenshot, `bounds` can look plausible and be wrong.**
+3. What worked: trace the silhouette yourself with `select.lasso {"points":[[x,y],…],"mode":"replace","feather":0}`
+   (document pixels, ~20 points; convert from a screenshot with doc_px = (screen_px − canvas_left) × doc_width /
+   canvas_width_on_screen), then
+   `select.refineEdge {"radius":6,"smartRadius":true,"smooth":8,"feather":1,"contrast":20,"output":"layerMask"}`
+   → the layer gets a mask and the selection is consumed (`select.deselect` then fails with "no selection").
+   Hide the original with `layer.setProps {"layer":2,"visible":false}`; the checkerboard shows the cut.
+4. Check edges on a contrasting colour: `layer.newFillLayer.solidColor {"color":"#2E75B6"}` then
+   `layer.moveTo {"layer":4,"target":2,"position":"above"}` (between background and cutout), export a crop.
+   Loose traces leave wedges of old background beside the neck and along shoulders.
+5. Fix wedges by painting the MASK, not the pixels: `select.lasso` the wedge, then
+   `edit.fill {"contents":"black","layer":3,"target":"mask"}` (black hides, white shows).
+   **`edit.fillForeground` with `target:"mask"` painted WHITE (the foreground swapped to white when the mask became
+   active) and revealed the wedge instead of hiding it: use `edit.fill` with an explicit `contents`.**
+6. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
+   `doc_save {"path":"x.pcraft"}` (keeps layer + mask). Never overwrite the source photo.
+Hair detail against a dark blur is the weak spot: a traced edge is smooth and slightly hard; `smartRadius` softens it.
 
 ## Traps
 
@@ -101,5 +135,7 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 
 ## Log
 
+- 2026-10-24: Live mode via the control bridge; background removal on a blurred-background portrait (lasso +
+  refineEdge → layer mask; auto selections failed); mask fill colour trap.
 - 2026-10-24: Initial notes: CLI run/info/convert/batch, layers kept in .pcraft/.psd, shapes, type, drop shadow,
   adjustment layer, resize/crop, JPEG/WebP/PSD export (photocraft-cli 0.15.1, Linux).
