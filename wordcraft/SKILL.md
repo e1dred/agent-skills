@@ -130,6 +130,14 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   with `caret.set {"pos":{"story":"body","path":[para],"off":N}}` (reliable). `references.nextFootnote` also
   happened to land after the mark in a one-note test. NOT `insert.closeHeader`: that goes to the start of the body.
 - Pictures: `insert.picture {"path":ABS,"width":pt,"alt":…}` keeps the aspect ratio (returns width/height).
+- Find/replace: `edit.replaceAll {"text","with","matchCase"?,"wholeWord"?}` returns `{"replaced":N}`.
+  Special codes `^p ^t` work in both fields (per its params; untested).
+- Review: `file.setAuthor {"name"}` first (sets comment/revision author and the file's lastModifiedBy; default
+  "WordCraft User"). `select.text` → `review.newComment {"text"}` returns `{"id":N}`; `review.reply {"id","text"}`;
+  `review.resolveComment {"id","value":true}`; `review.comments` lists them (author, parent, resolved).
+  `review.trackChanges {"value":true}` → later edits become revisions; `review.changes` lists them
+  (kind insert/delete, text, author); `review.acceptAll` / `review.rejectAll` exist (untested).
+  For anonymous output: `file.privacyOptions {"removePersonalInfo":true}` (untested).
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
@@ -150,6 +158,9 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - **`references.footnote` leaves the caret in the footnote**, same as headers. And `insert.closeHeader` always
   puts the caret at the START of the body, so after a header/footer added mid-script, move with `caret.docEnd`.
 - A table inserted inside a column layout keeps full-page-width columns and runs past the column; set widths.
+- **`edit.replaceAll` ignores case by default and does not keep it:** "colour"→"color" also turned "Colour" into
+  "color". Use `"matchCase":true` and one call per capitalisation.
+- With tracked changes on, `inspect`/`text` show deleted text too ("graygrey"): runs carry `ins`/`del` ids.
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
@@ -175,4 +186,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Generalized for sharing; résumé recipe made data-driven with fictional sample content.
 - 2026-10-24: Numbered lists; confirmed that new paragraphs inherit list numbering.
 - 2026-10-24: Tables (fill, header row shading/repeat, from text), headers/footers, x-of-y page numbers,
-  page breaks, columns, links, TOC, footnotes, pictures.
+  page breaks, columns, links, TOC, footnotes, pictures, find/replace, comments, tracked changes.
