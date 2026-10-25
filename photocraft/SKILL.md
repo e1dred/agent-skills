@@ -110,7 +110,14 @@ Removing a background, non-destructively:
 6. Inspect EVERY edge, not only the head: after the first pass a dark wedge of background was still left between the
    sleeve and the image border (the user spotted it; I had only checked head and neck). Export the backdrop-coloured
    composite and crop all four sides and the shoulders at 1:1. A lasso with `feather:1` filled black on the mask removed it.
-7. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
+7. Colour fringe / halo (orange bleed on the edge, dark rim) after the mask exists: shrink the mask edge.
+   `select.loadSelection {"channel":"mask","layer":3}` → `select.modify.contract {"radius":3}` →
+   `layer.layerMask.delete {"layer":3}` → `layer.select {"layer":3}` → `select.refineEdge {"radius":1.5,"smooth":6,
+   "feather":0.8,"output":"layerMask"}`. The orange fringe disappeared. **`select.refineEdge` writes the mask to the
+   ACTIVE layer, not the one you loaded from: after helper layers were added the active layer was the backdrop fill,
+   so the mask landed there (`"layer":4` in the reply). Always `layer.select` the target first and check the
+   `layer` in the reply; `edit.undo` reverts it.** A thin dark rim that remains may just be dark hair.
+8. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
    `doc_save {"path":"x.pcraft"}` (keeps layer + mask). Never overwrite the source photo.
 Hair detail against a dark blur is the weak spot: a traced edge is smooth and slightly hard; `smartRadius` softens it.
 
