@@ -14,34 +14,34 @@ import json, os, sys
 
 RESUME = {
     "name": "ALEX MORGAN",
-    "headline": "Instructional Designer  |  Corporate Trainer  |  Project Coordinator",
+    "headline": "Landscape Designer  |  Nursery Manager  |  Estimator",
     "location": "Portland, OR, USA",
     "email": "alex.morgan@example.com",
     "profile": "linkedin.com/in/example",
-    "summary": ("Instructional designer with 8+ years of experience creating and delivering training for adult "
-                "learners in 3 industries. Builds blended courses, coaches new trainers, and coordinates "
-                "cross-team projects from kickoff to launch."),
+    "summary": ("Landscape designer with 9 years of experience planning residential gardens and running a retail "
+                "nursery. Drafts planting plans, prices projects accurately, and schedules crews and suppliers "
+                "from first sketch to final walkthrough."),
     "competencies": [
-        ("Training", ["Instructional Design", "Needs Analysis", "Workshop Facilitation", "Coaching", "E-Learning"]),
-        ("Management", ["Project Coordination", "Budget Tracking", "Stakeholder Communication", "Scheduling"]),
-        ("Tools", ["Articulate 360", "LMS Administration", "Microsoft 365", "Canva"]),
+        ("Design", ["Site Planning", "Plant Selection", "Drainage Layouts", "Sketching", "Seasonal Color"]),
+        ("Operations", ["Cost Estimating", "Inventory Control", "Supplier Relations", "Crew Scheduling"]),
+        ("Tools", ["Vectorworks", "Spreadsheets", "Point-of-Sale Systems", "Irrigation Software"]),
     ],
     "jobs": [
-        {"title": "Senior Instructional Designer", "dates": "Jan 2021 – Present",
-         "org": "Example Learning Co.  •  Portland, OR",
-         "bullets": ["Designed 12 blended onboarding courses used by 400+ new hires per year.",
-                     "Coached 6 new trainers through observation, co-delivery and feedback.",
-                     "Cut course update time by moving content into a shared template library."]},
-        {"title": "Corporate Trainer", "dates": "Jun 2017 – Dec 2020",
-         "org": "Sample Manufacturing Inc.  •  Salem, OR",
-         "bullets": ["Delivered safety and systems training to 25–40 staff per month.",
-                     "Wrote the site training manual and maintained training records for audits."]},
+        {"title": "Senior Landscape Designer", "dates": "Jan 2021 – Present",
+         "org": "Sample Garden Studio  •  Portland, OR",
+         "bullets": ["Designed 40 residential planting plans per year, from small courtyards to half-acre lots.",
+                     "Trained 3 junior designers to draft plans, estimate costs and run client walkthroughs.",
+                     "Cut estimate turnaround from five days to two with a reusable pricing sheet."]},
+        {"title": "Nursery Manager", "dates": "Jun 2017 – Dec 2020",
+         "org": "Demo Plant Nursery  •  Salem, OR",
+         "bullets": ["Managed stock of 2,000 plant varieties and ordered from 15 growers each season.",
+                     "Introduced a seasonal planting calendar that reduced unsold stock by 18%."]},
     ],
-    "earlier": [("Customer Service Supervisor", "Demo Telecom, Eugene, OR", "2012 – 2017",
-                 "Promoted twice in 3 years, from Representative to Supervisor.")],
-    "education": [("Bachelor of Science, Education", "Example State University, Corvallis, OR", "2012")],
-    "certifications": [("Certified Professional in Talent Development (CPTD)", "ATD", "2022")],
-    "extra": [("Languages: ", "English (Native) • Spanish (Intermediate)")],
+    "earlier": [("Crew Lead", "Example Lawn & Garden, Eugene, OR", "2012 – 2017",
+                 "Led a crew of six on installation and maintenance jobs.")],
+    "education": [("Associate of Applied Science, Horticulture", "Example Community College, Corvallis, OR", "2011")],
+    "certifications": [("Certified Landscape Professional (sample certificate)", "Example Trade Association", "2022")],
+    "extra": [("Volunteer: ", "Community garden coordinator, weekend workshops for beginners")],
 }
 
 NAVY, GRAY = "#1F3864", "#404040"

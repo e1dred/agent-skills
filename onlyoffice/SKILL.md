@@ -294,7 +294,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 ## Recipes
 
 - `recipes/resume_live.py` — ATS-friendly résumé rebuilt live in 4 visible stages (styles → header/summary →
-  experience → rest + links). Fictional sample data; replace `RESUME`. Verified live (2 pages) and headless with
+  experience → rest + links). Fictional sample data; replace `RESUME`. Verified live (the earlier, longer sample made 2 pages; the current invented sample is 1 page) and headless with
   `preview` (render matched the intended layout).
 
 ## Log

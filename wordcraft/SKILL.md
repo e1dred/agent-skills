@@ -407,7 +407,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 ## Recipes
 
 - `recipes/resume_ats.py` — ATS-friendly résumé: Calibri 10.5, 0.6"/0.5" margins, navy Heading 1 with bottom
-  rule, job title with right-tab dates, italic employer line, navy bullets, linked email/profile, ~2 pages.
+  rule, job title with right-tab dates, italic employer line, navy bullets, linked email/profile; the invented sample fits 1 page (about 2 with a real career).
   Sample content is fictional; replace the `RESUME` data at the top.
   Usage: `python3 -I recipes/resume_ats.py /abs/out.docx /abs/out.pdf > s.json && wordcraft-cli run --script s.json`.
 
