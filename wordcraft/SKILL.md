@@ -174,6 +174,24 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   `table.altText` (all accepted; only merge, shading and borders were checked visually).
 - Convert: `wordcraft-cli convert in.docx out.{pdf,odt,html,md}` all work; `.md` keeps only text and the equation's
   linear form (charts, images and tables are not carried in the test document).
+- Header/footer layout: `insert.createHeader` (caret goes in), type `Left\tCenter\tRight`, then
+  `para.set {"props":{"tabs":[{"pos":234,"align":"center","leader":"none"},{"pos":468,"align":"right","leader":"none"}]}}`
+  (pos = text width / 2 and text width; 1" margins on Letter = 468) → three zones, verified by render. Without tab
+  stops the text just sits at the default stops. `insert.header {"preset":"blankThree"}` fills in literal
+  "[Type here]" placeholders and leaves the caret at the start, so your text is inserted before them: avoid it.
+- Page setup: `layout.size {"name":"A4"}` (595.3×841.9), `layout.lineNumbers {"value":"restartPage","countBy":1}`,
+  `layout.verticalAlign {"value":"center"}` (also `layout.hyphenation`, `layout.differentOddEven`) — all checked
+  in `inspect` section props and by render.
+- Selecting: `select.text {"text","occurrence":N}` (1-based) picks the Nth match. `edit.find` with `"regex":true`
+  works (`b[a-z]+` found "bird"); with `"wildcards":true` it is Word-style (`<b*>`, `(c)at`), NOT regex: my `b[a-z]+`
+  wildcard found nothing. `edit.find` returns `{"count","matches":[{start,end}]}` and does not change the
+  selection when there are no matches (a later `format.*` then hits the OLD selection: always check `count`).
+  Capture groups in `edit.replaceAll`: use `"wildcards":true` with `(c)at` → `\\1AT` ; with `"regex":true`
+  `\\1` and `$0` were left as literal text.
+- Macros: `tools.macros {"define":{"name":"Shout","steps":[{"command":"format.bold","params":{"value":true}},
+  {"command":"format.allCaps"}]}}` then `tools.macros {"run":"Shout"}` runs the steps on the selection.
+- Proofing: `review.wordCount` → words/characters/pages; `review.issues` → list of spelling/grammar issues with
+  offsets and suggestions (found "jumpd" and a capitalisation).
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
@@ -225,5 +243,6 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Numbered lists; confirmed that new paragraphs inherit list numbering.
 - 2026-10-24: Tables (fill, header row shading/repeat, from text), headers/footers, x-of-y page numbers,
   page breaks, columns, links, TOC, footnotes, pictures, find/replace, comments, tracked changes.
+- 2026-10-24: Header tab zones, page setup, regex/wildcard find, macros, proofing.
 - 2026-10-24: Inline formatting, custom styles, captions, drop cap, shapes/text boxes, cover page, multilevel lists,
   roman page numbers, first-page-different footers, charts, equations, table merge, convert formats.
