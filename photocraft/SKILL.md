@@ -107,7 +107,10 @@ Removing a background, non-destructively:
    `edit.fill {"contents":"black","layer":3,"target":"mask"}` (black hides, white shows).
    **`edit.fillForeground` with `target:"mask"` painted WHITE (the foreground swapped to white when the mask became
    active) and revealed the wedge instead of hiding it: use `edit.fill` with an explicit `contents`.**
-6. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
+6. Inspect EVERY edge, not only the head: after the first pass a dark wedge of background was still left between the
+   sleeve and the image border (the user spotted it; I had only checked head and neck). Export the backdrop-coloured
+   composite and crop all four sides and the shoulders at 1:1. A lasso with `feather:1` filled black on the mask removed it.
+7. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
    `doc_save {"path":"x.pcraft"}` (keeps layer + mask). Never overwrite the source photo.
 Hair detail against a dark blur is the weak spot: a traced edge is smooth and slightly hard; `smartRadius` softens it.
 
