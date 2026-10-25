@@ -13,7 +13,7 @@ same commands. If `deckcraft-cli --version` is newer, re-check before relying on
 
 ## Surfaces
 
-> **Versions:** written on 0.10.0 (2026-10-24/25). The headless CLI forms ran identically on 0.11.1 (see the version note). The live `app --port` / `ui.*` calls were tested on the 0.10.0 app only; the 0.11.1 app was not running when I checked, so they have **not** been re-tested.
+> **Versions:** written on 0.10.0 (2026-10-24/25). The headless CLI forms ran identically on 0.11.1 (see the version note). The live `app --port` / `ui.*` calls were re-tested 2026-10-25 on the 0.11.1 app (port 47824, started with plain `--control 47824`, blank unsaved Presentation1): `slide.new`, `shape.insert`, `shape.fill`, `insert.table`, `insert.chart`, `document.inspect`, `ui.screenshot` and `file.export` to PDF (2 pages) all behaved as documented, and the window showed the shape, table and pie chart.
 
 - **Headless CLI**: `info FILE`, `render FILE --all --scale 1 OUTDIR/` (PNG per slide, 0-based `--slide N`),
   `convert IN OUT` (`.deckcraft .pptx .pdf .txt/.md .png .jpg .gif`; PNG/JPG = first slide only),
@@ -170,3 +170,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - 2026-10-26: SmartArt, text builds, auto-advance timing, align/distribute/group, picture crop/adjust/style, custom master layout verified headless.
 - 2026-10-25 (4): brand theme colours/fonts, header/footer, chart types, table style/merge/borders, connectors, shape effects/merge, icon/WordArt/audio, comments, spelling, compare, custom show, slide links, morph verified.
 - 2026-10-25 (5): three build sequences re-run on 0.10.0 and 0.11.1 (identical except default chart text tint); version labels added per section.
+- 2026-10-25 (6): live control channel re-tested on the 0.11.1 app (edits, screenshot, PDF export).

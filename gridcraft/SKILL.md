@@ -13,7 +13,7 @@ control channel all run the same commands. If `gridcraft-cli version` is newer, 
 
 ## Surfaces
 
-> **Versions:** written on 0.11.1 (2026-10-24/25). The headless CLI forms ran identically on 0.12.1 (see the version note). The live control channel (`send`, `ui.*`) was tested on the 0.11.1 app only; the 0.12.1 app was not running, so it has **not** been re-tested.
+> **Versions:** written on 0.11.1 (2026-10-24/25). The headless CLI forms ran identically on 0.12.1 (see the version note). The live control channel was re-tested 2026-10-25 on the 0.12.1 app (port 47823, started with plain `--control 47823`, blank unsaved Book1): `range.setValues`, `home.numberFormat`, `home.bold {on:true}`, `home.fillColor`, `home.formatCells` with the integer `Rgb` fill, `insert.table`, `insert.chart`, `sheet.read`, `document.inspect`, `ui.screenshot` (rendered the table, currency formats, chart and fill) and `file.exportPdf` (2 pages) all behaved as documented, and `pivot.options` correctly asked for a PivotTable. One `send` failed once with "not reachable: Resource temporarily unavailable", and after the first batch `ui.screenshot` and `ui.inspect` hung until killed (the app still answered earlier commands; same symptom as PhotoCraft's stalled window, cause not determined, so bring the window to the front and retry).
 
 - **Headless CLI** (no window, deterministic; best for building/reading/verifying files):
   `info FILE`, `cat FILE [--range A1:D9] [--formulas|--csv]`, `eval '=FORMULA' [--in FILE]`,
@@ -179,3 +179,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
 - 2026-10-25 (3): formatting, merge, borders, find/replace, hyperlink, comment, sparkline, lookups, page setup/print area, protection verified headless.
 - 2026-10-25 (4): goal seek, scenarios, data table, solver, forecast, ToolPak, subtotals, consolidate, advanced filter, trendlines, print setup, dynamic-array functions, JSON import verified.
 - 2026-10-25 (5): twelve scripts re-run on 0.11.1 and 0.12.1 (identical); version labels added per section.
+- 2026-10-25 (6): live control channel re-tested on the 0.12.1 app (then the window stopped answering screenshots).
