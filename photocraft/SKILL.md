@@ -117,7 +117,24 @@ Removing a background, non-destructively:
    ACTIVE layer, not the one you loaded from: after helper layers were added the active layer was the backdrop fill,
    so the mask landed there (`"layer":4` in the reply). Always `layer.select` the target first and check the
    `layer` in the reply; `edit.undo` reverts it.** A thin dark rim that remains may just be dark hair.
-8. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
+8. **Compare against a known-good cutout when the user has one (what the gap looked like):** extract its silhouette
+   (flood-fill the near-white background from the corners with PIL, subject = everything else, so a white shirt is
+   kept), scale it onto yours by bounding box and draw a difference map (red = only mine, green = only the
+   reference). The overlap was 96%, so outlines were right; the visible faults were NOT in the shape but in edge
+   quality (check both with side-by-side crops of neck/collar and hair, on white and on a contrasting colour):
+   - a polygon lasso leaves straight stepped segments along jaw and shoulders and a pale sliver where it cut the
+     background short: use many more points on curves, then `select.modify.smooth` or refine `smooth`;
+   - a wedge fill meant to remove background can bite off real collar or neck (the reference showed a missing
+     slice of collar): confirm against the photo before filling the mask black;
+   - a hair edge from a lasso is a hard "helmet" with a dark rim; the good result keeps soft edges and single
+     stray hairs. A hair-aware pass was tried and FAILED: `select.refineEdge {"radius":10,"smartRadius":true,
+     "decontaminate":true,"refineStrokes":[{points along the hairline,"size":45,"mode":"add"}],"output":
+     "newLayerWithMask"}` smeared the hair and left ghost shapes (revert: `layer.delete` the new layer). Do not repeat
+     it on a blurred dark background; try small radius on the contracted selection (step 7) and accept slightly
+     smooth hair, or ask the user whether an AI-generated cutout (as in their reference) is acceptable.
+   - the reference was an AI-regenerated image (1024², face and clothing re-rendered, not the same pixels), so use it
+     to judge quality and outline, never to copy pixels or masks from.
+9. Deliver: hide the helper fill layer, `doc_save {"path":"x.png"}` (RGBA, transparent corners confirmed) and
    `doc_save {"path":"x.pcraft"}` (keeps layer + mask). Never overwrite the source photo.
 Hair detail against a dark blur is the weak spot: a traced edge is smooth and slightly hard; `smartRadius` softens it.
 
