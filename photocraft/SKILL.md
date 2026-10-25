@@ -138,6 +138,25 @@ Removing a background, non-destructively:
    `doc_save {"path":"x.pcraft"}` (keeps layer + mask). Never overwrite the source photo.
 Hair detail against a dark blur is the weak spot: a traced edge is smooth and slightly hard; `smartRadius` softens it.
 
+### Better method, measured (second run on the same photo: overlap with the reference 95.9% → 98.1%)
+
+Use this order instead of steps 2–5 above; it fixed the neck/collar, fringe and wedge problems in one pass:
+1. Read the ORIGINAL file (under the read root) with PIL, not window screenshots: write gridded crops (yellow vertical /
+   cyan horizontal lines every 25–50 px, labels every 100, scale 1.3–2.7×) of the head, both jaw sides, collar,
+   both shoulders and both lower edges, view each, and read edge points in document pixels
+   (doc = box_origin + shown_px / scale). ~70 points were enough.
+2. `layer.duplicate`, then ONE `select.lasso` with all points (`feather:0`), `select.modify.smooth {"radius":4}`,
+   `select.modify.contract {"radius":2}` (removes the colour fringe up front).
+3. `layer.select` the cutout (the duplicate), then `select.refineEdge {"radius":1.5,"smooth":6,"feather":0.8,
+   "output":"layerMask"}`; hide the original; `doc_save` a transparent PNG and a `.pcraft`.
+4. Score and look: silhouette overlap with the reference, and close-up crops on a contrasting colour. Result: no
+   orange fringe or dark rim, the collar kept, smooth jaw and shoulder curves; remaining flaws were a thin pale sliver
+   along one jaw edge and hair without any flyaway strands (the lasso edge is smooth). Fixing the hair needs a different
+   technique than anything tried here.
+Ready-to-reuse scoring: flood-fill the reference's near-white background (all channels ≥ 241) from the 4 corners,
+subject = the rest, crop to its bbox, resize to your alpha bbox, then intersection-over-union.
+(Without numpy, PIL's `ImageChops` + `ImageDraw.floodfill` do it.)
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -162,6 +181,8 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 
 ## Log
 
+- 2026-10-24: Second background-removal run with a dense, grid-read trace + smooth/contract: IoU vs a good reference
+  95.9% → 98.1%, collar and edges fixed; hair strands still not reproduced.
 - 2026-10-24: Live mode via the control bridge; background removal on a blurred-background portrait (lasso +
   refineEdge → layer mask; auto selections failed); mask fill colour trap.
 - 2026-10-24: Initial notes: CLI run/info/convert/batch, layers kept in .pcraft/.psd, shapes, type, drop shadow,
