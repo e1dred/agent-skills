@@ -226,6 +226,11 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   read it, the allowed values are listed. Nothing is saved when a script command fails.
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
+- **Different headers per section is NOT solved.** In a two-section document `insert.createHeader {"page":1}` returned
+  the same header (story 1) as section 1, so both texts landed in one header ("Header OneHeader Two" on every page);
+  adding `layout.linkToPrevious` (a toggle, replied `{"linked":true}`) made the headers disappear from the saved
+  file. Until someone finds the working sequence, avoid per-section headers (use `layout.differentFirstPage` for
+  the one case that works) and verify any attempt with `pdftotext -f N -l N`.
 - **`\n` in `text.insert` does not start a paragraph** — "Line A\nLine B" stays one paragraph with a line break.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
