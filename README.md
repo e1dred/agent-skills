@@ -15,7 +15,7 @@ Unofficial: not affiliated with any of the app projects.
 
 More skills are added as the apps get used.
 
-## Install (Claude Code)
+## Install (for Claude Code use)
 
 ```sh
 git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
