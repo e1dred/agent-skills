@@ -71,7 +71,35 @@ control channel all run the same commands. If `gridcraft-cli version` is newer, 
 No macros run; `.xls/.xlsb/.ods` import only (never written); slicers not saved to xlsx; charts shallow (no 3-D, axis
 scaling); PDF export can't render Arabic/Devanagari/Thai. `app.quit` / `file.close {force:true}` discard unsaved work.
 
+## More recipes (verified headless, 0.11.1)
+
+Build with `run --script steps.jsonl --out f.xlsx` (one `{"command":…,"params":…}` per line), then `check` + `cat`.
+
+- **Formula fill**: set the first cell with `cell.set`, then `edit.fillDown {"range":"E2:E7"}`. Do **not** use
+  `range.fill {"range","input":"=C2*D2"}` for this: the relative formula is interpreted from the *active cell* (A1), so
+  `E2` became `=G3*H3`. `range.setValues` with `=` strings is fine (references are literal).
+- **Sort** with formulas in the data works and adjusts relative refs: `data.sort {"range":"A1:E7","header":true,"keys":[{"column":"E","order":"desc"}]}`.
+- **Pivot**: `insert.pivotTable {"source":"Sales"|"Sheet1!$A$1:$E$7","destination":"new"|"Sheet1!H3","rows":["Region"],
+  "columns":["Product"],"values":[{"field":"Revenue","func":"sum"}]}`; the new sheet is inserted *before* the current one and
+  becomes active, so `cat`/`--print` then shows the pivot — pass `--sheet NAME`. Grand totals verified against SUMIFS.
+- **Structured refs, names, spill** all calculate: `=SUMIFS(Sales[Revenue],Sales[Region],"North")*(1+TaxRate)`,
+  `=SORT(UNIQUE(Sales[Region]))` (spills down), `formulas.defineName {"name":"TaxRate","refersTo":"=Sheet1!$H$1"}`.
+- **Conditional format**: `home.conditionalFormat {"range","rule":{"type":"cellIs","operator":"greater","value":"50","preset":"lightRedFill"}}`
+  or `{"type":"dataBar"}`; **validation**: `data.validation {"range","type":"list","formula1":"Widget,Gadget"}`.
+- **Fill colour**: `home.formatCells {"range","style":{"fill":{"pattern":"Solid","fg":{"Rgb":14544887}}}}` — `Rgb` is an
+  integer `0xRRGGBB` (alpha byte ignored), not a hex string. `Theme`/`Auto` are the other colour variants. Writes
+  `fgColor rgb=…` to styles.xml.
+- **Filter**: `data.filter {"range"}` turns AutoFilter on, then `data.filterBy {"column":"A","values":["East"]}`; `--print` still
+  lists every row, so verify hiding via the live screenshot (not checked).
+- **Charts**: `insert.chart` types incl. `pie`, `column` + `"subtype":"stacked"`, `"at":"J2"`; `home.insertSheet {"name":"Notes"}`;
+  `freeze`: `view.freezeTopRow {}`. `info` lists each chart's kind and series count.
+- **CSV**: `convert in.csv out.xlsx` and `data.fromTextCsv` both turn `007` into `7`. Keep text with
+  `file.open {"path":"in.csv","csvAsText":true}` (verified: `007` kept). CSV/HTML export per sheet: `convert f.xlsx out.csv --sheet Sheet1`.
+- `check` after a pivot/CF/validation/name workbook: all formulas matched, round trip equal.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.11.1): headless build/check/eval/info, live cell/table/chart/format/save/PDF,
   screenshots. Reference reading: artcraft-skills `gridcraft` (macOS, MIT) — see repo README credits.
+- 2026-10-25 (2): pivots, conditional formats, validation, names, structured refs, spill, sort, filter, charts, CSV import,
+  fills verified headless; `range.fill` relative-formula trap found.

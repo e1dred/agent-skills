@@ -63,7 +63,24 @@ same commands. If `deckcraft-cli --version` is newer, re-check before relying on
 No `.ppt/.odp/.pptm`, no SVG/HEIC pictures, no MP4 export (GIF only), no recording, PDF artwork rasterised, SmartArt/animations
 partial, English UI only.
 
+## More recipes (verified headless, 0.10.0)
+
+- **Theme**: `design.theme {"name":"Harbor"}` (list with `design.themes`); starters via `file.new {"template":"Quarterly"}` give 5 slides.
+- **Fill / text**: `shape.fill {"color":"#E07B39"}` acts on the just-inserted (selected) shape; also `ids`. `text.set {"id","text"}`,
+  `format.size/bold/font/color` act on the selection; `shape.setBounds {x,y,w,h,ids?}`; `arrange.align {"edge":"center"}`.
+- **Animation**: `animation.add {"effect":"fade","start":"onClick","duration":600}` → `{"count":1}`; `animation.get` lists them
+  (class, effect, durationMs, shape id). `animation.list` shows every effect. Animations, the `push` transition (with
+  `durationMs`) and notes all survived a `.deckcraft` → `.pptx` → reopen round trip.
+- **Picture**: `insert.picture {"path":"pic.png","rect":[500,200,200,120]}` (PNG renders; SVG/HEIC don't). Relative paths resolve from the CLI's cwd.
+- **Outline import**: `slide.fromOutline {"text":"# Title\n- bullet\n  - nested","markdown":true}` → `{"slides":N}` (headings = slides). Adds after the
+  current slide; the blank first slide of a fresh `file.new` stays.
+- **Exports** via `run --in F --export OUT --export-params JSON`: notes pages `{"layout":"notes"}` (one page per slide: 6),
+  handouts `{"layout":"handouts","perPage":6}` (1 page for 6 slides); `convert F x.gif` makes an animated GIF
+  (GIF89a, 960×540); `convert F x.md` writes the outline (tab-indented bullets).
+- Render check: `deckcraft-cli render F --slide 1 --scale 1 out.png` (slide index 0-based; output path is the *last* argument).
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.10.0): headless run/save/convert/render/info, live new/slide/shape/table/chart/
   save/export/screenshot with the Pitch starter. Reference reading: artcraft-skills `deckcraft` (macOS, MIT).
+- 2026-10-25 (2): themes, animation, transition, picture, notes, outline import, notes/handout PDF, GIF, pptx round trip verified headless.
