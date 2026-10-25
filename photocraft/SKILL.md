@@ -5,7 +5,9 @@ description: Verified working knowledge for driving the PhotoCraft image editor 
 
 # PhotoCraft
 
-Field notes from real tasks, tested on **photocraft-cli 0.15.1** (Linux AppImage). PhotoCraft is an early-alpha,
+**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
+
+Field notes from real tasks, tested on **photocraft-cli 0.15.1, re-checked and extended on 0.16.0** (Linux AppImage; 0.16.0 is the version for everything dated after 2026-10-25). PhotoCraft is an early-alpha,
 Photoshop-style editor in Rust: layers, masks, adjustment layers, layer styles, type, vector shapes, PSD read/write.
 Everything the UI does is an *engine command*, and the CLI, the MCP server and the app's control channel all run
 the same commands. If `photocraft-cli --version` is newer, re-check anything below before relying on it.
@@ -80,6 +82,7 @@ photocraft-cli commands --json --filter <text>               # find ids; each ha
 
 ## Live mode and removing a background (verified on a portrait with a blurred, busy background)
 
+Helper when the `photocraft` MCP tools are not loaded in the session: `python3 -I tools/pcmcp.py PORT calls.json` (see its docstring) runs the same tool calls through the bridge from the shell and saves screenshots.
 Live mode: the app must be started with `--control PORT --control-token-file FILE --automation-read-root DIR
 --automation-write-root DIR` (the user runs it); then the MCP tools `command_run`, `command_batch`, `doc_save`,
 `ui_screenshot` work on the open document. **`session_list` in bridge mode returns the app's entire UI state

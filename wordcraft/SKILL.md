@@ -5,7 +5,9 @@ description: Verified working knowledge for driving the WordCraft word processor
 
 # WordCraft
 
-Field notes from real tasks, tested on **WordCraft 0.10.0** (Linux AppImage). If `wordcraft-cli --version`
+**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
+
+Field notes from real tasks, tested on **WordCraft 0.10.0; the style, review and next-tier sections on 0.11.0** (Linux AppImage). If `wordcraft-cli --version`
 reports something newer, treat anything below as "probably still true" and re-check it before relying on it.
 
 ## Keep this file growing
@@ -265,6 +267,11 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - **Table formulas and sort**: `table.formula {"formula":"=SUM(ABOVE)"}` in the last cell → 42; `table.sort {"column":1,"order":"ascending","header":true}` sorted the body rows and kept the header and total rows in place (the total sorted last by name, so check totals when sorting).
 - **Other**: `layout.lineNumbers {"value":"restartPage","countBy":1}`, `insert.textBox {"text":"Callout box","width":150,"height":60}`, `insert.shape`, `insert.dateTime`/`insert.field`, `insert.dropCap`.
 - **Converting**: `wordcraft-cli convert base.docx base.{pdf,odt,rtf,html,md,tex,txt,png}` all wrote files (png renders page 1); the `.md`/`.txt` exports keep text only.
+
+## Version note (0.11.0)
+
+WordCraft 0.11.0 added 5 commands (638 → 643), none removed: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
+(after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`. The recipes and styles in this file ran unchanged on 0.11.0.
 
 ## Property names (verified via `inspect`)
 

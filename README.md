@@ -9,13 +9,13 @@ Unofficial: not affiliated with any of the app projects.
 
 | Skill | App | Tested on | Commands documented (measured) | Everyday workflows covered (est.) |
 |---|---|---|---|---|
-| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.10.0, Linux AppImage | 174 of 643 | ~85% |
-| [`gridcraft/`](gridcraft/) | [GridCraft](https://github.com/storytold/gridcraft) spreadsheet: headless CLI, live control channel, formulas, pivots, formatting, charts, .xlsx build/check/export | 0.12.1, Linux AppImage | 61 of 353 | ~85% |
-| [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.11.1, Linux AppImage | 75 of 327 | ~85% |
-| [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.16.0, Linux AppImage | 88 of 940 | ~85% |
+| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.10.0 / 0.11.0, Linux AppImage | 209 of 643 | ~85% |
+| [`gridcraft/`](gridcraft/) | [GridCraft](https://github.com/storytold/gridcraft) spreadsheet: headless CLI, live control channel, formulas, pivots, formatting, charts, .xlsx build/check/export | 0.11.1 / 0.12.1, Linux AppImage | 87 of 353 | ~85% |
+| [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.10.0 / 0.11.1, Linux AppImage | 102 of 327 | ~85% |
+| [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.15.1 / 0.16.0, Linux AppImage | 115 of 940 | ~85% |
 | [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 tools (plus the full macro API) | ~95% |
 
-*Commands documented* is measured by `./coverage.sh` (as of 2026-10-25): how many of the app's own command ids (MCP tools for ONLYOFFICE)
+*Commands documented* is measured by `./coverage.sh` (as of 2026-10-25, after the next-tier workflow round): how many of the app's own command ids (MCP tools for ONLYOFFICE)
 appear in the skill. It is a rough lower bound on what a skill teaches, since a workflow can be described without naming every command, and an
 upper bound on what was tested, since an id can be named without being run. *Everyday workflows covered* is the author's **estimate**, rounded
 to 5%, of how many of the core tasks (build, edit, format, export) have a recipe that was run and checked. It is a judgement, not a measurement.

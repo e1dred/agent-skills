@@ -5,7 +5,9 @@ description: Verified working knowledge for driving the DeckCraft presentation a
 
 # DeckCraft
 
-Field notes from real tasks, tested on **deckcraft-cli 0.10.0** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
+**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
+
+Field notes from real tasks, tested on **deckcraft-cli 0.10.0; later sections on 0.11.1** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
 presentation app in Rust. Everything is a command with an id (321 of them); CLI, MCP and the live control channel run the
 same commands. If `deckcraft-cli --version` is newer, re-check before relying on this.
 

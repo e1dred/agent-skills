@@ -5,6 +5,8 @@ description: Verified working knowledge for driving ONLYOFFICE Desktop Editors f
 
 # ONLYOFFICE Desktop Editors
 
+**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
+
 Field notes from real tasks, tested on **ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux)** with the
 AI-tools server **onlyoffice-document-builder 2.0.0-native**. Re-check anything below on other versions.
 

@@ -11,6 +11,10 @@ app, live vs headless behaviour, Word macro API details that work, traps, verifi
 Tested with ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux) and its AI-tools server
 2.0.0-native. Unofficial: not affiliated with Ascensio System SIA / ONLYOFFICE.
 
+## Helper scripts
+
+`tools/ooc.py` runs a list of tool calls against a document through the stdio server (works when the MCP link has dropped); `tools/ooschema.py docx|xlsx|pptx [tool…]` prints the real parameter names of the tools.
+
 ## Contents
 
 | Path | What it is |
