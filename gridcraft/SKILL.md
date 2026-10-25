@@ -133,6 +133,24 @@ New sheets and charts keep working after protection; protect last in the script.
   `automate.stopAction {}` → `{stopped:false}` when nothing is running.
 - `run --quiet` suppresses command results: omit it when you need the returned values (it hid `pivot.showDetails`' answer).
 
+## Analysis and layout tools (verified headless, 0.12.1)
+
+Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":…}` per line); `cat`/`info`/`check` on the output confirm.
+- **Goal seek**: `data.goalSeek {"set":"D5","to":1000,"changing":"B2"}` → `{converged:true,iterations:2,value:168}` (writes the found value into `B2`; `set` must be a formula cell, `changing` a constant).
+- **Scenarios**: `data.scenarioAdd {"name":"Boom","changing":"B2:B4","values":[200,80,50]}`, `data.scenarioShow {"name"}` (writes the values), `data.scenarioManager {}`, `data.scenarioSummary {}` (adds a "Scenario Summary" sheet). Scenarios are stored in a hidden name `_sc_scenarios`.
+- **Data table** (what-if): `data.dataTable {"range":"G1:H6","columnInput":"D1"}` with the input values down `G2:G6` and the formula in `H1` → writes **static values** (a snapshot, not a live `TABLE()`); `rowInput` for values across the top; two-variable with the formula in the corner.
+- **Solver**: `data.solver {"objective":"E1","goal":"max|min|value","variables":"D1","constraints":["D1 <= 9","D1 >= 0","B2 int","B3 bin"],"method":"grg|simplex|evolutionary"}` → "Solver converged to a locally optimal solution"; for `price*(100-10*price)` it found price 5 (250), matching the data table. `data.solverReport` makes the report sheets.
+- **Forecast sheet**: `data.forecastSheet {"timeline":"A2:A13","values":"B2:B13","periods":4}` → new sheet with a table (actual, forecast, bounds) and a line chart; dates need a date number format (`home.numberFormat {"code":"yyyy-mm"}`).
+- **Analysis ToolPak**: `data.analysisToolPak {"tool":"descriptive","range":"B1:B7","labels":true,"output":"E1","summary":true}`; `regression` uses **`inputY` and `inputX`** (not `range`): `{"tool":"regression","inputY":"B1:B7","inputX":"A1:A7","labels":true,"output":"E1"}` → the usual "SUMMARY OUTPUT" block (R² 0.998 on my test line); `correlation {"range":"A1:B7","labels":true}`. Others: anovaSingle, covariance, fTest, histogram, movingAverage, rankPercentile, tTest*.
+- **Subtotals / outline**: `data.subtotal {"range":"A1:C5","groupBy":"A","function":"sum","columns":["C"]}` inserts "East Total … Grand Total" rows and the outline; `data.showLevels {"rows":1}` collapses to the totals; `data.group {"rows":"2:5"}`/`ungroup`, `data.outlineSettings {"summaryBelow":false}`.
+- **Consolidate** (several sheets by labels): `data.consolidate {"sources":["Q1!A1:B3","Q2!A1:B3"],"destination":"A1","function":"sum","topRow":true,"leftColumn":true}` → Widget 17, Gadget 5, Gizmo 3.
+- **Advanced filter**: `data.advancedFilter {"range":"A1:B4","criteria":"E1:F2","copyTo":"H1"}` where `E1:F2` holds the field names and a condition row (`"> 6"` under Qty; blank = any) → `{matched:1,range:"H1:I2"}`; without `copyTo` it hides rows in place.
+- **Charts**: `chart.addElement {"element":"trendline","type":"linear|exponential|polynomial|movingAverage","displayEquation":true,"displayRSquared":true}`, `chart.set {"legend":"bottom","xTitle","yTitle","dataLabels":false,"width":480,"height":300}`; other elements: title, legend, dataLabels, gridlines, axisTitles, smooth.
+- **Print**: `pageLayout.printTitles {"rows":"1:1"}`, `pageLayout.headerFooter {"header":"&CSales report","footer":"&CPage &P of &N"}`, `pageLayout.scaleToFit {"width":1,"height":0}`, `pageLayout.orientation {"orientation":"landscape"}`, `pageLayout.printGridlines`, `pageLayout.breaks {"insert":true,"cell":"A20"}`; PDF export obeys them (landscape Letter, header/footer text present).
+- **Dynamic arrays and modern functions** all calculated and `check`ed: `=LET(n,SEQUENCE(5),SUM(n*n))` → 55, `=MAP(SEQUENCE(3),LAMBDA(x,x*10))` → 10,20,30 (spills), `=TEXTSPLIT(…)`, `=FILTER(…)`, `=XMATCH(…)`, `=TEXTJOIN(", ",TRUE,UPPER(LEFT(A2:A5,1)))`, `=SORTBY(A2:A5,RIGHT(A2:A5,3),-1)`. A spill that runs into occupied cells shows `#SPILL!` (and `check` reports a mismatch against the cached value).
+- **JSON import**: `data.getData {"text":"[{\"id\":1,\"name\":\"Ann\"}]"}` (or `{"path"}`) → a new sheet with a table of the keys.
+- **Flash Fill** (`edit.flashFill`, `data.flashFill`) answered "didn't see a pattern" for first-name extraction in every form I tried (ranges `B2:B5`, `B4:B5`, two examples): untested/unreliable headlessly, use a formula (`=LEFT(A2,FIND(" ",A2)-1)`) instead.
+
 ## Version note (2026-10-25)
 
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
@@ -145,3 +163,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
 - 2026-10-25 (2): pivots, conditional formats, validation, names, structured refs, spill, sort, filter, charts, CSV import,
   fills verified headless; `range.fill` relative-formula trap found.
 - 2026-10-25 (3): formatting, merge, borders, find/replace, hyperlink, comment, sparkline, lookups, page setup/print area, protection verified headless.
+- 2026-10-25 (4): goal seek, scenarios, data table, solver, forecast, ToolPak, subtotals, consolidate, advanced filter, trendlines, print setup, dynamic-array functions, JSON import verified.
