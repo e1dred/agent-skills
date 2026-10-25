@@ -97,6 +97,20 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
 - `save_document {"path":…,"format":"pdf"|"md"|"docx"}`: PDF carries header/footer/footnotes; the `md` export
   keeps headings, numbered lists and tables (`**bold**` header cells) and drops headers/footers.
 
+## PDF tools (verified headless; open a .pdf to get the `pdf_*` tools)
+
+- `pdf_get_document_info` → page count + AcroForm field summary; `pdf_search_document {"query":"a|b","is_regex":true,
+  "context_chars":20}` → matches with page, snippet, occurrence; `pdf_get_page_info {"page_number","include_forms"}`.
+- Markup is a two-step pipeline: `pdf_get_text_quads {"page_number":1,"items":["requirements"]}` (items may be
+  strings or `{"text"}`) → per-occurrence quads; then `pdf_markup_text {"page_number":1,"type":"highlight"|
+  "strikeout"|"underline"|redact,"markup_targets":[{"text","quads":[the quad(s) of ONE occurrence],"comment"?}]}`.
+  Passing only `{"text"}` fails with "empty quads". Apply `save_document` afterwards.
+- **Colour trap:** `color` as a list (`[255,235,0]`, `[1,.92,0]`), `"#FFEB00"` or `"FFEB00"` all produced a solid BLACK
+  box over the text in the render. Omit `color` (default yellow) or pass an object `{"r":255,"g":235,"b":0}`.
+  Always render a page after marking up: the black box also looked like a redaction.
+- `pdf_split {"parts":[{"pages":"1","path":ABS}],"overwrite":true}`; `pdf_merge {"sources":[{path,pages?}],
+  "output_path"}` (untested).
+
 ## Spreadsheets (verified headless; `cell_*` tools)
 
 Create with `create_document(format="xlsx")` (or `ooc.py new:xlsx calls.json`). Read `learn_about(topic="spreadsheets")`.
@@ -155,6 +169,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 
 ## Log
 
+- 2026-10-24: PDF search/markup/split, highlight colour trap.
 - 2026-10-24: Word helper tools (lists, table, page setup, comments, tracking), md/pdf export.
 - 2026-10-24: Spreadsheet and presentation basics (cell_* and slide_* tools), headless build + preview; ooc.py `new:` mode.
 - 2026-10-24: Initial notes: connector discovery and wrapper, live résumé rebuild, headless preview check
