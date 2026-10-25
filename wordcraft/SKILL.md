@@ -72,6 +72,19 @@ Unverified hints from the docs: CharProps has a `link` field (URL or `#bookmark`
   would bind the open document to that file and clear the Edited state: only do that when the user asks.
 - Leave the user's document as found: it stays dirty with my test text; tell them to close it without saving.
 
+## Opening real résumés (.docx) in WordCraft: fidelity check (verified on copies, 2 designs)
+
+`wordcraft-cli info f.docx` → pages/paragraphs; `convert f.docx f.pdf`; `run --file f.docx --save out.docx` is the open+save round trip.
+- A style-based résumé (custom styles, no tables, 2 hyperlinks) round-tripped IDENTICALLY: same style counts, 2 pages,
+  998 words, links, margins, numbering, document title; text diff of the two PDFs 1.0000.
+- A table-based résumé (9 layout tables, list bullets, direct formatting, 6 numbering definitions, 195 styles) kept all of
+  it: tables, styles, margins, bullet definitions, 20 border blocks, 3 pages. Differences: text runs are merged (42 → 37 font
+  runs, harmless), one line wrapped differently (ONLYOFFICE hyphenated "class-rooms", WordCraft kept "classrooms"), a
+  bullet character extracted as `•` instead of `·`, and `docProps/custom.xml` (custom document properties) was dropped.
+- Compare renderers by exporting both PDFs, then `pdftotext` word sequences with `difflib.SequenceMatcher` and a
+  4-up page image (original-renderer vs WordCraft for each file). Verdict: WordCraft is safe for these résumés when saving
+  to a NEW file; keep the original untouched.
+
 ## Choosing live vs headless
 
 - **Live** (user watches): bridge MCP / `tools/wcmcp.py`. Check `ui_inspect` first: `title`, `dirty`.
@@ -282,6 +295,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Log
 
+- 2026-10-24: Résumé round-trip fidelity check on two designs (faithful; only custom doc properties lost).
 - 2026-10-24: Live mode on a blank document: typing, formatting, screenshot/render, export, failed-select trap.
 - 2026-10-24: Initial notes from building and linking an ATS résumé (WordCraft 0.10.0).
 - 2026-10-24: Linked the official docs (docs/mcp.md, docs/control-protocol.md); corrected path resolution.
