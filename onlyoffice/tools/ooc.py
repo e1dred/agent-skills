@@ -1,6 +1,8 @@
 """Run ONLYOFFICE AI-tools calls against a document from the shell, when the MCP tools aren't loaded.
 
     python3 -I ooc.py "/abs/path/Doc.docx" calls.json      # calls.json: [["tool_name", {args}], ...]
+    python3 -I ooc.py new:xlsx calls.json                  # new:docx / new:xlsx / new:pptx: a blank headless document
+                                                           # (end calls.json with save_document, an absolute path)
 
 Attaches to the document (LIVE if it is open in ONLYOFFICE Desktop), runs each call, then detaches with
 close_document. Environment: OO_MCP (server command, default: onlyoffice-ai-mcp next to this file),
@@ -40,7 +42,10 @@ def tool(name, args):
 rpc("initialize", {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "ooc", "version": "1"}})
 p.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n")
 p.stdin.flush()
-print("[attach]", tool("open_document", {"path": doc})[:90])
+if doc.startswith("new:"):
+    print("[create]", tool("create_document", {"format": doc[4:]})[:90])
+else:
+    print("[attach]", tool("open_document", {"path": doc})[:90])
 for name, args in calls:
     print(f"[{name}]", tool(name, args)[:lim])
 print("[detach]", tool("close_document", {})[:60])

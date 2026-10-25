@@ -76,6 +76,39 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
 - Read back: `p.ToHtml({RenderHTMLTags: true})` (shows `<strong>`, `<a href>`), `p.GetNumbering()`,
   `doc.GetStatistics()` → `{PageCount, WordsCount, ParagraphCount, …}` (works live).
 
+## Spreadsheets (verified headless; `cell_*` tools)
+
+Create with `create_document(format="xlsx")` (or `ooc.py new:xlsx calls.json`). Read `learn_about(topic="spreadsheets")`.
+- `cell_set_cell_data {"cells":[{address,value|formula,style,numberFormat,copyTo}]}`: `style` is CSS-like
+  (`font-weight:bold;background-color:#1F3864;color:#ffffff`); a `formula` seed + `copyTo:"D2:D4"` fills down with
+  shifted references; the reply's `formulaChecks` shows the computed values (e.g. `=SUM(B2:C2)` → 270): read them.
+- `cell_read_context` → table `regionAddress`, `headerRow`, `dataRowCount`, `nextCol`, per-column `type`
+  (`formula` columns are flagged); use its header names for the tools below.
+- `cell_set_sort {"range":"A1:D4","key1":"Total","sort_order1":"xlDescending"}` sorts by header name and keeps rows
+  together (formulas followed their rows); a total row outside the range stayed put.
+- `cell_add_data_bars {"range":"D2:D4"}`, `cell_layout {"action":"freeze"}` (header row → `frozenAt:"1:1"`),
+  `cell_add_chart {"category_column":"Region","series_columns":["Q1","Q2"],"range":"A1:C4","chart_type":"bar","title":…}`
+  (placed below the data; renders in `preview`; theme-less default colours).
+- `cell_get_range_data {"range"}` returns `headers[]` + `rows[][]` (a blank cell is `null`).
+- `preview` of a sheet prints the first page with chart and data bars (checked).
+
+## Presentations (verified headless; `slide_*` tools)
+
+Read `learn_about(topic="presentations")` (designed vs placeholder route). Placeholder route, as tested:
+- A new deck has one title slide. Add slides by macro (no add-slide tool):
+  `var p=Api.GetPresentation(),m=p.GetMaster(0),s=Api.CreateSlide();s.ApplyLayout(m.GetLayoutByType('obj'));p.AddSlide(s);`
+  (types `title|obj|twoObj|secHead|picTx|titleOnly|blank`).
+- Theme colours: `m.GetTheme().SetColorScheme(Api.CreateThemeColorScheme([12 × Api.Color('#…')],'Name'))`, order
+  accent1..accent6, dk1, dk2, folHlink, hlink, lt1, lt2. Charts then use accents 1–3 (navy/blue/orange in the test).
+- `slide_set_text {"slide_number":N,"target":"title|subtitle|body|notes","text":"line1\nline2"}` (newline = new paragraph;
+  `target:"notes"` writes speaker notes).
+- `slide_add_chart_to_slide {"slide_number":3,"chart_type":"bar","categories":[…],"series":["Q1","Q2"],"data":[[…],[…]]}`:
+  **each inner list of `data` is ONE series' values** (length = number of categories). Giving only categories+series
+  names without `data` is an error ("give either 'data' … or 'prompt'"). Mismatched shapes are padded: 3 rows with
+  2 names made a third "Series 3" and cut the categories to the row length. The chart fills the content placeholder.
+- `slide_get_presentation_context {"detail":"audit"}` lists problems per slide (e.g. `no_speaker_notes`); `preview`
+  with `pages:"all"` renders every slide.
+
 ## Traps
 
 - **An empty paragraph's `GetText()` is `"\r\n"`, not `""`.** Test emptiness with `.replace(/[\r\n]/g, "") === ""`.
@@ -84,6 +117,8 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
   (e.g. via `word_for_all_text`) when restyling existing content.
 - `doc.GetStyle(name)` returns null for an unknown name, and `SetStyle(null)` REMOVES a style — pass names to
   `SetStyle` so typos throw.
+- **The MCP link can drop mid-session** (all `mcp__onlyoffice__*` tools vanish); the wrapper still works, so continue
+  with `tools/ooc.py` (it now also takes `new:docx|xlsx|pptx` to start from a blank headless document).
 - Never pass `discard_unsaved=true` on your own; the server refuses to drop unsaved work for a reason.
 
 ## Verify before reporting
@@ -99,5 +134,6 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
 
 ## Log
 
+- 2026-10-24: Spreadsheet and presentation basics (cell_* and slide_* tools), headless build + preview; ooc.py `new:` mode.
 - 2026-10-24: Initial notes: connector discovery and wrapper, live résumé rebuild, headless preview check
   (ONLYOFFICE 10.0.0 flatpak, server 2.0.0-native).
