@@ -145,14 +145,21 @@ Use this order instead of steps 2–5 above; it fixed the neck/collar, fringe an
    cyan horizontal lines every 25–50 px, labels every 100, scale 1.3–2.7×) of the head, both jaw sides, collar,
    both shoulders and both lower edges, view each, and read edge points in document pixels
    (doc = box_origin + shown_px / scale). ~70 points were enough.
-2. `layer.duplicate`, then ONE `select.lasso` with all points (`feather:0`), `select.modify.smooth {"radius":4}`,
-   `select.modify.contract {"radius":2}` (removes the colour fringe up front).
+2. `layer.duplicate`, then ONE `select.lasso` with all points (`feather:0`), `select.modify.smooth {"radius":2}`,
+   `select.modify.contract {"radius":1}` (heavier values 4/2 also work but pull the edge in; see the comparison below).
 3. `layer.select` the cutout (the duplicate), then `select.refineEdge {"radius":1.5,"smooth":6,"feather":0.8,
    "output":"layerMask"}`; hide the original; `doc_save` a transparent PNG and a `.pcraft`.
 4. Score and look: silhouette overlap with the reference, and close-up crops on a contrasting colour. Result: no
    orange fringe or dark rim, the collar kept, smooth jaw and shoulder curves; remaining flaws were a thin pale sliver
    along one jaw edge and hair without any flyaway strands (the lasso edge is smooth). Fixing the hair needs a different
    technique than anything tried here.
+Shrink/smooth settings compared (same dense trace, same refine; three layers in one document, one mask each, by
+`select.saveSelection {"name":"raw"}` once and `select.loadSelection {"channel":"raw"}` + modify + refine per layer, always
+`layer.select {"name":…}` the target before refining): tight (smooth 4, contract 2) IoU 0.9813, light (smooth 2,
+contract 1) 0.9818, loose (no modify) 0.9821; mask area differs only 0.7%, and no variant showed a colour fringe at 2×.
+So with an accurate trace use LIGHT (smooth 2, contract 1) or none; the heavier shrink was only needed for the
+loose first trace (about 8 px off), where it hid the fringe. The user noticed the marching-ants selection sat
+slightly "inside" the subject: that is the contract plus smoothing rounding convex curves inward.
 Ready-to-reuse scoring: flood-fill the reference's near-white background (all channels ≥ 241) from the 4 corners,
 subject = the rest, crop to its bbox, resize to your alpha bbox, then intersection-over-union.
 (Without numpy, PIL's `ImageChops` + `ImageDraw.floodfill` do it.)
