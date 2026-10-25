@@ -226,6 +226,10 @@ are still unverified.
   --automation-read-root DIR --automation-write-root DIR`). Roots stay valid for headless `mcp`.
 - A raw JSON-line client on the control port answers "authentication required" without the right handshake; use the MCP bridge.
 - Verified live on 0.16.0: `doc_new`, `command_run` (`layer.newFillLayer.gradient`, `type.create`), `ui_screenshot`, `jobs_list`.
+- **AI selection re-tested on 0.16.0** (portrait, dark suit, blurred green/yellow background): `select.subject {}` → `{bounds:[0,0,1225,1494],changed:true}`; rendered over magenta via
+  `layer.duplicate` → `select.subject` → `layer.layerMask.revealSelection` it **kept the left-hand plants, the lamp and the face but removed the whole dark suit and the right half** —
+  still wrong (same failure class as 0.15.1). Keep using the manual `select.lasso` + `select.refineEdge` method below. Judge any cutout by compositing over a loud colour
+  (`layer.newFillLayer.solidColor {"color":"#ff00ff"}` then `layer.moveTo {"layer":id,"target":cutoutId,"position":"below"}`); transparent and a dark suit both look black on a PNG viewer.
 - New commands in 0.16.0: `type.fillPath`, `style.presets.importAsl/exportAsl`, `help.checkForUpdates`, `updates.status` (935 → 940). Nothing removed; every recipe
   above (crop, curves, unsharp mask, resize, saves) gave the same results on both CLIs. `select.subject/object/focusArea/quick` parameter docs are unchanged.
 
