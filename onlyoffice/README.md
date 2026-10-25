@@ -23,11 +23,11 @@ Tested with ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux) and its A
 ## Install (Claude Code, Linux flatpak)
 
 1. In ONLYOFFICE, turn on **Settings → Enable AI features**, then restart it.
-2. Clone the skill and register the connector:
+2. Clone [agent-skills](https://gitlab.com/e1dred/agent-skills), link the skill and register the connector:
 
    ```sh
-   git clone https://gitlab.com/e1dred/onlyoffice-skill.git ~/.claude/skills/onlyoffice
-   chmod +x ~/.claude/skills/onlyoffice/tools/onlyoffice-ai-mcp
+   git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
+   ~/agent-skills/install.sh onlyoffice
    claude mcp add onlyoffice -- ~/.claude/skills/onlyoffice/tools/onlyoffice-ai-mcp
    ```
 

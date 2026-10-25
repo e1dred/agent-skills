@@ -1,0 +1,42 @@
+# agent-skills
+
+[Agent Skills](https://agentskills.io) that help AI agents such as Claude Code drive desktop apps well.
+Each one holds working notes collected from real tasks: how to connect for live editing, exact command and
+parameter formats, traps that cost time, how to verify results, and ready-to-run recipes. Only things
+confirmed on a named app version go in.
+
+Unofficial: not affiliated with any of the app projects.
+
+| Skill | App | Tested on |
+|---|---|---|
+| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor | 0.10.0, Linux AppImage |
+| [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx), live editing through its AI-tools MCP server | 10.0.0, Linux flatpak |
+
+More skills are added as the apps get used.
+
+## Install (Claude Code)
+
+```sh
+git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
+~/agent-skills/install.sh            # or: install.sh wordcraft onlyoffice
+```
+
+`install.sh` only creates symlinks `~/.claude/skills/<skill>` → `~/agent-skills/<skill>`; it never
+overwrites an existing file or folder. Claude Code picks up skills in `~/.claude/skills/` automatically.
+Update later with `git -C ~/agent-skills pull`.
+
+Each skill's own `README.md` says how to connect its app (MCP server, launch flags).
+
+## History
+
+`wordcraft/` and `onlyoffice/` were first published as separate repos (`e1dred/wordcraft-skill`,
+`e1dred/onlyoffice-skill`) and were merged here with their history.
+
+## Contributing
+
+Corrections and new verified notes are welcome. Please only add what you have confirmed on a named app
+version, and keep personal data out of examples.
+
+## License
+
+MIT — see `LICENSE`.

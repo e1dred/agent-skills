@@ -19,11 +19,14 @@ Tested with WordCraft 0.10.0 on Linux (AppImage). Unofficial: not affiliated wit
 
 ## Install (Claude Code)
 
+This skill is part of [agent-skills](https://gitlab.com/e1dred/agent-skills):
+
 ```sh
-git clone https://gitlab.com/e1dred/wordcraft-skill.git ~/.claude/skills/wordcraft
+git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
+~/agent-skills/install.sh wordcraft
 ```
 
-Claude Code picks up skills in `~/.claude/skills/` automatically. Then connect WordCraft itself
+That links `~/.claude/skills/wordcraft` to this folder; Claude Code picks up skills there automatically. Then connect WordCraft itself
 (see **Setup** in `SKILL.md`): start the app with `--control PORT` and register the MCP server:
 
 ```sh
