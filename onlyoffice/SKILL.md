@@ -92,6 +92,16 @@ The same tools as headless work live, and the user sees the edits at once:
   `max_results` cuts it off) and `pdf_get_text_quads` worked live. **`pdf_get_document_info` failed live** with
   "returned a malformed reply: null": use `pdf_get_page_info` instead. Markup on a live PDF was not tried (it
   would change the user's file in the editor).
+- **Filling an existing PDF form live (81-field government form, fake values):** `pdf_get_page_info
+  {"page_number":1,"include_forms":true}` returns `forms[]` with `name`, `type` (`textField|checkboxField|…`), `value`
+  (`''` or `Off` when empty), `tooltip`, `isRequired`, `isReadOnly`, `charLimit`, `options` and a long `nearbyText`.
+  That listing is huge (every field repeats ~300 characters of surrounding text): save the output to a file and
+  filter it in Python instead of printing it. Then `pdf_fill_form_fields {"fields":[{"name":"Patient Name",
+  "value":"Test Patient"},{"name":"Check Box3","value":"Yes"}]}` → `successCount`/`failed`; re-read with
+  `include_forms` to confirm (`Check Box3 = 'Yes'`, untouched boxes stay `Off`). Field `name`s can be unhelpful
+  (`Text37`, `Check Box12`): use `tooltip` and `nearbyText` to pick the right one, and ask the user for real values.
+  Unlike `form_fill` (documents you build, a LIST of `{key,value}`), this tool takes `{name,value}`; a checkbox's
+  on-value is its `options[].export` (here `Yes`); an empty string unchecks.
 - `save_document` and `preview` are refused live ("NOTHING WAS SAVED … only the user can save it"): tell the user to
   Ctrl+S, and remind them that test edits sit unsaved in their window (close without saving to discard).
 - Test files: ask the user to Save As blank files (docx/xlsx/pptx/pdf) first; a never-saved document cannot be attached.
