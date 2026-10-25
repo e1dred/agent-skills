@@ -258,6 +258,26 @@ Headless batch checked on a photo: `select.colorRange {"select":"sampledColors",
 `paint.pencil`, `paint.bucket {"x","y","tolerance","color"}`, `paint.gradient {"from":[x,y],"to":[x,y],"style","colors"}`, mixer brush, magic eraser), `filter.stylize` 9, `filter.distort` 9, `filter.noise` 5, `filter.other` 7
 (`highPass {"radius"}`), `filter.render` 9 (`clouds`, `lensFlare`, `pictureFrame {"frame":"…"}`), `channel.*` 22, `layerComp.*` 14, `history.*` 13, `brush.*` 17.
 
+## Retouching, compositing and selections (verified headless on a portrait, 0.16.0; renders checked)
+
+Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the final renders looked right.
+- **Heal / clone / dodge / burn** paint on the *active pixel layer* with `points:[[x,y],…]`: `paint.spotHealing {"points","size":40,"type":"contentAware","sampleAllLayers":true}` → `{damage:[x,y,w,h]}`;
+  `paint.cloneStamp {"points","size":60,"source":[900,1200],"sampleLayer":"currentAndBelow"}` (→ `offset`, `aligned`); `paint.healingBrush` takes the same `source`/`offset`;
+  `paint.dodge|burn {"points","size":120,"range":"shadows|midtones|highlights","exposure":20}`. Do dodge/burn on a duplicate of the Background (`layer.select {"name":"Background"}` → `layer.duplicate {"name":"Dodge&Burn"}`) to stay non-destructive.
+- **Colour**: `layer.newAdjustmentLayer.selectiveColor {"colors":"blues","cyan":-20,"black":10}`, `…gradientMap {"stops":[[0,"#1a1a40"],[1,"#ffd9a8"]]}` then `layer.setProps {"blend":"SoftLight","opacity":0.4}`;
+  destructive `image.adjustments.replaceColor {"color":"#3a8fd8","fuzziness":50,"hue":-90,"saturation":10}` (also `matchColor {"source":docIndex,…}`).
+- **Clipping**: `layer.createClippingMask {"layer":id}` clips that layer to the one below it (`clipped:true` in `info`); `layer.releaseClippingMask`.
+- **Saved selections as channels**: `select.rect {…,"ellipse":true,"feather":20}` → `select.saveSelection {"name":"Face"}` → `{channel:0}` (alpha channel in `info.channels.alpha`), later
+  `select.loadSelection {"channel":"Face","invert":true}` (+ `"operation":"add|subtract|intersect"`). Verified: brightness −40 on the inverted selection, then an Exposure adjustment layer with the
+  non-inverted selection (it becomes that layer's mask) lifted the face and darkened the surroundings.
+- **Liquify**: `filter.liquify {"strokes":[{"tool":"bloat|forwardWarp|pucker|twirlCw|smooth|reconstruct…","size":80,"points":[[800,520]],"pressure":50}]}` → `{changed,maxDisplacement}`.
+- **Smart objects / smart filters**: `layer.smartObjects.convertToSmartObject {}` → `{layer}`; a following filter (e.g. `filter.blur.gaussianBlur`) becomes a smart filter; edit it with
+  `layer.smartFilter.setParams {"index":0,"params":{"radius":2}}`. `image.perspectiveCrop` rasterizes smart objects (the layer came back as a plain Pixel layer) — do it first or keep a copy.
+- **Perspective crop**: `image.perspectiveCrop {"corners":[tl,tr,br,bl],"width":800,"height":1000}` maps the quad onto an upright canvas (all layers, one undo step).
+- **Layer comps**: `layerComp.new {"name":"Soft"}` → `{comp}`, `layerComp.apply {"comp":"Soft"}`, listed in `info.layerComps`.
+- **Quick export**: `file.export.quickExport {"path":"/abs/out.jpg"}` → `{path,format,bytes,warnings}` (format by extension; honours Export Preferences). `layer.quickExportAsPng {"layer","path"}` for one layer.
+- Remaining unverified: `paint.mixerBrush`, `filter.cameraRaw`, Actions recording/`.atn` playback via the app, `droplet`, panorama/HDR merges.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -290,3 +310,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
   adjustment layer, resize/crop, JPEG/WebP/PSD export (photocraft-cli 0.15.1, Linux).
 - 2026-10-25: everyday-edits table (crop/resize/rotate/adjustments/denoise/sharpen), selection→mask, watermark, batch webp, format support verified headless.
 - 2026-10-26: live bridge session (doc_open, command_batch steps, screenshot), paint/filters/content-aware fill, silent-unknown-param trap verified.
+- 2026-10-26: retouch (heal/clone/dodge/burn), selective colour, gradient map, clipping, saved selections, liquify, smart filters, perspective crop, layer comps, quick export verified.
