@@ -50,7 +50,7 @@ Linux. Thanks to its author.
 
 ## Document styles
 
-[`styles/`](styles/) has eight looks (traditional, elegant, clean, professional, academic, modern, stylish, creative), each as a document, an ATS-friendly résumé and a European-style CV, on US Letter or A4,
+[`styles/`](styles/) has eight looks (traditional, elegant, clean, professional, academic, modern, stylish, creative), each as a document, an ATS-friendly résumé, a European-style CV and (academic) an APA/MLA paper, on US Letter or A4, with tables, headers/footers, columns and optional photo,
 built identically in WordCraft and ONLYOFFICE from one spec, with font fallbacks that match what is installed. See the [gallery](styles/README.md).
 
 ## Keeping up with app updates

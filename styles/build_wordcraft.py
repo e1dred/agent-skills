@@ -1,24 +1,31 @@
-"""Build a styled sample document or résumé in WordCraft: prints a `wordcraft-cli run --script` job (JSON).
+"""Build a styled sample document, résumé, CV or paper in WordCraft: prints a `wordcraft-cli run --script` job (JSON).
 
-    python3 -I build_wordcraft.py STYLE doc|resume|cv /abs/out.docx [--paper=a4|letter] [--local-fonts] > job.json
-    wordcraft-cli run --script job.json            # writes out.docx (and out.dotx, a template of the same style)
+    python3 -I build_wordcraft.py STYLE KIND /abs/out.docx [options] > job.json
+    wordcraft-cli run --script job.json
 
-STYLE is a key of styles.json (traditional, elegant, clean, professional, academic, modern, stylish, creative).
-`doc` is a one-to-two page report using Title, Heading 1/2, body, bullets and a quote; `resume` is the ATS-safe
-single-column layout (no tables or text boxes); `cv` is the European curriculum vitae (MM/YYYY dates, languages with CEFR levels, digital skills; A4 by default). `--paper=a4` or `--paper=letter` sets the page (default letter, a4 for cv). Replace the sample text in content.py with real content.
+STYLE: traditional elegant clean professional academic modern stylish creative   (see styles.json)
+KIND:  doc | resume | cv | paper          (paper uses the academic style; add --format=apa|mla)
+Options (all `--name=value`):
+  --paper=letter|a4            page size (default letter; cv defaults to a4)
+  --page-numbers=bottom-center|bottom-right|top-right      --header-text="Short title"
+  --columns=2                  doc only: body in columns after the subtitle (newsletter feel)
+  --photo=/abs/pic.png         resume/cv only (human-first, not ATS-safe)
+  --layout=chronological|functional|combined              resume only
+  --format=apa|mla             paper only
+  --local-fonts                allow fonts installed here but not shipped with Office
+  --overwrite                  replace an existing out.docx (otherwise the script refuses)
+Notes about ATS-safety and other cautions go to stderr. Replace the sample text in content.py with real content.
 """
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import content
-from resolve import resolve
+from plan import make, parse_argv
 
-args = [a for a in sys.argv[1:] if not a.startswith("--")]
-style_name, kind, out = args[0], args[1], args[2]
-PAPER = next((a.split("=", 1)[1].lower() for a in sys.argv if a.startswith("--paper=")), "a4" if kind == "cv" else "letter")
-PAGE_W = 595.3 if PAPER == "a4" else 612
-S = resolve(style_name, portable="--local-fonts" not in sys.argv)
-HF, BF = S["font"]["heading"], S["font"]["body"]
-C, SZ, B, H, T = S["color"], S["size"], S["body"], S["heading"], S["title"]
+style_name, kind, out, o, flags = parse_argv(sys.argv)
+if os.path.exists(out) and "overwrite" not in flags:
+    sys.exit("refusing to overwrite %s (pass --overwrite)" % out)
+P = make(style_name, kind, o)
+for n in P["notes"]:
+    print("NOTE:", n, file=sys.stderr)
 cmds = []
 
 
@@ -26,167 +33,127 @@ def c(cmd, **params):
     cmds.append({"command": cmd, "params": params} if params else cmd)
 
 
-def chr_(font, size, color, bold=False, italic=False, caps=False, spacing=0):
-    d = {"font": font, "fontCs": font, "size": size, "sizeCs": size, "color": color}
-    if bold: d["bold"] = True
-    if italic: d["italic"] = True
-    if caps: d["caps"] = True
-    if spacing: d["spacing"] = spacing
-    return d
+def rgb(h): return h.lstrip("#")
 
 
-def border(side, color, width, space=1):
-    return {side: {"style": "single", "width": width, "color": color, "space": space}}
+def translate(name, p):
+    chr_, par = {}, {}
+    if "font" in p: chr_.update(font=p["font"], fontCs=p["font"])
+    if "size" in p: chr_.update(size=p["size"], sizeCs=p["size"])
+    if "color" in p: chr_["color"] = rgb(p["color"])
+    for k in ("bold", "italic", "caps"):
+        if p.get(k): chr_[k] = True
+    if p.get("spacing"): chr_["spacing"] = p["spacing"]
+    if "before" in p: par["spaceBefore"] = p["before"]
+    if "after" in p: par["spaceAfter"] = p["after"]
+    if "align" in p: par["align"] = p["align"]
+    if "indent_first" in p: par["indentFirst"] = p["indent_first"]
+    if "indent_left" in p: par["indentLeft"] = p["indent_left"]
+    if "line" in p: par["lineSpacing"] = {"rule": "multiple", "value": p["line"]}
+    if p.get("keep_next"): par["keepNext"] = True
+    if p.get("tab_right"): par["tabs"] = [{"pos": p["tab_right"], "align": "right", "leader": "none"}]
+    b = {}
+    if "border_bottom" in p: col, w, sp = p["border_bottom"]; b["bottom"] = {"style": "single", "width": w, "color": rgb(col), "space": sp}
+    if "border_left" in p: col, w, sp = p["border_left"]; b["left"] = {"style": "single", "width": w, "color": rgb(col), "space": sp}
+    if b: par["borders"] = b
+    return chr_, par
 
 
-def new_style(name, chr=None, para=None):
-    c("styles.create", name=name, basedOn="Normal")
-    c("styles.modify", style=name, **({"chr": chr} if chr else {}), **({"para": para} if para else {}))
+pg = P["page"]
+if P["paper"] == "a4": c("layout.size", name="A4")
+t, b_, l, r = pg["margins"]
+c("layout.margins", top=t, bottom=b_, left=l, right=r)
 
+H, F = P["header"], P["footer"]
+base_font = next((p["font"] for n, p in P["styles"] if n == "Normal"), None)
+base_size = next((p["size"] for n, p in P["styles"] if n == "Normal"), 11)
+if H:
+    if H["number"] and not H["text"]:
+        c("insert.pageNumber", position="top", align=H["align"])
+    else:
+        c("insert.header", text=H["text"])
+        if H["number"]:
+            c("caret.end"); c("insert.pageField")
+        c("para.set", props={"align": H["align"]})
+        c("insert.closeHeader")
+if F:
+    c("insert.pageNumber", position="bottom", align=F["align"])
+for hf in ("Header", "Footer"):
+    if (H or F) and base_font:
+        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] == "paper" else "555555"})
 
-def rule(h, color):
-    if h["rule"] == "bottom": return border("bottom", color, 1)
-    if h["rule"] == "left": return border("left", color, 3, space=6)
-    return None
+BUILTIN = {"Normal", "Heading 1", "Heading 2", "Heading 3"}
+for name, p in P["styles"]:
+    chr_, par = translate(name, p)
+    if name not in BUILTIN:
+        c("styles.create", name=name, basedOn="Normal")
+    c("styles.modify", style=name, **({"chr": chr_} if chr_ else {}), **({"para": par} if par else {}))
 
-
-first = [True]
-BULLET = [None]
-
-
-def para(style, text=None, runs=None, bullet=False):
-    if not first[0]:
-        c("text.newParagraph")
-    first[0] = False
-    c("para.style", style=style)
-    c("para.set", props={"numbering": {"level": 0, "num": BULLET[0] if bullet else 0}})
-    for bold, t in (runs or [(False, text)]):
-        if bold:
-            c("format.bold", value=True)
-        c("text.insert", text=t)
-        if bold:
-            c("format.resetChar")
-
-
-def define_bullets(color):
-    c("list.define", levels=[{"format": "bullet", "text": "•", "alignedAt": 4, "indentAt": 18, "follow": "tab",
-                              "tabAt": 18, "color": color}], apply=True, name="Style Bullets")
+bullet_style = next((n for n, _ in P["styles"] if n.endswith("Bullet")), None)
+BULLET = [0]
+if any(bk.get("bullet") for bk in P["blocks"]) and bullet_style:
+    c("para.style", style=bullet_style)
+    c("list.define", levels=[{"format": "bullet", "text": "•", "alignedAt": 4, "indentAt": 18, "follow": "tab", "tabAt": 18,
+                              "color": rgb(P["bullet"]["color"])}], apply=True, name="Style Bullets")
     c("para.style", style="Normal")
     BULLET[0] = 1  # list.define on a blank template returns num 1 (verified, WordCraft 0.10.0)
 
+first = [True]
+pending_before = [0]
+pending_break = [False]
+prev_bullet = [False]
+STYLE_BEFORE = {n: p.get("before", 0) for n, p in P["styles"]}
 
-if kind == "doc":
-    m = S["margins_in"]
-    if PAPER == "a4": c("layout.size", name="A4")
-    c("layout.margins", top=m[0] * 72, bottom=m[1] * 72, left=m[3 - 1] * 72, right=m[3] * 72)
-    c("styles.modify", style="Normal", chr=chr_(BF, SZ["body"], C["text"]),
-      para={"spaceBefore": 0, "spaceAfter": B["after"], "align": B["align"], "indentFirst": B["first_indent"],
-            "lineSpacing": {"rule": "multiple", "value": B["line"]}})
-    hp = {"spaceBefore": H["before"], "spaceAfter": H["after"], "keepNext": True, "align": H["align"], "indentFirst": 0}
-    if rule(H, C["accent"]): hp["borders"] = rule(H, C["accent"])
-    c("styles.modify", style="Heading 1", chr=chr_(HF, SZ["h1"], C["heading"], H["bold"], H["italic"], H["caps"], H["spacing"]),
-      para=dict(hp, lineSpacing={"rule": "multiple", "value": 1.0}))
-    c("styles.modify", style="Heading 2", chr=chr_(HF, SZ["h2"], C["heading"], True, H["italic"]),
-      para={"spaceBefore": max(H["before"] * 0.6, 0), "spaceAfter": 3, "keepNext": True, "align": "left", "indentFirst": 0,
-            "lineSpacing": {"rule": "multiple", "value": 1.0}})
-    tp = {"align": T["align"], "spaceAfter": 4, "indentFirst": 0, "lineSpacing": {"rule": "multiple", "value": 1.0}}
-    if T["rule"] == "bottom": tp["borders"] = border("bottom", C["accent"], 1.5, space=4)
-    new_style("Doc Title", chr=chr_(HF, SZ["title"], C["heading"], T["bold"], False, T["caps"]), para=tp)
-    new_style("Doc Subtitle", chr=chr_(BF, SZ["body"], C["muted"]),
-              para={"align": T["align"], "spaceAfter": 14, "indentFirst": 0, "lineSpacing": {"rule": "multiple", "value": 1.0}})
-    new_style("Doc Quote", chr=chr_(BF, SZ["body"], C["muted"], italic=True),
-              para={"indentLeft": 24, "indentFirst": 0, "spaceBefore": 4, "spaceAfter": 10, "align": "left",
-                    "borders": border("left", C["accent"], 2.5, space=8)})
-    new_style("Doc Bullet", para={"indentFirst": 0, "spaceAfter": 3, "align": "left"})
-    c("para.style", style="Doc Bullet")
-    define_bullets(C["accent"])
-    for kind_, val in content.DOC:
-        if kind_ == "title": para("Doc Title", val)
-        elif kind_ == "subtitle": para("Doc Subtitle", val)
-        elif kind_ == "h1": para("Heading 1", val)
-        elif kind_ == "h2": para("Heading 2", val)
-        elif kind_ == "p": para("Normal", val)
-        elif kind_ == "quote": para("Doc Quote", val)
-        elif kind_ == "bullets":
-            for b in val: para("Doc Bullet", b, bullet=True)
-    c("file.properties", title="Style sample: " + style_name, author="Sample Author", subject=S["summary"])
-else:
-    R, RS = (content.CV if kind == "cv" else content.RESUME), S["resume"]
-    m = RS["margins_in"]
-    width = PAGE_W - (m[2] + m[3]) * 72
-    if PAPER == "a4": c("layout.size", name="A4")
-    c("layout.margins", top=m[0] * 72, bottom=m[1] * 72, left=m[2] * 72, right=m[3] * 72)
-    bs = RS["body_size"]
-    c("styles.modify", style="Normal", chr=chr_(BF, bs, C["text"]),
-      para={"spaceBefore": 0, "spaceAfter": 0, "align": "left", "indentFirst": 0, "lineSpacing": {"rule": "multiple", "value": 1.0}})
-    hp = {"spaceBefore": 8, "spaceAfter": 3, "keepNext": True, "align": "left", "indentFirst": 0}
-    if rule(H, C["accent"]): hp["borders"] = rule(H, C["accent"])
-    c("styles.modify", style="Heading 1", chr=chr_(HF, min(SZ["h1"], bs + 2.5), C["heading"], H["bold"], H["italic"], H["caps"], H["spacing"]), para=hp)
-    new_style("Resume Name", chr=chr_(HF, RS["name_size"], C["heading"], True), para={"align": RS["name_align"], "spaceAfter": 1, "indentFirst": 0})
-    new_style("Resume Headline", chr=chr_(BF, bs + 1, C["muted"], bold=True), para={"align": RS["name_align"], "spaceAfter": 1, "indentFirst": 0})
-    new_style("Resume Contact", chr=chr_(BF, bs, C["text"]), para={"align": RS["name_align"], "spaceAfter": 3, "indentFirst": 0})
-    new_style("Resume Body", para={"spaceAfter": 2, "align": "left", "indentFirst": 0})
-    new_style("Job Title", chr=chr_(BF, bs + 0.5, C["text"], bold=True),
-              para={"spaceBefore": 4, "keepNext": True, "indentFirst": 0, "tabs": [{"pos": width, "align": "right", "leader": "none"}]})
-    new_style("Job Org", chr=chr_(BF, bs, C["muted"], italic=True), para={"spaceAfter": 1.5, "keepNext": True, "indentFirst": 0})
-    new_style("Resume Bullet", para={"spaceAfter": 1, "indentFirst": 0, "align": "left"})
-    new_style("Resume Line", para={"spaceAfter": 1.5, "indentFirst": 0, "tabs": [{"pos": width, "align": "right", "leader": "none"}]})
-    c("para.style", style="Resume Bullet")
-    define_bullets(C["accent"])
-    if kind == "cv":
-        para("Resume Name", R["name"])
-        para("Resume Headline", R["headline"])
-        para("Resume Contact", R["address"])
-        para("Resume Contact", "  \u2022  ".join([R["phone"], R["email"]]))
-        para("Heading 1", "Profile")
-        para("Resume Body", R["profile"])
-        para("Heading 1", "Work experience")
-        for j in R["jobs"]:
-            para("Job Title", f"{j['title']}\t{j['dates']}")
-            para("Job Org", j["org"])
-            for b in j["bullets"]:
-                para("Resume Bullet", b, bullet=True)
-        para("Heading 1", "Education and training")
-        for d, s, y in R["education"]:
-            para("Job Title", f"{d}\t{y}")
-            para("Job Org", s)
-        para("Heading 1", "Languages")
-        para("Resume Line", runs=[(True, "Mother tongue: "), (False, R["languages"]["mother"])])
-        for lang, li, rd, sp, wr in R["languages"]["other"]:
-            para("Resume Line", runs=[(True, lang + ": "), (False, f"listening {li}, reading {rd}, speaking {sp}, writing {wr} (CEFR)")])
-        para("Heading 1", "Digital skills")
-        for label, txt in R["digital"]:
-            para("Resume Line", runs=[(True, label + ": "), (False, txt)])
-        para("Heading 1", "Certificates")
-        for n, i, y in R["certificates"]:
-            para("Resume Line", runs=[(True, n), (False, f" \u2014 {i}\t{y}")])
-        para("Heading 1", "Interests")
-        para("Resume Body", R["interests"])
-        c("select.text", text=R["email"]); c("insert.link", url="mailto:" + R["email"])
-        c("file.properties", title=R["name"] + " - Curriculum Vitae", author=R["name"], subject=R["headline"])
-    else:
-        para("Resume Name", R["name"])
-        para("Resume Headline", R["headline"])
-        para("Resume Contact", "  •  ".join([R["location"], R["email"], R["profile"]]))
-        para("Heading 1", "Professional Summary")
-        para("Resume Body", R["summary"])
-        para("Heading 1", "Core Competencies")
-        for label, items in R["competencies"]:
-            para("Resume Line", runs=[(True, label + ": "), (False, " • ".join(items))])
-        para("Heading 1", "Professional Experience")
-        for j in R["jobs"]:
-            para("Job Title", f"{j['title']}\t{j['dates']}")
-            para("Job Org", j["org"])
-            for b in j["bullets"]:
-                para("Resume Bullet", b, bullet=True)
-        para("Heading 1", "Education")
-        for d, s, y in R["education"]:
-            para("Resume Line", runs=[(True, d), (False, f" — {s}\t{y}")])
-        para("Heading 1", "Certifications")
-        for n, i, y in R["certifications"]:
-            para("Resume Line", runs=[(True, n), (False, f" — {i}\t{y}")])
-        c("select.text", text=R["email"]);   c("insert.link", url="mailto:" + R["email"])
-        c("select.text", text=R["profile"]); c("insert.link", url="https://www." + R["profile"])
-        c("file.properties", title=R["name"] + " - Resume", author=R["name"], subject=R["headline"])
 
+def new_para():
+    if not first[0]:
+        c("text.newParagraph")
+    first[0] = False
+
+
+for blk in P["blocks"]:
+    t_ = blk["t"]
+    if t_ == "p":
+        new_para()
+        c("para.style", style=blk["style"])
+        # a new paragraph inherits the previous paragraph's DIRECT properties, so set these explicitly every time
+        props = {"spaceBefore": pending_before[0] or STYLE_BEFORE.get(blk["style"], 0), "pageBreakBefore": pending_break[0]}
+        if blk["bullet"] or prev_bullet[0]:  # only touch numbering when needed: setting num 0 also drops the style's indents
+            props["numbering"] = {"level": 0, "num": BULLET[0] if blk["bullet"] else 0}
+        prev_bullet[0] = blk["bullet"]
+        pending_before[0] = 0; pending_break[0] = False
+        c("para.set", props=props)
+        for bold, text in blk["runs"]:
+            if bold: c("format.bold", value=True)  # never set bold False: direct formatting would override the style
+            c("text.insert", text=text)
+            if bold: c("format.resetChar")
+    elif t_ == "spacer":
+        pending_before[0] = blk["pt"]
+    elif t_ == "pagebreak":
+        pending_break[0] = True
+    elif t_ == "columns":
+        c("text.newParagraph")
+        c("layout.columns", count=blk["n"], space=24, separator=True, apply="forward"); first[0] = True
+    elif t_ == "photo":
+        new_para()
+        c("para.style", style=blk["style"])
+        c("insert.picture", path=blk["path"], width=blk["w"], alt="Portrait photo")
+    elif t_ == "table":
+        new_para()
+        rows = blk["rows"]; ncol = len(rows[0])
+        c("insert.table", rows=len(rows), cols=ncol, style="Table Grid")
+        for ri, row in enumerate(rows):
+            for ci, cell in enumerate(row):
+                c("para.style", style=blk["style"]); c("text.insert", text=cell)
+                if not (ri == len(rows) - 1 and ci == ncol - 1): c("caret.right")
+        for _ in range(len(rows) - 1): c("caret.up")
+        c("table.selectRow"); c("table.shading", color=rgb(blk["fill"]))
+        c("format.set", props={"bold": True, "color": rgb(blk["text"])}); c("table.repeatHeader")
+        c("table.borders", color=rgb(blk["border"]), width=0.5)
+        c("caret.docEnd"); first[0] = True
+
+for text, url in P["links"]:
+    c("select.text", text=text); c("insert.link", url=url)
+pr = P["props"]
+c("file.properties", title=pr["title"], author=pr["author"], subject=pr["subject"])
 json.dump({"template": "blank", "commands": cmds, "save": [out]}, sys.stdout)

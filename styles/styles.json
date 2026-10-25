@@ -3,97 +3,585 @@
   "traditional": {
     "summary": "Classic serif, black on white, centred headings, justified text.",
     "use_for": "Formal letters, legal-style documents, reports for conservative readers.",
-    "fonts": {"heading": ["Times New Roman", "Liberation Serif", "Nimbus Roman"], "body": ["Times New Roman", "Liberation Serif", "Nimbus Roman"]},
-    "size": {"body": 12, "title": 20, "h1": 14, "h2": 12, "small": 10},
-    "color": {"text": "000000", "heading": "000000", "accent": "000000", "muted": "555555"},
-    "margins_in": [1, 1, 1.25, 1.25],
-    "body": {"line": 1.15, "after": 8, "align": "justify", "first_indent": 0},
-    "heading": {"caps": false, "bold": true, "italic": false, "align": "center", "rule": "none", "spacing": 0, "before": 16, "after": 6},
-    "title": {"align": "center", "caps": true, "bold": true, "rule": "bottom"},
-    "resume": {"margins_in": [0.7, 0.7, 0.9, 0.9], "name_size": 20, "name_align": "center", "body_size": 11}
+    "fonts": {
+      "heading": [
+        "Times New Roman",
+        "Liberation Serif",
+        "Nimbus Roman"
+      ],
+      "body": [
+        "Times New Roman",
+        "Liberation Serif",
+        "Nimbus Roman"
+      ]
+    },
+    "size": {
+      "body": 12,
+      "title": 20,
+      "h1": 14,
+      "h2": 12,
+      "small": 10
+    },
+    "color": {
+      "text": "000000",
+      "heading": "000000",
+      "accent": "000000",
+      "muted": "555555"
+    },
+    "margins_in": [
+      1,
+      1,
+      1.25,
+      1.25
+    ],
+    "body": {
+      "line": 1.15,
+      "after": 8,
+      "align": "justify",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": false,
+      "bold": true,
+      "italic": false,
+      "align": "center",
+      "rule": "none",
+      "spacing": 0,
+      "before": 16,
+      "after": 6
+    },
+    "title": {
+      "align": "center",
+      "caps": true,
+      "bold": true,
+      "rule": "bottom"
+    },
+    "resume": {
+      "margins_in": [
+        0.7,
+        0.7,
+        0.9,
+        0.9
+      ],
+      "name_size": 20,
+      "name_align": "center",
+      "body_size": 11
+    },
+    "table": {
+      "header_fill": "D9D9D9",
+      "header_text": "000000",
+      "border": "808080"
+    }
   },
   "elegant": {
     "summary": "Refined serif, deep burgundy, letter-spaced small headings with a hairline rule, generous margins and leading.",
     "use_for": "Invitations, personal statements, portfolios, boutique-client proposals.",
-    "fonts": {"heading": ["Constantia", "Georgia", "Noto Serif"], "body": ["Constantia", "Georgia", "Noto Serif"]},
-    "size": {"body": 11.5, "title": 26, "h1": 12.5, "h2": 11.5, "small": 9.5},
-    "color": {"text": "2B2B2B", "heading": "7A1F2B", "accent": "7A1F2B", "muted": "6B6B6B"},
-    "margins_in": [1.1, 1.1, 1.3, 1.3],
-    "body": {"line": 1.35, "after": 9, "align": "left", "first_indent": 0},
-    "heading": {"caps": true, "bold": false, "italic": false, "align": "left", "rule": "bottom", "spacing": 1.5, "before": 20, "after": 8},
-    "title": {"align": "left", "caps": false, "bold": false, "rule": "none"},
-    "resume": {"margins_in": [0.8, 0.8, 1.0, 1.0], "name_size": 24, "name_align": "left", "body_size": 11}
+    "fonts": {
+      "heading": [
+        "Constantia",
+        "Georgia",
+        "Noto Serif"
+      ],
+      "body": [
+        "Constantia",
+        "Georgia",
+        "Noto Serif"
+      ]
+    },
+    "size": {
+      "body": 11.5,
+      "title": 26,
+      "h1": 12.5,
+      "h2": 11.5,
+      "small": 9.5
+    },
+    "color": {
+      "text": "2B2B2B",
+      "heading": "7A1F2B",
+      "accent": "7A1F2B",
+      "muted": "6B6B6B"
+    },
+    "margins_in": [
+      1.1,
+      1.1,
+      1.3,
+      1.3
+    ],
+    "body": {
+      "line": 1.35,
+      "after": 9,
+      "align": "left",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": true,
+      "bold": false,
+      "italic": false,
+      "align": "left",
+      "rule": "bottom",
+      "spacing": 1.5,
+      "before": 20,
+      "after": 8
+    },
+    "title": {
+      "align": "left",
+      "caps": false,
+      "bold": false,
+      "rule": "none"
+    },
+    "resume": {
+      "margins_in": [
+        0.8,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "name_size": 24,
+      "name_align": "left",
+      "body_size": 11
+    },
+    "table": {
+      "header_fill": "F2E6E8",
+      "header_text": "7A1F2B",
+      "border": "D9BFC3"
+    }
   },
   "clean": {
     "summary": "Plain sans-serif, lots of white space, dark grey text, no ornament.",
     "use_for": "Everyday documents, notes, internal memos, README-style handouts.",
-    "fonts": {"heading": ["Calibri", "Corbel", "Liberation Sans"], "body": ["Calibri", "Corbel", "Liberation Sans"]},
-    "size": {"body": 11, "title": 24, "h1": 15, "h2": 12.5, "small": 9.5},
-    "color": {"text": "222222", "heading": "222222", "accent": "808080", "muted": "707070"},
-    "margins_in": [1, 1, 1.1, 1.1],
-    "body": {"line": 1.2, "after": 8, "align": "left", "first_indent": 0},
-    "heading": {"caps": false, "bold": true, "italic": false, "align": "left", "rule": "none", "spacing": 0, "before": 18, "after": 6},
-    "title": {"align": "left", "caps": false, "bold": true, "rule": "none"},
-    "resume": {"margins_in": [0.7, 0.7, 0.8, 0.8], "name_size": 22, "name_align": "left", "body_size": 10.5}
+    "fonts": {
+      "heading": [
+        "Calibri",
+        "Corbel",
+        "Liberation Sans"
+      ],
+      "body": [
+        "Calibri",
+        "Corbel",
+        "Liberation Sans"
+      ]
+    },
+    "size": {
+      "body": 11,
+      "title": 24,
+      "h1": 15,
+      "h2": 12.5,
+      "small": 9.5
+    },
+    "color": {
+      "text": "222222",
+      "heading": "222222",
+      "accent": "808080",
+      "muted": "707070"
+    },
+    "margins_in": [
+      1,
+      1,
+      1.1,
+      1.1
+    ],
+    "body": {
+      "line": 1.2,
+      "after": 8,
+      "align": "left",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": false,
+      "bold": true,
+      "italic": false,
+      "align": "left",
+      "rule": "none",
+      "spacing": 0,
+      "before": 18,
+      "after": 6
+    },
+    "title": {
+      "align": "left",
+      "caps": false,
+      "bold": true,
+      "rule": "none"
+    },
+    "resume": {
+      "margins_in": [
+        0.7,
+        0.7,
+        0.8,
+        0.8
+      ],
+      "name_size": 22,
+      "name_align": "left",
+      "body_size": 10.5
+    },
+    "table": {
+      "header_fill": "F0F0F0",
+      "header_text": "222222",
+      "border": "D0D0D0"
+    }
   },
   "professional": {
     "summary": "Business default: Calibri, navy all-caps headings with a bottom rule, tight and orderly.",
     "use_for": "Business reports, proposals, client letters, ATS-friendly résumés.",
-    "fonts": {"heading": ["Calibri", "Arial", "Liberation Sans"], "body": ["Calibri", "Arial", "Liberation Sans"]},
-    "size": {"body": 11, "title": 22, "h1": 12, "h2": 11.5, "small": 9.5},
-    "color": {"text": "000000", "heading": "1F3864", "accent": "1F3864", "muted": "404040"},
-    "margins_in": [0.9, 0.9, 1, 1],
-    "body": {"line": 1.1, "after": 6, "align": "left", "first_indent": 0},
-    "heading": {"caps": true, "bold": true, "italic": false, "align": "left", "rule": "bottom", "spacing": 0.5, "before": 14, "after": 5},
-    "title": {"align": "left", "caps": false, "bold": true, "rule": "bottom"},
-    "resume": {"margins_in": [0.5, 0.5, 0.6, 0.6], "name_size": 22, "name_align": "center", "body_size": 10.5}
+    "fonts": {
+      "heading": [
+        "Calibri",
+        "Arial",
+        "Liberation Sans"
+      ],
+      "body": [
+        "Calibri",
+        "Arial",
+        "Liberation Sans"
+      ]
+    },
+    "size": {
+      "body": 11,
+      "title": 22,
+      "h1": 12,
+      "h2": 11.5,
+      "small": 9.5
+    },
+    "color": {
+      "text": "000000",
+      "heading": "1F3864",
+      "accent": "1F3864",
+      "muted": "404040"
+    },
+    "margins_in": [
+      0.9,
+      0.9,
+      1,
+      1
+    ],
+    "body": {
+      "line": 1.1,
+      "after": 6,
+      "align": "left",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": true,
+      "bold": true,
+      "italic": false,
+      "align": "left",
+      "rule": "bottom",
+      "spacing": 0.5,
+      "before": 14,
+      "after": 5
+    },
+    "title": {
+      "align": "left",
+      "caps": false,
+      "bold": true,
+      "rule": "bottom"
+    },
+    "resume": {
+      "margins_in": [
+        0.5,
+        0.5,
+        0.6,
+        0.6
+      ],
+      "name_size": 22,
+      "name_align": "center",
+      "body_size": 10.5
+    },
+    "table": {
+      "header_fill": "1F3864",
+      "header_text": "FFFFFF",
+      "border": "BFBFBF"
+    }
   },
   "academic": {
     "summary": "Times 12 pt, double spacing, first-line indents, black, plain bold headings: the usual essay and paper layout.",
     "use_for": "Essays, theses, papers (APA/MLA-style layout; check your style guide for specifics).",
-    "fonts": {"heading": ["Times New Roman", "Liberation Serif", "Nimbus Roman"], "body": ["Times New Roman", "Liberation Serif", "Nimbus Roman"]},
-    "size": {"body": 12, "title": 14, "h1": 12, "h2": 12, "small": 10},
-    "color": {"text": "000000", "heading": "000000", "accent": "000000", "muted": "000000"},
-    "margins_in": [1, 1, 1, 1],
-    "body": {"line": 2.0, "after": 0, "align": "left", "first_indent": 36},
-    "heading": {"caps": false, "bold": true, "italic": false, "align": "center", "rule": "none", "spacing": 0, "before": 0, "after": 0},
-    "title": {"align": "center", "caps": false, "bold": true, "rule": "none"},
-    "resume": {"margins_in": [0.8, 0.8, 1.0, 1.0], "name_size": 16, "name_align": "center", "body_size": 11}
+    "fonts": {
+      "heading": [
+        "Times New Roman",
+        "Liberation Serif",
+        "Nimbus Roman"
+      ],
+      "body": [
+        "Times New Roman",
+        "Liberation Serif",
+        "Nimbus Roman"
+      ]
+    },
+    "size": {
+      "body": 12,
+      "title": 14,
+      "h1": 12,
+      "h2": 12,
+      "small": 10
+    },
+    "color": {
+      "text": "000000",
+      "heading": "000000",
+      "accent": "000000",
+      "muted": "000000"
+    },
+    "margins_in": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "body": {
+      "line": 2.0,
+      "after": 0,
+      "align": "left",
+      "first_indent": 36
+    },
+    "heading": {
+      "caps": false,
+      "bold": true,
+      "italic": false,
+      "align": "center",
+      "rule": "none",
+      "spacing": 0,
+      "before": 0,
+      "after": 0
+    },
+    "title": {
+      "align": "center",
+      "caps": false,
+      "bold": true,
+      "rule": "none"
+    },
+    "resume": {
+      "margins_in": [
+        0.8,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "name_size": 16,
+      "name_align": "center",
+      "body_size": 11
+    },
+    "table": {
+      "header_fill": "FFFFFF",
+      "header_text": "000000",
+      "border": "000000"
+    }
   },
   "modern": {
     "summary": "Geometric sans headings in teal, humanist body, left-aligned, airy, big title.",
     "use_for": "Product docs, startup decks' companion documents, newsletters, design-aware résumés.",
-    "fonts": {"heading": ["Century Gothic", "Corbel", "Montserrat"], "body": ["Corbel", "Calibri", "Open Sans"]},
-    "size": {"body": 10.5, "title": 30, "h1": 16, "h2": 12.5, "small": 9},
-    "color": {"text": "2E2E2E", "heading": "0E7C86", "accent": "0E7C86", "muted": "6A6A6A"},
-    "margins_in": [0.9, 0.9, 0.95, 0.95],
-    "body": {"line": 1.25, "after": 8, "align": "left", "first_indent": 0},
-    "heading": {"caps": false, "bold": true, "italic": false, "align": "left", "rule": "none", "spacing": 0, "before": 18, "after": 5},
-    "title": {"align": "left", "caps": false, "bold": true, "rule": "none"},
-    "resume": {"margins_in": [0.6, 0.6, 0.75, 0.75], "name_size": 26, "name_align": "left", "body_size": 10}
+    "fonts": {
+      "heading": [
+        "Century Gothic",
+        "Corbel",
+        "Montserrat"
+      ],
+      "body": [
+        "Corbel",
+        "Calibri",
+        "Open Sans"
+      ]
+    },
+    "size": {
+      "body": 10.5,
+      "title": 30,
+      "h1": 16,
+      "h2": 12.5,
+      "small": 9
+    },
+    "color": {
+      "text": "2E2E2E",
+      "heading": "0E7C86",
+      "accent": "0E7C86",
+      "muted": "6A6A6A"
+    },
+    "margins_in": [
+      0.9,
+      0.9,
+      0.95,
+      0.95
+    ],
+    "body": {
+      "line": 1.25,
+      "after": 8,
+      "align": "left",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": false,
+      "bold": true,
+      "italic": false,
+      "align": "left",
+      "rule": "none",
+      "spacing": 0,
+      "before": 18,
+      "after": 5
+    },
+    "title": {
+      "align": "left",
+      "caps": false,
+      "bold": true,
+      "rule": "none"
+    },
+    "resume": {
+      "margins_in": [
+        0.6,
+        0.6,
+        0.75,
+        0.75
+      ],
+      "name_size": 26,
+      "name_align": "left",
+      "body_size": 10
+    },
+    "table": {
+      "header_fill": "0E7C86",
+      "header_text": "FFFFFF",
+      "border": "CFE3E5"
+    }
   },
   "stylish": {
     "summary": "Serif italic headings in plum with a left accent bar, light sans body: editorial feel.",
     "use_for": "Magazine-style handouts, event programmes, brand-conscious proposals.",
-    "fonts": {"heading": ["Georgia", "Constantia", "Noto Serif"], "body": ["Candara", "Calibri", "Noto Sans"]},
-    "size": {"body": 11, "title": 28, "h1": 15, "h2": 12.5, "small": 9.5},
-    "color": {"text": "2A2A2A", "heading": "6B2E5F", "accent": "C8963E", "muted": "6E6E6E"},
-    "margins_in": [1, 1, 1.1, 1.1],
-    "body": {"line": 1.3, "after": 8, "align": "left", "first_indent": 0},
-    "heading": {"caps": false, "bold": true, "italic": true, "align": "left", "rule": "left", "spacing": 0, "before": 18, "after": 6},
-    "title": {"align": "left", "caps": false, "bold": true, "rule": "none"},
-    "resume": {"margins_in": [0.65, 0.65, 0.8, 0.8], "name_size": 26, "name_align": "left", "body_size": 10.5}
+    "fonts": {
+      "heading": [
+        "Georgia",
+        "Constantia",
+        "Noto Serif"
+      ],
+      "body": [
+        "Candara",
+        "Calibri",
+        "Noto Sans"
+      ]
+    },
+    "size": {
+      "body": 11,
+      "title": 28,
+      "h1": 15,
+      "h2": 12.5,
+      "small": 9.5
+    },
+    "color": {
+      "text": "2A2A2A",
+      "heading": "6B2E5F",
+      "accent": "C8963E",
+      "muted": "6E6E6E"
+    },
+    "margins_in": [
+      1,
+      1,
+      1.1,
+      1.1
+    ],
+    "body": {
+      "line": 1.3,
+      "after": 8,
+      "align": "left",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": false,
+      "bold": true,
+      "italic": true,
+      "align": "left",
+      "rule": "left",
+      "spacing": 0,
+      "before": 18,
+      "after": 6
+    },
+    "title": {
+      "align": "left",
+      "caps": false,
+      "bold": true,
+      "rule": "none"
+    },
+    "resume": {
+      "margins_in": [
+        0.65,
+        0.65,
+        0.8,
+        0.8
+      ],
+      "name_size": 26,
+      "name_align": "left",
+      "body_size": 10.5
+    },
+    "table": {
+      "header_fill": "6B2E5F",
+      "header_text": "FFFFFF",
+      "border": "D9C3D5"
+    }
   },
   "creative": {
     "summary": "Bold coral headings with a thick teal rule, friendly sans body, large title. Colour does the work.",
     "use_for": "Portfolios, workshop handouts, flyers-as-documents, creative-field résumés.",
-    "fonts": {"heading": ["Trebuchet MS", "Century Gothic", "Verdana"], "body": ["Trebuchet MS", "Candara", "Verdana"]},
-    "size": {"body": 10.5, "title": 32, "h1": 18, "h2": 13, "small": 9},
-    "color": {"text": "2F2F2F", "heading": "E4572E", "accent": "17A398", "muted": "6A6A6A"},
-    "margins_in": [0.8, 0.8, 0.9, 0.9],
-    "body": {"line": 1.25, "after": 8, "align": "left", "first_indent": 0},
-    "heading": {"caps": false, "bold": true, "italic": false, "align": "left", "rule": "bottom", "spacing": 0, "before": 18, "after": 6},
-    "title": {"align": "left", "caps": false, "bold": true, "rule": "none"},
-    "resume": {"margins_in": [0.55, 0.55, 0.7, 0.7], "name_size": 28, "name_align": "left", "body_size": 10}
+    "fonts": {
+      "heading": [
+        "Trebuchet MS",
+        "Century Gothic",
+        "Verdana"
+      ],
+      "body": [
+        "Trebuchet MS",
+        "Candara",
+        "Verdana"
+      ]
+    },
+    "size": {
+      "body": 10.5,
+      "title": 32,
+      "h1": 18,
+      "h2": 13,
+      "small": 9
+    },
+    "color": {
+      "text": "2F2F2F",
+      "heading": "E4572E",
+      "accent": "17A398",
+      "muted": "6A6A6A"
+    },
+    "margins_in": [
+      0.8,
+      0.8,
+      0.9,
+      0.9
+    ],
+    "body": {
+      "line": 1.25,
+      "after": 8,
+      "align": "left",
+      "first_indent": 0
+    },
+    "heading": {
+      "caps": false,
+      "bold": true,
+      "italic": false,
+      "align": "left",
+      "rule": "bottom",
+      "spacing": 0,
+      "before": 18,
+      "after": 6
+    },
+    "title": {
+      "align": "left",
+      "caps": false,
+      "bold": true,
+      "rule": "none"
+    },
+    "resume": {
+      "margins_in": [
+        0.55,
+        0.55,
+        0.7,
+        0.7
+      ],
+      "name_size": 28,
+      "name_align": "left",
+      "body_size": 10
+    },
+    "table": {
+      "header_fill": "17A398",
+      "header_text": "FFFFFF",
+      "border": "F0C4B8"
+    }
   }
 }

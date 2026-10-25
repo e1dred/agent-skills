@@ -22,6 +22,7 @@ DOC = [
     ("p", "Interest is highest on weekends and lowest on weekday mornings. The beds nearest the gate are the best tended, "
           "while the far corner needs a clearer path and a water point."),
     ("quote", "“We came for the tomatoes and stayed for the Saturday tea.”  — volunteer feedback card"),
+    ("table", [["Month", "Workshops", "Attendees", "Seeds saved"], ["September", "3", "41", "18"], ["October", "3", "44", "27"]]),
     ("h1", "Next steps"),
     ("bullets", ["Lay a gravel path to the far corner before the first frost",
                  "Install a second water butt beside the compost area",
@@ -80,4 +81,47 @@ CV = {
     "digital": [("Office", "word processing, spreadsheets, presentations"), ("Specialist", "QGIS, project-planning software, survey tools")],
     "certificates": [("Prince2 Foundation (sample certificate)", "Example Training Body", "2019")],
     "interests": "Trail running, community gardening, volunteering at a river clean-up group",
+}
+
+RESUME_EXTRA = {
+    "skill_groups": [
+        ("Planting design", ["Designed 40 residential planting plans per year, from small courtyards to half-acre lots.",
+                             "Matched plant lists to soil, light and drainage, cutting replacement costs for clients."]),
+        ("Estimating and project management", ["Cut estimate turnaround from five days to two with a reusable pricing sheet.",
+                                               "Scheduled crews and suppliers from first sketch to final walkthrough."]),
+        ("Training and customer service", ["Trained 3 junior designers to draft plans and run client walkthroughs.",
+                                           "Reduced unsold nursery stock by 18% with a seasonal planting calendar."]),
+    ],
+    "highlights": ["40 residential planting plans per year", "Estimate turnaround cut from five days to two",
+                   "Unsold nursery stock reduced by 18%"],
+}
+
+# Invented student paper. The sources are fictional; replace them with real ones.
+PAPER = {
+    "title": "Community Gardens and Neighbourhood Wellbeing",
+    "author": "Jordan Morgan", "surname": "Morgan", "affiliation": "Example University",
+    "course": "SOC 210: Urban Communities", "instructor": "Dr. Rowan Ellis", "date": "October 26, 2026",
+    "body": [
+        ("p", "Community gardens have become a common feature of mid-sized cities, yet their effect on the people who use them is still debated. "
+              "This paper reviews two recent studies and argues that the clearest benefit is social rather than nutritional {c1}."),
+        ("h1", "Background"),
+        ("p", "Early work on urban gardening focused on food production and cost savings. More recent studies ask instead how shared growing spaces "
+              "change the way neighbours know and trust one another {c2}."),
+        ("h2", "Measuring wellbeing"),
+        ("p", "Both studies rely on short surveys given at the start and end of a growing season. Respondents rate their sense of belonging, "
+              "and the researchers compare gardeners with a matched group of non-gardening neighbours."),
+        ("h1", "Discussion"),
+        ("p", "The two studies agree on the direction of the effect and differ on its size. The larger effect appears where gardens run open weekly sessions, "
+              "which suggests that the schedule matters as much as the soil {c1}."),
+    ],
+    "refs": [
+        "Haddad, N., & Lindqvist, P. (2021). Shared plots and shared lives: Gardens in mid-sized cities. Journal of Example Studies, 12(3), 45\u201361.",
+        "Okafor, T. (2022). Belonging by the bed: A seasonal survey of community gardeners. Example Press.",
+    ],
+    "cites": {"apa": {"c1": "(Haddad & Lindqvist, 2021)", "c2": "(Okafor, 2022)"},
+              "mla": {"c1": "(Haddad and Lindqvist 52)", "c2": "(Okafor 88)"}},
+    "mla_refs": [
+        "Haddad, Nadia, and Per Lindqvist. \u201cShared Plots and Shared Lives: Gardens in Mid-Sized Cities.\u201d Journal of Example Studies, vol. 12, no. 3, 2021, pp. 45\u201361.",
+        "Okafor, Tunde. Belonging by the Bed: A Seasonal Survey of Community Gardeners. Example Press, 2022.",
+    ],
 }

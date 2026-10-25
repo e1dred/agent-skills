@@ -342,11 +342,21 @@ a TOC or table shifts later numbers — re-read `word_get_document_structure` (`
 - `form_set_data {"values":{"name":"Ann Example","email":"ann@example.com","agree":true}}` fills by key (checkbox shows ☑); `form_delete_field {"key":"email"}` (or `"all":true`); check with `form_get_fields {}`.
 - `view_image {"path":"/abs/pic.png"}` → size and format plus the picture itself, for you to look at.
 
-## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; documents and résumés)
+## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; document, résumé, CV, APA/MLA paper)
 
-`../styles/` holds eight style specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and builders for this app:
-`python3 -I styles/build_onlyoffice.py STYLE doc|resume /abs/out.docx [--pdf] > calls.json` then `python3 -I tools/ooc.py new:docx calls.json`. Each style comes as a document, an ATS-safe résumé and a European-style `cv` (A4 default; `--paper=a4|letter` on every kind), and both apps produce the same look from the same spec; see `../styles/README.md`
-for the table, gallery, font-fallback rules and résumé-format advice. Verified: all 8 styles in both kinds, saved as .docx and rendered by ONLYOFFICE's own PDF export. Macro facts that mattered: font sizes in half-points, spacing/indents in twips, `SetSpacing` for letter-spacing, `SetBottomBorder/SetLeftBorder` for rules (left border is wrapped in try/catch in the builder and rendered as a bar), `SetCaps`, styles created with `doc.CreateStyle(name,"paragraph")` and based on Normal.
+`../styles/` holds the specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and a neutral build plan (`plan.py`);
+`python3 -I styles/build_onlyoffice.py STYLE doc|resume|cv|paper /abs/out.docx [--paper=a4] [--page-numbers=…] [--columns=2] [--photo=…]
+[--layout=functional|combined] [--format=apa|mla] [--pdf] [--overwrite] > calls.json` then `python3 -I tools/ooc.py new:docx calls.json`. See `../styles/README.md`
+for the table, gallery, ATS notes and options. Verified: every style in 3 kinds plus the feature samples, rendered by ONLYOFFICE's own PDF export. Macro facts that mattered:
+- **`save_document` never overwrites** an existing file: it writes `name (1).pdf` and the old `name.pdf` stays. I once judged a stale file for an hour; delete the old file or pass `overwrite:true`.
+- **A failing macro does not stop `ooc.py`**: the later `save_document` still runs and saves a half-built document. Always grep the output for `Error` (the style builders' test loops do).
+- `Api.CreateTable(rows, cols)` in this build (first argument = **rows**); reach cells with `tbl.GetRow(r).GetCell(c)`. Colour a header cell's text on the *run* (`run.SetColor`), not the paragraph.
+  Borders: `tbl.SetTableBorderTop/Bottom/Left/Right/InsideH/InsideV("single", 4, 0, color)`; shading `cell.SetShd("clear", color)`.
+- Header/footer: `sec.GetHeader("default", true).GetElement(0)` then `AddText` and `AddPageNumber()`; `sec.GetFooter("default", true)`. Style them via `doc.GetStyle("Header")`/`"Footer"`.
+- Columns after a title: `doc.CreateSection(lastParagraph)` closes section 1 there; then on `doc.GetFinalSection()`: `SetType("continuous")` and `SetEqualColumns(2, 360)` (`SetNumberOfColumns` does not exist).
+- Page break before a paragraph: `p.SetPageBreakBefore(true)` (cleaner than a break run, which leaves an empty line).
+- Photo: run the macro, then `word_add_image {"src","width":30,"height":40,"index":1}` (mm), then a second macro `doc.GetElement(0).SetStyle(doc.GetStyle("Resume Photo"))`.
+
 ## Traps
 
 - **An empty paragraph's `GetText()` is `"\r\n"`, not `""`.** Test emptiness with `.replace(/[\r\n]/g, "") === ""`.

@@ -227,11 +227,21 @@ Script commands are `{"command": id, "params": {...}}` or a bare id string. Rela
 `save` list resolve against the script's folder, but paths inside command params resolve against the working
 folder (per docs/mcp.md) — use absolute paths. A failing script command stops the run and nothing is saved.
 
-## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; documents and résumés)
+## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; document, résumé, CV, APA/MLA paper)
 
-`../styles/` holds eight style specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and builders for this app:
-`python3 -I styles/build_wordcraft.py STYLE doc|resume /abs/out.docx > job.json` then `wordcraft-cli run --script job.json`. Each style comes as a document, an ATS-safe résumé and a European-style `cv` (A4 default; `--paper=a4|letter` on every kind), and both apps produce the same look from the same spec; see `../styles/README.md`
-for the table, gallery, font-fallback rules and résumé-format advice. Verified: all 8 styles in both kinds, rendered with `wordcraft-cli convert x.docx x.pdf`. `styles.modify` accepts `spacing` (letter-spacing in pt; it lands as `w:spacing w:val` in styles.xml), `caps`, `italic`, paragraph `borders` with `left` or `bottom` (`space` in pt), `indentFirst`, `lineSpacing {"rule":"multiple","value":2.0}`; `list.define` + `para.style Normal` afterwards, as in the résumé recipe.
+`../styles/` holds the specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and a neutral build plan (`plan.py`);
+`python3 -I styles/build_wordcraft.py STYLE doc|resume|cv|paper /abs/out.docx [--paper=a4] [--page-numbers=…] [--columns=2] [--photo=…]
+[--layout=functional|combined] [--format=apa|mla] [--overwrite] > job.json` then `wordcraft-cli run --script job.json`. See `../styles/README.md` for the table, gallery,
+ATS notes and options. Verified: every style in 3 kinds plus the feature samples, rendered with `wordcraft-cli convert x.docx x.pdf`. Facts that mattered:
+- **`para.set {"props":{"numbering":{"level":0,"num":0}}}` also wipes the style's indents** (first-line and hanging indents vanished on every paragraph). Only set numbering on bullet paragraphs and on the first paragraph after a list.
+- **A new paragraph inherits the previous paragraph's DIRECT properties** (a one-off `spaceBefore` 96 leaked onto every later paragraph). Set `spaceBefore`/`pageBreakBefore` explicitly on each paragraph.
+- Page break before a paragraph: `para.set {"props":{"pageBreakBefore":true}}`. `insert.pageBreak` stays inside the same paragraph, so the next heading text lands in it.
+- Header with text plus page number: `insert.header {"text":"Morgan "}` → `caret.end` → `insert.pageField` → `para.set {"props":{"align":"right"}}` → `insert.closeHeader` (without `caret.end` the number comes first). Page number only: `insert.pageNumber {"position":"top","align":"right"}` or `"bottom"`. Style them with `styles.modify {"style":"Header"|"Footer",…}`.
+- Two columns after the title: `text.newParagraph` → `layout.columns {"count":2,"space":24,"separator":true,"apply":"forward"}`; the rest of the document continues in columns.
+- Tables: `insert.table {"rows","cols","style":"Table Grid"}`, per cell `para.style` + `text.insert` + `caret.right`; then `caret.up` to the header row, `table.selectRow`, `table.shading {"color"}`, `format.set {"props":{"bold":true,"color"}}`, `table.repeatHeader`, `table.borders {"color","width":0.5}`.
+  `table.borders` applies to the **whole table** and ignores `preset`/`style:none` (unknown parameter names are silently ignored); a borderless start is table style `"Normal Table"`. Then `caret.docEnd` leaves the table.
+- Photo: `insert.picture {"path","width":85,"alt"}` in its own paragraph above the name.
+
 ## Property names (verified via `inspect`)
 
 Paragraph props (`para.set {"props":…}`, `styles.modify {"para":…}`):
