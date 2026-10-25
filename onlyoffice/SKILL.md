@@ -363,6 +363,28 @@ for the table, gallery, ATS notes and options. Verified: every style in 3 kinds 
 - `word_add_image {"src","width","height","index"}` inserts BEFORE the element at `index` (1-based, top-level elements); when adding several pictures in ascending order, add 1 for each already inserted.
 - Introspect objects when the reference is silent: `for (var k in obj) if (typeof obj[k] === "function" && /pattern/i.test(k)) …` inside `word_write_macro`.
 
+## Next-tier workflows through macros (verified headless via `tools/ooc.py`, 2026-10-25)
+
+**Find the right call yourself:** `get_api_reference {"topic":"…"}` has short, accurate pages (topics seen: `defined_names`, `protection`, `charts`, `hyperlinks`, `transitions`, `animations`, `masters`, `themes`, `tables`, `gotchas`, `validation`, `comments`, `pivots`, `cond_format`, plus the older `patterns, units, colors, headers-footers, images, forms, document, macro`),
+or `get_api_reference {"class_name":"ApiParagraph"}` for a class's real methods. A macro error says so and warns that **the engine has no undo**: everything before the error is still in the document, so retries must be idempotent. Introspecting an object's methods inside a macro works for Word/cell objects, but slide objects return obfuscated names, so use the reference.
+
+**Word**
+- Track changes: `doc.SetTrackRevisions(true)` then edit through the API; `range.Delete()` made a tracked `<w:del>`; **`range.AddText('x')` appends AFTER the found range instead of replacing it** (`quick brown` + `slow red` → "quick brownslow red"). `doc.AcceptAllRevisionChanges()`/`RejectAllRevisionChanges()`, `doc.IsTrackRevisions()`.
+- Comments: `range.AddComment('text','Author')` (a `commentRangeStart` appears; `doc.GetAllComments()`); the `word_comment_text` tool does the same by search. Watermark: `doc.InsertWatermark('DRAFT')` (also Get/Set/RemoveWatermarkSettings).
+- Content controls and forms: `doc.GetAllContentControls()`, `GetFormsData/SetFormsData`, `AddCheckBoxContentControl`/`AddComboBoxContentControl` exist; the `form_*` tools are the easier route.
+- **Password-protected files**: `save_document {"path","format":"docx","password":"…"}` writes a real Office-encrypted file (`CDFV2 Encrypted`; the reply says "it asks for that password when it is opened"); reopen with `open_document {"path","password":"…"}`. Keep an unprotected copy while you still have work to do. To remove a password, open with it and save again without `password`.
+
+**Spreadsheet** (macro tool `cell_write_macro {"code","images":{}}`)
+- Defined names: `Api.AddDefName('SalesData','Sheet1!$B$2:$B$5')` returns a boolean (read back with `Api.GetDefName`, which throws if missing; `Api.GetDefNames()` is the safe existence check).
+- Protected ranges (this is the sheet-protection API): `var pr = ws.AddProtectedRange('Locked','Sheet1!$A$1:$C$5'); pr.SetAnyoneType('CanEdit|CanView|NotView'); pr.AddUser(id,name,'CanEdit')`; there is no `Delete()` on a protected range.
+- Hyperlinks: `ws.SetHyperlink('E1','https://example.com','','tip','Docs')` (worksheet method; there is no `range.SetHyperlink`; internal link: address `''`, subAddress `'Sheet2!A1'`) → `<hyperlink ref="E1">`.
+- Charts: after `cell_add_chart`, `ws.GetAllCharts()[0]` offers `SetTitle`, `SetHorAxisTitle/SetVerAxisTitle(title,sizeHps,bold)`, `SetLegendPos('bottom')`, `SetShowDataLabels(ser,cat,val,pct)`, `SetMajorHorizontalGridlines(stroke|null)`, tick marks and label font sizes. Font sizes are half-points.
+
+**Presentation** (macro tool `slide_write_macro`)
+- **Transitions**: `var t = slide.GetSlideShowTransition(); t.SetEntryEffect('effectPushLeft'); t.SetDuration(700); t.SetAdvanceOnClick(false); t.SetAdvanceOnTime(true); t.SetAdvanceTime(4000)` → `<p:transition advClick="0" advTm="4000"><p:push dir="l">` (effect names: effectFade, effectPush*/effectWipe*… ; `effectNone` removes it).
+- **Animations**: `var seq = slide.GetTimeLine().GetMainSequence(); var e = seq.AddEffect(shape, 'fade', 'onclick')` (second effect `'spin','afterprevious'`); triggers are lowercase `onclick|withprevious|afterprevious`; effect names are kebab or camel (`fade`, `fly-in`, `spin`, `entranceFade`, `emphasisSpin`, `path-circle`…). `AddEffect` returns **null without an error** for an unknown name (my first try with `'entrFade'`/`'clickEffect'` returned null and count 0). `e.SetDuration(800)`, `GetEffectType()`, `seq.GetCount()`. DeckCraft reads the saved file back with `animations:2` (entrance fade, emphasis spin).
+- Theme: `slide.GetTheme().GetColorScheme().ChangeColor(0, Api.Color(228,87,46))` (positions 0–5 accent1–6, 6 dk1, 7 dk2, 8 folHlink, 9 hlink, 10 lt1, 11 lt2); `pres.GetMaster(0).GetLayoutsCount()` → 11; `slide.ApplyLayout(layout)`, `pres.ApplyTheme`.
+
 ## Traps
 
 - **An empty paragraph's `GetText()` is `"\r\n"`, not `""`.** Test emptiness with `.replace(/[\r\n]/g, "") === ""`.
@@ -399,3 +421,4 @@ for the table, gallery, ATS notes and options. Verified: every style in 3 kinds 
   (ONLYOFFICE 10.0.0 flatpak, server 2.0.0-native).
 - 2026-10-25: conditional formats, autofilter, pivot, chart, sheet-object listing, slide set_text/notes/chart/background/arrange/delete/set_object verified via ooc.py.
 - 2026-10-25 (2): the remaining 38 tools (Word text/structure/AI tools, spreadsheet cell tools, slide search/image/AI tools, form_set_data/delete, view_image) verified; all 93 documented.
+- 2026-10-25 (3): tracked revisions, comments, watermark, password-encrypted save, defined names, protected ranges, hyperlinks, chart formatting, slide transitions/animations/theme colours verified via macros.
