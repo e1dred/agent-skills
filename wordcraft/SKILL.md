@@ -101,6 +101,18 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   `para.set {"props":{"numbering":{"level":0,"num":0}}}`.
 - Selection + links: `select.text {"text":…}` then `insert.link {"url":"mailto:…"}` or `{"url":"https://…"}`
   keeps the selected text as the link text.
+- Tables: `insert.table {"rows":3,"cols":3,"style":"Table Grid"}` puts the caret in the first cell (`inspect`
+  shows the style as `TableGrid`). Fill cells with `text.insert`; `caret.right` at the end of a cell's text moves
+  to the next cell, wrapping to the next row. Header row: put the caret in row 1 (`caret.docStart`, then
+  `caret.paraDown` when one paragraph sits above the table), then `table.selectRow` → `table.shading {"color":"D9E2F3"}`
+  → `format.bold {"value":true}` → `table.repeatHeader`. `caret.docEnd` then lands in the paragraph after the table.
+  `inspect` shows a table block as `{"type":"table","rows","cols","cells":[[…]]}`.
+- Header/footer: `insert.header {"text":…}`, `insert.footer {"preset":"pageNumber"}` (centred page number).
+  Both leave the caret IN the header/footer: follow each with `insert.closeHeader` (it closes footers too).
+- Page numbers: `insert.pageNumber {"position":"bottom","align":"right","format":"x of y"}` makes a footer that
+  renders "Page 2 of 2" (numbers bold); unlike `insert.footer` it leaves the caret in the body.
+- Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
+  on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
 - Save/export: `file.save {"path"}`, `file.saveAs {"path"}`, `file.exportPdf {"path"}`.
 - `file.open {"path"}` / `file.close {"force"?}` exist; untested whether `file.open` replaces a dirty doc.
@@ -114,6 +126,10 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   line: `format.bold true` → insert → `format.resetChar` → insert the rest. Never set bold false "to be safe".
 - **`text.newParagraph` carries the list over:** the new paragraph keeps the previous one's numbering
   (verified with `inspect`). Set `numbering num 0` on the first paragraph after a list.
+- **`insert.header` / `insert.footer` leave the caret in that header/footer** — without `insert.closeHeader`
+  the rest of the script's text ends up in the footer, and `inspect` shows an empty body.
+- `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
+  real numbers. Check page numbers by rendering, not with `inspect`.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
 
@@ -136,3 +152,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Linked the official docs (docs/mcp.md, docs/control-protocol.md); corrected path resolution.
 - 2026-10-24: Generalized for sharing; résumé recipe made data-driven with fictional sample content.
 - 2026-10-24: Numbered lists; confirmed that new paragraphs inherit list numbering.
+- 2026-10-24: Tables (fill, header row shading/repeat), headers/footers, x-of-y page numbers, page breaks.
