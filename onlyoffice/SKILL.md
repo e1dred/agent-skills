@@ -118,6 +118,45 @@ The same tools as headless work live, and the user sees the edits at once:
   Ctrl+S, and remind them that test edits sit unsaved in their window (close without saving to discard).
 - Test files: ask the user to Save As blank files (docx/xlsx/pptx/pdf) first; a never-saved document cannot be attached.
 
+## Résumés: editing real ones safely (verified on copies; originals untouched)
+
+- **Never edit the user's file:** `cp` it into the scratchpad, work headless on the copy, `save_document` under a NEW
+  name. Résumé folders may hold other people's files: leave those alone.
+- **Two designs exist; check which first** with a macro that returns counts only (no text): `d.GetElementsCount()`,
+  per-element `GetClassType()` (`'table'|'paragraph'`), style names via `p.GetStyle().GetName()`, page/word counts from
+  `d.GetStatistics()`. A *style-based* résumé (styles like Heading 1, Job Title, Bullet; no tables) is easy to restyle.
+  A *table-based* one (a 1-row, 2-cell table per job: employer/title left, dates right; bullets as List Paragraph)
+  needs table-aware edits and its date cell is narrow, so a longer date wraps onto a second line.
+- **Add a bullet that matches the others:** `var cp=d.GetElement(i).Copy(); … d.AddElement(i+1, cp);` where `i` is the last
+  bullet paragraph (verified: numbering, font and indent are kept). In a clone, bullets can hold the leading tab in a
+  SEPARATE run: replace only the text run (`r.ClearContent(); r.AddText(newText)` on the first run whose text has
+  letters, clear the later runs) and do NOT put `\t` in the new text (that gave a double indent).
+- **Tracked changes:** `d.SetTrackRevisions(true)` then `word_search_replace` (e.g. a date) is tracked (red strike +
+  underlined new text in the PDF render). **`d.AddElement` of a whole paragraph is NOT tracked**: flag it for review with
+  `para.AddComment('New bullet proposed for review','Claude')` (comment count read back as 1) or highlight it.
+  Turn tracking off again before saving if the user wants clean text.
+- ATS check: `pdftotext -layout` on the exported PDF keeps one line per job ("Employer … dates") even for the
+  table-based layout, so reading order was fine.
+- Page count after edits: `d.GetStatistics().PageCount` (3 pages stayed 3 after one extra bullet).
+
+## Forms, all field types (verified headless: build, fill, save as form, reopen)
+
+- `form_add_field` types: `text` (also `multiline:true`, `max_chars:200` → `charLimit`), `dropdown` (`items`, reported
+  back as `comboBoxForm` with an extra "Choose an item" first entry), `combobox` (`items`), `checkbox`, `radio`
+  (one `key` for the group, a different `choice_name` per option: add one call per option), `date` (`date_format`).
+- `form_fill {"fields":[{"key","value"},…]}`: text/multiline/date as strings ("10/24/2026"), dropdown by item text,
+  checkbox "yes"/"true", **radio by the choice name** on the group key (`{"key":"contact","value":"by_email"}` → `◉`).
+  **A combo box refused a value that was not in its list** (`failed … "set failed"`), although the UI allows typing:
+  pick a listed item.
+- `save_document {"format":"form"}` → reopen with `open_document`: it comes back as an editable Word document with all
+  fields and values (checked with `form_get_fields`). The `preview` shows labels and values inline without field boxes.
+
+## Filling a Word template from data (verified)
+
+Put `{{placeholders}}` in the text, then one `word_search_replace` per key: ALL occurrences are replaced, run
+formatting (bold/colour) of the placeholder is kept (`<strong>` survived in `ToHtml`), and a check for leftover `{{`
+returned none. Always search the result for `{{` before saving.
+
 ## Word helper tools (verified headless; cheaper than macros)
 
 - A new docx starts with ONE empty paragraph (element 1); content tools append after it.
@@ -223,6 +262,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 
 ## Log
 
+- 2026-10-24: Résumé copies (bullet clone, tracked date change, comment on a new paragraph), all form field types, template fill.
 - 2026-10-24: Live edits in all four editors (word, cell, slide, pdf).
 - 2026-10-24: Fillable forms (add, fill, save as form, reopen).
 - 2026-10-24: PDF search/markup/split, highlight colour trap.
