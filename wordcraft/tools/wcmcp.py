@@ -3,10 +3,11 @@
     WORDCRAFT_PORT=7981 python3 -I wcmcp.py '[["ui_inspect",{}],["get_text",{}]]'
 
 Environment: WORDCRAFT_PORT (default 7981), WORDCRAFT_CLI (default: wordcraft-cli on PATH),
-LIM (characters of each result to print, default 4000). The app must run with `--control PORT`.
+LIM (characters of each result to print, default 4000), IMGDIR (folder where image results such as
+`screenshot` / `render_page` are saved as img_N.png; default: the current folder). The app must run with `--control PORT`.
 Can also be imported: `from wcmcp import tool` after setting the environment.
 """
-import json, os, shutil, subprocess, sys
+import base64, json, os, shutil, subprocess, sys
 
 CLI = os.environ.get("WORDCRAFT_CLI") or shutil.which("wordcraft-cli") or os.path.expanduser("~/AppImages/wordcraft-cli")
 PORT = os.environ.get("WORDCRAFT_PORT", "7981")
@@ -14,6 +15,7 @@ PORT = os.environ.get("WORDCRAFT_PORT", "7981")
 p = subprocess.Popen([CLI, "mcp", "--connect", f"127.0.0.1:{PORT}"],
                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
 n = [0]
+IMG = [0]
 
 def rpc(method, params):
     n[0] += 1
@@ -34,7 +36,17 @@ p.stdin.flush()
 def tool(name, args=None):
     r = rpc("tools/call", {"name": name, "arguments": args or {}})
     res = r.get("result", {})
-    t = "\n".join(c.get("text", "<%s>" % c.get("type")) for c in res.get("content", []))
+    parts = []
+    for c in res.get("content", []):
+        if c.get("type") == "image" and c.get("data"):
+            IMG[0] += 1
+            path = os.path.join(os.environ.get("IMGDIR", "."), f"img_{IMG[0]}.png")
+            with open(path, "wb") as f:
+                f.write(base64.b64decode(c["data"]))
+            parts.append(f"<image saved to {path}>")
+        else:
+            parts.append(c.get("text", "<%s>" % c.get("type")))
+    t = "\n".join(parts)
     if r.get("error") or res.get("isError"):
         t = "ERROR: " + (t or json.dumps(r.get("error")))
     return t
