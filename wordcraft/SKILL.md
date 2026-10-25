@@ -85,6 +85,29 @@ Unverified hints from the docs: CharProps has a `link` field (URL or `#bookmark`
   4-up page image (original-renderer vs WordCraft for each file). Verdict: WordCraft is safe for these résumés when saving
   to a NEW file; keep the original untouched.
 
+## Mail merge (verified headless with `wordcraft-cli run --script`; letters)
+
+```
+mailings.start {"kind":"letters"}                       # also emails|envelopes|labels|directory
+mailings.recipients {"csv":"Name,Company\nAda,Acme\n…"}   # or {"path":"/abs/people.csv"} (.csv/.tsv/.xlsx/.ods…) → {"fields":[…],"records":N}
+mailings.filterRecipients {"rules":[{"field":"Status","op":"equal","value":"send"}]}   # → {"of":4,"records":3}
+text.insert {"text":"Dear "}, mailings.insertField {"field":"Name"}, …      # the template text, with fields
+mailings.addressBlock {} / mailings.greetingLine {}     # built from STANDARD column names: First Name, Last Name,
+                                                        # Address Line 1, City, State, Postal Code → "Ada Example / 1 Main St /
+                                                        # Boston, MA 02101" and "Dear Ada Example,"
+mailings.rules {"rule":"IF","field":"Role","value":"","then":"…","else":"…"}   # also SKIPIF|NEXTIF|NEXT|MERGEREC
+mailings.checkErrors {} → {"ok":true,"records":3,"unknownFields":[]}
+mailings.finish {"path":"/abs/merged.docx","from":1,"to":2}   # one page per record; from/to merges a range
+```
+- The filter is applied before the merge: 4 records with one `Status=skip` gave 3 letters on 3 pages.
+- An empty field simply leaves a gap ("the  position"): use an `IF` rule or filter blanks out (`op:"notBlank"`).
+- **`then`/`else` text in `IF` is literal**: `else:"the Role you posted"` printed the word "Role", not the field's value, so
+  you cannot embed a field inside a rule's text; put the field next to the rule instead.
+- `\n` inside `text.insert` is a soft line break, so each merged letter was ONE paragraph with line breaks
+  (`info` said 3 paragraphs for 3 letters); use `text.newParagraph` between paragraphs if separate paragraphs matter.
+- Only letters were merged; envelopes (`mailings.envelopes`) and labels (`mailings.labels {"product":"letter-3x10",
+  "fromRecipients":true}`) exist but were not run. Live mode with the app open was not tried for mailings.
+
 ## Choosing live vs headless
 
 - **Live** (user watches): bridge MCP / `tools/wcmcp.py`. Check `ui_inspect` first: `title`, `dirty`.
@@ -295,6 +318,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Log
 
+- 2026-10-24: Mail merge (recipients, filter, fields, address block, IF rule, partial finish).
 - 2026-10-24: Résumé round-trip fidelity check on two designs (faithful; only custom doc properties lost).
 - 2026-10-24: Live mode on a blank document: typing, formatting, screenshot/render, export, failed-select trap.
 - 2026-10-24: Initial notes from building and linking an ATS résumé (WordCraft 0.10.0).
