@@ -220,6 +220,43 @@ Create with `create_document(format="xlsx")` (or `ooc.py new:xlsx calls.json`). 
 - `cell_get_range_data {"range"}` returns `headers[]` + `rows[][]` (a blank cell is `null`).
 - `preview` of a sheet prints the first page with chart and data bars (checked).
 
+## Designed decks from shapes (verified headless; render checked)
+
+For anything presented, skip placeholders (`get_api_reference(editor="slide", topic="designed")` has the library; a tested copy
+is `recipes/designed_deck_helpers.js`). Recipe, all inside ONE `slide_write_macro`: paste the helpers, `master.SetBackground(
+SF("#EEF2F7"))`, `s1=pres.GetSlideByIndex(0); s1.ApplyLayout(blank)` and delete its leftover placeholders
+(`s1.GetAllDrawings()` → `Delete()`), then per slide `Api.CreateSlide(); ApplyLayout(blank); AddSlide`, and compose with
+`header(sl,"KICKER","Title")`, `card`, `chip`+`arrR` (process flow), `takeaway`, `footer`. A 4-slide deck (title with two
+overlapping circles, three cards, a 4-step flow, chart slide) rendered cleanly on the first try.
+- Add the chart AFTER the macro with `slide_add_chart_to_slide` on a blank-layout slide: it lands centred and small (~40% width)
+  in the default blue/orange, not the deck palette; resize/recolour it by macro if it matters.
+- Size cards to their content: at 3.5 M EMU high with two lines of text they looked half empty.
+- Fonts: Linux has no Segoe UI; the library's `FONT` variable was set to Arial and rendered as Arial.
+- `slide_get_presentation_context {"detail":"audit"}` still flags `layout_mismatch` on a designed title slide: ignore it.
+- `preview` with `pages:"all"` writes `<path>_pages/imageN.png` beside your `path`; its reply text wrongly says the pages are
+  in the default output folder, which was empty. Combine the pages into one contact sheet with PIL to read a whole deck in
+  one image.
+
+## Spreadsheets, more (verified headless)
+
+- Conditional formatting tools (all applied, `cell_add_*`): `color_scale {"range","color_scale_type":3}`,
+  `cell_value_condition {"range","operator":"xlGreater","value1":8,"fill_color":{"r","g","b"},"font_color":{…}}`,
+  `top10_condition {"range","rank":3,"fill_color":{…}}`, `icon_set {"range","icon_set_type":"xl3Arrows"}`.
+- `cell_set_multi_sort {"range":"A1:F25","key1":"Region","key2":"Revenue","sort_order2":"xlDescending"}` (header names).
+- **`cell_insert_pivot_table {"range":"A1:F25","rows":["Region"],"columns":["Month"],"value_column":"Units","aggregation":"Sum",
+  "output_sheet_name":"Pivot"}` creates the pivot on a NEW sheet inserted FIRST (index 0)**: the active sheet and the first
+  `preview` page then show the pivot, so `cell_sheet {"action":"activate","name":…}` back to the data sheet if you go on.
+  The pivot rendered with Sum of Units, row/column labels and grand totals.
+- Data validation by macro (`ws.GetRange(…).GetValidation()`): `v.Delete(); v.Add('xlValidateList','xlValidAlertStop',
+  'xlBetween','Bolts,Nuts,Gears'); v.SetInCellDropdown(true); v.SetShowError(true); v.SetErrorTitle(…); v.SetErrorMessage(…)`;
+  whole-number limits `v.Add('xlValidateWholeNumber','xlValidAlertStop','xlBetween','0','100')`. Read back with
+  `GetType()`/`GetFormula1()`. Cascading `INDIRECT` lists are NOT supported.
+- Named range: `Api.AddDefName('Units','Sheet1!$D$2:$D$25',false)` then `=SUM(Units)` evaluated (735).
+- Print setup per sheet: `ps=ws.GetPageSetup(); ps.SetOrientation('xlLandscape'); ps.SetPaperSize('xlPaperLetter');
+  ps.SetFitToPagesWide(1); ps.SetFitToPagesTall(0); ps.SetPrintTitleRows('$1:$1'); ps.SetCenterFooter('Page &P of &N')`:
+  the exported PDF's page for that sheet was Letter landscape with the footer, while the other sheet kept A4 portrait.
+- `cell_layout {"action":"freeze","range":"A2"}` → `frozenAt:"1:1"`; `column_width {"range":"A:F","size":14}`.
+
 ## Presentations (verified headless; `slide_*` tools)
 
 Read `learn_about(topic="presentations")` (designed vs placeholder route). Placeholder route, as tested:
@@ -262,6 +299,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 
 ## Log
 
+- 2026-10-24: Designed decks from shapes, conditional formatting, pivot, validation, named range, print setup.
 - 2026-10-24: Résumé copies (bullet clone, tracked date change, comment on a new paragraph), all form field types, template fill.
 - 2026-10-24: Live edits in all four editors (word, cell, slide, pdf).
 - 2026-10-24: Fillable forms (add, fill, save as form, reopen).
