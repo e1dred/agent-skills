@@ -13,6 +13,8 @@ same commands. If `deckcraft-cli --version` is newer, re-check before relying on
 
 ## Surfaces
 
+> **Versions:** written on 0.10.0 (2026-10-24/25). The headless CLI forms ran identically on 0.11.1 (see the version note). The live `app --port` / `ui.*` calls were tested on the 0.10.0 app only; the 0.11.1 app was not running when I checked, so they have **not** been re-tested.
+
 - **Headless CLI**: `info FILE`, `render FILE --all --scale 1 OUTDIR/` (PNG per slide, 0-based `--slide N`),
   `convert IN OUT` (`.deckcraft .pptx .pdf .txt/.md .png .jpg .gif`; PNG/JPG = first slide only),
   `run [--in FILE|--sample] --cmd 'id={json}'... --save OUT [--export OUT] [--print]`,
@@ -24,6 +26,8 @@ same commands. If `deckcraft-cli --version` is newer, re-check before relying on
   yet; the `app` subcommand works anyway.
 
 ## Command formats (verified)
+
+> **Versions:** 0.10.0; the commands in the three build sequences below ran on both versions with identical return values.
 
 | Goal | Command |
 |---|---|
@@ -67,6 +71,8 @@ partial, English UI only.
 
 ## More recipes (verified headless, 0.10.0)
 
+> **Versions:** 0.10.0 (2026-10-25); re-run 2026-10-25 on 0.10.0 and 0.11.1 (slides, shape fill, animation, push transition, picture, notes, Harbor theme): identical return values, `info`, `.pptx` info and rendered pixels.
+
 - **Theme**: `design.theme {"name":"Harbor"}` (list with `design.themes`); starters via `file.new {"template":"Quarterly"}` give 5 slides.
 - **Fill / text**: `shape.fill {"color":"#E07B39"}` acts on the just-inserted (selected) shape; also `ids`. `text.set {"id","text"}`,
   `format.size/bold/font/color` act on the selection; `shape.setBounds {x,y,w,h,ids?}`; `arrange.align {"edge":"center"}`.
@@ -82,6 +88,8 @@ partial, English UI only.
 - Render check: `deckcraft-cli render F --slide 1 --scale 1 out.png` (slide index 0-based; output path is the *last* argument).
 
 ## Building a real deck (verified headless, 0.10.0)
+
+> **Versions:** 0.10.0 (2026-10-25); re-run 2026-10-25 on 0.10.0 and 0.11.1: identical return values, `info` and `.pptx` info. **Rendered pixels differ only on the slide with the chart**: 0.11.1 draws default chart text (title, axes, legend) in a bluish theme tint where 0.10.0 drew neutral grey (about 350 pixels, at most 17 of 255 per channel); data and structure are identical. Set an explicit chart text colour if you need grey.
 
 One `run` built title + bullets + table + chart + text box + link + background + duplicate/move/hide + section, then
 `convert` to `.pptx` and `render` (checked: table, chart, formatting, background and the hidden slide all survived).
@@ -106,6 +114,8 @@ One `run` built title + bullets + table + chart + text box + link + background +
 
 ## SmartArt, grouping, pictures, layouts (verified headless, 0.11.1)
 
+> **Versions:** 0.11.1 only (2026-10-25); not re-run on 0.10.0.
+
 - **SmartArt**: `insert.smartArt {"kind":"process|list|cycle|hierarchy|pyramid|matrix","items":["Plan","Build","Ship"]}` (leading tabs = sub-points) → `{id}`; then
   `smartArt.addNode {"text":"Review"}` → `{index}`, `smartArt.nodes {}` (read back `[{level,text}]`), `smartArt.setNodes {"lines":[…]}`, `smartArt.promote/demote/removeNode {"index"}`,
   `smartArt.layout {"kind":"chevron|blockList|verticalProcess|radial|timeline…"}`. Rendered result checked: 4 coloured chevrons with the text. Accessibility flags SmartArt as "Missing alternative text" — use `shape.altText`.
@@ -119,6 +129,8 @@ One `run` built title + bullets + table + chart + text box + link + background +
 - `review.accessibility` also reports "Missing slide title" for blank/layout-only slides; give them titles or accept.
 
 ## Next-tier workflows (verified headless, 0.11.1; render checked)
+
+> **Versions:** 0.11.1 (2026-10-25). The theme-colour/fonts, header/footer, pie and stacked-column charts, table style/merge, connector, shape-effects and icon steps were also run on 0.10.0 with identical return values (same chart-text tint difference in the render). Comments, spelling, compare, custom shows, audio, WordArt, slide links and morph were run on 0.11.1 only.
 
 - **Brand theme**: `design.colors {"name":"Brand","colors":{"dk1":"#1B1B1B","lt1":"#FFFFFF","dk2":"#16324F","lt2":"#F2F5F8","accent1":"#0E7C86","accent2":"#E4572E","accent3":"#C8963E","accent4":"#6B2E5F","accent5":"#17A398","accent6":"#7A8B99","hlink":"#0E7C86","folHlink":"#6B2E5F"}}` and
   `design.fonts {"name":"Brand fonts","major":"Georgia","minor":"Calibri"}` restyle the whole deck (titles became Georgia, charts and shapes took accent1/accent2 in order). `design.variant {"index":0..3}` picks a built-in colour variant.
@@ -135,6 +147,8 @@ One `run` built title + bullets + table + chart + text box + link + background +
 - The live-app-only and video items remain untested: playing a show, presenter view, `insert.video`, narration.
 
 ## New in 0.11.x (verified headless)
+
+> **Versions:** 0.11.1 only (the commands do not exist in 0.10.0).
 
 - Path editing on a shape: `shape.openPath {"index":0}` (break a closed outline), `shape.closePath {"index":0}`, `shape.deleteSegment {"index":0,"segment":2}`
   (**only on a closed outline**, otherwise "only a segment of a closed outline can be deleted"), `shape.segmentType {"index":0,"segment":1,"type":"straight|curved"}`.
@@ -155,3 +169,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - 2026-10-25 (3): full deck build (text, table cells, chart options, link, background, slide management, sections, accessibility) verified headless incl. pptx round trip.
 - 2026-10-26: SmartArt, text builds, auto-advance timing, align/distribute/group, picture crop/adjust/style, custom master layout verified headless.
 - 2026-10-25 (4): brand theme colours/fonts, header/footer, chart types, table style/merge/borders, connectors, shape effects/merge, icon/WordArt/audio, comments, spelling, compare, custom show, slide links, morph verified.
+- 2026-10-25 (5): three build sequences re-run on 0.10.0 and 0.11.1 (identical except default chart text tint); version labels added per section.

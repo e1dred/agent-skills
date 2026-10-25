@@ -26,6 +26,8 @@ Official docs: `docs/control-protocol.md`, `docs/mcp.md` in https://github.com/s
 
 ## Setup
 
+> **Versions:** 0.15.1 (2026-10-24); the bridge arguments changed in 0.16.0 (see 'Version 0.16.0 notes').
+
 - **CLI:** extract it from the AppImage (`photocraft.appimage --appimage-extract`, copy `usr/bin/photocraft-cli`
   somewhere stable); it is self-contained and needs no window. Subcommands: `convert`, `info`, `run`, `batch`,
   `droplet`, `commands`, `mcp`, `serve`. An unknown flag is a usage error.
@@ -38,6 +40,8 @@ Official docs: `docs/control-protocol.md`, `docs/mcp.md` in https://github.com/s
 - Without MCP tools in the session, everything below works from a shell with `photocraft-cli`.
 
 ## CLI essentials (verified)
+
+> **Versions:** 0.15.1; `run`, `info`, `convert`, `batch` behave the same on 0.16.0 in every pipeline below.
 
 ```
 photocraft-cli run --new '{"width":800,"height":500,"background":"#ffffff"}' \
@@ -60,6 +64,8 @@ photocraft-cli commands --json --filter <text>               # find ids; each ha
 
 ## Commands that worked (exact parameter formats)
 
+> **Versions:** 0.15.1; the same commands appear in the pipelines that were re-run 2026-10-25 on 0.15.1 and 0.16.0.
+
 - Fill: `layer.newFillLayer.gradient {"from":"#1F3864","to":"#2E75B6","angle":90,"style":"linear"}` (with angle 90
   the `to` colour ended at the TOP), `layer.newFillLayer.solidColor {"color":"#rrggbb"}`.
 - Shapes: `shape.create {"kind":"rect|roundedRect|ellipse|polygon|star|line","rect":[x,y,w,h],"radii":24,"fill":"#F2F2F2"}`
@@ -81,6 +87,8 @@ photocraft-cli commands --json --filter <text>               # find ids; each ha
   section for which ones worked. `select.rect {"x","y","width","height","feather"}` is still unrun.
 
 ## Live mode and removing a background (verified on a portrait with a blurred, busy background)
+
+> **Versions:** 0.15.1 app and CLI (2026-10-24). The live bridge was re-verified on 0.16.0 (see 'Version 0.16.0 notes'); `select.subject` was re-tested on 0.16.0 and still fails on this kind of photo.
 
 Helper when the `photocraft` MCP tools are not loaded in the session: `python3 -I tools/pcmcp.py PORT calls.json` (see its docstring) runs the same tool calls through the bridge from the shell and saves screenshots.
 Live mode: the app must be started with `--control PORT --control-token-file FILE --automation-read-root DIR
@@ -178,6 +186,8 @@ exposes it, re-test the portrait background removal above before using the manua
 
 ## Everyday photo edits (verified headless, 0.15.1)
 
+> **Versions:** 0.15.1 (2026-10-25); re-run 2026-10-25 on 0.15.1 and 0.16.0 (crop, exposure, vibrance, levels, curves, denoise, sharpen, resize; masked adjustment + type; rotate/canvas/photo filter/place/blend/mask/shape/stroke): **pixel-identical** output and identical layer lists.
+
 Run a whole retouch in one go: `photocraft-cli run photo.jpg --cmd ID --params JSON … --out out.jpg` (an opened JPEG is the
 background `Pixel` layer, id 2). Commands that return `null` succeeded. Parameter docs: `commands --json` (each item has
 `id` and `params`; ranges and defaults are in the string).
@@ -221,6 +231,8 @@ are still unverified.
 
 ## Version 0.16.0 notes (2026-10-25)
 
+> **Versions:** 0.16.0 (2026-10-25).
+
 - App 0.16.0 needs the **0.16.0 `photocraft-cli`** for the live bridge. With the old 0.15.1 CLI against the 0.16.0 app, authenticated
   bridge calls timed out after 55 s ("app was not drawing frames") and the bridge never worked; the 0.16.0 CLI (extracted from the new
   AppImage: `./photocraft.appimage --appimage-extract`, binary at `squashfs-root/usr/bin/photocraft-cli`) answered at once.
@@ -244,6 +256,8 @@ are still unverified.
 
 ## Live session and wider toolbox (verified, 0.16.0)
 
+> **Versions:** 0.16.0 only (2026-10-25); live bridge session, not re-run on 0.15.1 (its bridge needs the matching CLI).
+
 **Live bridge session (MCP server `photocraft` → app on 47825):** `doc_open {"path":"~/Pictures/x.png"}` (under the read root) → `{name,path,warnings}`;
 `command_batch {"steps":[{"id":…,"params":…},…]}` (the argument is **`steps`**, not `commands`) → `{completed,failed,results:[{ok,result}]}` (one history step each);
 `command_run {"id","params","wait"?}`; `ui_screenshot {"max_side":700}` (returns an image); `jobs_list {}`; `doc_save`/`doc_export` write under the write root.
@@ -262,6 +276,8 @@ Headless batch checked on a photo: `select.colorRange {"select":"sampledColors",
 (`highPass {"radius"}`), `filter.render` 9 (`clouds`, `lensFlare`, `pictureFrame {"frame":"…"}`), `channel.*` 22, `layerComp.*` 14, `history.*` 13, `brush.*` 17.
 
 ## Retouching, compositing and selections (verified headless on a portrait, 0.16.0; renders checked)
+
+> **Versions:** first run on 0.16.0 (2026-10-25); the heal/clone/dodge/burn/selective-colour/gradient-map/clipping pipeline and the saved-selection pipeline were also run on 0.15.1: pixel-identical.
 
 Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the final renders looked right.
 - **Heal / clone / dodge / burn** paint on the *active pixel layer* with `points:[[x,y],…]`: `paint.spotHealing {"points","size":40,"type":"contentAware","sampleAllLayers":true}` → `{damage:[x,y,w,h]}`;
@@ -282,6 +298,8 @@ Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the
 - Remaining unverified: `paint.mixerBrush`, `filter.cameraRaw`, Actions recording/`.atn` playback via the app, `droplet`, panorama/HDR merges.
 
 ## Next-tier workflows (verified headless, 0.16.0; renders checked where noted)
+
+> **Versions:** 0.16.0 (2026-10-25). Camera Raw, lens correction and tilt-shift were also run on 0.15.1 (pixel-identical). Layer-style stacking, modes/formats, Actions/droplets, contact sheet, content-aware scale and path text were run on 0.16.0 only.
 
 **Layer styles stack with `"add":true`** (without it a new style call replaces the layer's effects). Verified on a type layer over a gradient (render checked):
 `layer.layerStyle.stroke {"size":4,"position":"outside","color":"#0b1d3a"}` → `…outerGlow {"color":"#ffd966","opacity":70,"size":24,"spread":10,"add":true}` →
@@ -340,3 +358,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-26: live bridge session (doc_open, command_batch steps, screenshot), paint/filters/content-aware fill, silent-unknown-param trap verified.
 - 2026-10-26: retouch (heal/clone/dodge/burn), selective colour, gradient map, clipping, saved selections, liquify, smart filters, perspective crop, layer comps, quick export verified.
 - 2026-10-25 (3): layer-style stacking, Camera Raw/lens/tilt-shift, colour modes and formats, Actions (.atn) + droplets + fit image + contact sheet, content-aware scale, transform, warped and path text verified headless.
+- 2026-10-25 (5): six pipelines re-run on 0.15.1 and 0.16.0 (pixel-identical); version labels added per section.

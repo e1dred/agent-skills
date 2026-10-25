@@ -13,6 +13,8 @@ control channel all run the same commands. If `gridcraft-cli version` is newer, 
 
 ## Surfaces
 
+> **Versions:** written on 0.11.1 (2026-10-24/25). The headless CLI forms ran identically on 0.12.1 (see the version note). The live control channel (`send`, `ui.*`) was tested on the 0.11.1 app only; the 0.12.1 app was not running, so it has **not** been re-tested.
+
 - **Headless CLI** (no window, deterministic; best for building/reading/verifying files):
   `info FILE`, `cat FILE [--range A1:D9] [--formulas|--csv]`, `eval '=FORMULA' [--in FILE]`,
   `run [--in FILE|--sample budget|sales|grades] --cmd 'id={json}'... --out FILE [--print RANGE]`,
@@ -29,6 +31,8 @@ control channel all run the same commands. If `gridcraft-cli version` is newer, 
 **not** a method — run it through `engine.execute`).
 
 ## Command formats (verified)
+
+> **Versions:** 0.11.1; the commands listed here ran identically on 0.12.1 (12 scripts, see the version note).
 
 | Goal | Command |
 |---|---|
@@ -75,6 +79,8 @@ scaling); PDF export can't render Arabic/Devanagari/Thai. `app.quit` / `file.clo
 
 ## More recipes (verified headless, 0.11.1)
 
+> **Versions:** 0.11.1 (2026-10-25); re-run 2026-10-25 on 0.11.1 and 0.12.1 (`t2`, `t4`, `t7` and the later scripts): identical cell values, formulas, tables, charts and sheet lists.
+
 Build with `run --script steps.jsonl --out f.xlsx` (one `{"command":…,"params":…}` per line), then `check` + `cat`.
 
 - **Formula fill**: set the first cell with `cell.set`, then `edit.fillDown {"range":"E2:E7"}`. Do **not** use
@@ -100,6 +106,8 @@ Build with `run --script steps.jsonl --out f.xlsx` (one `{"command":…,"params"
 - `check` after a pivot/CF/validation/name workbook: all formulas matched, round trip equal.
 
 ## Everyday formatting and sheet editing (verified headless, 0.11.1)
+
+> **Versions:** 0.11.1 (2026-10-25); re-run 2026-10-25 on 0.11.1 and 0.12.1: identical (the `t7` report build, including PDF-facing settings).
 
 Typical report build (checked: `check` clean, PDF 2 pages): header row styled, % and thousands formats, borders, merge, link,
 sparkline, lookups, chart, protect.
@@ -128,6 +136,8 @@ New sheets and charts keep working after protection; protect last in the script.
 
 ## New in 0.12.x (verified headless)
 
+> **Versions:** 0.12.1 only (the commands do not exist in 0.11.1).
+
 - `pivot.options {"enableShowDetails":true}` then `pivot.showDetails {"cell":"B5"}` → `{sheet:"Sheet3",records:1}`: writes the source records behind that value
   to a new sheet *before* the current one (error if show-details is off). `pivot.list {}` shows layout, grand totals, `enableShowDetails`.
 - `formulas.pasteName {"list":true,"at":"J1"}` writes each defined name and its target (`TaxRate` / `=Sheet1!$H$1`) as two columns; `{"name":"TaxRate"}` starts `=TaxRate` in the active cell.
@@ -136,6 +146,8 @@ New sheets and charts keep working after protection; protect last in the script.
 - `run --quiet` suppresses command results: omit it when you need the returned values (it hid `pivot.showDetails`' answer).
 
 ## Analysis and layout tools (verified headless, 0.12.1)
+
+> **Versions:** first run on 0.12.1 (2026-10-25); the same scripts also gave identical output on 0.11.1, so these commands are not new in 0.12.
 
 Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":…}` per line); `cat`/`info`/`check` on the output confirm.
 - **Goal seek**: `data.goalSeek {"set":"D5","to":1000,"changing":"B2"}` → `{converged:true,iterations:2,value:168}` (writes the found value into `B2`; `set` must be a formula cell, `changing` a constant).
@@ -156,7 +168,7 @@ Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":�
 ## Version note (2026-10-25)
 
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
-`view.showOutlineSymbols`, `automate.stopAction`); none removed. The recipes in this file produced byte-identical cell output on 0.11.1 and 0.12.1.
+`view.showOutlineSymbols`, `automate.stopAction`); none removed. Twelve of this file's scripts (the sort/pivot/table/chart build, the report-formatting build, goal seek and scenarios, data table and solver, forecast, ToolPak, subtotals, consolidate and advanced filter, print and chart settings, array functions and JSON import) were run on both 0.11.1 and 0.12.1 and gave identical `info`, sheet contents and formulas. The traps and Flash Fill note were not re-run.
 
 ## Log
 
@@ -166,3 +178,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
   fills verified headless; `range.fill` relative-formula trap found.
 - 2026-10-25 (3): formatting, merge, borders, find/replace, hyperlink, comment, sparkline, lookups, page setup/print area, protection verified headless.
 - 2026-10-25 (4): goal seek, scenarios, data table, solver, forecast, ToolPak, subtotals, consolidate, advanced filter, trendlines, print setup, dynamic-array functions, JSON import verified.
+- 2026-10-25 (5): twelve scripts re-run on 0.11.1 and 0.12.1 (identical); version labels added per section.

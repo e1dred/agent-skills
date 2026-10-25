@@ -52,6 +52,8 @@ Unverified hints from the docs: CharProps has a `link` field (URL or `#bookmark`
 
 ## Live mode, verified (WordCraft 0.10.0, app started with `--control 47822`, blank document open)
 
+> **Versions:** tested 2026-10-24 on the app 0.10.0. Re-run 2026-10-25 on the app 0.11.0 (blank unsaved document, port 47826): `execute para.style`, `type_text` (real paragraphs), `select_text` + bold/italic, `get_text`, `render_page`, `inspect_document` and `ui_inspect.dirty` all behaved as described. Not re-run: `screenshot`, `batch`, `key`, `click`, `new_document`, `save_document`.
+
 - Connect: `WORDCRAFT_PORT=47822 IMGDIR=DIR python3 -I tools/wcmcp.py '[["tool",{args}],…]'` (the helper now SAVES image
   results such as `screenshot` and `render_page` to `IMGDIR/img_N.png`; before, they were dropped as `<image>`).
   If `ui_inspect` shows `"title":"Document1"` and `"dirty":false` the user's blank document is attached.
@@ -76,6 +78,8 @@ Unverified hints from the docs: CharProps has a `link` field (URL or `#bookmark`
 
 ## Opening real résumés (.docx) in WordCraft: fidelity check (verified on copies, 2 designs)
 
+> **Versions:** tested 2026-10-24 on 0.10.0 with two older résumé files (the figures below come from those). re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs on two current résumé files (one style-based, one table-based, copies in scratch): `info`, the open+save round trip, style/table/link/numbering/margin counts and the PDF word-sequence ratio came out **identical** on both versions. Not re-compared against ONLYOFFICE's renderer.
+
 `wordcraft-cli info f.docx` → pages/paragraphs; `convert f.docx f.pdf`; `run --file f.docx --save out.docx` is the open+save round trip.
 - A style-based résumé (custom styles, no tables, 2 hyperlinks) round-tripped IDENTICALLY: same style counts, 2 pages,
   998 words, links, margins, numbering, document title; text diff of the two PDFs 1.0000.
@@ -88,6 +92,8 @@ Unverified hints from the docs: CharProps has a `link` field (URL or `#bookmark`
   to a NEW file; keep the original untouched.
 
 ## Mail merge (verified headless with `wordcraft-cli run --script`; letters)
+
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (3-record CSV, one record filtered out, `start`, `recipients`, `filterRecipients`, `insertField`, `checkErrors`, `finish`): identical results and merged text. Not re-run: `addressBlock`/`greetingLine`, `rules`, envelopes/labels, `.xlsx` recipients.
 
 ```
 mailings.start {"kind":"letters"}                       # also emails|envelopes|labels|directory
@@ -112,6 +118,8 @@ mailings.finish {"path":"/abs/merged.docx","from":1,"to":2}   # one page per rec
 
 ## Citations, bibliography, cross-references (verified headless)
 
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (a Book and a three-author JournalArticle in APA, IEEE and MLA, the bibliography, and the `insert.crossReference` list and heading text): identical. Not re-run: the other citation styles, `references.sources`, cross-references to bookmarks, figures, tables, equations or pages.
+
 ```
 references.citationStyle {"style":"APA"}     # also IEEE, MLA, Chicago, Harvard (Anglia), ISO 690, Turabian, GOST…
 references.citation {"source":{"tag":"Smith2020","type":"Book","author":"Smith, John","title":"…","year":"2020",
@@ -130,6 +138,8 @@ references.bibliography {"title":"References"}   # insert after text.newParagrap
 
 ## Document comparison (verified headless)
 
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (word and character level on a one-line edit): identical changes. Not re-run: the two-résumé comparison, `showIn` variants, `review.combine`.
+
 `review.compare {"path":ABS_revised.docx | "text":"revised text","level":"word|character","author":"Cmp","showIn":"original|revised|new"}`
 → `{"changes":N,"notHonoured":[]}` and the differences become tracked changes; read them with `review.changes` (kind
 insert/delete/format, text). Word level on a one-line edit gave exactly `delete "jumps " / insert "leaps " / delete "16.5 " /
@@ -139,6 +149,8 @@ records incl. 52 `format` records): filter `kind` to `insert|delete` for the tex
 (commands are `id={json}`; there is no `--params` option). `review.combine` takes the same parameters.
 
 ## Templates (verified headless)
+
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (all five built-in templates by pages/paragraphs/text; `file.saveTemplate` + `file.newFromTemplate` with a custom style, margins and header): identical. Not re-run: `tools.attachTemplate`.
 
 - Built-ins: `wordcraft-cli run --template resume|letter|report|sample|blank --save x.docx` (resume: 1 page of fictional "Alex
   Rivera" text; letter; report; sample: a 2-page handbook).
@@ -150,6 +162,8 @@ records incl. 52 `format` records): filter `kind` to `insert|delete` for the tex
   indented). It changes styles only, not margins or headers.
 
 ## Headers and footers per section (verified headless; render checked per page)
+
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (the two-section script above, per-page text): identical (page 1 'Head1 … Foot1', page 2 'Head2 … Foot2'). Not re-run: the third-section inheritance and the `inspect` ids.
 
 ```
 text.insert "Section one." ; insert.header {"text":"Head1"} ; insert.closeHeader ; insert.footer {"text":"Foot1"} ; insert.closeHeader
@@ -167,6 +181,8 @@ Result: page 1 "Head1…Foot1", page 2 "Head2…Foot2", and a THIRD section adde
 
 ## Accessibility checker (verified headless)
 
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (picture, table and 'click here' link, no title): identical issue lists. Not re-run: the full fix recipe down to `ok:true`, and the tagged-PDF check.
+
 `file.accessibility {}` → `{"ok":bool,"issues":[{"kind":"error|warning|tip","issue","fix"?,"action"?:{command,params},"pos"}]}`.
 On a deliberately flawed document it found 6: picture without alt text (error, fix `object.altText`/`picture.altText`),
 table without alt text (`table.altText {title,text}`), table without a header row (`table.repeatHeader`), an empty table row
@@ -179,6 +195,8 @@ first cell `table.altText` + `table.repeatHeader`; real header text such as `ins
   title as the PDF title once `file.properties` has set it.
 
 ## Paragraph formatting, lists and editing commands (verified headless; props read back with `inspect`, lists by `pdftotext`)
+
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs: `para.align/indents/spacing/lineSpacing/tabs`, `para.numbering` (numbered, lowerRoman), `para.bullets` and `edit.paste {html}` gave identical text and properties. Not re-run: the pagination keeps, multilevel lists, `setNumberingValue`, `para.sort`, copy/paste format, `edit.undoTo`, `edit.goto`, the spike.
 
 Paragraph (one call each; `text.newParagraph` carries the settings forward, see traps):
 - `para.align {"value":"left|center|right|justify|distribute"}`; `para.indents {"left":36,"right":36,"firstLine":18}` (pt, negative
@@ -215,6 +233,8 @@ Editing:
 
 ## CLI essentials (verified)
 
+> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs: `run --save`, `info`, `text`, `render`, `convert … .md` identical. Not re-run: `batch` and the other converters (the style work converted to PDF on 0.11.0).
+
 ```
 wordcraft-cli run --template blank --script s.json            # {"template","commands":[...],"save":["a.docx","a.pdf"]}
 wordcraft-cli run --file in.docx --cmd 'id={json}' ... --save out.docx [--print]   # --print shows each result
@@ -230,6 +250,8 @@ Script commands are `{"command": id, "params": {...}}` or a bare id string. Rela
 folder (per docs/mcp.md) — use absolute paths. A failing script command stops the run and nothing is saved.
 
 ## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; document, résumé, CV, APA/MLA paper)
+
+> **Versions:** built and rendered on 0.11.0 (2026-10-25) only.
 
 `../styles/` holds the specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and a neutral build plan (`plan.py`);
 `python3 -I styles/build_wordcraft.py STYLE doc|resume|cv|paper /abs/out.docx [--paper=a4] [--page-numbers=…] [--columns=2] [--photo=…]
@@ -251,6 +273,8 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 
 ## Next-tier workflows (verified headless, 0.11.0)
 
+> **Versions:** 0.11.0 only (2026-10-25); not run on 0.10.0.
+
 **Seeing results:** `wordcraft-cli run --file F.docx --cmd id={json} --print` (or a `--script`) prints every command's result (the older notes only showed "wrote …"). `--author NAME` names who the tracked changes and comments are by (default "WordCraft User").
 - **Tracked changes**: `review.trackChanges {"on":true}`, then ordinary edits (`select.text {"text":"quick brown"}` + `text.insert` → one insertion + one deletion; `text.delete`) become `<w:ins>`/`<w:del>`.
   `review.changes` → `[{kind:"insert|delete",author,date,start,end,text}]`; `review.nextChange` + `review.accept`/`review.reject` act on one; `review.acceptAll`/`review.rejectAll`. After `acceptAll` the text read "The slow red fox jumps over the dog."
@@ -271,7 +295,7 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 ## Version note (0.11.0)
 
 WordCraft 0.11.0 added 5 commands (638 → 643), none removed: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
-(after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`. The recipes and styles in this file ran unchanged on 0.11.0.
+(after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`. Of the older sections, nine headless ones were re-run on both versions and gave identical output (see the `> Versions` line under each); the rest of this file has not been re-run on 0.11.0.
 
 ## Property names (verified via `inspect`)
 
@@ -287,6 +311,8 @@ Character props (`format.set {"props":…}`, `styles.modify {"chr":…}`):
 Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×792).
 
 ## Commands (verified)
+
+> **Versions:** mostly 0.10.0 (2026-10-24). Re-verified on 0.11.0 by the style builders (2026-10-25): `layout.size/margins`, `styles.create/modify`, `list.define`, `insert.picture`, `insert.table` + `table.*`, `insert.pageNumber`, `insert.header` + `insert.pageField`, `layout.columns`, `references.footnote`, `select.text` + `insert.link`, `file.properties`. Everything else in this list has **not** been re-run on 0.11.0.
 
 - Page: `layout.margins {"top":36,"bottom":36,"left":43.2,"right":43.2}` (pt).
 - Styles: `styles.create {"name","basedOn"}`, `styles.modify {"style","chr","para"}`, `para.style {"style"}`,
@@ -415,6 +441,8 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Traps (each one cost time)
 
+> **Versions:** found on 0.10.0 unless the item says otherwise; the three traps from the style builders (numbering `num 0` wiping indents, inherited direct properties, `insert.pageBreak`) were found on 0.11.0.
+
 - **Unknown property keys are silently ignored** — no error (documented in docs/mcp.md). Confirm every new
   key with `inspect`. Example: `para.set {"props":{"spaceAftr":12}}` succeeds and changes nothing.
 - **`styles.create` also applies the new style to the current paragraph.** Reset with `para.style` afterwards.
@@ -475,3 +503,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Inline formatting, custom styles, captions, drop cap, shapes/text boxes, cover page, multilevel lists,
   roman page numbers, first-page-different footers, charts, equations, table merge, convert formats.
 - 2026-10-25 (4): tracked changes, comments, compare, content controls, watermark, restrict/encrypt with password options, spelling/grammar, table of figures, table formula/sort, convert formats verified headless.
+- 2026-10-25 (5): nine headless sections re-run on 0.10.0 and 0.11.0 (identical) and the live-mode steps on the 0.11.0 app; version labels added per section.

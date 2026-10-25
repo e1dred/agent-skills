@@ -9,11 +9,13 @@ Unofficial: not affiliated with any of the app projects.
 
 | Skill | App | Tested on | Commands documented (measured) | Everyday workflows covered (est.) |
 |---|---|---|---|---|
-| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.10.0 / 0.11.0, Linux AppImage | 209 of 643 | ~85% |
-| [`gridcraft/`](gridcraft/) | [GridCraft](https://github.com/storytold/gridcraft) spreadsheet: headless CLI, live control channel, formulas, pivots, formatting, charts, .xlsx build/check/export | 0.11.1 / 0.12.1, Linux AppImage | 87 of 353 | ~85% |
-| [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.10.0 / 0.11.1, Linux AppImage | 102 of 327 | ~85% |
-| [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.15.1 / 0.16.0, Linux AppImage | 115 of 940 | ~85% |
+| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.10.0, 0.11.0 (headless sections re-run on both; see the skill), Linux AppImage | 209 of 643 | ~85% |
+| [`gridcraft/`](gridcraft/) | [GridCraft](https://github.com/storytold/gridcraft) spreadsheet: headless CLI, live control channel, formulas, pivots, formatting, charts, .xlsx build/check/export | 0.11.1, 0.12.1 (12 scripts re-run on both), Linux AppImage | 87 of 353 | ~85% |
+| [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.10.0, 0.11.1 (3 build sequences re-run on both), Linux AppImage | 102 of 327 | ~85% |
+| [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.15.1, 0.16.0 (6 pipelines re-run on both), Linux AppImage | 115 of 940 | ~85% |
 | [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 tools (plus the full macro API) | ~95% |
+
+Each skill marks, section by section, which version it was tested on and what was re-run on a second version (`> Versions:` lines); where it says "not re-run", treat the text as tested on the older version only.
 
 *Commands documented* is measured by `./coverage.sh` (as of 2026-10-25, after the next-tier workflow round): how many of the app's own command ids (MCP tools for ONLYOFFICE)
 appear in the skill. It is a rough lower bound on what a skill teaches, since a workflow can be described without naming every command, and an
@@ -52,6 +54,12 @@ Linux. Thanks to its author.
 
 [`styles/`](styles/) has eight looks (traditional, elegant, clean, professional, academic, modern, stylish, creative), each as a document, an ATS-friendly résumé, a European-style CV and (academic) an APA/MLA paper, on US Letter or A4, with tables, headers/footers, columns and optional photo,
 built identically in WordCraft and ONLYOFFICE from one spec, with font fallbacks that match what is installed. See the [gallery](styles/README.md).
+
+### How versions were compared
+
+When an app updated, the previous CLI was kept (`<app>-cli.bak`) and the skills' own example scripts were run on both CLIs; the outputs (command results, `info`, sheet and
+text contents, `.pptx` info, rendered pixels) were normalised for timestamps and paths and diffed. "Identical" in a skill's `> Versions:` line means that diff was empty. Only the
+examples named in that line were re-run: anything else in the section is still tested on the older version only. Live control channels need the app running and were re-tested only where the line says so.
 
 ## Keeping up with app updates
 

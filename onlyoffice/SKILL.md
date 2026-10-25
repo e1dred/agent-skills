@@ -10,6 +10,8 @@ description: Verified working knowledge for driving ONLYOFFICE Desktop Editors f
 Field notes from real tasks, tested on **ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux)** with the
 AI-tools server **onlyoffice-document-builder 2.0.0-native**. Re-check anything below on other versions.
 
+> **Versions:** every section was tested on ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, commit 318889a1…) with `onlyoffice-document-builder 2.0.0-native`; `check-versions.sh` showed no update available through 2026-10-25, so nothing here was re-tested on a second version. Live-editing sections were tested 2026-10-24; the tool and macro sections 2026-10-25.
+
 ## Keep this file growing
 
 At the end of every ONLYOFFICE task: add verified commands, API details, recipes and traps to the matching
@@ -424,3 +426,4 @@ or `get_api_reference {"class_name":"ApiParagraph"}` for a class's real methods.
 - 2026-10-25: conditional formats, autofilter, pivot, chart, sheet-object listing, slide set_text/notes/chart/background/arrange/delete/set_object verified via ooc.py.
 - 2026-10-25 (2): the remaining 38 tools (Word text/structure/AI tools, spreadsheet cell tools, slide search/image/AI tools, form_set_data/delete, view_image) verified; all 93 documented.
 - 2026-10-25 (3): tracked revisions, comments, watermark, password-encrypted save, defined names, protected ranges, hyperlinks, chart formatting, slide transitions/animations/theme colours verified via macros.
+- 2026-10-25 (4): version labels added; nothing re-tested on a second version (no update available).
