@@ -124,6 +124,11 @@ sparkline, lookups, chart, protect.
 Notes: `cat` prints values as formatted (`1,200`, `33.33%`); add `--formulas` for formulas. Sparkline cells don't extend `info`'s used range.
 New sheets and charts keep working after protection; protect last in the script.
 
+## Version note (2026-10-25)
+
+App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
+`view.showOutlineSymbols`, `automate.stopAction`); none removed. The recipes in this file produced byte-identical cell output on 0.11.1 and 0.12.1.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.11.1): headless build/check/eval/info, live cell/table/chart/format/save/PDF,

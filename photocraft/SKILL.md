@@ -216,6 +216,19 @@ Shape + stroke: `shape.create {…}` then `layer.layerStyle.stroke {"color":"#ff
 Live mode needs the app started with `--control 47821` plus the token file; it was not running this session, so live recipes
 are still unverified.
 
+## Version 0.16.0 notes (2026-10-25)
+
+- App 0.16.0 needs the **0.16.0 `photocraft-cli`** for the live bridge. With the old 0.15.1 CLI against the 0.16.0 app, authenticated
+  bridge calls timed out after 55 s ("app was not drawing frames") and the bridge never worked; the 0.16.0 CLI (extracted from the new
+  AppImage: `./photocraft.appimage --appimage-extract`, binary at `squashfs-root/usr/bin/photocraft-cli`) answered at once.
+- **Bridge flags changed:** `photocraft-cli mcp --bridge PORT --control-token-file FILE` — `--automation-read-root/--automation-write-root` are now
+  *refused* with `--bridge` (set the roots on the desktop app instead: start it with `--control PORT --control-token-file FILE
+  --automation-read-root DIR --automation-write-root DIR`). Roots stay valid for headless `mcp`.
+- A raw JSON-line client on the control port answers "authentication required" without the right handshake; use the MCP bridge.
+- Verified live on 0.16.0: `doc_new`, `command_run` (`layer.newFillLayer.gradient`, `type.create`), `ui_screenshot`, `jobs_list`.
+- New commands in 0.16.0: `type.fillPath`, `style.presets.importAsl/exportAsl`, `help.checkForUpdates`, `updates.status` (935 → 940). Nothing removed; every recipe
+  above (crop, curves, unsharp mask, resize, saves) gave the same results on both CLIs. `select.subject/object/focusArea/quick` parameter docs are unchanged.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a

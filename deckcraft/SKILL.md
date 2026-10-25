@@ -102,6 +102,11 @@ One `run` built title + bullets + table + chart + text box + link + background +
    `shape.altText {"text":"…","ids":[266]}` (or `"decorative":true`); the re-check returned `[]`.
 8. Tables: new tables are 3-row styled with the theme colour; empty cells stay empty; row/col changes via `table.insertRowBelow {"row","id"}` etc.
 
+## Version note (2026-10-25)
+
+App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`); none removed. The full-deck recipe
+(select chart → `chart.options`, accessibility check, `.pptx` round trip with a hidden slide) behaved identically on 0.10.0 and 0.11.1.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.10.0): headless run/save/convert/render/info, live new/slide/shape/table/chart/
