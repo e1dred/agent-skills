@@ -10,6 +10,7 @@ Unofficial: not affiliated with any of the app projects.
 | Skill | App | Tested on |
 |---|---|---|
 | [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor | 0.10.0, Linux AppImage |
+| [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor, headless CLI | 0.15.1, Linux AppImage |
 | [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx), live editing through its AI-tools MCP server | 10.0.0, Linux flatpak |
 
 More skills are added as the apps get used.
