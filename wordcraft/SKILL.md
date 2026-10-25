@@ -247,6 +247,25 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - Figure: `insert.picture {"path","width":300,"alt":"…"}` in a `Doc Figure` paragraph, then `text.newParagraph` and the caption paragraph; the alt text lands as `descr` on the drawing.
 - `wordcraft-cli commands` lists ids only (no parameter docs, no `describe`): learn parameters from this file or by trial, and remember unknown parameter names are silently ignored.
 
+## Next-tier workflows (verified headless, 0.11.0)
+
+**Seeing results:** `wordcraft-cli run --file F.docx --cmd id={json} --print` (or a `--script`) prints every command's result (the older notes only showed "wrote …"). `--author NAME` names who the tracked changes and comments are by (default "WordCraft User").
+- **Tracked changes**: `review.trackChanges {"on":true}`, then ordinary edits (`select.text {"text":"quick brown"}` + `text.insert` → one insertion + one deletion; `text.delete`) become `<w:ins>`/`<w:del>`.
+  `review.changes` → `[{kind:"insert|delete",author,date,start,end,text}]`; `review.nextChange` + `review.accept`/`review.reject` act on one; `review.acceptAll`/`review.rejectAll`. After `acceptAll` the text read "The slow red fox jumps over the dog."
+- **Comments**: `review.newComment {"text":"…"}` (on the current selection), `review.reply`, `review.editComment`, `review.resolveComment`, `review.comments` → `[{id,anchor,author,resolved,text}]`.
+- **Compare two files**: open the original and `review.compare {"path":"revised.docx"}` → `{changes:1,notHonoured:[]}`, saving it gives a document with `<w:ins>`/`<w:del>` marks for the differences (`review.combine` merges revisions).
+- **Content controls** (form-style fields): `developer.plainText {"title":"Full name","tag":"fullname","placeholder":"…"}`, `developer.dropDown {"title","tag","items":["Engineer","Designer"]}`, `developer.datePicker {"title","tag","format":"yyyy-MM-dd"}`,
+  `developer.checkBox {"title","tag"}`, `developer.richText {"title","tag"}`; they save as `<w:sdt>` with `<w:alias>`/`<w:tag>` (the dropdown as `dropDownList`, the date as `<w:date>`). Also `developer.comboBox`, `picture`, `repeatingSection`, `developer.properties`, `removeControl`.
+- **Watermark**: `design.watermark {"text":"DRAFT"}` → a `PowerPlusWaterMarkObject` in the header part.
+- **Protection and encryption**: `review.restrict {"mode":"readOnly","password":"pw"}` writes `<w:documentProtection w:edit="readOnly" w:enforcement="1">` with a SHA-512 hash and salt (a speed bump, not security);
+  `file.encrypt {"password":"…"}` produces a real Office-encrypted file (`CDFV2 Encrypted`). Opening it needs a password: `--password PASS`, `--password-file PATH` or the `WORDCRAFT_PASSWORD` environment variable (prefer the last two: a command-line password is visible to other processes); without it: "this document is protected with a password".
+  A file opened with a password is written back with it.
+- **Spelling and grammar**: `review.spelling` / `review.issues` → items `{kind:"spelling|grammar",message,start,end,text,suggestions:["receive","relieve",…]}` ("recieve" → receive; a repeated "the the" is reported as grammar); `review.suggestions`, `review.applySuggestion`, `review.addToDictionary`, `review.ignoreAll`, `review.language`, `review.thesaurus`, `review.wordCount`.
+- **Table of figures**: `references.tableOfFigures {"label":"Figure","title":"List of figures"}`, captions with `references.caption {"label":"Figure","text":"Attendance by session"}`, then `references.updateFigures` → a line "Figure 1: Attendance by session … 1" with a page number.
+- **Table formulas and sort**: `table.formula {"formula":"=SUM(ABOVE)"}` in the last cell → 42; `table.sort {"column":1,"order":"ascending","header":true}` sorted the body rows and kept the header and total rows in place (the total sorted last by name, so check totals when sorting).
+- **Other**: `layout.lineNumbers {"value":"restartPage","countBy":1}`, `insert.textBox {"text":"Callout box","width":150,"height":60}`, `insert.shape`, `insert.dateTime`/`insert.field`, `insert.dropCap`.
+- **Converting**: `wordcraft-cli convert base.docx base.{pdf,odt,rtf,html,md,tex,txt,png}` all wrote files (png renders page 1); the `.md`/`.txt` exports keep text only.
+
 ## Property names (verified via `inspect`)
 
 Paragraph props (`para.set {"props":…}`, `styles.modify {"para":…}`):
@@ -448,3 +467,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Header tab zones, page setup, regex/wildcard find, macros, proofing.
 - 2026-10-24: Inline formatting, custom styles, captions, drop cap, shapes/text boxes, cover page, multilevel lists,
   roman page numbers, first-page-different footers, charts, equations, table merge, convert formats.
+- 2026-10-25 (4): tracked changes, comments, compare, content controls, watermark, restrict/encrypt with password options, spelling/grammar, table of figures, table formula/sort, convert formats verified headless.
