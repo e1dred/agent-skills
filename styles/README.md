@@ -1,7 +1,7 @@
 # Document styles
 
-Eight ready-made looks, each as a **document** (title, headings, body, bullets, quote) and as an **ATS-friendly résumé**
-(single column, real headings, no tables or text boxes). One spec file feeds both apps, so WordCraft and ONLYOFFICE
+Eight ready-made looks, each as a **document** (title, headings, body, bullets, quote), as an **ATS-friendly résumé**
+and as a **European-style CV** (single column, real headings, no tables or text boxes), on **US Letter or A4**. One spec file feeds both apps, so WordCraft and ONLYOFFICE
 produce the same look. All sample text is invented.
 
 | Style | Look | Good for |
@@ -17,6 +17,7 @@ produce the same look. All sample text is invented.
 
 ![WordCraft documents](gallery/wordcraft-doc.png)
 ![ONLYOFFICE résumés](gallery/onlyoffice-resume.png)
+![WordCraft A4 CVs (top halves)](gallery/wordcraft-cv-a4.png)
 
 (More in `gallery/`: both apps, documents and résumés.)
 
@@ -26,8 +27,10 @@ produce the same look. All sample text is invented.
 python3 -I resolve.py                                   # which font each style gets on this machine
 # WordCraft: writes out.docx
 python3 -I build_wordcraft.py modern doc /abs/out.docx > job.json && wordcraft-cli run --script job.json
-python3 -I build_wordcraft.py modern resume /abs/cv.docx > job.json && wordcraft-cli run --script job.json
-# ONLYOFFICE (headless; add --pdf to also save a PDF rendered by ONLYOFFICE for checking)
+python3 -I build_wordcraft.py modern resume /abs/resume.docx > job.json && wordcraft-cli run --script job.json
+python3 -I build_wordcraft.py modern cv /abs/cv.docx > job.json && wordcraft-cli run --script job.json          # European CV, A4
+python3 -I build_wordcraft.py clean doc /abs/report_a4.docx --paper=a4 > job.json && wordcraft-cli run --script job.json
+# ONLYOFFICE (headless; add --pdf to also save a PDF rendered by ONLYOFFICE for checking; same --paper option)
 python3 -I build_onlyoffice.py modern doc /abs/out.docx > calls.json && python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 ```
 
@@ -43,6 +46,21 @@ Georgia, Arial, Times New Roman, Trebuchet MS, Verdana…), so a file opens the 
 lets any installed font win (e.g. Montserrat or Open Sans): only use it for documents that stay on this machine or embed the
 fonts. If a preferred font is missing the resolver reports it and uses the next one; the look then differs slightly.
 
+## Paper size
+
+ (default for  and ) or  (default for ) on both builders. The builders set the page size, margins
+and the right-hand tab used for dates, so nothing else changes between sizes; A4 is a little narrower (595 pt) and taller (842 pt) than Letter (612 pt × 792 pt).
+Checked: A4 and Letter PDFs report the right page size in both apps, and the CVs stay on one page in all eight styles.
+
+## CV (European style)
+
+ is a single-column curriculum vitae laid out the way European employers expect: name, role and contact lines; *Profile*; *Work experience* (newest
+first, dates as ); *Education and training* (degree and years, institution underneath); *Languages* (mother tongue, then each language
+with CEFR levels A1–C2 for listening, reading, speaking and writing); *Digital skills*; *Certificates*; *Interests*. It is inspired by the Europass
+structure but is **not** the official Europass template. Notes: a photo, date of birth, nationality and marital status are expected in some countries and
+discouraged or unlawful to ask for in others (including the US and UK), so none are included, and you should add them only where the local norm calls for it;
+two pages are normal for a senior CV; keep the single column so portals can read it.
+
 ## Résumé formats
 
 The builders produce the **reverse-chronological** layout (summary, competencies, experience, education, certifications):
@@ -54,6 +72,6 @@ then a timeline: good for experienced people changing direction). Keep one colum
 
 ## Checked
 
-Every style was built in both apps and rendered (WordCraft with its own renderer, ONLYOFFICE through its own PDF export).
+Every style (document, résumé and CV) was built in both apps and rendered (WordCraft with its own renderer, ONLYOFFICE through its own PDF export).
 Letter-spacing, caps, borders, tab stops, bullets and links reach the saved `.docx` (inspected in `styles.xml`).
-Not covered: tables, headers/footers, page numbers, columns, A4. Page size is US Letter.
+Not covered: tables, headers/footers, page numbers, columns, photos in CVs.

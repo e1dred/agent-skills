@@ -54,3 +54,30 @@ RESUME = {
     "education": [("Associate of Applied Science, Horticulture", "Example Community College, Corvallis, OR", "2011")],
     "certifications": [("Certified Landscape Professional (sample certificate)", "Example Trade Association", "2022")],
 }
+
+CV = {
+    "name": "Sam Rivera",
+    "headline": "Environmental Project Coordinator",
+    "address": "Example Street 12, 1000 Sampletown, Exampleland",
+    "phone": "+00 000 000 000",
+    "email": "sam.rivera@example.com",
+    "profile": ("Project coordinator with 8 years of experience delivering river-restoration and urban-greening projects across "
+                "three countries. Works comfortably between engineers, local authorities and volunteer groups, and writes the "
+                "funding reports that keep projects running."),
+    "jobs": [
+        {"title": "Senior Project Coordinator", "dates": "03/2021 \u2013 present", "org": "Sample Rivers Foundation  \u2022  Sampletown, Exampleland",
+         "bullets": ["Coordinated 12 restoration projects with a combined budget of EUR 2.4 million.",
+                     "Led a team of five and managed relations with municipal partners and two national agencies.",
+                     "Wrote four successful grant applications totalling EUR 850,000."]},
+        {"title": "Project Officer", "dates": "09/2017 \u2013 02/2021", "org": "Demo Urban Greening Office  \u2022  Otherville, Exampleland",
+         "bullets": ["Planned and monitored 30 pocket-park installations.",
+                     "Introduced a shared monitoring spreadsheet used by six partner organisations."]},
+    ],
+    "education": [("MSc Environmental Management", "Example University of Technology, Sampletown", "2015 \u2013 2017"),
+                  ("BSc Geography", "Sample State University, Otherville", "2012 \u2013 2015")],
+    "languages": {"mother": "English",
+                  "other": [("German", "C1", "C1", "B2", "B2"), ("French", "B1", "B1", "A2", "A2")]},
+    "digital": [("Office", "word processing, spreadsheets, presentations"), ("Specialist", "QGIS, project-planning software, survey tools")],
+    "certificates": [("Prince2 Foundation (sample certificate)", "Example Training Body", "2019")],
+    "interests": "Trail running, community gardening, volunteering at a river clean-up group",
+}

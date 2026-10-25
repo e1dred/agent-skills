@@ -345,7 +345,7 @@ a TOC or table shifts later numbers — re-read `word_get_document_structure` (`
 ## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; documents and résumés)
 
 `../styles/` holds eight style specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and builders for this app:
-`python3 -I styles/build_onlyoffice.py STYLE doc|resume /abs/out.docx [--pdf] > calls.json` then `python3 -I tools/ooc.py new:docx calls.json`. Each style comes as a document and as an ATS-safe résumé, and both apps produce the same look from the same spec; see `../styles/README.md`
+`python3 -I styles/build_onlyoffice.py STYLE doc|resume /abs/out.docx [--pdf] > calls.json` then `python3 -I tools/ooc.py new:docx calls.json`. Each style comes as a document, an ATS-safe résumé and a European-style `cv` (A4 default; `--paper=a4|letter` on every kind), and both apps produce the same look from the same spec; see `../styles/README.md`
 for the table, gallery, font-fallback rules and résumé-format advice. Verified: all 8 styles in both kinds, saved as .docx and rendered by ONLYOFFICE's own PDF export. Macro facts that mattered: font sizes in half-points, spacing/indents in twips, `SetSpacing` for letter-spacing, `SetBottomBorder/SetLeftBorder` for rules (left border is wrapped in try/catch in the builder and rendered as a bar), `SetCaps`, styles created with `doc.CreateStyle(name,"paragraph")` and based on Normal.
 ## Traps
 

@@ -1,11 +1,11 @@
 """Build a styled sample document or résumé in WordCraft: prints a `wordcraft-cli run --script` job (JSON).
 
-    python3 -I build_wordcraft.py STYLE doc|resume /abs/out.docx [--local-fonts] > job.json
+    python3 -I build_wordcraft.py STYLE doc|resume|cv /abs/out.docx [--paper=a4|letter] [--local-fonts] > job.json
     wordcraft-cli run --script job.json            # writes out.docx (and out.dotx, a template of the same style)
 
 STYLE is a key of styles.json (traditional, elegant, clean, professional, academic, modern, stylish, creative).
 `doc` is a one-to-two page report using Title, Heading 1/2, body, bullets and a quote; `resume` is the ATS-safe
-single-column layout (no tables or text boxes). Replace the sample text in content.py with real content.
+single-column layout (no tables or text boxes); `cv` is the European curriculum vitae (MM/YYYY dates, languages with CEFR levels, digital skills; A4 by default). `--paper=a4` or `--paper=letter` sets the page (default letter, a4 for cv). Replace the sample text in content.py with real content.
 """
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -14,6 +14,8 @@ from resolve import resolve
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 style_name, kind, out = args[0], args[1], args[2]
+PAPER = next((a.split("=", 1)[1].lower() for a in sys.argv if a.startswith("--paper=")), "a4" if kind == "cv" else "letter")
+PAGE_W = 595.3 if PAPER == "a4" else 612
 S = resolve(style_name, portable="--local-fonts" not in sys.argv)
 HF, BF = S["font"]["heading"], S["font"]["body"]
 C, SZ, B, H, T = S["color"], S["size"], S["body"], S["heading"], S["title"]
@@ -75,6 +77,7 @@ def define_bullets(color):
 
 if kind == "doc":
     m = S["margins_in"]
+    if PAPER == "a4": c("layout.size", name="A4")
     c("layout.margins", top=m[0] * 72, bottom=m[1] * 72, left=m[3 - 1] * 72, right=m[3] * 72)
     c("styles.modify", style="Normal", chr=chr_(BF, SZ["body"], C["text"]),
       para={"spaceBefore": 0, "spaceAfter": B["after"], "align": B["align"], "indentFirst": B["first_indent"],
@@ -108,9 +111,10 @@ if kind == "doc":
             for b in val: para("Doc Bullet", b, bullet=True)
     c("file.properties", title="Style sample: " + style_name, author="Sample Author", subject=S["summary"])
 else:
-    R, RS = content.RESUME, S["resume"]
+    R, RS = (content.CV if kind == "cv" else content.RESUME), S["resume"]
     m = RS["margins_in"]
-    width = 612 - (m[2] + m[3]) * 72
+    width = PAGE_W - (m[2] + m[3]) * 72
+    if PAPER == "a4": c("layout.size", name="A4")
     c("layout.margins", top=m[0] * 72, bottom=m[1] * 72, left=m[2] * 72, right=m[3] * 72)
     bs = RS["body_size"]
     c("styles.modify", style="Normal", chr=chr_(BF, bs, C["text"]),
@@ -129,28 +133,60 @@ else:
     new_style("Resume Line", para={"spaceAfter": 1.5, "indentFirst": 0, "tabs": [{"pos": width, "align": "right", "leader": "none"}]})
     c("para.style", style="Resume Bullet")
     define_bullets(C["accent"])
-    para("Resume Name", R["name"])
-    para("Resume Headline", R["headline"])
-    para("Resume Contact", "  •  ".join([R["location"], R["email"], R["profile"]]))
-    para("Heading 1", "Professional Summary")
-    para("Resume Body", R["summary"])
-    para("Heading 1", "Core Competencies")
-    for label, items in R["competencies"]:
-        para("Resume Line", runs=[(True, label + ": "), (False, " • ".join(items))])
-    para("Heading 1", "Professional Experience")
-    for j in R["jobs"]:
-        para("Job Title", f"{j['title']}\t{j['dates']}")
-        para("Job Org", j["org"])
-        for b in j["bullets"]:
-            para("Resume Bullet", b, bullet=True)
-    para("Heading 1", "Education")
-    for d, s, y in R["education"]:
-        para("Resume Line", runs=[(True, d), (False, f" — {s}\t{y}")])
-    para("Heading 1", "Certifications")
-    for n, i, y in R["certifications"]:
-        para("Resume Line", runs=[(True, n), (False, f" — {i}\t{y}")])
-    c("select.text", text=R["email"]);   c("insert.link", url="mailto:" + R["email"])
-    c("select.text", text=R["profile"]); c("insert.link", url="https://www." + R["profile"])
-    c("file.properties", title=R["name"] + " - Resume", author=R["name"], subject=R["headline"])
+    if kind == "cv":
+        para("Resume Name", R["name"])
+        para("Resume Headline", R["headline"])
+        para("Resume Contact", R["address"])
+        para("Resume Contact", "  \u2022  ".join([R["phone"], R["email"]]))
+        para("Heading 1", "Profile")
+        para("Resume Body", R["profile"])
+        para("Heading 1", "Work experience")
+        for j in R["jobs"]:
+            para("Job Title", f"{j['title']}\t{j['dates']}")
+            para("Job Org", j["org"])
+            for b in j["bullets"]:
+                para("Resume Bullet", b, bullet=True)
+        para("Heading 1", "Education and training")
+        for d, s, y in R["education"]:
+            para("Job Title", f"{d}\t{y}")
+            para("Job Org", s)
+        para("Heading 1", "Languages")
+        para("Resume Line", runs=[(True, "Mother tongue: "), (False, R["languages"]["mother"])])
+        for lang, li, rd, sp, wr in R["languages"]["other"]:
+            para("Resume Line", runs=[(True, lang + ": "), (False, f"listening {li}, reading {rd}, speaking {sp}, writing {wr} (CEFR)")])
+        para("Heading 1", "Digital skills")
+        for label, txt in R["digital"]:
+            para("Resume Line", runs=[(True, label + ": "), (False, txt)])
+        para("Heading 1", "Certificates")
+        for n, i, y in R["certificates"]:
+            para("Resume Line", runs=[(True, n), (False, f" \u2014 {i}\t{y}")])
+        para("Heading 1", "Interests")
+        para("Resume Body", R["interests"])
+        c("select.text", text=R["email"]); c("insert.link", url="mailto:" + R["email"])
+        c("file.properties", title=R["name"] + " - Curriculum Vitae", author=R["name"], subject=R["headline"])
+    else:
+        para("Resume Name", R["name"])
+        para("Resume Headline", R["headline"])
+        para("Resume Contact", "  •  ".join([R["location"], R["email"], R["profile"]]))
+        para("Heading 1", "Professional Summary")
+        para("Resume Body", R["summary"])
+        para("Heading 1", "Core Competencies")
+        for label, items in R["competencies"]:
+            para("Resume Line", runs=[(True, label + ": "), (False, " • ".join(items))])
+        para("Heading 1", "Professional Experience")
+        for j in R["jobs"]:
+            para("Job Title", f"{j['title']}\t{j['dates']}")
+            para("Job Org", j["org"])
+            for b in j["bullets"]:
+                para("Resume Bullet", b, bullet=True)
+        para("Heading 1", "Education")
+        for d, s, y in R["education"]:
+            para("Resume Line", runs=[(True, d), (False, f" — {s}\t{y}")])
+        para("Heading 1", "Certifications")
+        for n, i, y in R["certifications"]:
+            para("Resume Line", runs=[(True, n), (False, f" — {i}\t{y}")])
+        c("select.text", text=R["email"]);   c("insert.link", url="mailto:" + R["email"])
+        c("select.text", text=R["profile"]); c("insert.link", url="https://www." + R["profile"])
+        c("file.properties", title=R["name"] + " - Resume", author=R["name"], subject=R["headline"])
 
 json.dump({"template": "blank", "commands": cmds, "save": [out]}, sys.stdout)

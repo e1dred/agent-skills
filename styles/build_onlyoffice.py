@@ -1,6 +1,6 @@
 """Build a styled sample document or résumé in ONLYOFFICE: prints a calls.json for tools/ooc.py (headless new docx).
 
-    python3 -I build_onlyoffice.py STYLE doc|resume /abs/out.docx [--local-fonts] [--pdf] > calls.json
+    python3 -I build_onlyoffice.py STYLE doc|resume|cv /abs/out.docx [--paper=a4|letter] [--local-fonts] [--pdf] > calls.json
     python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json        # writes out.docx
 
 To restyle a document that is open in the editor instead, run the same macro through `ooc.py "/abs/Open.docx"`
@@ -15,22 +15,24 @@ from resolve import resolve
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 style_name, kind, out = args[0], args[1], args[2]
+PAPER = next((a.split("=", 1)[1].lower() for a in sys.argv if a.startswith("--paper=")), "a4" if kind == "cv" else "letter")
+PW, PH = (11906, 16838) if PAPER == "a4" else (12240, 15840)   # twips
 S = resolve(style_name, portable="--local-fonts" not in sys.argv)
 HF, BF = S["font"]["heading"], S["font"]["body"]
 C, SZ, B, H, T, RS = S["color"], S["size"], S["body"], S["heading"], S["title"], S["resume"]
 tw = lambda pt: int(round(pt * 20))
 hx = lambda c: "#" + c
 
-m = RS["margins_in"] if kind == "resume" else S["margins_in"]          # [top, bottom, left, right] inches
+m = RS["margins_in"] if kind in ("resume", "cv") else S["margins_in"]          # [top, bottom, left, right] inches
 TOP, BOT, LEFT, RIGHT = [int(round(v * 1440)) for v in m]
-WIDTH = 12240 - LEFT - RIGHT
-BS = RS["body_size"] if kind == "resume" else SZ["body"]
+WIDTH = PW - LEFT - RIGHT
+BS = RS["body_size"] if kind in ("resume", "cv") else SZ["body"]
 
 PRE = r'''
 var doc = Api.GetDocument();
 doc.RemoveSelection();
 var sec = doc.GetSections()[0];
-sec.SetPageSize(12240, 15840);
+sec.SetPageSize(%(pw)d, %(ph)d);
 sec.SetPageMargins(%(left)d, %(top)d, %(right)d, %(bot)d);
 function col(h) { return Api.Color(h); }
 function border(pp, side, size, space, color) {
@@ -129,6 +131,24 @@ if kind == "doc":
         elif k == "quote": items.append(P("Doc Quote", v))
         elif k == "bullets": items += [P("Doc Bullet", b) for b in v]
     links = []
+elif kind == "cv":
+    R = content.CV
+    items = [P("Resume Name", R["name"]), P("Resume Headline", R["headline"]), P("Resume Contact", R["address"]),
+             P("Resume Contact", "  \u2022  ".join([R["phone"], R["email"]])),
+             P("Heading 1", "Profile"), P("Resume Body", R["profile"]), P("Heading 1", "Work experience")]
+    for j in R["jobs"]:
+        items += [P("Job Title", f"{j['title']}\t{j['dates']}"), P("Job Org", j["org"])] + [P("Resume Bullet", b) for b in j["bullets"]]
+    items.append(P("Heading 1", "Education and training"))
+    for d, s, y in R["education"]:
+        items += [P("Job Title", f"{d}\t{y}"), P("Job Org", s)]
+    items += [P("Heading 1", "Languages"), P("Resume Line", ("b", "Mother tongue: "), R["languages"]["mother"])]
+    items += [P("Resume Line", ("b", l + ": "), f"listening {a}, reading {b}, speaking {c}, writing {d} (CEFR)") for l, a, b, c, d in R["languages"]["other"]]
+    items.append(P("Heading 1", "Digital skills"))
+    items += [P("Resume Line", ("b", l + ": "), t) for l, t in R["digital"]]
+    items.append(P("Heading 1", "Certificates"))
+    items += [P("Resume Line", ("b", n), f" \u2014 {i}\t{y}") for n, i, y in R["certificates"]]
+    items += [P("Heading 1", "Interests"), P("Resume Body", R["interests"])]
+    links = [[R["email"], "mailto:" + R["email"]]]
 else:
     R = content.RESUME
     items = [P("Resume Name", R["name"]), P("Resume Headline", R["headline"]),
@@ -152,13 +172,13 @@ def rule_js(h, var, pfx):
 
 
 fmt = dict(
-    left=LEFT, right=RIGHT, top=TOP, bot=BOT, bf=BF, hf=HF, bs=BS, bs1=BS + 1, bs05=BS + 0.5,
+    pw=PW, ph=PH, left=LEFT, right=RIGHT, top=TOP, bot=BOT, bf=BF, hf=HF, bs=BS, bs1=BS + 1, bs05=BS + 0.5,
     after=tw(B["after"]) if kind == "doc" else 0, line=int(round(240 * (B["line"] if kind == "doc" else 1.0))),
     jc={"justify": "both"}.get(B["align"], B["align"]) if kind == "doc" else "left", first=tw(B["first_indent"]) if kind == "doc" else 0,
     ctext=hx(C["text"]), chead=hx(C["heading"]), cmuted=hx(C["muted"]), caccent=hx(C["accent"]),
-    h1size=min(SZ["h1"], BS + 2.5) if kind == "resume" else SZ["h1"], h2size=SZ["h2"],
+    h1size=min(SZ["h1"], BS + 2.5) if kind != "doc" else SZ["h1"], h2size=SZ["h2"],
     hbold=str(H["bold"]).lower(), hital=str(H["italic"]).lower(), hcaps=str(H["caps"]).lower(), hspc=tw(H["spacing"]),
-    hbefore=tw(8 if kind == "resume" else H["before"]), hafter=tw(3 if kind == "resume" else H["after"]), hjc="left" if kind == "resume" else H["align"],
+    hbefore=tw(8 if kind != "doc" else H["before"]), hafter=tw(3 if kind != "doc" else H["after"]), hjc="left" if kind != "doc" else H["align"],
     h2before=tw(max(H["before"] * 0.6, 0)), tsize=SZ["title"], tbold=str(T["bold"]).lower(), tcaps=str(T["caps"]).lower(), tjc=T["align"],
     nsize=RS["name_size"], njc=RS["name_align"], width=WIDTH,
 )
