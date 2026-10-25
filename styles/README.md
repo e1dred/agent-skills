@@ -48,18 +48,18 @@ fonts. If a preferred font is missing the resolver reports it and uses the next 
 
 ## Paper size
 
- (default for  and ) or  (default for ) on both builders. The builders set the page size, margins
-and the right-hand tab used for dates, so nothing else changes between sizes; A4 is a little narrower (595 pt) and taller (842 pt) than Letter (612 pt × 792 pt).
-Checked: A4 and Letter PDFs report the right page size in both apps, and the CVs stay on one page in all eight styles.
+`--paper=letter` (default for `doc` and `resume`) or `--paper=a4` (default for `cv`) on both builders. The builders set the page size, margins
+and the right-hand tab used for dates, so nothing else changes between sizes; A4 is a little narrower and taller (595 × 842 pt) than Letter (612 × 792 pt).
+Checked: both sizes report the right page size in both apps, and the CVs stay on one page in all eight styles.
 
 ## CV (European style)
 
- is a single-column curriculum vitae laid out the way European employers expect: name, role and contact lines; *Profile*; *Work experience* (newest
-first, dates as ); *Education and training* (degree and years, institution underneath); *Languages* (mother tongue, then each language
+`cv` is a single-column curriculum vitae laid out the way European employers expect: name, role and contact lines; *Profile*; *Work experience* (newest
+first, dates as `MM/YYYY – present`); *Education and training* (degree and years, institution underneath); *Languages* (mother tongue, then each language
 with CEFR levels A1–C2 for listening, reading, speaking and writing); *Digital skills*; *Certificates*; *Interests*. It is inspired by the Europass
 structure but is **not** the official Europass template. Notes: a photo, date of birth, nationality and marital status are expected in some countries and
-discouraged or unlawful to ask for in others (including the US and UK), so none are included, and you should add them only where the local norm calls for it;
-two pages are normal for a senior CV; keep the single column so portals can read it.
+discouraged or unlawful to ask for in others (including the US and UK), so none are included; add them only where the local norm calls for it.
+Two pages are normal for a senior CV. Keep the single column so portals can read it.
 
 ## Résumé formats
 
