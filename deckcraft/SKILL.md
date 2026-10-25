@@ -102,6 +102,20 @@ One `run` built title + bullets + table + chart + text box + link + background +
    `shape.altText {"text":"…","ids":[266]}` (or `"decorative":true`); the re-check returned `[]`.
 8. Tables: new tables are 3-row styled with the theme colour; empty cells stay empty; row/col changes via `table.insertRowBelow {"row","id"}` etc.
 
+## SmartArt, grouping, pictures, layouts (verified headless, 0.11.1)
+
+- **SmartArt**: `insert.smartArt {"kind":"process|list|cycle|hierarchy|pyramid|matrix","items":["Plan","Build","Ship"]}` (leading tabs = sub-points) → `{id}`; then
+  `smartArt.addNode {"text":"Review"}` → `{index}`, `smartArt.nodes {}` (read back `[{level,text}]`), `smartArt.setNodes {"lines":[…]}`, `smartArt.promote/demote/removeNode {"index"}`,
+  `smartArt.layout {"kind":"chevron|blockList|verticalProcess|radial|timeline…"}`. Rendered result checked: 4 coloured chevrons with the text. Accessibility flags SmartArt as "Missing alternative text" — use `shape.altText`.
+- **Text builds**: select the placeholder (`edit.select {"ids":[281]}`), `animation.add {"effect":"fade","start":"onClick"}`, then `animation.options {"textBuild":"byParagraph"}` → `{"changed":1}`.
+- **Auto-advance**: `transition.set {"kind":"fade","duration":700}` then `transition.timing {"onClick":false,"after":3000}` (ms).
+- **Align / distribute / group**: `edit.selectAll` → `{ids}`, `arrange.distribute {"dir":"horizontal","to":"selection"}`, `arrange.align {"edge":"middle","to":"selection"}`, `arrange.group` → `{id}` (render showed three shapes evenly spaced on one line).
+- **Pictures**: after `insert.picture`, `picture.crop {"left":0.1,"right":0.1}` (fractions), `picture.adjust {"brightness":0.1,"saturation":1.5}` (brightness −1..1, saturation 0..4),
+  `picture.style {"style":"softEdgeOval"}` (`picture.styles` lists them), `picture.recolor {"preset":"sepia|grayscale|…"}`, `picture.removeBackground {"tolerance":20}`, `picture.change`, `picture.reset`.
+- **Custom layout**: `view.slideMaster` → `{kind:"layout",layout,master}`, `master.insertLayout {"name":"My Layout"}` → `{id}`, `master.insertPlaceholder {"kind":"picture|content|text|chart|table|media","rect":[x,y,w,h]}`,
+  `view.closeMaster`, then `slide.layout {"layout":"My Layout"}` (name or the returned id). `master.renameLayout/deleteLayout` also exist.
+- `review.accessibility` also reports "Missing slide title" for blank/layout-only slides; give them titles or accept.
+
 ## New in 0.11.x (verified headless)
 
 - Path editing on a shape: `shape.openPath {"index":0}` (break a closed outline), `shape.closePath {"index":0}`, `shape.deleteSegment {"index":0,"segment":2}`
@@ -121,3 +135,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
   save/export/screenshot with the Pitch starter. Reference reading: artcraft-skills `deckcraft` (macOS, MIT).
 - 2026-10-25 (2): themes, animation, transition, picture, notes, outline import, notes/handout PDF, GIF, pptx round trip verified headless.
 - 2026-10-25 (3): full deck build (text, table cells, chart options, link, background, slide management, sections, accessibility) verified headless incl. pptx round trip.
+- 2026-10-26: SmartArt, text builds, auto-advance timing, align/distribute/group, picture crop/adjust/style, custom master layout verified headless.
