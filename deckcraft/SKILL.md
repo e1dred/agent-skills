@@ -79,8 +79,32 @@ partial, English UI only.
   (GIF89a, 960×540); `convert F x.md` writes the outline (tab-indented bullets).
 - Render check: `deckcraft-cli render F --slide 1 --scale 1 out.png` (slide index 0-based; output path is the *last* argument).
 
+## Building a real deck (verified headless, 0.10.0)
+
+One `run` built title + bullets + table + chart + text box + link + background + duplicate/move/hide + section, then
+`convert` to `.pptx` and `render` (checked: table, chart, formatting, background and the hidden slide all survived).
+
+1. **Find shape ids first.** `slide.inspect {"index":0}` (`run … --print` shows the JSON) lists shapes with `id`, `kind`, `name`
+   (`Title 1`, `Subtitle 2`). A fresh `file.new` slide 0 has title id 258 / subtitle 259, but always read them.
+2. **Text**: `text.set {"id":258,"text":"Q3 Review"}`. For a table cell: `text.set {"text":"North","cell":[1,0]}` (row, col; acts on the
+   just-inserted/selected table, or pass `id`). Bullets: `\n` separates paragraphs, a leading `\t` indents a level.
+3. **Select, then format.** `format.size/bold/italic/color/alignCenter/bullets/font` act on the *selection* (inserting a shape
+   selects it; otherwise `edit.select {"ids":[266]}` → `{"selected":[266]}`). Chart/alt-text commands also need a selection or `ids`:
+   `chart.options` without a selection fails with "nothing selected".
+4. **Chart**: `insert.chart {"type":"column","rect":[…],"categories":["Q1","Q2","Q3"],"series":[{"name":"Sales","values":[10,14,19]}]}`;
+   afterwards `edit.select` it, then `chart.options {"title":"Sales by quarter","dataLabels":true,"legend":null|"b"|"r"}`,
+   `chart.type {"type":"line"}`, `chart.data {"categories","series"}`. The default title is "Chart Title" — always set one or `title:null`.
+5. **Link**: `insert.hyperlink {"url":"https://…","text":"Details"}` (or `{"slide":2}`); **background**: `design.background {"color":"#F4F6F8","index":2}`
+   (omit `index` for the current slide, `"all":true` for every slide); **text box**: `insert.textBox {"rect":[x,y,w,h],"text":"…"}`.
+6. **Slides**: `slide.duplicate {"index":1}`, `slide.move {"from":2,"to":3}`, `slide.hide {"index":3,"hidden":true}`, `slide.delete {"index"}`,
+   `slide.layout {"layout":"title","index":0}`, `section.add {"name":"Body","at":1}`, `design.variant {"index":0..3}`, `design.slideSize {"preset":"widescreen"}`.
+7. **Accessibility**: `review.accessibility` → `[{slide,shape,issue}]` (e.g. "Missing alternative text" for a chart); fix with
+   `shape.altText {"text":"…","ids":[266]}` (or `"decorative":true`); the re-check returned `[]`.
+8. Tables: new tables are 3-row styled with the theme colour; empty cells stay empty; row/col changes via `table.insertRowBelow {"row","id"}` etc.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.10.0): headless run/save/convert/render/info, live new/slide/shape/table/chart/
   save/export/screenshot with the Pitch starter. Reference reading: artcraft-skills `deckcraft` (macOS, MIT).
 - 2026-10-25 (2): themes, animation, transition, picture, notes, outline import, notes/handout PDF, GIF, pptx round trip verified headless.
+- 2026-10-25 (3): full deck build (text, table cells, chart options, link, background, slide management, sections, accessibility) verified headless incl. pptx round trip.

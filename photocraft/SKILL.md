@@ -173,6 +173,49 @@ is classical. The Craft AI layer (https://github.com/storytold/craft-ai-integrat
 SAM 2.1/SAM 3 engines and a ComfyUI `image.segment` role that would give real subject selection. When a newer PhotoCraft
 exposes it, re-test the portrait background removal above before using the manual lasso method.
 
+## Everyday photo edits (verified headless, 0.15.1)
+
+Run a whole retouch in one go: `photocraft-cli run photo.jpg --cmd ID --params JSON … --out out.jpg` (an opened JPEG is the
+background `Pixel` layer, id 2). Commands that return `null` succeeded. Parameter docs: `commands --json` (each item has
+`id` and `params`; ranges and defaults are in the string).
+
+| Goal | Command + params |
+|---|---|
+| crop | `image.crop {"x":100,"y":50,"width":1000,"height":700}` (also `angle`, `targetWidth/Height`, `contentAware`) |
+| resize | `image.imageSize {"width":800}` (keeps aspect; or `percent`, `resample`) |
+| canvas / borders | `image.canvasSize {"width":820,"height":1280,"anchor":"center","extensionColor":"#ffffff"}` → `{offset}` |
+| rotate / flip | `image.imageRotation.90cw|90ccw|180|flipCanvasHorizontal|flipCanvasVertical` (no params) |
+| exposure | `image.adjustments.exposure {"exposure":0.3,"offset":0,"gamma":1}` |
+| brightness/contrast | `image.adjustments.brightnessContrast {"brightness":-150..150,"contrast":-50..100}` |
+| levels | `image.adjustments.levels {"inBlack":8,"gamma":1.1,"inWhite":245,"outBlack":0,"outWhite":255}` (per channel under `red/green/blue`) |
+| curves | `image.adjustments.curves {"points":[[0,0],[64,56],[192,200],[255,255]]}` (0..255 pairs; `red/green/blue` per channel) |
+| vibrance / saturation | `image.adjustments.vibrance {"vibrance":30,"saturation":5}`; `…hueSaturation {"hue","saturation","lightness"}` |
+| warm/cool | `image.adjustments.photoFilter {"filter":"warming85|cooling80|sepia|…","density":20}` |
+| B&W | `image.adjustments.blackWhite {}` (channel mixers `reds`…`magentas`), `…desaturate`, `…threshold {"level":128}` |
+| shadows/highlights | `image.adjustments.shadowsHighlights {"shadowAmount":35,"highlightAmount":0}` |
+| denoise / noise | `filter.noise.reduceNoise {"strength":4}`, `filter.noise.addNoise {"amount":12.5,"distribution":"gaussian"}` |
+| sharpen | `filter.sharpen.unsharpMask {"amount":80,"radius":1.2,"threshold":2}`, `…smartSharpen {"amount","radius","reduceNoise"}` |
+| blur | `filter.blur.gaussianBlur {"radius":2}`, `…motionBlur {"angle","distance"}` |
+
+Non-destructive versions are `layer.newAdjustmentLayer.<name>` with the same parameter names; destructive ones are `image.adjustments.*`.
+
+**Selection → mask (verified, render checked):** make a selection first and a new adjustment layer takes it as its mask:
+`select.rect {"x":300,"y":200,"width":600,"height":400,"ellipse":true,"feather":40}` then
+`layer.newAdjustmentLayer.hueSaturation {"saturation":-80}` → the layer reports `hasMask:true`; the effect applies inside the feathered
+ellipse only. Other selection ids: `select.colorRange`, `select.grow`, `select.modify.feather {"radius"}`, `select.inverse`, `select.deselect`.
+For an existing layer: `select.rect …` then `layer.layerMask.revealSelection` (or `hideSelection`, `revealAll`, `hideAll`, `delete`, `apply`).
+
+**Watermark / logo:** `file.placeEmbedded {"path":"/abs/mark.png","scale":100,"center":[700,1200]}` → a Smart Object layer; then
+`layer.setProps {"blend":"Overlay","opacity":0.8}`. Text: `type.create {"x":40,"y":770,"text":"© Studio","font":"Arial","size":28,"color":"#ffffff"}`.
+Shape + stroke: `shape.create {…}` then `layer.layerStyle.stroke {"color":"#ffffff","size":3}`.
+
+**Output formats checked:** `.jpg/.webp` (lossy warning, `--quality`), `.png`, `.tiff` (2.9 MB for 1200×800), `.psd` (layers kept, DPI warning),
+`.pcraft`. **AVIF cannot be written** ("unsupported: AVIF cannot be written in this build"). `batch --actions act.json --in DIR --out DIR2
+--format webp --quality 80` → "N succeeded, M failed".
+
+Live mode needs the app started with `--control 47821` plus the token file; it was not running this session, so live recipes
+are still unverified.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -203,3 +246,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
   refineEdge → layer mask; auto selections failed); mask fill colour trap.
 - 2026-10-24: Initial notes: CLI run/info/convert/batch, layers kept in .pcraft/.psd, shapes, type, drop shadow,
   adjustment layer, resize/crop, JPEG/WebP/PSD export (photocraft-cli 0.15.1, Linux).
+- 2026-10-25: everyday-edits table (crop/resize/rotate/adjustments/denoise/sharpen), selection→mask, watermark, batch webp, format support verified headless.

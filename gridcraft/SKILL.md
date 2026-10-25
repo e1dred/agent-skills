@@ -97,9 +97,37 @@ Build with `run --script steps.jsonl --out f.xlsx` (one `{"command":…,"params"
   `file.open {"path":"in.csv","csvAsText":true}` (verified: `007` kept). CSV/HTML export per sheet: `convert f.xlsx out.csv --sheet Sheet1`.
 - `check` after a pivot/CF/validation/name workbook: all formulas matched, round trip equal.
 
+## Everyday formatting and sheet editing (verified headless, 0.11.1)
+
+Typical report build (checked: `check` clean, PDF 2 pages): header row styled, % and thousands formats, borders, merge, link,
+sparkline, lookups, chart, protect.
+
+| Goal | Command + params |
+|---|---|
+| fill / font colour | `home.fillColor {"range","color":"#DDEBF7"}`, `home.fontColor {"range","color":"#1F3864"}` (simpler than `home.formatCells`) |
+| bold / size / wrap | `home.bold {"range","on":true}`, `home.fontSize {"range","size":12}`, `home.wrapText {"range","on":true}` |
+| borders | `home.borders {"range":"A1:D5","preset":"all|outside|bottom|thickOutside|doubleBottom|…","style"?}` |
+| merge | `home.mergeCenter {"range":"A7:D7"}` (`home.mergeAcross`); set the text after merging |
+| number format | `home.numberFormat {"range","format":"Percentage|Currency|…"}` or `{"code":"#,##0"}` |
+| widths / rows | `home.columnWidth {"cols":"A:D","chars":14}`, `home.insertRows {"rows":"3:5"}`, `home.deleteRows {"rows":"3:5"}` |
+| find & replace | `edit.replace {"what":"Jan","with":"January","all":true,"within":"sheet|workbook"}` |
+| copy / paste | `edit.copy {"range"}`, `edit.paste {"at":"C3"}`, `edit.pasteSpecial {"what":"values|formats|formulas…","operation"?,"transpose"?}` |
+| series | `edit.fillSeries {"range","type":"linear|growth|date","step":1,"dateUnit":"month"}`; `edit.fillRight {"range"}` |
+| dedupe / split | `data.removeDuplicates {"range","columns":["A"],"header":true}`, `data.textToColumns {"range","delimiters":[","]}` |
+| hyperlink | `insert.link {"cell":"A9","target":"https://…|Sheet2!A1|mailto:…","text":"Site"}` |
+| comment | `review.newComment {"cell":"B2","text":"…","author"?}` (writes threaded-comment parts; round-trips) |
+| sparkline | `insert.sparkline {"range":"B2:B5","location":"F2","type":"line|column|winLoss"}` |
+| page setup | `pageLayout.pageSetup {"orientation":"landscape","paper":"A4","margins"?}`, `pageLayout.printArea {"range":"A1:D5"}` — PDF export obeys them (print area gave 1 page) |
+| protect | `review.protectSheet {}` (`password?`, permission flags) → `<sheetProtection sheet="1">`; `review.protectWorkbook` |
+| lookups verified | `=XLOOKUP("Apr",A2:A5,B2:B5)`, `=IFERROR(VLOOKUP("Mar",A2:D5,2,FALSE),"n/a")`, `=TEXT(TODAY(),"yyyy-mm-dd")` (TODAY is flagged *volatile* in `check`, as expected) |
+
+Notes: `cat` prints values as formatted (`1,200`, `33.33%`); add `--formulas` for formulas. Sparkline cells don't extend `info`'s used range.
+New sheets and charts keep working after protection; protect last in the script.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.11.1): headless build/check/eval/info, live cell/table/chart/format/save/PDF,
   screenshots. Reference reading: artcraft-skills `gridcraft` (macOS, MIT) — see repo README credits.
 - 2026-10-25 (2): pivots, conditional formats, validation, names, structured refs, spill, sort, filter, charts, CSV import,
   fills verified headless; `range.fill` relative-formula trap found.
+- 2026-10-25 (3): formatting, merge, borders, find/replace, hyperlink, comment, sparkline, lookups, page setup/print area, protection verified headless.
