@@ -107,10 +107,29 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   `caret.paraDown` when one paragraph sits above the table), then `table.selectRow` → `table.shading {"color":"D9E2F3"}`
   → `format.bold {"value":true}` → `table.repeatHeader`. `caret.docEnd` then lands in the paragraph after the table.
   `inspect` shows a table block as `{"type":"table","rows","cols","cells":[[…]]}`.
+- **Quickest table:** type rows as tab-separated paragraphs, select them (`caret.docStart`, then
+  `caret.docEnd {"extend":true}`), then `table.fromText {"separator":"tab","autofit":"contents"}` →
+  `table.style {"style":"Table Grid"}` → `table.properties {"align":"center"}`. Gives a compact centred table.
+- `table.columnWidth {"width":pt}` sets only the caret's column (others keep theirs);
+  `table.cellAlign {"value":"bottomRight"}` writes vertical `vAlign` plus paragraph `jc` for the caret cell.
 - Header/footer: `insert.header {"text":…}`, `insert.footer {"preset":"pageNumber"}` (centred page number).
   Both leave the caret IN the header/footer: follow each with `insert.closeHeader` (it closes footers too).
 - Page numbers: `insert.pageNumber {"position":"bottom","align":"right","format":"x of y"}` makes a footer that
   renders "Page 2 of 2" (numbers bold); unlike `insert.footer` it leaves the caret in the body.
+- Columns: `layout.columns {"count":2,"space":18,"separator":true}` with no `apply` changes the WHOLE section,
+  including text above the caret. `"apply":"forward"` starts the columns at the caret: it adds a continuous
+  section break, as an empty paragraph (`sectionBreak: true` in `inspect`). `layout.break {"kind":"column"}`
+  jumps to the next column (a `\u000e` in the text). Kinds also include `nextPage|continuous|evenPage|oddPage`.
+- Links: `insert.link {"url":…,"text":…}` inserts linked text styled `Hyperlink` (blue, underlined).
+  The CharProp `format.set {"props":{"link":URL}}` on a selection also creates a working link (checked in the
+  .docx rels), but the text keeps its normal look: no blue, no underline.
+- Table of contents: `references.toc {"levels":2,"title":"Contents"}` at the top, headings below with
+  `para.style "Heading 1"`, then `references.updateToc` at the end → TOC lines with dot leaders, page numbers,
+  links to `_Toc…` bookmarks on the headings.
+- Footnotes: `references.footnote {"text":…}` returns `{"id":N}` and leaves the caret IN the footnote. Get back
+  with `caret.set {"pos":{"story":"body","path":[para],"off":N}}` (reliable). `references.nextFootnote` also
+  happened to land after the mark in a one-note test. NOT `insert.closeHeader`: that goes to the start of the body.
+- Pictures: `insert.picture {"path":ABS,"width":pt,"alt":…}` keeps the aspect ratio (returns width/height).
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
@@ -128,6 +147,9 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   (verified with `inspect`). Set `numbering num 0` on the first paragraph after a list.
 - **`insert.header` / `insert.footer` leave the caret in that header/footer** — without `insert.closeHeader`
   the rest of the script's text ends up in the footer, and `inspect` shows an empty body.
+- **`references.footnote` leaves the caret in the footnote**, same as headers. And `insert.closeHeader` always
+  puts the caret at the START of the body, so after a header/footer added mid-script, move with `caret.docEnd`.
+- A table inserted inside a column layout keeps full-page-width columns and runs past the column; set widths.
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
@@ -152,4 +174,5 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-24: Linked the official docs (docs/mcp.md, docs/control-protocol.md); corrected path resolution.
 - 2026-10-24: Generalized for sharing; résumé recipe made data-driven with fictional sample content.
 - 2026-10-24: Numbered lists; confirmed that new paragraphs inherit list numbering.
-- 2026-10-24: Tables (fill, header row shading/repeat), headers/footers, x-of-y page numbers, page breaks.
+- 2026-10-24: Tables (fill, header row shading/repeat, from text), headers/footers, x-of-y page numbers,
+  page breaks, columns, links, TOC, footnotes, pictures.
