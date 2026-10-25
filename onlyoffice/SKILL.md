@@ -76,6 +76,27 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
 - Read back: `p.ToHtml({RenderHTMLTags: true})` (shows `<strong>`, `<a href>`), `p.GetNumbering()`,
   `doc.GetStatistics()` → `{PageCount, WordsCount, ParagraphCount, …}` (works live).
 
+## Word helper tools (verified headless; cheaper than macros)
+
+- A new docx starts with ONE empty paragraph (element 1); content tools append after it.
+- `word_insert_paragraphs {"paragraphs":[…],"style":"Heading 1"}` (style applies to the batch) and
+  `{"paragraphs":[…],"list_type":"numbered"}` (one batch = one list, "1. 2. 3."; call again to restart at 1).
+- `word_add_table {"rows":[["Task","Owner"],…],"header":true}` (bold first row, plain grid); `word_search_replace
+  {"search","replace","match_case"}`.
+- `word_page_setup {"page_size":"A4","margins_mm":20,"header_text":"…","footer_text":"Confidential",
+  "page_numbers":true,"align":"center"}` → PDF footer reads "Confidential 1"; `page_numbers_of_total`,
+  `start_page_number`, `first_page_different`, `orientation` also exist (untested).
+- `word_comment_text {"search":"timeline","prompt":"…","comment_text":"…","type":"comment"|"footnote"}`: the schema
+  demands `prompt` even when `comment_text` is given (without it: "missing required argument prompt"). Author is
+  "AI Assistant". Footnote text appears at the page bottom in the PDF.
+- Comments by macro: `d.GetAllComments()[0]` → `AddReply('text','Author')`, `SetSolved(true)`, `GetQuoteText()`,
+  `GetRepliesCount()` all work.
+- Track changes by macro: `d.SetTrackRevisions(true)`, then tools such as `word_search_replace` are recorded;
+  `d.AcceptAllRevisionChanges()` (or `Reject…`) works. `d.GetReviewReport()` is an object keyed by user but its
+  values are not arrays and it is circular (`JSON.stringify` fails): inspect its keys before relying on it.
+- `save_document {"path":…,"format":"pdf"|"md"|"docx"}`: PDF carries header/footer/footnotes; the `md` export
+  keeps headings, numbered lists and tables (`**bold**` header cells) and drops headers/footers.
+
 ## Spreadsheets (verified headless; `cell_*` tools)
 
 Create with `create_document(format="xlsx")` (or `ooc.py new:xlsx calls.json`). Read `learn_about(topic="spreadsheets")`.
@@ -134,6 +155,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 
 ## Log
 
+- 2026-10-24: Word helper tools (lists, table, page setup, comments, tracking), md/pdf export.
 - 2026-10-24: Spreadsheet and presentation basics (cell_* and slide_* tools), headless build + preview; ooc.py `new:` mode.
 - 2026-10-24: Initial notes: connector discovery and wrapper, live résumé rebuild, headless preview check
   (ONLYOFFICE 10.0.0 flatpak, server 2.0.0-native).
