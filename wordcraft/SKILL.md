@@ -199,6 +199,14 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - Text characters: `\n` inside `text.insert` is a soft line break (`<w:br/>`), NOT a new paragraph; use
   `text.newParagraph` for that. `text.lineBreak`, `text.nbsp`, `text.nbHyphen`, `text.emDash`, `text.copyright`,
   `text.tab` exist (nbsp and emDash checked).
+- Internal links: `select.text` then `insert.link {"bookmark":"name"}` (after `insert.bookmark {"name"}`) or
+  `insert.link {"heading":N}` (N = the heading's block index in `inspect`; a `_Toc…` bookmark is created for it).
+  Both give `Hyperlink`-styled runs with `link:"#…"`.
+- Restyling a built-in heading: `styles.modify {"style":"Heading 1","chr":{"font":"Georgia","size":20,"color":"7F3F00",
+  "bold":true},"para":{"spaceBefore":18,"spaceAfter":6,"borders":{"bottom":{"style":"single","width":1,"color":"7F3F00",
+  "space":1}}}}` (rendered correctly). Nested bullets: `list.define` with two `levels` (second `alignedAt":18,
+  "indentAt":36`, text "–") `apply`:true puts paragraphs in `ListParagraph` style; level 1 via `numbering {"level":1,"num":N}`.
+- Document properties are read back from `inspect` → `properties` (`creator` = the `author` you set).
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
