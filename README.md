@@ -13,12 +13,13 @@ Unofficial: not affiliated with any of the app projects.
 | [`gridcraft/`](gridcraft/) | [GridCraft](https://github.com/storytold/gridcraft) spreadsheet: headless CLI, live control channel, formulas, pivots, formatting, charts, .xlsx build/check/export | 0.12.1, Linux AppImage | 61 of 353 | ~85% |
 | [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.11.1, Linux AppImage | 75 of 327 | ~85% |
 | [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.16.0, Linux AppImage | 88 of 940 | ~85% |
-| [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 55 of 93 tools | ~90% |
+| [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 tools (plus the full macro API) | ~95% |
 
 *Commands documented* is measured by `./coverage.sh` (as of 2026-10-25): how many of the app's own command ids (MCP tools for ONLYOFFICE)
 appear in the skill. It is a rough lower bound on what a skill teaches, since a workflow can be described without naming every command, and an
 upper bound on what was tested, since an id can be named without being run. *Everyday workflows covered* is the author's **estimate**, rounded
 to 5%, of how many of the core tasks (build, edit, format, export) have a recipe that was run and checked. It is a judgement, not a measurement.
+For ONLYOFFICE the unit is MCP tools, which are convenience wrappers rather than app operations, so that figure is not comparable to the Craft rows; each document type also has a macro tool that reaches the whole Document Builder API.
 Both change when an app updates; most commands in these apps are rarely needed, so a low first number does not mean a skill is thin.
 
 More skills are added as the apps get used.
