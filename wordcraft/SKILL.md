@@ -108,6 +108,45 @@ mailings.finish {"path":"/abs/merged.docx","from":1,"to":2}   # one page per rec
 - Only letters were merged; envelopes (`mailings.envelopes`) and labels (`mailings.labels {"product":"letter-3x10",
   "fromRecipients":true}`) exist but were not run. Live mode with the app open was not tried for mailings.
 
+## Citations, bibliography, cross-references (verified headless)
+
+```
+references.citationStyle {"style":"APA"}     # also IEEE, MLA, Chicago, Harvard (Anglia), ISO 690, Turabian, GOST…
+references.citation {"source":{"tag":"Smith2020","type":"Book","author":"Smith, John","title":"…","year":"2020",
+                     "publisher":"…","city":"…"},"pages":"12"}      # inserts "(Smith, 2020, p. 12)"; later: {"tag":"Smith2020","pages":"50"}
+references.bibliography {"title":"References"}   # insert after text.newParagraph; same style as the citations
+```
+- **`author` is ONE string, not a list or object** (a list/map is rejected with "invalid type: sequence, expected a string").
+  Several authors: `"Lee, Mina; Park, Joon; Kim, Ana"` (semicolon between "Last, First" names) → APA gives
+  "(Lee & Park, 2022)" / "(Lee et al., 2022)" and "Lee, M., Park, J., & Kim, A. (2022)." `"Mina Lee and Joon Park"` parsed
+  wrongly ("Park, M. L. a. J."). **Unknown source keys are silently ignored**: `authors` (plural) produced "(Title, 2020)" and
+  a reference with no author. Always read the bibliography output.
+- Types verified: `Book`, `JournalArticle` (`journal`, `volume`, `issue`, `pages`). Same text in IEEE: "[1]", "[2]" and a numbered
+  list; MLA: "(Coaching Teachers 12)". `references.sources {"add"|"remove"|"import"}` lists/manages sources (untested).
+- Cross-references: `insert.crossReference {}` lists targets (`["Methods","Results"]`); `{"to":"heading","target":"Methods",
+  "show":"text"}` → "Methods"; `"show":"page"` → "1" (also bookmark, figure, table, equation, `label:<Name>`).
+
+## Document comparison (verified headless)
+
+`review.compare {"path":ABS_revised.docx | "text":"revised text","level":"word|character","author":"Cmp","showIn":"original|revised|new"}`
+→ `{"changes":N,"notHonoured":[]}` and the differences become tracked changes; read them with `review.changes` (kind
+insert/delete/format, text). Word level on a one-line edit gave exactly `delete "jumps " / insert "leaps " / delete "16.5 " /
+insert "18 "`; character level gave `jum→lea`, `6.5→8`. Two résumé versions with different layouts gave 48 change blocks (238
+records incl. 52 `format` records): filter `kind` to `insert|delete` for the text story. CLI form:
+`wordcraft-cli run --file old.docx --cmd 'review.compare={"path":"/abs/new.docx","level":"word","showIn":"new"}' --cmd 'review.changes={}' --save cmp.docx --print`
+(commands are `id={json}`; there is no `--params` option). `review.combine` takes the same parameters.
+
+## Templates (verified headless)
+
+- Built-ins: `wordcraft-cli run --template resume|letter|report|sample|blank --save x.docx` (resume: 1 page of fictional "Alex
+  Rivera" text; letter; report; sample: a 2-page handbook).
+- Make one: build styles, margins and a header, then `file.saveTemplate {"path":"x.dotx"}`; start from it with
+  `file.newFromTemplate {"path":"x.dotx"}` (script without `"template"`): styles, header text and margins (64 pt) all
+  carried over and `Heading 1`/custom `Callout` styles applied correctly.
+- Refresh an old document's styles: `tools.attachTemplate {"path":"x.dotx","linkStyles":true,"update":true}` replaced ALL styles
+  (reply lists `replaced:[Normal, Heading 1…]`), turning a stale custom style (green bold) into the template's (italic brown,
+  indented). It changes styles only, not margins or headers.
+
 ## Choosing live vs headless
 
 - **Live** (user watches): bridge MCP / `tools/wcmcp.py`. Check `ui_inspect` first: `title`, `dirty`.
@@ -318,6 +357,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Log
 
+- 2026-10-24: Citations/bibliography (author string format), cross-references, document compare, templates.
 - 2026-10-24: Mail merge (recipients, filter, fields, address block, IF rule, partial finish).
 - 2026-10-24: Résumé round-trip fidelity check on two designs (faithful; only custom doc properties lost).
 - 2026-10-24: Live mode on a blank document: typing, formatting, screenshot/render, export, failed-select trap.
