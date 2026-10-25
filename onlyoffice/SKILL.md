@@ -111,6 +111,18 @@ Read `get_api_reference(topic=…)` first: topics `styles`, `lists`, `paragraphs
 - `pdf_split {"parts":[{"pages":"1","path":ABS}],"overwrite":true}`; `pdf_merge {"sources":[{path,pages?}],
   "output_path"}` (untested).
 
+## Fillable forms (verified headless)
+
+- Flow: `create_document("docx")` → `form_add_field {"type":"text"|"dropdown"|"combobox"|"checkbox"…,"key","label",
+  "placeholder","required","items":[…]}` per field → `save_document {"format":"form"}` (a fillable PDF that reopens
+  EDITABLE as a Word document with its fields; `format:"pdf"` flattens it and says so in the reply).
+- `form_get_fields` lists keys, `type` (`textForm|comboBoxForm|checkBoxForm|…`), `value`, `filled`, `required`.
+  A dropdown reports as `comboBoxForm` and has an extra first list entry "Choose an item".
+- **`form_fill {"fields":[{"key":"full_name","value":"Ada"},{"key":"plan","value":"Pro"},{"key":"agree","value":"true"}]}`**:
+  `fields` must be a LIST of `{key,value}`; a `{key: value}` object fails with `field not found`. Checkbox values:
+  "true"/"1"/"yes"/"on"/"checked"/"x". Read `form_get_fields` back (`filled:true`, checkbox `☑`).
+- `word_generate_form {"description"}` is a two-call AI task that returns `{FIELD:…}` template syntax (untested).
+
 ## Spreadsheets (verified headless; `cell_*` tools)
 
 Create with `create_document(format="xlsx")` (or `ooc.py new:xlsx calls.json`). Read `learn_about(topic="spreadsheets")`.
@@ -169,6 +181,7 @@ Read `learn_about(topic="presentations")` (designed vs placeholder route). Place
 
 ## Log
 
+- 2026-10-24: Fillable forms (add, fill, save as form, reopen).
 - 2026-10-24: PDF search/markup/split, highlight colour trap.
 - 2026-10-24: Word helper tools (lists, table, page setup, comments, tracking), md/pdf export.
 - 2026-10-24: Spreadsheet and presentation basics (cell_* and slide_* tools), headless build + preview; ooc.py `new:` mode.
