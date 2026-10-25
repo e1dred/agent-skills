@@ -192,6 +192,13 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   {"command":"format.allCaps"}]}}` then `tools.macros {"run":"Shout"}` runs the steps on the selection.
 - Proofing: `review.wordCount` → words/characters/pages; `review.issues` → list of spelling/grammar issues with
   offsets and suggestions (found "jumpd" and a capitalisation).
+- Floating pictures: right after `insert.picture` the new picture is the selected object, so
+  `arrange.wrap {"wrap":"square"}` then `arrange.position {"preset":"topRight"}` floats it with the text flowing
+  around it (render confirmed). Wrap kinds: `inline|square|tight|through|topAndBottom|behindText|inFrontOfText`; also
+  `arrange.rotation {"degrees"}`, `arrange.bounds`, `arrange.nudge`, `object.altText`.
+- Text characters: `\n` inside `text.insert` is a soft line break (`<w:br/>`), NOT a new paragraph; use
+  `text.newParagraph` for that. `text.lineBreak`, `text.nbsp`, `text.nbHyphen`, `text.emDash`, `text.copyright`,
+  `text.tab` exist (nbsp and emDash checked).
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
@@ -219,6 +226,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   read it, the allowed values are listed. Nothing is saved when a script command fails.
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
+- **`\n` in `text.insert` does not start a paragraph** — "Line A\nLine B" stays one paragraph with a line break.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
 
