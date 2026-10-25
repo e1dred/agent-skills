@@ -131,13 +131,15 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   happened to land after the mark in a one-note test. NOT `insert.closeHeader`: that goes to the start of the body.
 - Pictures: `insert.picture {"path":ABS,"width":pt,"alt":…}` keeps the aspect ratio (returns width/height).
 - Find/replace: `edit.replaceAll {"text","with","matchCase"?,"wholeWord"?}` returns `{"replaced":N}`.
-  Special codes `^p ^t` work in both fields (per its params; untested).
+  `^p` in `with` splits into new paragraphs ("One; Two" with `"; "`→`^p` gave two paragraphs); `^t` = tab.
 - Review: `file.setAuthor {"name"}` first (sets comment/revision author and the file's lastModifiedBy; default
   "WordCraft User"). `select.text` → `review.newComment {"text"}` returns `{"id":N}`; `review.reply {"id","text"}`;
   `review.resolveComment {"id","value":true}`; `review.comments` lists them (author, parent, resolved).
   `review.trackChanges {"value":true}` → later edits become revisions; `review.changes` lists them
-  (kind insert/delete, text, author); `review.acceptAll` / `review.rejectAll` exist (untested).
+  (kind insert/delete, text, author); `review.acceptAll` keeps the edits, `review.rejectAll` restores the original (both verified).
   For anonymous output: `file.privacyOptions {"removePersonalInfo":true}` (untested).
+- Landscape page in a portrait document: `layout.break {"kind":"nextPage"}` then
+  `layout.orientation {"value":"landscape"}` → only the new section turns (792×612); the first stays portrait.
 - Page break: `insert.pageBreak` adds a `\f` inside the current paragraph (not a new paragraph); text continues
   on the next page in the same paragraph.
 - Properties: `file.properties {"title","author","subject","keywords"}`.
