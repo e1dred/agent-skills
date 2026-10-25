@@ -28,14 +28,17 @@ def make(style_name, kind, o=None):
     if kind == "paper":
         style_name = "academic"
     S = resolve(style_name, portable=not o.get("local_fonts"))
+    if o.get("figure") == "sample": o["figure"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "sample-figure.png")
     paper = o.get("paper") or ("a4" if kind == "cv" else "letter")
     PW, PH = PAGES[paper]
     HF, BF = S["font"]["heading"], S["font"]["body"]
     C, SZ, B, H, T, RS, TB = S["color"], S["size"], S["body"], S["heading"], S["title"], S["resume"], S["table"]
     notes, links, blocks, styles = [], [], [], []
+    SCRIPT_FONTS = {"arabic": "Arial", "hebrew": "Arial", "japanese": "Noto Sans CJK JP", "chinese": "Noto Sans CJK SC", "korean": "Noto Sans CJK KR"}
+    SCRIPT_LANG = {"arabic": "ar-SA", "hebrew": "he-IL", "japanese": "ja-JP", "chinese": "zh-CN", "korean": "ko-KR"}
     plan = {"style": style_name, "kind": kind, "paper": paper, "font": S["font"], "summary": S["summary"],
             "notes": notes, "links": links, "blocks": blocks, "styles": styles, "header": None, "footer": None,
-            "bullet": {"color": C["accent"]}, "columns": None}
+            "bullet": {"color": C["accent"]}, "columns": None, "footnotes": []}
     m = RS["margins_in"] if kind in ("resume", "cv") else S["margins_in"]
     top, bottom, left, right = [v * 72 for v in m]
     if kind == "paper":
@@ -48,7 +51,7 @@ def make(style_name, kind, o=None):
 
     def para(style, *runs, bullet=False):
         blocks.append({"t": "p", "style": style, "bullet": bullet,
-                       "runs": [(True, r[1]) if isinstance(r, tuple) else (False, r) for r in runs]})
+                       "runs": [r if isinstance(r, tuple) else (False, r) for r in runs]})   # flag: True = bold, "i" = italic
 
     # ---------------------------------------------------------------- page furniture
     pn = o.get("page_numbers")
@@ -74,6 +77,11 @@ def make(style_name, kind, o=None):
             border_left=(C["accent"], 2.5, 8))
         add("Doc Bullet", indent_first=0, after=3, align="left")
         add("Doc Table", font=BF, size=max(bs - 1, 8), color=C["text"], before=2, after=2, align="left", indent_first=0, line=1.0)
+        add("Doc Figure", align="left", before=4, after=2, indent_first=0, line=1.0, keep_next=True)
+        add("Doc Caption", font=BF, size=max(bs - 1.5, 8), color=C["muted"], italic=True, align="left", after=12, indent_first=0, line=1.0)
+        add("Doc Script", indent_first=0, after=B["after"])
+        fn_texts = {"seed log.": "Sign-in sheets were kept by the volunteer on duty at each session."}
+        figure_w = min(300.0, width)
         for k, v in content.DOC:
             if k == "title": para("Doc Title", v)
             elif k == "subtitle":
@@ -81,12 +89,26 @@ def make(style_name, kind, o=None):
                 if o.get("columns"): blocks.append({"t": "columns", "n": int(o["columns"])})
             elif k == "h1": para("Heading 1", v)
             elif k == "h2": para("Heading 2", v)
-            elif k == "p": para("Normal", v)
+            elif k == "p":
+                para("Normal", v)
+                if o.get("script") and not any(b.get("script") for b in blocks):
+                    name, text, rtl = content.SCRIPTS[o["script"]]
+                    blocks.append({"t": "p", "style": "Doc Script", "bullet": False, "runs": [(False, text)], "script": o["script"], "rtl": rtl, "font": SCRIPT_FONTS[o["script"]], "lang": SCRIPT_LANG[o["script"]]})
+                    notes.append("script: %s sample sentence (check the wording with a native reader before reusing it); other machines may substitute the font." % name)
+                if o.get("footnotes") and v.rstrip().endswith("seed log."):
+                    plan["footnotes"].append({"anchor": "seed log.", "text": fn_texts["seed log."]})
             elif k == "quote": para("Doc Quote", v)
             elif k == "bullets":
                 for b in v: para("Doc Bullet", b, bullet=True)
             elif k == "table":
-                blocks.append({"t": "table", "rows": v, "fill": TB["header_fill"], "text": TB["header_text"], "border": TB["border"], "style": "Doc Table"})
+                rows = [list(r) for r in v]; merge = []
+                if o.get("merged_table"):
+                    rows = [["Workshop attendance, autumn 2026"] + [""] * (len(rows[0]) - 1)] + rows
+                    merge = [[0, 0, 0, len(rows[0]) - 1]]
+                blocks.append({"t": "table", "rows": rows, "merge": merge, "sub_fill": TB["border"], "fill": TB["header_fill"], "text": TB["header_text"], "border": TB["border"], "style": "Doc Table"})
+                if o.get("figure"):
+                    blocks.append({"t": "figure", "path": o["figure"], "w": figure_w, "h": figure_w * 520 / 900, "caption": "Figure 1. Workshop attendance by session (invented data).",
+                                   "style": "Doc Figure", "caption_style": "Doc Caption", "alt": "Bar chart of workshop attendance by session"})
         plan["props"] = {"title": "Style sample: " + style_name, "author": "Sample Author", "subject": S["summary"]}
         if o.get("columns"): notes.append("columns: fine for newsletters and handouts; never use them in a résumé (see styles/README.md on ATS).")
 
@@ -138,7 +160,7 @@ def make(style_name, kind, o=None):
             layout = o.get("layout", "chronological")
             X = content.RESUME_EXTRA
             para("Resume Name", R["name"]); para("Resume Headline", R["headline"])
-            para("Resume Contact", "  •  ".join([R["location"], R["email"], R["profile"]]))
+            para("Resume Contact", "  •  ".join([R["location"], R["phone"], R["email"], R["profile"]]))
             para("Heading 1", "Professional Summary"); para("Resume Body", R["summary"])
 
             def competencies():
@@ -177,6 +199,7 @@ def make(style_name, kind, o=None):
     elif kind == "paper":
         fmt = o.get("fmt", "apa")
         P = content.PAPER
+        X = content.PAPER_EXTRAS
         cites = P["cites"][fmt]
         fill = lambda t: t.format(**cites)
         add("Normal", font=BF, size=12, color="000000", before=0, after=0, align="left", indent_first=36, line=2.0)
@@ -185,28 +208,54 @@ def make(style_name, kind, o=None):
         add("Paper Title", font=BF, size=12, color="000000", bold=(fmt == "apa"), align="center", indent_first=0, before=0, after=0, line=2.0)
         add("Paper Meta", font=BF, size=12, color="000000", align="center" if fmt == "apa" else "left", indent_first=0, before=0, after=0, line=2.0)
         add("Reference", font=BF, size=12, color="000000", indent_left=36, indent_first=-36, align="left", before=0, after=0, line=2.0)
+        add("Paper Abstract", font=BF, size=12, color="000000", indent_first=0, align="left", before=0, after=0, line=2.0)
+        add("Block Quote", font=BF, size=12, color="000000", indent_left=36, indent_first=0, align="left", before=0, after=0, line=2.0)
+        add("Table Caption", font=BF, size=12, color="000000", indent_first=0, align="left", before=0, after=0, line=2.0, keep_next=True)
+        add("Paper Table", font=BF, size=11, color="000000", indent_first=0, align="left", before=1, after=1, line=1.0)
         plan["header"] = {"text": (P["surname"] + " ") if fmt == "mla" else "", "number": True, "align": "right"}
+
+        def extras_table():
+            label, title = X["table_caption"]
+            if fmt == "apa":
+                para("Table Caption", (True, label)); para("Table Caption", ("i", title))
+            else:
+                para("Table Caption", f"{label}. {title}")
+            blocks.append({"t": "table", "rows": X["table_rows"], "merge": [], "fill": "FFFFFF", "text": "000000", "border": "000000", "style": "Paper Table"})
+        body = P["body"]
         if fmt == "apa":
             blocks.append({"t": "spacer", "pt": 96})
             para("Paper Title", P["title"])
             for k in ("author", "affiliation", "course", "instructor", "date"): para("Paper Meta", P[k])
             blocks.append({"t": "pagebreak"})
+            if o.get("extras"):
+                para("Heading 1", "Abstract"); para("Paper Abstract", X["abstract"]); para("Normal", ("i", "Keywords: "), X["keywords"])
+                blocks.append({"t": "pagebreak"})
             para("Paper Title", P["title"])
-            for k, v in P["body"]:
-                para({"p": "Normal", "h1": "Heading 1", "h2": "Heading 2"}[k], fill(v))
-            blocks.append({"t": "pagebreak"})
-            para("Heading 1", "References")
-            for r in P["refs"]: para("Reference", r)
         else:
             for v in (P["author"], P["instructor"], P["course"], P["date"]): para("Paper Meta", v)
             para("Paper Title", P["title"])
-            for k, v in P["body"]:
-                if k == "p": para("Normal", fill(v))
-            blocks.append({"t": "pagebreak"})
+        np_ = 0
+        for k, v in body:
+            if fmt == "mla" and k != "p": continue
+            style = {"p": "Normal", "h1": "Heading 1", "h2": "Heading 2"}[k]
+            para(style, fill(v))
+            if k == "p":
+                np_ += 1
+                if np_ == 1 and o.get("footnotes"):
+                    plan["footnotes"].append({"anchor": fill(v)[-26:], "text": "Okafor surveyed 214 gardeners across six sites."})
+                if np_ == 2 and o.get("extras"):
+                    para("Block Quote", X["quote"])
+        if o.get("extras"): extras_table()
+        blocks.append({"t": "pagebreak"})
+        if fmt == "apa":
+            para("Heading 1", "References")
+            for r in P["refs"]: para("Reference", r)
+        else:
             para("Paper Title", "Works Cited")
             for r in P["mla_refs"]: para("Reference", r)
         plan["props"] = {"title": P["title"], "author": P["author"], "subject": fmt.upper() + " student paper (sample)"}
         notes.append("paper: layout only. Check your instructor's or journal's current style guide for rules this sample does not show.")
+        if o.get("extras"): notes.append("extras: abstract (APA), block quote and a captioned table. The table uses a plain grid; APA tables normally use horizontal rules only, which neither app's border tools can set per side.")
 
     return plan
 
@@ -219,7 +268,8 @@ def parse_argv(argv):
         if a.startswith("--") and "=" in a:
             k, v = a[2:].split("=", 1); opt[k.replace("-", "_")] = v
     flags = {a[2:] for a in argv[1:] if a.startswith("--") and "=" not in a}
-    o = {"paper": opt.get("paper", "").lower() or None, "page_numbers": opt.get("page_numbers"), "header_text": opt.get("header_text"),
+    o = {"figure": opt.get("figure"), "script": opt.get("script"), "footnotes": "footnotes" in flags, "merged_table": "merged-table" in flags, "extras": "extras" in flags,
+         "paper": opt.get("paper", "").lower() or None, "page_numbers": opt.get("page_numbers"), "header_text": opt.get("header_text"),
          "columns": opt.get("columns"), "photo": opt.get("photo"), "layout": opt.get("layout", "chronological"),
          "fmt": opt.get("format", "apa"), "local_fonts": "local-fonts" in flags}
-    return pos[0], pos[1], pos[2], {k: v for k, v in o.items() if v not in (None, "")}, flags
+    return pos[0], pos[1], pos[2], {k: v for k, v in o.items() if v not in (None, "", False)}, flags

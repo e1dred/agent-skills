@@ -356,6 +356,12 @@ for the table, gallery, ATS notes and options. Verified: every style in 3 kinds 
 - Columns after a title: `doc.CreateSection(lastParagraph)` closes section 1 there; then on `doc.GetFinalSection()`: `SetType("continuous")` and `SetEqualColumns(2, 360)` (`SetNumberOfColumns` does not exist).
 - Page break before a paragraph: `p.SetPageBreakBefore(true)` (cleaner than a break run, which leaves an empty line).
 - Photo: run the macro, then `word_add_image {"src","width":30,"height":40,"index":1}` (mm), then a second macro `doc.GetElement(0).SetStyle(doc.GetStyle("Resume Photo"))`.
+- `Api.CreateTable(rows, cols)` is confirmed by `get_api_reference` ("first arg ROWS"). `tbl.MergeCells([cell objects])` merges (cells of the same row → the row then has FEWER cells: fill text after merging, using `row.GetCellsCount()`).
+- No paragraph-direction call exists in this macro API (no `SetBidi` anywhere; `SetLanguage` exists on runs/paragraphs/text properties). Right-to-left and CJK text render correctly with the right font plus `SetJc("right")` for RTL, but the paragraph stays left-to-right underneath.
+- `word_comment_text {"search","prompt":"Add a footnote","comment_text":"…","type":"footnote"}` adds a real footnote but anchors it at the END of the paragraph containing the phrase.
+- Picture alt text: the image tools have no parameter; use `doc.GetAllDrawingObjects()[n].SetDescription("…")` (also `SetTitle`, `SetName`) in a macro afterwards (document order).
+- `word_add_image {"src","width","height","index"}` inserts BEFORE the element at `index` (1-based, top-level elements); when adding several pictures in ascending order, add 1 for each already inserted.
+- Introspect objects when the reference is silent: `for (var k in obj) if (typeof obj[k] === "function" && /pattern/i.test(k)) …` inside `word_write_macro`.
 
 ## Traps
 

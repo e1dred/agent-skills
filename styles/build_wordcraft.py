@@ -12,6 +12,11 @@ Options (all `--name=value`):
   --photo=/abs/pic.png         resume/cv only (human-first, not ATS-safe)
   --layout=chronological|functional|combined              resume only
   --format=apa|mla             paper only
+  --figure=sample|/abs/pic.png doc only: a captioned figure after the table (sample = styles/assets/sample-figure.png)
+  --merged-table               doc only: add a merged title row to the table
+  --footnotes                  doc/paper: one sample footnote
+  --script=arabic|hebrew|japanese|chinese|korean   doc only: one sample sentence in that script (RTL handled)
+  --extras                     paper only: abstract (APA), block quote, captioned table
   --local-fonts                allow fonts installed here but not shipped with Office
   --overwrite                  replace an existing out.docx (otherwise the script refuses)
 Notes about ATS-safety and other cautions go to stderr. Replace the sample text in content.py with real content.
@@ -102,13 +107,23 @@ first = [True]
 pending_before = [0]
 pending_break = [False]
 prev_bullet = [False]
+prev_script = [False]
 STYLE_BEFORE = {n: p.get("before", 0) for n, p in P["styles"]}
+STYLE_ALIGN = {n: p.get("align", "left") for n, p in P["styles"]}
 
 
 def new_para():
     if not first[0]:
         c("text.newParagraph")
     first[0] = False
+
+
+def type_runs(runs):
+    for flag, text in runs:
+        if flag is True: c("format.bold", value=True)       # never set bold False: direct formatting would override the style
+        elif flag == "i": c("format.italic", value=True)
+        c("text.insert", text=text)
+        if flag: c("format.resetChar")
 
 
 for blk in P["blocks"]:
@@ -118,15 +133,23 @@ for blk in P["blocks"]:
         c("para.style", style=blk["style"])
         # a new paragraph inherits the previous paragraph's DIRECT properties, so set these explicitly every time
         props = {"spaceBefore": pending_before[0] or STYLE_BEFORE.get(blk["style"], 0), "pageBreakBefore": pending_break[0]}
+        pending_before[0] = 0; pending_break[0] = False
         if blk["bullet"] or prev_bullet[0]:  # only touch numbering when needed: setting num 0 also drops the style's indents
             props["numbering"] = {"level": 0, "num": BULLET[0] if blk["bullet"] else 0}
         prev_bullet[0] = blk["bullet"]
-        pending_before[0] = 0; pending_break[0] = False
+        if blk.get("script"):
+            # in a right-to-left paragraph "left" means the START edge, i.e. the right-hand side on the page
+            props.update(bidi=bool(blk["rtl"]), align="left")
+            prev_script[0] = True
+        elif prev_script[0]:
+            props.update(bidi=False, align=STYLE_ALIGN.get(blk["style"], "left")); prev_script[0] = False
         c("para.set", props=props)
-        for bold, text in blk["runs"]:
-            if bold: c("format.bold", value=True)  # never set bold False: direct formatting would override the style
-            c("text.insert", text=text)
-            if bold: c("format.resetChar")
+        if blk.get("script"):
+            f = blk["font"]
+            c("format.set", props={"font": f, "fontCs": f, "fontEa": f})
+            c("text.insert", text=blk["runs"][0][1]); c("format.resetChar")
+        else:
+            type_runs(blk["runs"])
     elif t_ == "spacer":
         pending_before[0] = blk["pt"]
     elif t_ == "pagebreak":
@@ -138,22 +161,34 @@ for blk in P["blocks"]:
         new_para()
         c("para.style", style=blk["style"])
         c("insert.picture", path=blk["path"], width=blk["w"], alt="Portrait photo")
+    elif t_ == "figure":
+        new_para(); c("para.style", style=blk["style"])
+        c("insert.picture", path=blk["path"], width=blk["w"], alt=blk["alt"])
+        c("text.newParagraph"); c("para.style", style=blk["caption_style"]); c("text.insert", text=blk["caption"])
     elif t_ == "table":
         new_para()
-        rows = blk["rows"]; ncol = len(rows[0])
+        rows = blk["rows"]; ncol = len(rows[0]); merged = bool(blk.get("merge"))
         c("insert.table", rows=len(rows), cols=ncol, style="Table Grid")
         for ri, row in enumerate(rows):
             for ci, cell in enumerate(row):
-                c("para.style", style=blk["style"]); c("text.insert", text=cell)
+                c("para.style", style=blk["style"])
+                if cell: c("text.insert", text=cell)
                 if not (ri == len(rows) - 1 and ci == ncol - 1): c("caret.right")
         for _ in range(len(rows) - 1): c("caret.up")
-        c("table.selectRow"); c("table.shading", color=rgb(blk["fill"]))
+        c("table.selectRow")
+        if merged: c("table.merge"); c("table.selectRow")
+        c("table.shading", color=rgb(blk["fill"]))
         c("format.set", props={"bold": True, "color": rgb(blk["text"])}); c("table.repeatHeader")
+        if merged:
+            c("para.set", props={"align": "center"})
+            c("caret.down"); c("table.selectRow"); c("table.shading", color=rgb(blk["sub_fill"])); c("format.set", props={"bold": True})
         c("table.borders", color=rgb(blk["border"]), width=0.5)
         c("caret.docEnd"); first[0] = True
 
 for text, url in P["links"]:
     c("select.text", text=text); c("insert.link", url=url)
+for fn in P["footnotes"]:   # last: references.footnote leaves the caret inside the footnote; select.text finds the anchor wherever the caret is
+    c("select.text", text=fn["anchor"]); c("caret.right"); c("references.footnote", text=fn["text"])
 pr = P["props"]
 c("file.properties", title=pr["title"], author=pr["author"], subject=pr["subject"])
 json.dump({"template": "blank", "commands": cmds, "save": [out]}, sys.stdout)

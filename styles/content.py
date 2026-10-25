@@ -34,6 +34,7 @@ RESUME = {
     "name": "Alex Morgan",
     "headline": "Landscape Designer  |  Nursery Manager  |  Estimator",
     "location": "Portland, OR, USA",
+    "phone": "(555) 010-0100",
     "email": "alex.morgan@example.com",
     "profile": "linkedin.com/in/example",
     "summary": ("Landscape designer with 9 years of experience planning residential gardens and running a retail nursery. "
@@ -124,4 +125,25 @@ PAPER = {
         "Haddad, Nadia, and Per Lindqvist. \u201cShared Plots and Shared Lives: Gardens in Mid-Sized Cities.\u201d Journal of Example Studies, vol. 12, no. 3, 2021, pp. 45\u201361.",
         "Okafor, Tunde. Belonging by the Bed: A Seasonal Survey of Community Gardeners. Example Press, 2022.",
     ],
+}
+
+# Short sample sentences used to check right-to-left and CJK rendering. Have a native reader confirm the wording before you reuse it.
+SCRIPTS = {
+    "arabic": ("Arabic, right to left", "\u0647\u0630\u0627 \u0646\u0635 \u062a\u062c\u0631\u064a\u0628\u064a \u0642\u0635\u064a\u0631 \u064a\u0648\u0636\u062d \u0627\u062a\u062c\u0627\u0647 \u0627\u0644\u0643\u062a\u0627\u0628\u0629 \u0645\u0646 \u0627\u0644\u064a\u0645\u064a\u0646 \u0625\u0644\u0649 \u0627\u0644\u064a\u0633\u0627\u0631.", True),
+    "hebrew": ("Hebrew, right to left", "\u05d6\u05d4\u05d5 \u05d8\u05e7\u05e1\u05d8 \u05dc\u05d3\u05d5\u05d2\u05de\u05d4 \u05e7\u05e6\u05e8 \u05e9\u05de\u05e8\u05d0\u05d4 \u05db\u05ea\u05d9\u05d1\u05d4 \u05de\u05d9\u05de\u05d9\u05df \u05dc\u05e9\u05de\u05d0\u05dc.", True),
+    "japanese": ("Japanese", "\u3053\u308c\u306f\u3001\u65e5\u672c\u8a9e\u306e\u6587\u7ae0\u304c\u3069\u306e\u3088\u3046\u306b\u8868\u793a\u3055\u308c\u308b\u304b\u3092\u793a\u3059\u77ed\u3044\u30b5\u30f3\u30d7\u30eb\u3067\u3059\u3002", False),
+    "chinese": ("Chinese (Simplified)", "\u8fd9\u662f\u4e00\u4e2a\u7b80\u77ed\u7684\u793a\u4f8b\uff0c\u7528\u6765\u5c55\u793a\u4e2d\u6587\u6587\u672c\u7684\u663e\u793a\u6548\u679c\u3002", False),
+    "korean": ("Korean", "\uc774\uac83\uc740 \ud55c\uad6d\uc5b4 \ud14d\uc2a4\ud2b8\uac00 \uc5b4\ub5bb\uac8c \ud45c\uc2dc\ub418\ub294\uc9c0 \ubcf4\uc5ec \uc8fc\ub294 \uc9e7\uc740 \uc608\ubb38\uc785\ub2c8\ub2e4.", False),
+}
+
+# Extra blocks for papers (--extras): an abstract, a block quote and a captioned table.
+PAPER_EXTRAS = {
+    "abstract": ("This paper compares two recent studies of community gardens and argues that their clearest benefit is social. "
+                 "It summarises how each study measured belonging, notes where the findings agree, and suggests that weekly open sessions "
+                 "matter more than garden size."),
+    "keywords": "community gardens, belonging, urban neighbourhoods",
+    "quote": ("The garden gate is rarely locked, and that, more than the vegetables, seems to be the point: anyone may walk in, "
+              "pick up a trowel, and be asked what they are growing."),
+    "table_caption": ("Table 1", "Survey sample by group"),
+    "table_rows": [["Group", "Respondents", "Mean belonging score"], ["Gardeners", "112", "4.1"], ["Neighbours", "102", "3.4"]],
 }

@@ -4,7 +4,8 @@
     python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 
 STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper). Options (`--name=value`): --paper=letter|a4,
---page-numbers=bottom-center|bottom-right|top-right, --header-text=…, --columns=2 (doc), --photo=/abs/pic.png (resume/cv),
+--page-numbers=bottom-center|bottom-right|top-right, --header-text=…, --columns=2 (doc), --photo=/abs/pic.png (resume/cv), --figure=sample|/abs/pic.png, --merged-table, --footnotes,
+--script=arabic|hebrew|japanese|chinese|korean (doc), --extras (paper),
 --layout=chronological|functional|combined (resume), --format=apa|mla (paper), --local-fonts, --pdf (also save a PDF rendered by
 ONLYOFFICE, for checking), --overwrite (save_document never overwrites on its own; without this flag the script refuses if out.docx exists).
 Notes about ATS-safety go to stderr. Macro units: font sizes in half-points, spacing/indents in twips (20 per pt), borders in 1/8 pt.
@@ -91,12 +92,18 @@ function bulletLevel() {
   return lvl;
 }
 var pendingBefore = 0, pendingBreak = false, lastPara = null, COLS = 0;
-function addPara(style, runs, bullet) {
+function addPara(style, runs, bullet, scr) {
   var p = Api.CreateParagraph();
   p.SetStyle(doc.GetStyle(style));
+  if (scr) {   // no paragraph-direction call exists in this macro API: right-align RTL text, set font and proofing language on the run
+    var rr = Api.CreateRun(); rr.SetFontFamily(scr.font); try { rr.SetLanguage(scr.lang); } catch (e) {}
+    rr.AddText(runs[0][1]); p.AddElement(rr); if (scr.rtl) p.SetJc("right");
+    doc.Push(p); lastPara = p; return;
+  }
   for (var i = 0; i < runs.length; i++) {
     var seg = runs[i], r = Api.CreateRun();
-    if (seg[0]) r.SetBold(true);
+    if (seg[0] === true) r.SetBold(true);
+    if (seg[0] === "i") r.SetItalic(true);
     var bits = seg[1].split("\t");
     for (var k = 0; k < bits.length; k++) { if (k > 0) r.AddTabStop(); if (bits[k]) r.AddText(bits[k]); }
     p.AddElement(r);
@@ -110,18 +117,26 @@ function addTable(b) {
   var rows = b.rows, nr = rows.length, nc = rows[0].length;
   var tbl = Api.CreateTable(nr, nc);  // checked: in this build the FIRST argument is the row count
   tbl.SetWidth("percent", 100);
-  for (var r = 0; r < nr; r++) for (var c = 0; c < nc; c++) {
-    var cell = tbl.GetRow(r).GetCell(c), p = cell.GetContent().GetElement(0);
-    p.SetStyle(doc.GetStyle(b.style));
-    var run = Api.CreateRun(); run.AddText(rows[r][c]); p.AddElement(run);
-    if (r === 0) { cell.SetShd("clear", col(b.fill)); run.SetBold(true); run.SetColor(col(b.text)); }
+  var merged = b.merge && b.merge.length > 0;
+  if (merged) { var mc = []; for (var q = b.merge[0][1]; q <= b.merge[0][3]; q++) mc.push(tbl.GetRow(b.merge[0][0]).GetCell(q)); tbl.MergeCells(mc); }  // the row then has ONE cell
+  var hdrRows = merged ? 2 : 1;
+  for (var r = 0; r < nr; r++) {
+    var nCells = tbl.GetRow(r).GetCellsCount();
+    for (var c = 0; c < nCells && c < rows[r].length; c++) {
+      var cell = tbl.GetRow(r).GetCell(c), p = cell.GetContent().GetElement(0);
+      p.SetStyle(doc.GetStyle(b.style));
+      var run = Api.CreateRun(); run.AddText(rows[r][c]); p.AddElement(run);
+      if (r === 0) { cell.SetShd("clear", col(b.fill)); run.SetBold(true); run.SetColor(col(b.text)); if (merged) p.SetJc("center"); }
+      else if (r === 1 && merged) { cell.SetShd("clear", col(b.sub_fill)); run.SetBold(true); }
+    }
   }
   ["Top", "Bottom", "Left", "Right", "InsideH", "InsideV"].forEach(function (s) { tbl["SetTableBorder" + s]("single", 4, 0, col(b.border)); });
   doc.Push(tbl);
 }
 for (var j = 0; j < PLAN.blocks.length; j++) {
   var b = PLAN.blocks[j];
-  if (b.t === "p") addPara(b.style, b.runs, b.bullet);
+  if (b.t === "p") addPara(b.style, b.runs, b.bullet, b.script ? {font: b.font, lang: b.lang, rtl: b.rtl} : null);
+  else if (b.t === "figure") addPara(b.caption_style, [[false, b.caption]], false);   // caption only; word_add_image puts the picture before it
   else if (b.t === "spacer") pendingBefore = b.pt;
   else if (b.t === "pagebreak") pendingBreak = true;
   else if (b.t === "table") addTable(b);
@@ -136,10 +151,23 @@ return {elements: doc.GetElementsCount()};
 
 plan_js = json.dumps(P, ensure_ascii=False)
 calls = [["word_write_macro", {"code": JS.replace("__PLAN__", plan_js)}]]
-photo = next((b for b in P["blocks"] if b["t"] == "photo"), None)
-if photo:
-    calls.append(["word_add_image", {"src": photo["path"], "width": round(photo["w"] * 0.3528), "height": round(photo["h"] * 0.3528), "index": 1}])
-    calls.append(["word_write_macro", {"code": 'var doc = Api.GetDocument(); var p = doc.GetElement(0); p.SetStyle(doc.GetStyle("Resume Photo")); return "photo styled";'}])
+# 1-based top-level element index of every paragraph/table the macro creates (the initial empty paragraph is removed)
+count, images = 0, []
+for b in P["blocks"]:
+    if b["t"] in ("p", "table"): count += 1
+    elif b["t"] == "figure":
+        count += 1; images.append((count, b["path"], b["w"], b["h"], b["style"], b["alt"]))
+    elif b["t"] == "photo":
+        images.append((1, b["path"], b["w"], b["h"], b["style"], "Portrait photo"))
+for fn in P["footnotes"]:   # this tool anchors the footnote at the END of the paragraph that contains the phrase
+    calls.append(["word_comment_text", {"search": fn["anchor"], "prompt": "Add a footnote", "comment_text": fn["text"], "type": "footnote"}])
+images.sort(key=lambda t: t[0])
+for j, (idx, path, w, h, style, alt) in enumerate(images):      # inserting in ascending order shifts later targets by one each time
+    calls.append(["word_add_image", {"src": path, "width": round(w * 0.3528), "height": round(h * 0.3528), "index": idx + j}])
+if images:
+    sets = ";".join('doc.GetElement(%d).SetStyle(doc.GetStyle("%s"))' % (idx + j - 1, style) for j, (idx, _, _, _, style, _) in enumerate(images))
+    alts = json.dumps([a for *_, a in images])   # drawings come back in document order; the image tool sets no alt text itself
+    calls.append(["word_write_macro", {"code": "var doc = Api.GetDocument(); " + sets + "; var ds = doc.GetAllDrawingObjects(), alts = " + alts + "; for (var q = 0; q < ds.length && q < alts.length; q++) ds[q].SetDescription(alts[q]); return 'images styled';"}])
 calls.append(["save_document", dict({"path": out, "format": "docx"}, **({"overwrite": True} if overwrite else {}))])
 if "pdf" in flags:  # also render with ONLYOFFICE itself, for checking the look
     calls.append(["save_document", dict({"path": out[:-5] + ".pdf", "format": "pdf"}, **({"overwrite": True} if overwrite else {}))])

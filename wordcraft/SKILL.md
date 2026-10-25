@@ -241,6 +241,11 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - Tables: `insert.table {"rows","cols","style":"Table Grid"}`, per cell `para.style` + `text.insert` + `caret.right`; then `caret.up` to the header row, `table.selectRow`, `table.shading {"color"}`, `format.set {"props":{"bold":true,"color"}}`, `table.repeatHeader`, `table.borders {"color","width":0.5}`.
   `table.borders` applies to the **whole table** and ignores `preset`/`style:none` (unknown parameter names are silently ignored); a borderless start is table style `"Normal Table"`. Then `caret.docEnd` leaves the table.
 - Photo: `insert.picture {"path","width":85,"alt"}` in its own paragraph above the name.
+- Merged cells: fill every cell (skip text in the cells to be merged), `caret.up` to the row, `table.selectRow`, `table.merge` (→ `gridSpan`), then `table.selectRow` AGAIN before `table.shading`/`format.set` (the merge drops the selection).
+- Footnote after a phrase: `select.text {"text":"seed log."}` → `caret.right` → `references.footnote {"text":…}`; do all footnotes LAST (the caret stays inside the footnote).
+- Right-to-left: `para.set {"props":{"bidi":true,"align":"left"}}` — in a bidi paragraph "left" is the START edge, so it renders on the right of the page ("right" renders left). Set the font with `format.set {"props":{"font":"Arial","fontCs":"Arial"}}`; for CJK add `"fontEa":"Noto Sans CJK JP"`. Reset the next paragraph with `bidi:false` and `format.resetChar`.
+- Figure: `insert.picture {"path","width":300,"alt":"…"}` in a `Doc Figure` paragraph, then `text.newParagraph` and the caption paragraph; the alt text lands as `descr` on the drawing.
+- `wordcraft-cli commands` lists ids only (no parameter docs, no `describe`): learn parameters from this file or by trial, and remember unknown parameter names are silently ignored.
 
 ## Property names (verified via `inspect`)
 

@@ -1,6 +1,6 @@
 # Document styles
 
-Eight ready-made looks. Each comes as a **document** (title, headings, body, bullets, quote, table), an **ATS-friendly résumé**, a
+Eight ready-made looks. Each comes as a **document** (title, headings, body, bullets, quote, table, optional figure, footnote and right-to-left or CJK text), an **ATS-friendly résumé**, a
 **European-style CV**, and (for the academic style) an **APA or MLA student paper**, on **US Letter or A4**. One plan feeds both
 WordCraft and ONLYOFFICE, so they produce the same look. All sample text is invented.
 
@@ -42,6 +42,11 @@ python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && pytho
 | `--photo=/abs/pic.png` | `resume`, `cv` | Portrait above the name. |
 | `--layout=chronological` / `functional` / `combined` | `resume` | Which résumé structure. |
 | `--format=apa` / `--format=mla` | `paper` | Student-paper layout. |
+| `--extras` | `paper` | Abstract (APA), block quote, captioned table. |
+| `--figure=sample` / `--figure=/abs/pic.png` | `doc` | Picture with a caption after the table. |
+| `--merged-table` | `doc` | Adds a merged title row above the table header. |
+| `--footnotes` | `doc`, `paper` | One sample footnote. |
+| `--script=arabic` / `hebrew` / `japanese` / `chinese` / `korean` | `doc` | One sample sentence in that script (right-to-left handled). |
 | `--local-fonts` | all | Allow fonts installed here but not shipped with Office. |
 | `--overwrite` | all | Replace an existing output file (otherwise the builder refuses). |
 
@@ -69,12 +74,35 @@ based on common ATS guidance; **it was not tested against any real ATS software*
 So: send a `professional`/`clean`/`traditional` résumé (or any style, as long as it is the plain single-column build) through online portals, and
 use a designed style, a photo or columns for a copy you hand to a person.
 
+## Check a résumé: `ats_check.py`
+
+```sh
+python3 -I ats_check.py resume.docx [more.docx]      # PASS / WARN / FAIL lines; exit code 1 if any FAIL
+```
+
+A read-only lint of the structures that commonly break applicant-tracking parsers: **FAIL** for tables, text boxes, more than one column, contact
+details only in a header or footer, or no e-mail address in the body; **WARN** for pictures, bullets typed as characters, headings an ATS may not
+recognise, fewer than two dates, or text in headers/footers. It resolves style *names* (ONLYOFFICE writes numeric style ids such as `139` for "Heading 1";
+parsers read the name). It is a checklist, not a parser: a file that passes can still fail in a particular ATS, and nothing here was tested against one.
+Checked: it passes the generated résumés and CVs in both apps, flags the photo CV and a columns/tables document, fails a deliberately bad file
+(layout table, header-only contact, glyph bullets), and passes a hand-made résumé built for ATS.
+
 ## Tables, headers and footers, columns
 
-- **Tables** in `doc`: a thin grid, a filled header row in the style's colour, small body text; the header row repeats on a new page in WordCraft.
+- **Tables** in `doc`: a thin grid, a filled header row in the style's colour, small body text; the header row repeats on a new page in WordCraft. `--merged-table` adds a title row merged across all columns (shown in both apps).
   (Per-side borders and banded rows are not supported by WordCraft's border command, so both apps use the same simple grid.)
 - **Headers and footers**: `--page-numbers` and `--header-text`. `paper` builds the page-number header APA and MLA expect (MLA: surname and number).
 - **Columns**: two newspaper-style columns for the body, the title spanning the page.
+
+## Figures, footnotes, other scripts
+
+- **Figure**: picture in its own paragraph with a caption underneath ("Figure 1. …"); the sample is `assets/sample-figure.png` (invented data). Alt text is set in both apps (WordCraft through `insert.picture`'s `alt`; ONLYOFFICE through `SetDescription` on the drawing, because its image tool has no alt-text parameter).
+- **Footnotes** come from each app's own footnote feature, so they renumber and move with the text. WordCraft places the mark right after the phrase; ONLYOFFICE's footnote tool always puts it at the **end of the paragraph** containing the phrase.
+- **Right-to-left (Arabic, Hebrew)**: WordCraft gets a true right-to-left paragraph (`bidi`); in such a paragraph "left" alignment means the *start* edge, so it ends up on the right of the page.
+  This ONLYOFFICE build has no macro call for paragraph direction, so those paragraphs are right-aligned with the right font and proofing language: the letters, shaping and punctuation render correctly,
+  but the paragraph is still left-to-right underneath. For fully right-to-left documents use WordCraft, or switch the direction in the ONLYOFFICE editor.
+- **CJK (Japanese, Chinese, Korean)**: set the East-Asian font (`fontEa` in WordCraft, the run font in ONLYOFFICE) and the proofing language. The samples use Noto Sans CJK here; on other machines Office substitutes its own CJK fonts.
+  The sample sentences are short and simple; have a native reader check wording before you reuse them.
 
 ## Papers (APA 7 and MLA 9 layout)
 
@@ -82,8 +110,7 @@ use a designed style, a photo or columns for a copy you hand to a person.
 reference list. `--format=apa`: title page (bold title, author, affiliation, course, instructor, date), then the paper from page 2 with centred
 bold level-1 and left bold level-2 headings, then *References*. `--format=mla`: no title page; four-line heading block at the top left, centred
 title, *Works Cited* on a new page, "Surname page" header. This is a layout aid, not a style-guide checker: the sample sources are fictional and
-details such as running heads for professional papers, abstracts, block quotes and table captions are not shown. Check your instructor's or
-journal's current guide.
+details such as running heads for professional papers, multi-level heading rules and figure captions are not shown. `--extras` adds an abstract (APA), a block quote and a captioned table; APA tables normally use horizontal rules only, but neither app's border tools can set borders per side, so the sample table has a plain grid. Check your instructor's or journal's current guide.
 
 ## Paper size
 
@@ -99,6 +126,13 @@ structure but is **not** the official Europass template. A photo, date of birth,
 discouraged or unlawful to ask for in others (including the US and UK), so none are included; add them only where the local norm calls for it.
 Two pages are normal for a senior CV.
 
+## Europass
+
+The official Europass CV is an EU template and online editor, so it is deliberately **not** reproduced here. The `cv` kind follows the same section order so the
+content transfers: Profile (personal statement) → Work experience → Education and training → Languages (mother tongue, then CEFR levels) → Digital skills → Certificates →
+Interests. To get an official Europass file, enter the same content in the editor on the Europass website (its fields change over time, so check the current form); use this
+`cv` kind for a plain, ATS-friendly .docx or PDF of the same information.
+
 ## Fonts and fallbacks
 
 Each style lists fonts in order of preference in `styles.json`; `resolve.py` picks the first one that is **installed**. By default it also requires a
@@ -112,5 +146,4 @@ Every style as `doc`, `resume` and `cv`, and the feature samples (columns, APA, 
 both apps and rendered (WordCraft with its own renderer, ONLYOFFICE through its own PDF export). The builders check for macro errors and refuse to
 overwrite an existing file unless asked.
 
-Not covered: the official Europass template; footnotes and citations managed by the app; images other than a CV photo; right-to-left or CJK text;
-tables with merged cells; real-ATS testing.
+Not covered: the official Europass template (see above); app-managed citations and bibliographies (WordCraft has a citation feature that this sample does not use; ONLYOFFICE's reference tooling was not checked; here references are typed text); vertical CJK text; mixed-direction paragraphs; real-ATS testing.
