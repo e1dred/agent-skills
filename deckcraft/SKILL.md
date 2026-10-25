@@ -116,6 +116,22 @@ One `run` built title + bullets + table + chart + text box + link + background +
   `view.closeMaster`, then `slide.layout {"layout":"My Layout"}` (name or the returned id). `master.renameLayout/deleteLayout` also exist.
 - `review.accessibility` also reports "Missing slide title" for blank/layout-only slides; give them titles or accept.
 
+## Next-tier workflows (verified headless, 0.11.1; render checked)
+
+- **Brand theme**: `design.colors {"name":"Brand","colors":{"dk1":"#1B1B1B","lt1":"#FFFFFF","dk2":"#16324F","lt2":"#F2F5F8","accent1":"#0E7C86","accent2":"#E4572E","accent3":"#C8963E","accent4":"#6B2E5F","accent5":"#17A398","accent6":"#7A8B99","hlink":"#0E7C86","folHlink":"#6B2E5F"}}` and
+  `design.fonts {"name":"Brand fonts","major":"Georgia","minor":"Calibri"}` restyle the whole deck (titles became Georgia, charts and shapes took accent1/accent2 in order). `design.variant {"index":0..3}` picks a built-in colour variant.
+- **Footer, date, slide number**: `design.headerFooter {"slideNumber":true,"footer":true,"footerText":"Sample deck","hideOnTitle":true}` (applies to all slides unless `"all":false`).
+- **Chart types** (`insert.chart {"type":…,"rect","categories","series":[{name,values}]}`): `pie` (one series), `line` (several series), `stackedColumn` rendered correctly; also bar, doughnut, area, scatter, combo, waterfall… Change later with `chart.type {"type"}` / `chart.data {"categories","series"}` after `edit.select`. The default title is "Chart Title": set `chart.options {"title":…}`.
+- **Tables**: `table.style {"style":"medium2-accent1|light1-accent2|dark1-tx1|grid|none"}`, `table.merge {"from":[0,0],"to":[0,2]}` (a merged header row), `table.borders {"which":"inside|outside|all|top|bottom|insideH…","color":"#BBBBBB","width":0.75}`; table styles follow the theme's accent colours.
+- **Shapes**: `shape.connect {"from":271,"to":272,"preset":"bentConnector3|straightConnector1|curvedConnector3"}` → glued connector `{id,fromSite,toSite}` (it follows the shapes when they move);
+  `shape.effects {"ids":[271],"shadow":"outer","glow":{"color":"#0E7C86","radius":8}}` (also softEdges, reflection, bevel, threeD); `shape.merge {"op":"union|combine|fragment|intersect|subtract","ids":[273,274]}` → one freeform `{ids:[280]}`; `insert.icon {"name":"star","rect":[…]}` (`insert.icons` lists them), `insert.wordArt {"text","style":3}`.
+- **Audio**: `insert.audio {"path":"tone.wav","rect":[60,400,40,40]}` → `{contentType:"audio/wav",durationMs:1000,playable:true}` and a speaker icon on the slide (`insert.video` is the same shape).
+- **Comments and review**: `comment.add {"text","x","y"}` → `{index}`, `comment.reply {"index","text"}`, `comment.resolve {"index","resolved":true}`, `comment.list`, `comment.delete {"index"|"all":true}`; `review.spelling` → misspellings with `suggestions` (Recieve → Receive, teh → the), `review.spellingChange {"shape","word","to"}`;
+  `review.compare {"path":"revised.deckcraft"}` → `{changes:[{kind:"inserted",slide:2,details:["New slide"]}]}` (`review.revisions` re-reads them; `review.reject` only while a compare is open).
+- **Show setup**: `show.customShow {"name":"Short","slides":[0,2]}` then `show.setup {"type":"speaker|browsed|kiosk","loop":true,"custom":"Short"}`; `show.fromStart` plays (live app).
+- **Links between slides**: `edit.select {"ids":[265]}` (a shape must be selected) then `insert.hyperlink {"slide":2,"tooltip":"…"}`; without a selection: "select text or a shape". `transition.set {"kind":"morph","duration":900}` works (`transition.list` shows the kinds).
+- The live-app-only and video items remain untested: playing a show, presenter view, `insert.video`, narration.
+
 ## New in 0.11.x (verified headless)
 
 - Path editing on a shape: `shape.openPath {"index":0}` (break a closed outline), `shape.closePath {"index":0}`, `shape.deleteSegment {"index":0,"segment":2}`
@@ -136,3 +152,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - 2026-10-25 (2): themes, animation, transition, picture, notes, outline import, notes/handout PDF, GIF, pptx round trip verified headless.
 - 2026-10-25 (3): full deck build (text, table cells, chart options, link, background, slide management, sections, accessibility) verified headless incl. pptx round trip.
 - 2026-10-26: SmartArt, text builds, auto-advance timing, align/distribute/group, picture crop/adjust/style, custom master layout verified headless.
+- 2026-10-25 (4): brand theme colours/fonts, header/footer, chart types, table style/merge/borders, connectors, shape effects/merge, icon/WordArt/audio, comments, spelling, compare, custom show, slide links, morph verified.
