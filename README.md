@@ -41,6 +41,12 @@ The PhotoCraft, GridCraft and DeckCraft skills used [artcraft-skills](https://gi
 as background reading about what the app can do; nothing was copied, and everything in this repo was run and checked on
 Linux. Thanks to its author.
 
+## Keeping up with app updates
+
+The apps (AppImages) update themselves, but a separately installed `<app>-cli` does not, and a CLI older than its app has caused
+real failures (live-bridge timeouts). Run `./check-versions.sh` at the start of a session: it lists app vs CLI versions, flags
+mismatches and reports a pending ONLYOFFICE flatpak update. It only reads; refresh a CLI by re-extracting it from the AppImage.
+
 ## Contributing
 
 Corrections and new verified notes are welcome. Please only add what you have confirmed on a named app

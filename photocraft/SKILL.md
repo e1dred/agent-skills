@@ -230,6 +230,12 @@ are still unverified.
   `layer.duplicate` → `select.subject` → `layer.layerMask.revealSelection` it **kept the left-hand plants, the lamp and the face but removed the whole dark suit and the right half** —
   still wrong (same failure class as 0.15.1). Keep using the manual `select.lasso` + `select.refineEdge` method below. Judge any cutout by compositing over a loud colour
   (`layer.newFillLayer.solidColor {"color":"#ff00ff"}` then `layer.moveTo {"layer":id,"target":cutoutId,"position":"below"}`); transparent and a dark suit both look black on a PNG viewer.
+- **`type.fillPath {"layer"?:id,"shape"?:layerId}`** (verified): wraps a type layer's text inside a shape layer's outline (default: the work path) → `{layer,subpaths}`.
+  Make a paragraph type layer with `"box":[x,y,w,h]` first; the text re-flows to the ellipse (top-aligned, ragged to the outline); keep the shape layer.
+- **Style presets as ASL** (verified): `style.presets.list {}` → groups (Basics 8, Text Effects 7, Buttons 6 = 21 built-ins);
+  `style.presets.exportAsl {"path":"x.asl","group"?,"styles"?}` → `{count:21,bytes,patterns,warnings}` (31 KB);
+  `style.presets.importAsl {"path":"x.asl","group":"Name","replace":true}` → imports 21; a name clashing with a built-in group gets " 2" appended, built-ins are never replaced.
+  `help.checkForUpdates {}` / `updates.status {}` take no params.
 - New commands in 0.16.0: `type.fillPath`, `style.presets.importAsl/exportAsl`, `help.checkForUpdates`, `updates.status` (935 → 940). Nothing removed; every recipe
   above (crop, curves, unsharp mask, resize, saves) gave the same results on both CLIs. `select.subject/object/focusArea/quick` parameter docs are unchanged.
 

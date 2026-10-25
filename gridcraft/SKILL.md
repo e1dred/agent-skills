@@ -124,6 +124,15 @@ sparkline, lookups, chart, protect.
 Notes: `cat` prints values as formatted (`1,200`, `33.33%`); add `--formulas` for formulas. Sparkline cells don't extend `info`'s used range.
 New sheets and charts keep working after protection; protect last in the script.
 
+## New in 0.12.x (verified headless)
+
+- `pivot.options {"enableShowDetails":true}` then `pivot.showDetails {"cell":"B5"}` → `{sheet:"Sheet3",records:1}`: writes the source records behind that value
+  to a new sheet *before* the current one (error if show-details is off). `pivot.list {}` shows layout, grand totals, `enableShowDetails`.
+- `formulas.pasteName {"list":true,"at":"J1"}` writes each defined name and its target (`TaxRate` / `=Sheet1!$H$1`) as two columns; `{"name":"TaxRate"}` starts `=TaxRate` in the active cell.
+- `data.outlineSettings {"sheet","summaryBelow":false,"summaryRight":true}`, `view.showOutlineSymbols {"on":true}`, `view.statusBar {"sum":true,"average":true}` (returns all six flags),
+  `automate.stopAction {}` → `{stopped:false}` when nothing is running.
+- `run --quiet` suppresses command results: omit it when you need the returned values (it hid `pivot.showDetails`' answer).
+
 ## Version note (2026-10-25)
 
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,

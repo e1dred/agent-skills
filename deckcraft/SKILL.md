@@ -102,6 +102,14 @@ One `run` built title + bullets + table + chart + text box + link + background +
    `shape.altText {"text":"…","ids":[266]}` (or `"decorative":true`); the re-check returned `[]`.
 8. Tables: new tables are 3-row styled with the theme colour; empty cells stay empty; row/col changes via `table.insertRowBelow {"row","id"}` etc.
 
+## New in 0.11.x (verified headless)
+
+- Path editing on a shape: `shape.openPath {"index":0}` (break a closed outline), `shape.closePath {"index":0}`, `shape.deleteSegment {"index":0,"segment":2}`
+  (**only on a closed outline**, otherwise "only a segment of a closed outline can be deleted"), `shape.segmentType {"index":0,"segment":1,"type":"straight|curved"}`.
+  The first parameter is `index` (the subpath), not `path`; `segment` is the vertex ending the segment. Act on the selected shape or pass `id`.
+- `slide.reuseList {"path":"deck.deckcraft"}` → `{name,slides:[{index,title,hidden}]}`: preview which slides `slide.reuse {"path","slides":[…],"at"?}` can bring in.
+- `review.reject {"index"|"all":true}` only works while a Compare is in progress ("not comparing" otherwise).
+
 ## Version note (2026-10-25)
 
 App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`); none removed. The full-deck recipe
