@@ -48,6 +48,11 @@ The PhotoCraft, GridCraft and DeckCraft skills used [artcraft-skills](https://gi
 as background reading about what the app can do; nothing was copied, and everything in this repo was run and checked on
 Linux. Thanks to its author.
 
+## Document styles
+
+[`styles/`](styles/) has eight looks (traditional, elegant, clean, professional, academic, modern, stylish, creative), each as a document and an ATS-friendly résumé,
+built identically in WordCraft and ONLYOFFICE from one spec, with font fallbacks that match what is installed. See the [gallery](styles/README.md).
+
 ## Keeping up with app updates
 
 The apps (AppImages) update themselves, but a separately installed `<app>-cli` does not, and a CLI older than its app has caused

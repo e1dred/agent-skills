@@ -227,6 +227,11 @@ Script commands are `{"command": id, "params": {...}}` or a bare id string. Rela
 `save` list resolve against the script's folder, but paths inside command params resolve against the working
 folder (per docs/mcp.md) — use absolute paths. A failing script command stops the run and nothing is saved.
 
+## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; documents and résumés)
+
+`../styles/` holds eight style specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and builders for this app:
+`python3 -I styles/build_wordcraft.py STYLE doc|resume /abs/out.docx > job.json` then `wordcraft-cli run --script job.json`. Each style comes as a document and as an ATS-safe résumé, and both apps produce the same look from the same spec; see `../styles/README.md`
+for the table, gallery, font-fallback rules and résumé-format advice. Verified: all 8 styles in both kinds, rendered with `wordcraft-cli convert x.docx x.pdf`. `styles.modify` accepts `spacing` (letter-spacing in pt; it lands as `w:spacing w:val` in styles.xml), `caps`, `italic`, paragraph `borders` with `left` or `bottom` (`space` in pt), `indentFirst`, `lineSpacing {"rule":"multiple","value":2.0}`; `list.define` + `para.style Normal` afterwards, as in the résumé recipe.
 ## Property names (verified via `inspect`)
 
 Paragraph props (`para.set {"props":…}`, `styles.modify {"para":…}`):
