@@ -147,6 +147,35 @@ records incl. 52 `format` records): filter `kind` to `insert|delete` for the tex
   (reply lists `replaced:[Normal, Heading 1…]`), turning a stale custom style (green bold) into the template's (italic brown,
   indented). It changes styles only, not margins or headers.
 
+## Headers and footers per section (verified headless; render checked per page)
+
+```
+text.insert "Section one." ; insert.header {"text":"Head1"} ; insert.closeHeader ; insert.footer {"text":"Foot1"} ; insert.closeHeader
+caret.docEnd ; layout.break {"kind":"nextPage"} ; text.insert "Section two."          # caret is now IN section 2
+layout.linkToPrevious {}            ; insert.createHeader {} ; text.insert "Head2" ; insert.closeHeader
+layout.linkToPrevious {"footer":true} ; insert.createFooter {} ; text.insert "Foot2" ; insert.closeHeader
+```
+Result: page 1 "Head1…Foot1", page 2 "Head2…Foot2", and a THIRD section added afterwards inherits section 2's header and footer
+(`inspect` section props: `headers.default` / `footers.default` ids `[(1,2),(3,4),(3,4)]`). Rules learnt by failing first:
+- Run `layout.linkToPrevious` (once; twice gave the same result, reply `{"linked":true}`) with the caret in the new section BEFORE
+  `insert.createHeader`; without it the new section shares section 1's header and your text lands in it ("H1H2" on every page).
+- Do NOT pass `"page"` to `insert.createHeader`/`createFooter`; the default is the caret's section.
+- `insert.header {"text"}` alone in section 2 REPLACES the shared header for all sections (every page showed "H2").
+- `insert.closeHeader` after each header/footer; verify with `pdftotext -f N -l N`.
+
+## Accessibility checker (verified headless)
+
+`file.accessibility {}` → `{"ok":bool,"issues":[{"kind":"error|warning|tip","issue","fix"?,"action"?:{command,params},"pos"}]}`.
+On a deliberately flawed document it found 6: picture without alt text (error, fix `object.altText`/`picture.altText`),
+table without alt text (`table.altText {title,text}`), table without a header row (`table.repeatHeader`), an empty table row
+used as spacing, non-descriptive link text ("click here"), no document title (`file.properties {title}`). After fixing them:
+`{"issues":[],"ok":true}`. Fix recipe: `picture.altText {"text":"…"}` right after `insert.picture`; with the caret in a table's
+first cell `table.altText` + `table.repeatHeader`; real header text such as `insert.link {"url","text":"Example website"}`.
+- **Not caught by the checker**: plain text used as a heading (use `para.style "Heading 1"`), three blank paragraphs in a row.
+  Check these yourself with `inspect` (style names, empty `text`).
+- `convert x.docx x.pdf` produced a TAGGED PDF (`pdfinfo` → `Tagged: yes`) for both the flawed and fixed file, with the document
+  title as the PDF title once `file.properties` has set it.
+
 ## Choosing live vs headless
 
 - **Live** (user watches): bridge MCP / `tools/wcmcp.py`. Check `ui_inspect` first: `title`, `dirty`.
@@ -333,11 +362,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   read it, the allowed values are listed. Nothing is saved when a script command fails.
 - `inspect` shows a page-number field's cached text ("Page 1 of 1" in a 2-page document); `render` shows the
   real numbers. Check page numbers by rendering, not with `inspect`.
-- **Different headers per section is NOT solved.** In a two-section document `insert.createHeader {"page":1}` returned
-  the same header (story 1) as section 1, so both texts landed in one header ("Header OneHeader Two" on every page);
-  adding `layout.linkToPrevious` (a toggle, replied `{"linked":true}`) made the headers disappear from the saved
-  file. Until someone finds the working sequence, avoid per-section headers (use `layout.differentFirstPage` for
-  the one case that works) and verify any attempt with `pdftotext -f N -l N`.
+- Different headers per section: SOLVED, see "Headers and footers per section" below. The earlier failures came from passing `page` to `insert.createHeader` and from the call order.
 - **`\n` in `text.insert` does not start a paragraph** — "Line A\nLine B" stays one paragraph with a line break.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
@@ -357,6 +382,7 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Log
 
+- 2026-10-24: Per-section headers/footers SOLVED; accessibility checker and tagged PDF export.
 - 2026-10-24: Citations/bibliography (author string format), cross-references, document compare, templates.
 - 2026-10-24: Mail merge (recipients, filter, fields, address block, IF rule, partial finish).
 - 2026-10-24: Résumé round-trip fidelity check on two designs (faithful; only custom doc properties lost).
