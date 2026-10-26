@@ -53,7 +53,7 @@ Parse the saved ASCII DXF (LINE, small LWPOLYLINE donuts for junction dots, CIRC
 - Unknown or unloaded linetype in `layer.new` fails the whole run.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
-- Still not tested: refedit/bedit, dynamic blocks, solid editing, real .ctb plot styles, VectorCraft.
+- Still not tested: authoring dynamic blocks, 3D/solid editing, DWG/DXF from other programs, annotative scaling in a viewport, VectorCraft.
 
 ## Round 2 (2026-10-26, cadcraft-cli 0.13.0, headless, rendered and looked at)
 `tools/ccrun.py`: `run([(cmd, params), …], save=, export=)` runs many commands in one `cadcraft-cli run` and returns every result as JSON (raises on the first failure).
@@ -97,6 +97,13 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **`ui_click` is canvas-only:** screen-space clicks on toolset icons, menus and panels did nothing useful, and `execute` with an empty `params` never opens dialogs (`options` returns the settings JSON, `plot` returns base64 PDF data, `dimstyle`/`style` demand a `name`). So panels and dialogs cannot be driven; use the JSON commands.
 - Every `new_drawing` adds a tab (Drawing2…4 left open and unsaved in the user's window). `inspect_drawing` and `query_entities` read the ACTIVE document.
 
+## Round 7 (2026-10-26, 0.13.0, headless; the plot-style effect checked by pixels in the PDF)
+- **Block editor (verified):** `bedit {"name":"B"}`, draw into the block, then `bclose {}` (saves by default: block went from 1 to 2 entities, `saved:true`); `bsave {}` saves without closing, after which `bclose {"save":false}` keeps the saved result. Inserts of the block update. `refedit {"handle":insertHandle}` returns `working` handles, objects drawn while it runs join the working set, `refset {}` lists it, `refclose {"option":"save"}` writes them back to the block (`objects:2`). The handle must be a block REFERENCE (the `insert` value in the `block` result), not the block's old entities.
+- **Attributes:** `battman {"name":"B"}` lists the definitions, `{"action":"edit","tag":"A","newTag":"AA","default":"9"}` edits and syncs the references (`synced:1`); `blockreplace {"block":"C1","with":"C2"}` swaps every reference (`replaced:1`); `burst` explodes attribute blocks to text. `blocks.dynamic {"name"}` returns null for an ordinary block; dynamic blocks are authored in the block editor UI, the commands only read and set their properties (`blocks.reference`, `.set`, `.grips`).
+- **Plot style tables:** `stylesmanager {"action":"new","name":"mine.ctb","kind":"colorDependent"}` makes a table with 255 styles, `{"action":"set","name":"mine.ctb","style":{"name":"Color_1","color":"#000000","lineweight":0.6}}` edits one (lineweight in mm; `get` shows it as 60), then `pagesetup {"layout":"L","plotStyleTable":"mine.ctb"}` on a layout: the PDF turned a red object black (checked: red present without the table, absent with it). `pagesetup` needs a real layout name, never "Model". `plotstyle {…}` assigns named styles to objects.
+- **More dimensions and tools:** `qdim {"handles","at","mode":"radius"}` creates several dimensions at once (returned 3 handles), `dimarc {"handle","at"}`, `centerline {"h1","h2"}` (two lines), `selectsimilar`, `id {"at"}`, `cal {"expr":"2*pi*5"}` (31.4159), `publish {"path":"pub.pdf"}` writes `pub-<layout>.pdf` for the Model and EVERY layout (five files for a drawing with Layout1, Layout2, S1, S2), `pdfbook` splits sheet frames in model space into books.
+- **Real drawing:** a 300-entity DXF made by CadCraft round-tripped DXF → DWG → DXF with identical entity counts per type (arcs, circles, lines, polylines, text). Not tested: DWG files produced by other programs.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -104,3 +111,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 4: rich text, exports/plot options, xref attach, mleader/table styles, scales, dimbreak, hatchedit, splinedit, tiled viewports, autoconstrain.
 - 2026-10-26: round 5: floor-plan recipe on an A3 layout; viewport scale and annotation-height traps.
 - 2026-10-26: round 6: live window (screenshots, click-driven drawing, selection, what ui_click cannot do).
+- 2026-10-26: round 7: block editor, refedit, attribute manager, .ctb plot styles, publish, qdim.
