@@ -1,0 +1,25 @@
+Type text and start a paragraph | text.newParagraph
+Bold, italic, underline | format.bold format.italic format.underline
+Font name and size | format.font format.size
+Align and indent paragraphs | para.align para.indent
+Line and paragraph spacing | para.lineSpacing para.addSpaceBefore
+Apply a heading or other style | para.style
+Bulleted and numbered lists | para.bullets para.numbering
+Insert a table | insert.table
+Add and delete table rows | table.insertRowBelow table.deleteRow
+Merge table cells | table.merge
+Insert a picture | insert.picture
+Page margins and orientation | layout.margins layout.orientation
+Header and footer with page number | insert.header insert.footer insert.pageNumber
+Page break and section break | insert.pageBreak layout.break layout.section
+Table of contents | references.toc references.updateToc
+Footnote | references.footnote
+Hyperlink | insert.link
+Find and replace | edit.replaceAll
+Spell check and word count | review.spelling review.wordCount
+Comments | review.newComment
+Track changes accept and reject | review.trackChanges review.acceptAll
+Undo and redo | edit.undo edit.redo
+Save as docx and export PDF | file.saveAs file.exportPdf
+Mail merge fields | mailings.insertField
+Columns | layout.columns

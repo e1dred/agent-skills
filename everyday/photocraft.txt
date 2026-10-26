@@ -1,0 +1,34 @@
+Open an image | file.openAs
+Resize the image | image.imageSize
+Canvas size | image.canvasSize
+Crop | image.crop
+Trim | image.trim
+New layer and duplicate | layer.new.layer layer.duplicate
+Delete and merge layers | layer.delete layer.mergeDown
+Group layers | layer.groupLayers
+Reorder layers | layer.arrange.bringForward layer.arrange.sendBackward
+Show and hide layers | layer.hideLayers layer.showLayers
+Flatten | layer.flattenImage
+Rectangular and lasso selection | select.rect select.lasso
+Select all, deselect, invert | select.all select.deselect select.inverse
+Quick selection and colour range | select.quick select.colorRange
+Feather and expand a selection | select.modify.feather select.modify.expand
+Fill and stroke | edit.fill edit.stroke
+Copy and paste | edit.copy edit.paste
+Free transform | edit.transform
+Undo and redo | history.undo history.redo
+Brightness and contrast | image.adjustments.brightnessContrast
+Levels and curves | image.adjustments.levels image.adjustments.curves
+Hue and saturation | image.adjustments.hueSaturation
+Black and white | image.adjustments.blackWhite
+Gaussian blur | filter.blur.gaussianBlur
+Sharpen | filter.sharpen.unsharpMask filter.sharpen.smartSharpen
+Reduce noise | filter.noise.reduceNoise
+Clone stamp and healing | paint.cloneStamp paint.healingBrush paint.spotHealing
+Text | type.create
+Drop shadow layer style | layer.layerStyle.dropShadow
+Gradient | gradient.fill.create
+Smart object | layer.smartObjects.convertToSmartObject
+Shapes | shape.create
+Save a copy / export | file.saveACopy
+Adjustment layer | layer.newAdjustmentLayer.levels

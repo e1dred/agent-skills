@@ -1,0 +1,30 @@
+New, duplicate, move and delete slides | slide.new slide.duplicate slide.move slide.delete
+Slide layout | slide.layout
+Text box | insert.textBox
+Bold, italic, underline | format.bold format.italic format.underline
+Font name, size and colour | format.font format.size format.color
+Align text | format.alignLeft format.alignCenter format.alignRight
+Bullets and numbering | format.bullets format.numbering
+Line spacing | format.lineSpacing
+Insert a picture | insert.picture
+Crop and style a picture | picture.crop picture.style
+Insert a shape and fill it | shape.insert shape.fill
+Align, distribute and group objects | arrange.align arrange.distribute arrange.group
+Bring forward and send backward | arrange.bringToFront arrange.sendToBack
+Insert a table and add rows | insert.table table.insertRowBelow table.merge
+Insert a chart | insert.chart
+SmartArt | insert.smartArt
+Video and audio | insert.video insert.audio
+Hyperlink | insert.hyperlink
+Theme and variant | design.theme design.variant
+Background | design.background
+Slide size | design.slideSize
+Slide transition | transition.set transition.applyAll
+Animation | animation.add
+Slide master layouts | master.insertLayout master.renameLayout
+Sections | section.add section.rename
+Comments | comment.add comment.reply
+Spell check | review.spelling
+Start the show | show.fromStart show.fromCurrent
+Undo, redo, copy, paste | edit.undo edit.redo edit.copy edit.paste
+Save, save as, export PDF | file.save file.saveAs file.export

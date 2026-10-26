@@ -1,0 +1,33 @@
+Lines and polylines | line pline
+Circles, arcs, rectangles | circle arc rectang
+Text and multiline text | text mtext
+Layers: create and set properties | layer.new layer.set layer.current
+Linetypes | linetype ltscale
+Move, copy, rotate | move copy rotate
+Scale and mirror | scale mirror
+Offset, trim, extend | offset trim extend
+Fillet and chamfer | fillet chamfer
+Erase and undo | erase undo
+Arrays | arrayrect arraypolar
+Stretch and explode | stretch explode
+Join and break | join break
+Linear dimensions | dimlinear dimaligned
+Radius, diameter, angular dimensions | dimradius dimdiameter dimangular
+Dimension style and text style | dimstyle style
+Multileader | mleader
+Hatch | hatch
+Blocks and inserts | block insert
+Block attributes | attdef attedit
+Layouts and viewports | layout.new mview viewport.set
+Page setup and PDF plot | pagesetup exportpdf plot
+Zoom and views | zoom view
+Properties and match properties | properties.set matchprop
+Distance and area | dist area
+Select by property | qselect select
+Units | units
+Tables | table
+Find and replace text | find
+Purge and audit | purge audit
+Import and xref | import xattach
+Open, save, export | open qsave saveas export
+Group | group

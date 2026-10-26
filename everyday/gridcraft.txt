@@ -1,0 +1,26 @@
+Bold, italic, font name and size | home.bold home.italic home.fontName home.fontSize
+Fill and font colour | home.fillColor home.fontColor
+Borders | home.borders
+Align and wrap text | home.alignCenter home.wrapText
+Number, percent and comma formats | home.numberFormat home.percent home.comma
+Merge cells | home.mergeCells
+Column width and row height, autofit | home.columnWidth home.rowHeight home.autofitColumnWidth
+Insert and delete rows and columns | home.insertRows home.insertColumns home.deleteRows home.deleteColumns
+Add and delete a sheet | home.insertSheet home.deleteSheet
+Copy, cut, paste, paste special | edit.copy edit.cut edit.paste edit.pasteSpecial
+Fill down and fill series | edit.fillDown edit.fillSeries
+Undo and redo | edit.undo edit.redo
+Find and replace | edit.find edit.replace
+Sum and insert a function | formulas.autoSum formulas.insertFunction
+Named ranges | formulas.defineName
+Sort | data.sort data.sortAscending
+Filter | data.filter
+Remove duplicates and text to columns | data.removeDuplicates data.textToColumns
+Data validation | data.validation
+Conditional formatting | home.conditionalFormat
+Insert a chart | insert.chart
+Freeze panes | view.freezePanes
+Hyperlink | insert.link
+Print area, orientation, titles | pageLayout.printArea pageLayout.orientation pageLayout.printTitles
+Open, save as xlsx, export PDF and CSV | file.open file.saveAs file.exportPdf file.exportCsv
+Pivot table | insert.pivotTable pivot.addField pivot.refresh
