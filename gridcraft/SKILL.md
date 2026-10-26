@@ -185,6 +185,26 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
   Several of these return `null`/`{chart}` only: confirm with `info` (`chart LineMarkers "T" at B2, 2 series`).
 - Not run: pivot slicers/timelines, `pivot.moveField/removeField/changeSource/style/subtotals/reportLayout` individually, `pivot.delete`, `chart.shapeFill/shapeOutline`, secondary axis, axis scaling (the Limits section says it is unsupported), live-window rendering of pivots.
 
+## Conditional formats, validation, ToolPak, review and functions (verified headless, 0.12.1; render checked)
+
+> **Versions:** 0.12.1 only (2026-10-25); not re-run on 0.11.1. Data is invented.
+
+- **Conditional formats** (`home.conditionalFormat {"range","rule":{…}}` → `{rules:N}` = running count on the sheet). Verified types and the PDF render (rules stack; later ones layer over earlier fills, a colour scale painted over a `cellIs` fill):
+  `cellIs` (`operator` greater/between + `value`/`value2`), `beginsWith`/`containsText` (`text`), `blanks`, `duplicate`, `top10 {"rank":2}`, `aboveAverage`, `expression {"formula":"=$C2=\"B\""}` (formula relative to the range's top-left), `colorScale {"colors":[3 hex]}`, `dataBar {"color"}`, `iconSet {"set":"3TrafficLights1"}`.
+  Looks: `preset` (`greenFill`, `yellowFill`, `lightRedFill`, `redText`, `redBorder`, …) or `style {"font":{"bold":true},"fill":"#FFE699"}` (a plain hex string works here, unlike `home.formatCells`). Icons did not show in the PDF export (unverified in the live window). `check`: clean round trip.
+- **Validation:** `data.validation {"range","type":"whole|decimal|list|date|time|textLength|custom|any","operator","formula1","formula2","errorStyle":"stop|warning|information","errorTitle","errorMessage","inputTitle","inputMessage","dropdown","clear"}` (list: `"formula1":"Yes,No,Maybe"`; custom: `"=ISNUMBER(I2)"`).
+  **Test it without a window:** `data.validate {"cell":"F2","input":"11"}` → `{ok:false,message,style:"Stop",title}` or `{ok:true}`; a `warning` style came back as `style:"Warning"`. `data.circleInvalid {}` → `{invalid:["F2"]}` lists cells that already break their rule (a value outside the validated range is of course not listed).
+- **Analysis ToolPak, all remaining tools** (each ran; numbers sane): `anovaSingle {"range":"A1:C7","labels":true,"alpha":0.05}` (F 18.58, P 8.7e-5 on my data), `covariance`, `fTest {"range1","range2"}`, `histogram {"range","bins":"D2:D4"}` (→ Bin/Frequency/"More"), `movingAverage {"range","interval":3}` (first rows `#N/A`),
+  `exponentialSmoothing {"damping":0.3}`, `rankPercentile` (Point/value/Rank/Percent), `tTestPaired|tTestEqual|tTestUnequal {"range1","range2","alpha","hypothesizedDifference"}` (full SUMMARY blocks incl. Pooled Variance, df, t Stat, one/two-tail P and critical values).
+  **Trap:** with no `output` the report goes to a NEW sheet that becomes ACTIVE, so a following tool's `range` points at the empty new sheet ("Input range contains non-numeric data"). Give each an `output` cell on the data sheet (`"output":"A28"`; `overwrite:true` for non-empty cells) or `sheet.activate {"sheet":0}` between calls. Results are static values.
+- **Comments and notes:** `review.newComment {"cell","text","author"}`, `review.replyComment {"cell","text","author"}`, `review.resolveComment {"cell"}`, `review.newNote {…}` (legacy note), `review.convertToComments {}` → `{converted:1}`. The saved xlsx has `comments1.xml`, `threadedComments/threadedComment1.xml` (a reply carries `parentId`, resolved = `done="1"`) and `persons/person.xml` (one person per author).
+- **Protection:** `review.protectSheet {"password":"pw","insertRows":false,"sort":true,…}` then `cell.set` → "The cell or chart you're trying to change is on a protected sheet." (aborts a `run` script); `review.unprotectSheet {"password":"bad"}` → "The password you supplied is not correct."; the right password unprotects.
+  `review.allowEditRanges {"action":"add","title":"Qty edit","range":"B2:B3"}` → `<protectedRange name sqref>` in the sheet xml; `{}` lists them. `review.workbookStatistics {}` → per-sheet and workbook counts; `review.checkAccessibility {}` → `[{issue:"Default sheet name",sheet}]`.
+- **Functions** (513 exist; `functions --search X` shows signature and category; `eval '=…'` checks one): all of these returned the expected value: PMT 377.42, XNPV, IRR 0.1679, NPER, CUMIPMT, DB, PRICE (financial); STDEV.S, NORM.DIST, PERCENTILE.INC, CORREL, T.TEST, FORECAST.LINEAR (statistical);
+  EDATE, NETWORKDAYS 23, WORKDAY, DATEDIF "m" 13, YEARFRAC (date); TEXT, SUBSTITUTE, TEXTBEFORE (2nd instance), REGEXEXTRACT, VALUETOTEXT (text); XLOOKUP, INDEX, MATCH, CHOOSECOLS, TAKE, VSTACK (lookup/array, arrays print tab-separated);
+  BITAND, BASE, DEC2HEX, COMPLEX, IMABS, CONVERT mi→km 1.609344, MMULT, MDETERM, ROMAN, GCD, SUMPRODUCT, AGGREGATE (engineering/math). Array constants use `{1,2;3,4}` (comma = column, semicolon = row).
+- Not run: shapes/images in cells, cell styles/themes, `.xls/.xlsb/.ods` imports on a real corpus, solver reports/methods in depth, Flash Fill.
+
 ## Version note (2026-10-25)
 
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
@@ -201,3 +221,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
 - 2026-10-25 (5): twelve scripts re-run on 0.11.1 and 0.12.1 (identical); version labels added per section.
 - 2026-10-25 (6): live control channel re-tested on the 0.12.1 app (then the window stopped answering screenshots).
 - 2026-10-25 (7): pivot fields/calculated fields/show-as/filter/sort/layout/grouping/collapse, pivot chart, 16 chart types and chart-editing commands verified headless on 0.12.1.
+- 2026-10-25 (8): 12 conditional-format types, validation types + `data.validate`, all ToolPak tools, threaded comments/notes/protection/edit ranges, 40 functions verified headless on 0.12.1.
