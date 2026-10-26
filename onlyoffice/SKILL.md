@@ -194,7 +194,7 @@ returned none. Always search the result for `{{` before saving.
   box over the text in the render. Omit `color` (default yellow) or pass an object `{"r":255,"g":235,"b":0}`.
   Always render a page after marking up: the black box also looked like a redaction.
 - `pdf_split {"parts":[{"pages":"1","path":ABS}],"overwrite":true}`; `pdf_merge {"sources":[{path,pages?}],
-  "output_path"}` (untested).
+  "output_path","overwrite"}` (verified 2026-10-25: "Merged 4 page(s) from 2 file(s)").
 
 ## Fillable forms (verified headless)
 
@@ -389,6 +389,17 @@ or `get_api_reference {"class_name":"ApiParagraph"}` for a class's real methods.
 - **Animations**: `var seq = slide.GetTimeLine().GetMainSequence(); var e = seq.AddEffect(shape, 'fade', 'onclick')` (second effect `'spin','afterprevious'`); triggers are lowercase `onclick|withprevious|afterprevious`; effect names are kebab or camel (`fade`, `fly-in`, `spin`, `entranceFade`, `emphasisSpin`, `path-circle`…). `AddEffect` returns **null without an error** for an unknown name (my first try with `'entrFade'`/`'clickEffect'` returned null and count 0). `e.SetDuration(800)`, `GetEffectType()`, `seq.GetCount()`. DeckCraft reads the saved file back with `animations:2` (entrance fade, emphasis spin).
 - Theme: `slide.GetTheme().GetColorScheme().ChangeColor(0, Api.Color(228,87,46))` (positions 0–5 accent1–6, 6 dk1, 7 dk2, 8 folHlink, 9 hlink, 10 lt1, 11 lt2); `pres.GetMaster(0).GetLayoutsCount()` → 11; `slide.ApplyLayout(layout)`, `pres.ApplyTheme`.
 
+## Tool audit: all 93 tools called on ONLYOFFICE 10.0.0 (2026-10-25, headless via `tools/ooc.py`)
+
+> **Versions:** 10.0.0 (flatpak, server 2.0.0-native). Documents were invented; every tool was CALLED, results read back. **91 of 93 passed**; the two that did not are listed first. "Documented" (`coverage.sh`) only means the name appears in this folder; this audit is the measure of what was run.
+
+- **Not verified today:** `list_editor_documents` ("ONLYOFFICE Desktop is not reachable": it needs the desktop app that started the server; verified live in earlier sessions, see the live-editing section) and `pdf_fill_form_fields` (works on a real AcroForm PDF; a form saved from Word reopens as a Word document, so the tool answered "works on an opened PDF, but the active document is … Word"; verified earlier on a government form, not repeated).
+- **Passed as designed but return a task instead of a change (AI-task tools):** `word_check_spelling`, `word_rewrite_text`, `word_comment_text` (argument is `prompt`, not `comment`), `word_describe_image`, `word_generate_form`, `cell_explain_formula`, `cell_fill_missing_data`, `slide_rewrite_slide_text`; `cell_fix_formula` answered "No formula errors found" on a clean range. They need you to do the task and call again.
+- **Argument names I guessed wrong first (the tool lists the right ones in its error; unknown arguments are rejected here, unlike the Craft apps):** `word_add_table {"rows":[["a","b"],["c","d"]],"header":true,"index"}` (rows is a list of lists), `cell_set_cell_data {"cells":[{address,formula,numberFormat,copyTo}]}`, `cell_add_cell_value_condition {"operator":"xlGreater","value1"}` (xl-names), `cell_set_sort {"key1","sort_order1":"xlDescending","header":"xlYes"}` (`header` is `xlYes|xlNo`, not a boolean), `cell_set_multi_sort {"key1","key2","sort_order2"}`,
+  `pdf_markup_text {"page_number","type","markup_targets":[{"text","quads"}]}` (quads from `pdf_get_text_quads`, which returned `items:[]` for a word that is not on that page), `pdf_merge {"sources","output_path"}`. `word_for_range` refuses a range that touches a table cell ("not one stretch of the body").
+- **Behaviour worth knowing:** `pdf_get_document_info` works on an opened PDF headless (the earlier failure was live only). `cell_insert_pivot_table` failed with "An error occurred while creating the pivot table!" when the source range included a column without a header (a formula column in E); with a clean `A1:D6` it worked. `word_add_image` and `cell_add_image` take mm; `word_page_setup {"orientation":"landscape"}` → `{pageWidthTw:15840,…}`.
+- Still not covered by tools or tested: the unbounded Document Builder macro API (the roadmap areas: Word styles/TOC/sections via macros, spreadsheet pivot options/slicers/sparklines, slide masters, PDF annotations beyond highlight, protection), a second ONLYOFFICE version, and complex live editing.
+
 ## Traps
 
 - **An empty paragraph's `GetText()` is `"\r\n"`, not `""`.** Test emptiness with `.replace(/[\r\n]/g, "") === ""`.
@@ -427,3 +438,4 @@ or `get_api_reference {"class_name":"ApiParagraph"}` for a class's real methods.
 - 2026-10-25 (2): the remaining 38 tools (Word text/structure/AI tools, spreadsheet cell tools, slide search/image/AI tools, form_set_data/delete, view_image) verified; all 93 documented.
 - 2026-10-25 (3): tracked revisions, comments, watermark, password-encrypted save, defined names, protected ranges, hyperlinks, chart formatting, slide transitions/animations/theme colours verified via macros.
 - 2026-10-25 (4): version labels added; nothing re-tested on a second version (no update available).
+- 2026-10-25 (6): audit: all 93 tools called on 10.0.0 headless; 91 passed, 2 not verified today (live-only / real PDF form); pdf_merge verified; argument corrections recorded.
