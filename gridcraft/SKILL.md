@@ -165,6 +165,26 @@ Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":�
 - **JSON import**: `data.getData {"text":"[{\"id\":1,\"name\":\"Ann\"}]"}` (or `{"path"}`) → a new sheet with a table of the keys.
 - **Flash Fill** (`edit.flashFill`, `data.flashFill`) answered "didn't see a pattern" for first-name extraction in every form I tried (ranges `B2:B5`, `B4:B5`, two examples): untested/unreliable headlessly, use a formula (`=LEFT(A2,FIND(" ",A2)-1)`) instead.
 
+## Pivot tables and chart types in depth (verified headless, 0.12.1; renders checked)
+
+> **Versions:** 0.12.1 only (2026-10-25); not re-run on 0.11.1 (the `pivot.options/showDetails` commands are 0.12-only; the others exist in both but were not compared).
+
+Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Revenue). Scripts: `run --script x.jsonl --out f.xlsx`.
+- **Pivot build:** `insert.pivotTable {"source":"Sales","destination":"new","name":"P1","rows":["Region"],"columns":["Product"],"values":[{"field":"Revenue","func":"sum"}]}` → `{anchor,id:2,name,range,sheet}`. The pivot gets the NEW sheet (inserted before the current one) and the pivot id is 2 (ids are not 1-based per pivot).
+  Then, all verified with `cat --sheet`: `pivot.fields {"pivot"}` (source fields with `numeric/date/samples/areas`), `pivot.addField {"field":"Units","area":"values","func":"average","name":"Avg Units"}`,
+  `pivot.calculatedField {"name":"Tax","formula":"=Revenue*0.2"}` (a "Sum of Tax" column appears; sums per cell), `pivot.valueSettings {"field":"Sum of Revenue","showAs":"percentOfGrandTotal","numberFormat":"0.0%"}` (16.7 %… 100.0 % grand total; `showAs` also percentOfColumnTotal/RowTotal, runningTotal, rank),
+  `pivot.sort {"field":"Region","order":"desc"}`, `pivot.filter {"field":"Region","selected":["North","East"]}` (South dropped, totals recomputed), `pivot.layout {"layout":"tabular","style":"PivotStyleMedium9"}`, `pivot.list {}` (name, anchor, filters, calculatedFields, layout, grand-total flags).
+  **Date grouping:** put it in the *layout* — `"rows":[{"field":"Date","group":"quarters"},"Region"]` gave Qtr1…Qtr4 rows; `pivot.group {"field":"Date","by":"months"}` only works if the field is already in rows or columns ("`Date` isn't in the rows or columns area").
+  `pivot.collapse {"field":"Date","collapse":true}` → `{collapsed:["Qtr1",…]}` (hides the inner Region rows), `pivot.grandTotals {"mode":"off"}`, `pivot.refresh {}` → `{records:24}`, `insert.recommendedPivotTables {"source":"Sales"}` → suggestions with index/title/rows/columns/values (`apply:index` creates one).
+- **Pivot reference trap:** `pivot` accepts a name, an id or a cell, but `insert.pivotChart {"pivot":"P1"}` failed with "P1 is not in a PivotTable" while `{"pivot":2}` worked (and `pivot.*` calls by name worked). Use the id for the chart. Result `{chart,pivot,series}` (the chart followed the 3-value/2-product layout: 6 series).
+- **Chart types:** `insert.chart {"range":"A1:C6","type":…,"subtype":…,"title","at","width","height"}`; all of these produced a chart and rendered correctly in the PDF (one page, `pageLayout.scaleToFit` 1×1 + `file.exportPdf {"fitToPage":true}`):
+  column (clustered/stacked/stacked100), bar, line (markers), area (stacked), pie, doughnut (give ONE series range `A1:B6`), scatter, radar, combo (column + line), histogram, waterfall, funnel, treemap, boxWhisker, bubble. **`stock` silently became a plain Line chart** with only two series (it needs open/high/low/close columns; not tested with four). `sunburst` not run. `insert.chartRecommendations {"range"}` → ranked `[{type,subtype,label}]`.
+- **Chart editing** (target `"chart":id`, ids per workbook, the chart must be on the ACTIVE sheet): `chart.set {"legend":"top","xTitle","yTitle","dataLabels":true,"gridlines":false,"style":3,"width","height","dx"}`, `chart.addElement {"element":"trendline","series":0,"type":"linear","displayEquation":true}`,
+  `chart.changeColors {"palette":"monochrome|colorful|accent1..6"}` (or `colors:[hex…]`), `chart.formatSelection {"series":1,"color":"#C00000"}`, `chart.quickLayout {"layout":3}`, `chart.changeType {"type":"line","subtype":"markers"}`, `chart.switchRowColumn`,
+  `chart.selectData {"range":"Sheet1!A1:C6","categories":"Sheet1!A2:A6"}` (series count dropped 3 → 2), `chart.move {"sheet":"Dash","at":"B2"}` → the chart appears on that sheet; afterwards the *target sheet must be activated* (`sheet.activate {"sheet":1}`; param is `sheet`, index or name) before another `chart.*` call.
+  Several of these return `null`/`{chart}` only: confirm with `info` (`chart LineMarkers "T" at B2, 2 series`).
+- Not run: pivot slicers/timelines, `pivot.moveField/removeField/changeSource/style/subtotals/reportLayout` individually, `pivot.delete`, `chart.shapeFill/shapeOutline`, secondary axis, axis scaling (the Limits section says it is unsupported), live-window rendering of pivots.
+
 ## Version note (2026-10-25)
 
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
@@ -180,3 +200,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
 - 2026-10-25 (4): goal seek, scenarios, data table, solver, forecast, ToolPak, subtotals, consolidate, advanced filter, trendlines, print setup, dynamic-array functions, JSON import verified.
 - 2026-10-25 (5): twelve scripts re-run on 0.11.1 and 0.12.1 (identical); version labels added per section.
 - 2026-10-25 (6): live control channel re-tested on the 0.12.1 app (then the window stopped answering screenshots).
+- 2026-10-25 (7): pivot fields/calculated fields/show-as/filter/sort/layout/grouping/collapse, pivot chart, 16 chart types and chart-editing commands verified headless on 0.12.1.
