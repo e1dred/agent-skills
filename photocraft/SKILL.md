@@ -324,6 +324,21 @@ Other automation: `file.automate.fitImage {"width":500,"height":500}` (keeps asp
 `type.warpText {"style":"arc|flag|wave|fish|…","bend":45}` (render checked); text on a path: create the shape layer first, then `type.attachToPath {"layer":5,"shape":4,"start":20}` (needs a shape layer id or a work path; the text then runs along the outline). `type.paragraphStyle.new/apply/list` manage reusable paragraph styles.
 `timeline.create {"duration":2,"fps":5}` + `timeline.info` work and a `.gif` is written (palette-quantized, 256 colours), but animated *frames* from layer keyframes were not tested.
 
+## Paths and channels (verified headless, 0.16.0; path render checked)
+
+> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
+
+- **Paths:** `path.set {"path":{"subpaths":[{"closed":true,"knots":[[x,y],{"anchor":[x,y],"in":[x,y],"out":[x,y],"smooth":true},…]},{"closed":true,"op":"subtract","knots":[…]}]}}` makes the *work path*
+  (plain `[x,y]` knots are corners; a second subpath with `"op":"subtract"` punches a hole). `path.rename {"to":"Arch"}` saves it (`path.list` → `paths:[{name,knots,subpaths}]`).
+  `path.fill {"name":"Arch","color":"#2E75B6","opacity":80}` and `path.stroke {"name":"Arch","size":8,"hardness":1,"color":"#C00000"}` paint on the ACTIVE pixel layer (`layer.new.layer` first;
+  stroke returns `{damage}`); `path.toSelection {"name":"Arch","feather":3}` then `edit.fill`. Render checked: arch with a cut-out triangle, red outline, soft-edged green copy.
+  `path.transform {"name":…,"matrix":[a,b,c,d,e,f]}` rewrites the saved path in place (matrix `[0.5,0,0,0.5,300,200]` scaled it about the origin and moved it).
+  Also listed, not run: `path.moveAnchors/moveHandle/bendSegment/convertPoint/addAnchor/deleteAnchor`, `path.clippingPath.set/clear`, `path.style.copy*/paste*`.
+- **Channels:** `select.saveSelection {"name":"Alpha A"}` → `{channel:0}`; `channel.duplicate {"channel":"red","name":"Red copy"}` and `channel.new {"name":"Mask B","fill":"white"}` return only the new index;
+  `channel.rename {"channel":"Mask B","name":"Renamed"}`; `channel.options {"channel":…,"color":"#00ff00","opacity":40}` returns the whole `channel.list` (`alpha[]` with index/name/colour/opacity/indicates/visible, `colors[]`, `target`).
+  **Trap:** `channel.options` made that alpha channel the *target* and hid the composite RGB channels in the live state (`compositeVisible:false`); `channel.target {"channel":"composite"}` or `channel.target.composite {}` restores it. `info.channels` shows the same data.
+  Not run: `channel.newSpot/mergeSpot/split/merge/move/delete`, `channel.target.slotN`.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -359,3 +374,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-26: retouch (heal/clone/dodge/burn), selective colour, gradient map, clipping, saved selections, liquify, smart filters, perspective crop, layer comps, quick export verified.
 - 2026-10-25 (3): layer-style stacking, Camera Raw/lens/tilt-shift, colour modes and formats, Actions (.atn) + droplets + fit image + contact sheet, content-aware scale, transform, warped and path text verified headless.
 - 2026-10-25 (5): six pipelines re-run on 0.15.1 and 0.16.0 (pixel-identical); version labels added per section.
+- 2026-10-25 (6): paths (set/rename/fill/stroke/toSelection/transform) and channels (new/duplicate/rename/options) verified headless on 0.16.0.
