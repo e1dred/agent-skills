@@ -133,6 +133,10 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **Imperial → metric on a real part:** `entities {}` for all handles, `scale {"handles":all,"base":[0,0],"factor":25.4}`, `units {"lunits":2,"luprec":1,"insunits":4}` turned every `measurement` into the exact ×25.4 value (0.25 → 6.35, 1.0 → 25.4, 8.0 → 203.2) and the geometry rendered identically scaled; **the printed dimension text did not change** (still `6 31/32"`), because the dimension blocks keep their text: set `textOverride` through `properties.set`, or delete and redraw dimensions after scaling.
 - **A dynamic ISO title block (AC1024, one insert of block `Title_Block-ISO`, 117 entities, a layout "Architectural Title Block" for ARCH D, no viewports, no attributes):** `blocks.dynamic {"name":"Title_Block-ISO"}` shows a **Visibility State** parameter with states ISO A1, A2, A3, A4; `blocks.reference {"handle":"1E98"}` lists `properties[0].choices`; `blocks.reference.set {"handle":"1E98","name":"Title Block ISO","value":"ISO A2"}` switches the state, and the exported PDFs showed four visibly different title blocks (checked in a contact sheet). The insert is anonymous (`*U2`), so find its handle with `entities {"type":"Block Reference"}`. The drawing is A1-sized (841×594) in model space.
 
+## Erase and quick save (verified headless, 0.13.0, 2026-10-26)
+- `erase {"handles":["100"]}` → `{erased:1}`; with no handles it erases the selection (`select {"handles":["101"]}` then `erase {}` → `{erased:1}`).
+- `qsave {"path":"q.dxf"}` writes the drawing (`{bytes,path}`) and `info` of the file showed the right entity count; without `path` a drawing that was never saved fails with "drawing has no file name yet; use saveas {path}", and one opened from a file saves back to it, so never call `qsave` on a user's file you only inspected.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -146,3 +150,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 10: real AutoCAD DWG (layout, multileaders, dimensions, dynamic block read/edit), release check against GitHub.
 - 2026-10-26: round 11: save versions 2000-2018, dynamic-block authoring ruled out.
 - 2026-10-26: round 12: parametric imperial part (constraints not imported, metric scaling), dynamic ISO title block (visibility states).
+- 2026-10-26: gap round: erase and qsave.

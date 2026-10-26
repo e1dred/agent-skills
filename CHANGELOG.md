@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ### Added
 - WordCraft: recipe and traps from reformatting a real document with review comments (table header shading and column widths, links in cells, landscape appendix, comment anchors).
 - README table: CadCraft row (55 of 441 command ids named, an upper bound because its ids are plain words; everyday estimate ~20% from one task), refreshed counts for the other apps; `coverage.sh` now measures CadCraft too.
+- Gap round (2026-10-26): PhotoCraft layer order/visibility/merge down, stroke, gradient fill, copy/paste, undo scope, hue/saturation, smart sharpen; DeckCraft alignment, redo and textBox rect units; CadCraft erase/qsave; WordCraft `layout.section` and per-section orientation. `everyday.sh` + `everyday/*.txt`: measured everyday-task checklists (replace the flat 85% estimate); all five now 100%.
 - WordCraft: bullet-toggle trap (`para.bullets` toggles; call it on the first item only), editing a table cell in a reviewed document, and a memo built from a script.
 - CadCraft round 12: two more AutoCAD DWGs: a parametric imperial part (constraints are not imported; imperial-to-metric scaling updates measurements but not dimension text) and a dynamic ISO title block (visibility-state switching verified in renders).
 - CadCraft round 11: `saveas` in every DWG/DXF version (R2000/R2004 turn multileaders into leaders plus text), binary DXF, dynamic-block authoring ruled out (no commands), procedure for a future CadCraft release.

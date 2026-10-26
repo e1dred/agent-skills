@@ -605,6 +605,12 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
   Sample content is fictional; replace the `RESUME` data at the top.
   Usage: `python3 -I recipes/resume_ats.py /abs/out.docx /abs/out.pdf > s.json && wordcraft-cli run --script s.json`.
 
+## Sections: `layout.section`, section breaks and per-section orientation (verified headless, 0.11.0, 2026-10-26)
+> **Versions:** 0.11.0. Built with `wordcraft-cli run --template blank --cmd … --save sec.docx`; read back from `word/document.xml`.
+- **`layout.break {"kind":"nextPage"|"continuous"|"evenPage"|"oddPage"|"page"|"column"|"textWrapping"}`** starts a new section for the section kinds (3 `w:sectPr` after a next-page and a continuous break); `info` reported 2 pages. `insert.pageBreak {}` is the plain page break.
+- **`layout.section {}` is a READ**: it returns the current section's properties (columns, header and footer distances, header/footer slots, gutter, margins, page size), not a break. Use it to check a section before changing it.
+- **`layout.orientation {"orientation":"landscape"}` applies to the CURRENT section only:** the first section stayed `12240×15840` portrait, the second became `15840×12240 orient="landscape"`, and a following continuous section kept landscape. Insert the break first, then change the orientation.
+
 ## Log
 
 - 2026-10-24: Paragraph formatting, lists, tabs, sort, clipboard/paste, format painter, undoTo, goto, spike; two traps.
@@ -635,3 +641,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-25 (14): ink drawn by hand in the live window: 226/154-point strokes, lasso mode must be switched on with draw.lasso {}, convertInk made a rectangle from a hand-drawn box.
 - 2026-10-25 (15): reformatting a real document with review comments: style-name collision, header-row shading by caret.up trap, column widths, links in cells, x-of-y footer, landscape appendix with a picture, empty-bullet-before-break fix, comment anchors.
 - 2026-10-26 (16): bullets toggle trap; table-row edit in a commented document; built a 2-page explanation memo from a script.
+- 2026-10-26 (17): gap round: layout.section, section breaks (nextPage/continuous), per-section orientation.

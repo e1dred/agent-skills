@@ -485,6 +485,16 @@ gradient test would have looked fine in `info` but had its colours the wrong way
   → `type.create` → `hueSaturation` adjustment → `--out card.png` (rendered correctly).
 - Batch thumbnails: `batch` with `image.imageSize {"width":300}` over a folder, `--format jpg --quality 85`.
 
+## Everyday layer and edit commands, full ids (verified headless, 0.16.0, 2026-10-26; render checked)
+> **Versions:** 0.16.0 only. Invented shapes on a 400×300 canvas, one `run`.
+- **Layer order and visibility:** `layer.arrange.sendBackward {}` and `layer.arrange.bringForward {}` move the active layer one step (`null`; they undo each other), `layer.hideLayers {}` hides it, `layer.showLayers {}` shows it again (`hideLayers` toggles back when everything targeted is already hidden). Each takes an optional `{"layer":id}`.
+- **`layer.mergeDown {}`** merges the active layer into the one below: a star shape merged into an ellipse shape left ONE `Pixel` layer named after the lower layer (the shapes stop being editable); `info` showed `Ellipse 1` as Pixel.
+- **`edit.stroke {"width":6,"color":"#000000","location":"center"}`** outlines the active SELECTION on the active layer (a rectangular `select.rect` gave a black frame); `location` is `inside|center|outside`, plus `mode`, `opacity`, `preserveTransparency`. Make a pixel layer first (`layer.new.layer`).
+- **`gradient.fill.create {"from":[200,0],"to":[200,300],"style":"linear","stops":[[0,"#ffffff"],[1,"#2a9d8f"]],"opacity":35}`** makes a Gradient Fill layer (`{layer}`); with a selection active the fill layer is masked to it (the render showed the pale teal gradient only inside the selected rectangle). `layer.newAdjustmentLayer.levels {"inBlack":20,"gamma":1.2,"inWhite":235}` → `{layer}` (Adjustment).
+- **`edit.copy {}` → `edit.paste {"center":[300,230]}`** must share one `run` (the clipboard is not saved); `edit.copy` needs a layer WITH PIXELS ("the active layer has no pixels" for a shape/adjustment layer: `layer.select` a pixel layer first) → `{bounds}`, then `edit.paste` → `{layer,offset}` (a new layer; 7 layers afterwards).
+- **Undo/redo only work inside the run that made the change:** `history.undo {}` / `history.redo {}` (same as `edit.undo` / `edit.redo`) returned `true` after a `shape.create` in the same run, but on a reopened `.pcraft` they fail with "nothing to undo".
+- **`image.adjustments.hueSaturation {"hue":60,"saturation":30}`** (destructive; also `lightness`, `colorize`, per-range `reds…magentas`) and **`filter.sharpen.smartSharpen {"amount":120,"radius":1.2,"reduceNoise":20}`** (returns the applied filter parameters) both ran after `layer.flattenImage {}` (one Background layer, new id).
+
 ## Log
 
 - 2026-10-24: Second background-removal run with a dense, grid-read trace + smooth/contract: IoU vs a good reference
@@ -505,3 +515,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-25 (10): type styles/OpenType/warp/convert, transforms and warps, swatches (+ASE/ACO), smart-object commands, vector masks, video layers, guides/samplers/proof/preferences verified headless on 0.16.0.
 - 2026-10-25 (11): layer arrangement/grouping/locking/selection, masks, artboards and frames, clipboard and paste variants, fills, colour profiles, export family (artboards, comps, layers, presets, LUT, Illustrator), file scripts verified headless on 0.16.0.
 - 2026-10-25 (12): image auto adjustments/modes/measurement/notes, selection tools, brush tool state, actions editing, timeline, type styles and layer-style defaults verified headless on 0.16.0.
+- 2026-10-26: gap round: layer order/visibility/merge down, stroke, gradient fill, copy/paste, undo/redo scope, hue/saturation, smart sharpen, levels adjustment layer named with full ids.

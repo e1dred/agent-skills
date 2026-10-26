@@ -227,6 +227,12 @@ One `run` built title + bullets + table + chart + text box + link + background +
 App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`); none removed. The full-deck recipe
 (select chart → `chart.options`, accessibility check, `.pptx` round trip with a hidden slide) behaved identically on 0.10.0 and 0.11.1.
 
+## Alignment and redo (verified headless, 0.11.1, 2026-10-26; render looked at)
+> **Versions:** 0.11.1.
+- `format.alignLeft`, `format.alignCenter`, `format.alignRight` (no parameters) act on the selected text or shapes: after `insert.textBox` the new box is selected, so `--cmd 'insert.textBox={"text":"Right aligned","rect":[100,100,800,100]}' --cmd format.alignRight` right-aligned the text inside its 800-point-wide box (render: it sat at the right end), `alignCenter` centred and `alignLeft` left-aligned it.
+- **`insert.textBox` takes `rect: [x,y,w,h]` in points of a 960×540 slide** (the PNG export is 1920×1080). `x`, `y`, `width`, `height` are ignored: two boxes without `rect` were stacked at the default position and overlapped, and `rect:[1,1,6,1]` made a 6-point-wide box that wrapped one letter per line.
+- `edit.undo` then `edit.redo` in one `run` both succeed (a text box added and removed again, then restored).
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.10.0): headless run/save/convert/render/info, live new/slide/shape/table/chart/
@@ -241,3 +247,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - 2026-10-25 (8): shape formatting/freeform points, text and paragraph formatting, table cell commands, photo album, action buttons/zoom/slide actions, sections, slide/notes/handout masters, artistic picture effects, file properties/templates verified headless on 0.11.1.
 - 2026-10-25 (9): character formats, text movement, edit/selection helpers, arrange, table columns, audio media options, slide navigation, render/saveBytes and command discovery verified headless on 0.11.1.
 - 2026-10-25 (10): ink: only `draw.inkToShape` exists; strokes need pointer input in a visible window.
+- 2026-10-26: gap round: format.alignLeft/Center/Right, edit.redo, textBox rect units.
