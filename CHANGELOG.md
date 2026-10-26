@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ### Added
 - WordCraft: recipe and traps from reformatting a real document with review comments (table header shading and column widths, links in cells, landscape appendix, comment anchors).
 - README table: CadCraft row (55 of 441 command ids named, an upper bound because its ids are plain words; everyday estimate ~20% from one task), refreshed counts for the other apps; `coverage.sh` now measures CadCraft too.
+- CadCraft round 8: annotative text across viewport scales (checked in the PDF), editing a real drawing copy, basic 3D commands.
 - CadCraft round 7: block editor and in-place reference editing, attribute manager, block replace, plot-style tables (.ctb, effect checked in the PDF), publish, more dimension tools.
 - CadCraft round 6 (live window): screenshots, drawing by command_line + ui_click, click and window selection, repeat-last-command trap, snap/ortho not applied to clicks, panels and dialogs not drivable.
 - CadCraft rounds 4 and 5: rich text, plot/export options, xref attach, mleader/table styles, scale list, dimbreak, hatchedit, splinedit, tiled viewports, autoconstrain, and an end-to-end floor-plan recipe with viewport-scale and annotation-height traps.

@@ -53,7 +53,7 @@ Parse the saved ASCII DXF (LINE, small LWPOLYLINE donuts for junction dots, CIRC
 - Unknown or unloaded linetype in `layer.new` fails the whole run.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
-- Still not tested: authoring dynamic blocks, 3D/solid editing, DWG/DXF from other programs, annotative scaling in a viewport, VectorCraft.
+- Still not tested: authoring dynamic blocks (UI only), DWG/DXF made by other programs, a second CadCraft version, VectorCraft.
 
 ## Round 2 (2026-10-26, cadcraft-cli 0.13.0, headless, rendered and looked at)
 `tools/ccrun.py`: `run([(cmd, params), …], save=, export=)` runs many commands in one `cadcraft-cli run` and returns every result as JSON (raises on the first failure).
@@ -104,6 +104,12 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **More dimensions and tools:** `qdim {"handles","at","mode":"radius"}` creates several dimensions at once (returned 3 handles), `dimarc {"handle","at"}`, `centerline {"h1","h2"}` (two lines), `selectsimilar`, `id {"at"}`, `cal {"expr":"2*pi*5"}` (31.4159), `publish {"path":"pub.pdf"}` writes `pub-<layout>.pdf` for the Model and EVERY layout (five files for a drawing with Layout1, Layout2, S1, S2), `pdfbook` splits sheet frames in model space into books.
 - **Real drawing:** a 300-entity DXF made by CadCraft round-tripped DXF → DWG → DXF with identical entity counts per type (arcs, circles, lines, polylines, text). Not tested: DWG files produced by other programs.
 
+## Round 8 (2026-10-26, 0.13.0; annotative result looked at in a PDF)
+- **Annotative text (verified):** with `style {"name":"AN","font":"Arial","annotative":true,"height":3,"current":true}`, a `text` of height 3 in a 5000×3000 model plus `objectscale {"handles":[text],"add":["1:50","1:100"]}` printed at the same 3 mm in two layout viewports at 1:50 and 1:100; the same text in a NON-annotative style was invisible (3 model units). Use this instead of dividing heights by the scale (see Round 5). Paper A4 is the layout default (297×210 mm): keep `mview` rectangles inside it or they are cut off.
+- **Working on a real drawing (a 300-entity CadCraft schematic, copy only):** the whole edit run (layer off, `qselect`, `find`, `layerstate.save/restore`, `stretch` of 155 objects, `overkill`, `purge`, `audit`, SVG and PDF export) took 0.15 s. `entities {"layer":"TEXT","limit":0}` returns just the count (108). `layer.set {"on":false}` before `--export` leaves those layers out of the PDF. `selectsimilar` needs a selection; `purge` removed one unused layer.
+- **3D (basic):** `3dpoly {"points":[[x,y,z]…]}`, `helix {"center","baseRadius","topRadius","height","turns"}` (entity type Helix), `volume.measure {"handle":closed2D,"height":3}` → volume 75 for a 5×5 rectangle, `thickness {"thickness":5}` sets the current thickness, `flatten {"handles"}`. CadCraft is a 2D drafter: no solids modelling was found beyond these and regions.
+- Dynamic blocks cannot be created by commands (authoring is in the block editor UI); `blocks.dynamic {"name"}` answers null for an ordinary block.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -112,3 +118,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 5: floor-plan recipe on an A3 layout; viewport scale and annotation-height traps.
 - 2026-10-26: round 6: live window (screenshots, click-driven drawing, selection, what ui_click cannot do).
 - 2026-10-26: round 7: block editor, refedit, attribute manager, .ctb plot styles, publish, qdim.
+- 2026-10-26: round 8: annotative scaling, real-drawing edit run, basic 3D.
