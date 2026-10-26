@@ -53,7 +53,7 @@ Parse the saved ASCII DXF (LINE, small LWPOLYLINE donuts for junction dots, CIRC
 - Unknown or unloaded linetype in `layer.new` fails the whole run.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
-- Still not tested: authoring dynamic blocks (UI only), a second CadCraft version (0.13.0 is the latest release), DWG versions other than 2007 and the CadCraft-written ones, VectorCraft.
+- Not possible or not available: authoring dynamic blocks (no commands, UI only), a second CadCraft version (0.13.0 is the latest release). Not tested: VectorCraft.
 
 ## Round 2 (2026-10-26, cadcraft-cli 0.13.0, headless, rendered and looked at)
 `tools/ccrun.py`: `run([(cmd, params), …], save=, export=)` runs many commands in one `cadcraft-cli run` and returns every result as JSON (raises on the first failure).
@@ -123,6 +123,11 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **Dynamic blocks (read and edit, verified):** inserts of dynamic blocks are anonymous (`*B9`) and live in the layout's space, so `layout set` first, then `blocks.reference {"handle":"23E8"}` (definition "Drawing Title", property `Distance` 1.2747), `blocks.reference.grips`, `blocks.reference.set {"handle","name":"Distance","value":20}` (end point moved to x+20) and `blocks.reference.grip {"handle","node":80,"part":"end","to":[30,9]}` (distance 25.1583). `blocks.dynamic {"name":"Drawing Title"}` described the parameter (linear distance) and its stretch action; give it the definition name, not `*B9`.
 - Entities in layout (paper) space are only visible to `entities` after `layout set`; block references there: Rev, title and the four viewport-related anonymous blocks.
 
+## Round 11: save versions and the last open items (2026-10-26, 0.13.0, real AutoCAD DWG as the source)
+- **`saveas {"path","version":2000|2004|2007|2010|2013|2018,"binary":bool}`** (also `document.bytes`) writes DWG or DXF in each release; every file reopened in `info` with the right header (AC1015, AC1018, AC1021, AC1024, AC1027, AC1032) and the same 49 layers, 28 dimensions and 14 hatches, `skipped: 0`. **2007 and later keep all 36 multileaders; 2000 and 2004 cannot store them, so they come back as 36 `Leader` objects plus 33 extra `MText`** (1403 entities instead of 1367, 19 block references instead of 16): save as 2007+ unless the recipient needs R2000/R2004. `binary:true` gave a valid "AutoCAD Binary DXF" (1367 entities). Reading older/newer DWG written by other programs: only the 2007 file from AutoCAD was available; the CadCraft-written files of all six versions read back correctly.
+- **Dynamic blocks cannot be AUTHORED by commands:** the command list has no parameter/action/visibility-state commands (only `blocks.dynamic`, `blocks.reference`, `.set`, `.grips`, `.grip`, `bedit`, `bsave`, `bsaveas`, `bclose`); the block-editor palette is UI that `ui_click` (canvas only) cannot drive. Read and edit existing dynamic blocks (Round 10), and create plain blocks with `block`/`bedit`.
+- **Second CadCraft version:** none exists (v0.13.0 is the latest release); when one appears: extract the new CLI, diff `cadcraft-cli commands`, re-run `tools/ccrun.py` samples, relabel the sections.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -134,3 +139,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 8: annotative scaling, real-drawing edit run, basic 3D.
 - 2026-10-26: round 9: real drawing in the live window; find_text contains; selecting in dense drawings.
 - 2026-10-26: round 10: real AutoCAD DWG (layout, multileaders, dimensions, dynamic block read/edit), release check against GitHub.
+- 2026-10-26: round 11: save versions 2000-2018, dynamic-block authoring ruled out.
