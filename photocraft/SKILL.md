@@ -360,6 +360,26 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
   `paint.redEye {"x","y"}` errors "no red-eye pixels near the click" on anything that is not red pupils (a correct refusal, not a bug).
 - Not run: `paint.patch`, `paint.contentAwareMove`, `paint.remove`, `paint.historyBrush`, `.abr`/`importImage` brushes, real red-eye.
 
+## Filter families, layer comps, history and smart filters (verified headless, 0.16.0; contact sheets checked)
+
+> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
+
+- **Every filter ran with `{}` (defaults) without error: 65 ids** (blur 11 + blurGallery 5, sharpen 5, noise 5, pixelate 7, stylize 9, distort 8, render 6, other 7, video 2) on a flattened 260² test picture (`layer.flattenImage` first; the id is `layer.flattenImage`, not `image.flatten`). Rendered, so each does visibly what its name says:
+  - *Barely visible at defaults (raise the parameters):* `blur.blur`, `blurMore`, `boxBlur`, `gaussianBlur` (radius 1), `surfaceBlur`, `smartBlur`, `noise.despeckle/median/dustAndScratches/reduceNoise`, `sharpen.*`, `pixelate.facet`, `distort.zigZag/shear`, `other.custom`, `video.*`.
+  - *Replace the picture, not modify it:* `render.clouds` and `render.fibers` (greyscale/foreground-background noise, use a new layer or a selection), `blur.average` (one flat colour).
+  - *Surprises:* `other.colorToAlpha` defaults to white → keeps colour on black; `other.hsbHsl` swaps colour channel meaning (hue-shifted look); `distort.polarCoordinates` default is rectangular→polar (circular warp); `pixelate.colorHalftone`/`mezzotint` are loud; `stylize.findEdges/traceContour` give white line-art; `render.lightingEffects`/`relight`/`lensFlare` add light on top.
+  - `filter.distort.displace` needs `mapPath` or `mapDocument` ("Displace needs a displacement map"). `filter.render.pictureFrame {"frame":"waves"}` (draws a wavy green border, 445 primitives), `filter.render.tree {"baseTreeType":3}` (a pine, new look per type 1..34), `filter.render.flame {}` (a flame at the work path or the bottom): all return `{bounds,layer,newLayer:false,primitives}` and paint on the active layer.
+  - Parameter ranges for a few: `radialBlur {"amount","method":"spin|zoom"}`, `motionBlur {"angle","distance"}`, `lensBlur {"radius","shape":"hexagon|…"}`, `shapeBlur {"radius","shape":"heart|star|…"}`, `crystallize/pointillize {"cellSize","seed"}`, `mosaic {"cellSize"}`, `oilPaint`, `tiles {"count","fill"}`, `wave`, `ripple {"amount","size"}`, `twirl {"angle"}`, `filter.other.offset {"horizontal","vertical","undefinedAreas":"wrap|repeat|transparent"}`.
+- **Layer comps:** `layerComp.new {"name":"Red on","comment":"…"}` → `{comp:1}` (id numbers); `layerComp.apply {"comp":"Red on"}` → `{comp,missingLayers}`, `next`/`previous` step, `rename`, `setOptions {"comp","position":false}` (what the comp records: visibility/position/appearance),
+  `duplicate` → new id, `reorder {"comp","index"}`, `delete` → `{deleted}`, `list` → `{comps:[{id,name,comment,visibility,position,appearance,layers,missingLayers}],lastApplied}`, `updateWarnings` → `{count,warnings}`, `update {"comp":"*","what":"all"}`.
+- **History and snapshots:** `history.newSnapshot {"name":"Snap1","from":"fullDocument"}` → `{snapshot:1,…}` (**snapshot ids start at 1; `snapshot:0` is an error**); `history.selectSnapshot {"snapshot":1}` returns to it as a new state; `stepBackward/stepForward` → `{current,label,states}`;
+  `history.selectState {"state":1}` (0 = oldest); `history.setSource {"state":2}` then `paint.historyBrush {"points","size"}` paints back from that state (→ `{damage}`); `history.clear` drops the old states (Edit > Undo restores them).
+  **Trap:** `history.newDocument {"name"}` makes the new document ACTIVE, so a following `history.renameSnapshot` on the old document's snapshot fails with "no snapshot 1" (the new document has none). Do snapshot management first.
+- **Smart filters:** `layer.smartObjects.convertToSmartObject` (→ `{layer}`, a NEW layer id: a shape layer 3 became 6) then each `filter.*` is a smart filter; `layer.smartFilter.setParams {"index":0,"params":{"radius":3}}` (merged), `blendingOptions {"index":0,"blend":"Multiply","opacity":0.5}`,
+  `setVisible {"index":1,"visible":false}`, `move {"index":0,"to":1}`, `delete {"index":1}`, `disableSmartFilters {"enabled":false|true}`; also `deleteFilterMask`, `disableFilterMask`, `clearSmartFilters`, `transfer {"from","to","copy"}`. `info` lists `smartFilters:[{command,params,blend,opacity,visible}]` and `smartFiltersEnabled`.
+  `filter.convertForSmartFilters` is refused on a layer that already is a smart object.
+- Not run: the 47 `filter.gallery.*` artistic/sketch/texture filters, `filter.filterGallery`, `filter.vanishingPoint`, `filter.adaptiveWideAngle`, `filter.lastFilter`, filter masks, `layerComp.restoreLastDocumentState`, `history.deleteState`.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -397,3 +417,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-25 (5): six pipelines re-run on 0.15.1 and 0.16.0 (pixel-identical); version labels added per section.
 - 2026-10-25 (6): paths (set/rename/fill/stroke/toSelection/transform) and channels (new/duplicate/rename/options) verified headless on 0.16.0.
 - 2026-10-25 (7): brush presets (list/save/use), pressure strokes, pencil, erase, symmetry, bucket, magic eraser, smudge, sponge, colour replacement verified headless on 0.16.0.
+- 2026-10-25 (8): 65 filters rendered on a contact sheet, layer comps, history/snapshots/history brush, smart filters verified headless on 0.16.0.
