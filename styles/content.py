@@ -192,3 +192,76 @@ Ida set her own lantern down very carefully. Then she began to read the names, a
 THE END
 """,
 }
+
+# Invented screenplay excerpt. Markup used by --text files too (a Fountain-like subset): a line starting INT. EXT. EST. INT./EXT. I/E (or a leading ".")
+# is a scene heading; a line in capitals ending in "TO:" (or starting ">") is a transition; a block whose first line is a NAME IN CAPITALS followed by
+# lines is a character cue with dialogue, and a line in (parentheses) inside it is a parenthetical; everything else is action. *word* is italic.
+SCREENPLAY = {
+    "title": "The Last Signal", "author": "Sam Whitlock",
+    "contact": ["14 Example Row", "Harbourside, EX1 2AB", "(555) 010-0142", "sam.whitlock@example.com"],
+    "draft": "First draft",
+    "text": """FADE IN:
+
+INT. RADIO STATION - NIGHT
+
+A cramped room of dials and cold tea. One lamp. Rain on a tin roof. NORA VANCE (40s, sharp, tired) sits in front of a silent receiver, headphones round her neck.
+
+The receiver crackles once. She does not move.
+
+NORA
+(without turning)
+You're late.
+
+A figure steps out of the dark: ELIAS (60s, a coat that has seen weather). He sets a battered case on the desk.
+
+ELIAS
+The road was closed. *Again.*
+
+NORA
+The road is always closed.
+
+ELIAS
+Then it is always late.
+
+She almost smiles. The receiver crackles again, longer this time, a thread of a voice in the static.
+
+RADIO (V.O.)
+...calling any station... calling any...
+
+Nora grabs the headphones. Elias opens the case and lifts out a small brass key.
+
+NORA
+Where did you get that?
+
+ELIAS
+(quietly)
+Same place I got the news.
+
+NORA
+What news?
+
+Elias looks at the receiver, then at her.
+
+ELIAS
+That you're not the only one still listening.
+
+CUT TO:
+
+EXT. CLIFF PATH - CONTINUOUS
+
+Wind. A lantern swings from a post. Far below, a ship answers with three short blasts of its horn.
+
+Nora comes running into frame and stops at the edge, breathless.
+
+NORA
+(into the dark)
+I hear you!
+
+The horn sounds again. Closer.
+
+NORA
+Come closer. Come *closer*.
+
+FADE OUT.
+""",
+}

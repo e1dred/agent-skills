@@ -31,7 +31,7 @@ python3 -I build_wordcraft.py modern doc /abs/report.docx > job.json && wordcraf
 python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 ```
 
-`KIND` is `doc`, `resume`, `cv`, `paper` or `manuscript` (see below; the STYLE argument is ignored for it). Options, the same in both builders (`--name=value`):
+`KIND` is `doc`, `resume`, `cv`, `paper`, `manuscript` or `screenplay` (see below; the STYLE argument is ignored for the last two). Options, the same in both builders (`--name=value`):
 
 | Option | Applies to | What it does |
 |---|---|---|
@@ -85,6 +85,37 @@ What to know (all verified on WordCraft 0.11.0 and ONLYOFFICE 10.0.0; both apps 
   intentional (`manuscript_check.py` allows runs of up to seven).
 - Chapter headings are real `Heading 1` paragraphs, so a Word-style navigation pane or an accessibility checker sees the structure.
 - Not covered: footnotes, tables, pictures, poetry, an end-of-document page count, a table of contents, a synopsis or query letter.
+
+## Screenplay (`screenplay`)
+
+![Screenplay in WordCraft and ONLYOFFICE](gallery/screenplay.png)
+
+The common spec-script layout for film: Courier New 12 pt on a fixed 12 pt line pitch (6 lines per inch, so a page is about a minute), left margin 1.5 in,
+other margins 1 in. Element indents measured from the page edge: scene heading and action at 1.5 in, character cue at 3.7 in, dialogue 2.5 in to 6.0 in,
+parenthetical 3.1 in to 5.5 in, transition right-aligned. The title page is its own section; the script then starts at page 1 with no number, and
+pages 2, 3 … print `2.` `3.` at the top right. **A producer's, contest's or studio's own rules come first**: this is the usual default.
+
+```sh
+python3 -I build_wordcraft.py x screenplay /abs/script.docx --title="My Film" --author="Jane Doe" --email=jane@example.com --draft="First draft" \
+    --text=/abs/script.txt > job.json && wordcraft-cli run --script job.json
+python3 -I screenplay_check.py /abs/script.docx          # PASS / WARN / FAIL: margins, indents, Courier, line pitch, capitals, page numbers
+```
+
+Text input (`--text=`) is a Fountain-like subset, so a script written in any plain-text editor can be formatted:
+
+| Write | You get |
+|---|---|
+| `INT. KITCHEN - MORNING` (or `EXT.`, `EST.`, `INT./EXT.`, `I/E`; or a leading `.` to force) | scene heading, capitals |
+| a paragraph | action |
+| `NAME` on its own line, then dialogue lines (a line in `(parentheses)` is a parenthetical); `@Name` forces a cue | character cue, dialogue |
+| `CUT TO:` (a line in capitals ending in `TO:`), `FADE OUT.`, or a line starting `>` | transition, right-aligned |
+| `FADE IN:` at the start | left-aligned like action |
+| `*word*` | italic |
+
+`(CONT'D)` is added automatically when a speaker resumes after action. Options: `--title --author --address="L1|L2" --phone --email --draft` (title page), `--text`.
+
+Not covered (WordCraft has no "next element on Enter" and the file is a plain `.docx`): dual dialogue, `(MORE)` and `(CONT'D)` at page breaks, scene numbers, revision
+pages and colours, bold or underlined sluglines, centred text, Fountain title-page keys, and `.fdx` (Final Draft) or `.fountain` output. TV and stage-play formats differ and are not built.
 
 ## ATS-friendly, or good for humans?
 

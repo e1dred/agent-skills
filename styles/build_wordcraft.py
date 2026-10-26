@@ -4,7 +4,7 @@
     wordcraft-cli run --script job.json
 
 STYLE: traditional elegant clean professional academic modern stylish creative   (see styles.json)
-KIND:  doc | resume | cv | paper | manuscript   (paper uses the academic style; add --format=apa|mla; manuscript ignores STYLE)
+KIND:  doc | resume | cv | paper | manuscript | screenplay   (paper uses the academic style; add --format=apa|mla; manuscript and screenplay ignore STYLE)
 Options (all `--name=value`):
   --paper=letter|a4            page size (default letter; cv defaults to a4)
   --page-numbers=bottom-center|bottom-right|top-right      --header-text="Short title"
@@ -19,6 +19,7 @@ Options (all `--name=value`):
   --extras                     paper only: abstract (APA), block quote, captioned table
   --title= --author= --pen= --surname= --address="Line 1|Line 2" --phone= --email=   manuscript: title page and header
   --wordcount=N --font=times|courier --layout=novel|short --text=/abs/file.txt   manuscript: word count shown, font, title-page layout, your own text
+  --title= --author= --address= --phone= --email= --draft="First draft" --text=/abs/file.txt   screenplay: title page and your own script (Fountain-like markup, see content.py)
   --local-fonts                allow fonts installed here but not shipped with Office
   --overwrite                  replace an existing out.docx (otherwise the script refuses)
 Notes about ATS-safety and other cautions go to stderr. Replace the sample text in content.py with real content.
@@ -57,6 +58,8 @@ def translate(name, p):
     if "indent_first" in p: par["indentFirst"] = p["indent_first"]
     if "indent_left" in p: par["indentLeft"] = p["indent_left"]
     if "line" in p: par["lineSpacing"] = {"rule": "multiple", "value": p["line"]}
+    if "line_exact" in p: par["lineSpacing"] = {"rule": "exactly", "value": p["line_exact"]}
+    if "indent_right" in p: par["indentRight"] = p["indent_right"]
     if p.get("keep_next"): par["keepNext"] = True
     if p.get("tab_right"): par["tabs"] = [{"pos": p["tab_right"], "align": "right", "leader": "none"}]
     b = {}
@@ -66,12 +69,16 @@ def translate(name, p):
     return chr_, par
 
 
+if P["kind"] in ("manuscript", "screenplay"):
+    c("tools.autocorrect", enabled=False)   # keep the author's text exactly as typed (no "..." to ellipsis, no capitalising)
 pg = P["page"]
 if P["paper"] == "a4": c("layout.size", name="A4")
 t, b_, l, r = pg["margins"]
 c("layout.margins", top=t, bottom=b_, left=l, right=r)
 
 H, F = P["header"], P["footer"]
+SCRIPT_HDR = bool(P.get("script_header"))
+if SCRIPT_HDR: H = None   # a screenplay builds its page-number header after the title page (see "sectionbreak")
 base_font = next((p["font"] for n, p in P["styles"] if n == "Normal"), None)
 base_size = next((p["size"] for n, p in P["styles"] if n == "Normal"), 11)
 if H and P.get("different_first"):
@@ -93,8 +100,8 @@ elif H:
 if F:
     c("insert.pageNumber", position="bottom", align=F["align"])
 for hf in ("Header", "Footer"):
-    if (H or F) and base_font:
-        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript") else "555555"})
+    if (H or F or SCRIPT_HDR) and base_font:
+        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript", "screenplay") else "555555"})
 
 BUILTIN = {"Normal", "Heading 1", "Heading 2", "Heading 3"}
 for name, p in P["styles"]:
@@ -164,6 +171,14 @@ for blk in P["blocks"]:
         pending_before[0] = blk["pt"]
     elif t_ == "pagebreak":
         pending_break[0] = True
+    elif t_ == "sectionbreak":
+        # title page = section 1 (no header); the script is section 2: numbered from 1, page 1 shows no number, then "2." "3." ...
+        # order matters: create the header in the default slot first, THEN switch different-first-page on
+        c("layout.break", kind="nextPage"); first[0] = True
+        c("layout.pageNumberFormat", format="decimal", start=1)
+        c("layout.linkToPrevious"); c("insert.createHeader"); c("insert.pageField"); c("text.insert", text=P["header"].get("suffix", ""))
+        c("para.set", props={"align": P["header"]["align"]}); c("insert.closeHeader")
+        c("caret.docEnd"); c("layout.differentFirstPage")
     elif t_ == "columns":
         c("text.newParagraph")
         c("layout.columns", count=blk["n"], space=24, separator=True, apply="forward"); first[0] = True

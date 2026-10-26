@@ -343,6 +343,16 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - A right tab inside a one-line style (`tabs: [{pos:468, align:right}]`) puts "about 350 words" at the right margin on the same line as the author's name; `text.insert` with `\t` is a real tab.
 - Real `Heading 1` for chapters (restyled: 12 pt, bold, centred, black, double-spaced), `Normal` body with `indentFirst:36`, `lineSpacing multiple 2.0`, `spaceAfter:0`; the checker reads these back from `styles.xml`.
 
+## Screenplay format (verified headless, 0.11.0; both apps give the same pages)
+
+> **Versions:** 0.11.0 (2026-10-25). Built by `styles/build_wordcraft.py x screenplay …`, checked with `styles/screenplay_check.py`.
+
+- **Fixed line pitch:** `lineSpacing {"rule":"exactly","value":12}` on every element (`para.lineSpacing {"exactly":12}`); with Courier 12 this gives 6 lines per inch. Right indents are a paragraph property too: `indentRight` (pt), next to `indentLeft`.
+- **Title page not counted, script numbered from 1, page 1 without a number:** type the title page, `layout.break {"kind":"nextPage"}`, then in the NEW section `layout.pageNumberFormat {"format":"decimal","start":1}` → `layout.linkToPrevious` → `insert.createHeader` → `insert.pageField` → `text.insert "."` → `para.set {"props":{"align":"right"}}` → `insert.closeHeader` → `caret.docEnd` → **`layout.differentFirstPage` last**. Result per page (`pdftotext`): title page no header, script page 1 no number, then "2." "3.". Doing `differentFirstPage` BEFORE `createHeader` put the number on script page 1 only (the header went into the first-page slot).
+- **Autocorrect rewrites typed text:** `...` became `…` and some lines were capitalised; start screenplay and manuscript builds with `tools.autocorrect {"enabled":false}`.
+- Keep-with-next on scene headings, cues and parentheticals stops a cue from being stranded at the bottom of a page; a transition can still start a page.
+- `pdftotext -layout` drops some blank lines between elements even when the page has them: judge spacing on a render, not on the text dump.
+
 ## Version note (0.11.0)
 
 WordCraft 0.11.0 added 5 commands (638 → 643), none removed: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
@@ -558,3 +568,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-25 (6): styles management, Design tab, index (mark/insert/update), TOC caret behaviour, equation editing (structures, convert, number), tracked changes by author/one at a time/options/combine verified headless on 0.11.0.
 - 2026-10-25 (7): table editing/styles/nested tables, outline view, quick parts/autotext/doc properties, SmartArt/WordArt/canvas/icons, picture and shape commands verified headless on 0.11.0.
 - 2026-10-25 (8): manuscript format (publisher submission) built and checked in WordCraft and ONLYOFFICE; header-skipping-page-1 order, space-before-at-page-top trap, italic carry-over fix.
+- 2026-10-25 (9): screenplay format built and checked in WordCraft and ONLYOFFICE; title-page section with restarted numbering, exact line pitch, indentRight, autocorrect trap.

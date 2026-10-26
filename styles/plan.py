@@ -4,7 +4,8 @@
 
 Kinds: doc (report), resume (ATS-safe, one column), cv (European CV), paper (student paper, `fmt` apa or mla),
 manuscript (standard manuscript format for publishers/agents; options title author pen surname address phone email wordcount ms_font=times|courier
-ms_layout=novel|short text=/abs/file.txt).
+ms_layout=novel|short text=/abs/file.txt),
+screenplay (spec-script layout; options title author address phone email draft text=/abs/file.txt).
 Options (all optional): paper "letter"|"a4"; page_numbers "bottom-center"|"bottom-right"|"top-right"; header_text str;
 columns 2..3 (doc body in columns after the subtitle); photo /abs/path.png (resume/cv); layout chronological|functional|combined
 (resume); fmt apa|mla (paper); local_fonts bool. All sizes are points, all colours RRGGBB.
@@ -27,7 +28,7 @@ def _rule(h, color, kind):
 
 def make(style_name, kind, o=None):
     o = dict(o or {})
-    if kind in ("paper", "manuscript"):
+    if kind in ("paper", "manuscript", "screenplay"):
         style_name = "academic"
     S = resolve(style_name, portable=not o.get("local_fonts"))
     if o.get("figure") == "sample": o["figure"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "sample-figure.png")
@@ -43,7 +44,7 @@ def make(style_name, kind, o=None):
             "bullet": {"color": C["accent"]}, "columns": None, "footnotes": []}
     m = RS["margins_in"] if kind in ("resume", "cv") else S["margins_in"]
     top, bottom, left, right = [v * 72 for v in m]
-    if kind in ("paper", "manuscript"):
+    if kind in ("paper", "manuscript", "screenplay"):
         top = bottom = left = right = 72.0
     plan["page"] = {"w": PW, "h": PH, "margins": [top, bottom, left, right]}
     width = PW - left - right
@@ -343,6 +344,89 @@ def make(style_name, kind, o=None):
         notes.append("manuscript: standard layout for submissions (%s, 12 pt, double-spaced, 1-inch margins); always follow the publisher's or agent's own guidelines first." % mf)
         notes.append("manuscript: %s counted from the body text (%d words); header and title page carry no word-count field, so update it after editing." % (wc_text, words))
 
+    # ---------------------------------------------------------------- screenplay (standard spec-script layout)
+    elif kind == "screenplay":
+        SP = content.SCREENPLAY
+        mf = "Courier New"
+        title = o.get("title") or SP["title"]
+        author = o.get("author") or SP["author"]
+        custom = bool(o.get("author"))
+        contact = [x.strip() for x in o["address"].split("|")] if o.get("address") else ([] if custom else list(SP["contact"]))
+        if o.get("phone"): contact.append(o["phone"])
+        if o.get("email"): contact.append(o["email"])
+        draft = o.get("draft") if o.get("draft") is not None else ("" if custom else SP["draft"])
+        txt = open(o["text"], encoding="utf-8").read() if o.get("text") else SP["text"]
+
+        def runs_of(line):
+            out = []
+            for b in re.split(r"(\*[^*\n]+\*)", line):
+                if len(b) > 2 and b[0] == b[-1] == "*": out.append(("i", b[1:-1]))
+                elif b: out.append((False, b))
+            return out
+        SCENE = re.compile(r"^(\.[A-Za-z0-9]|INT\.|EXT\.|EST\.|INT\./EXT\.|INT/EXT|I/E)", re.I)
+        TRANS = re.compile(r"^[A-Z0-9 .'()\-]+TO:$")
+        caps = lambda t: not re.search(r"[a-z]", t) and re.search(r"[A-Z]", t)
+        items, last_speaker, action_since = [], None, False
+        for chunk in re.split(r"\n\s*\n", txt.strip()):
+            lines = [l.strip() for l in chunk.strip().split("\n") if l.strip()]
+            if not lines: continue
+            head = lines[0]
+            if SCENE.match(head):
+                items.append(("scene", head.lstrip(".").upper())); last_speaker = None
+                if lines[1:]: items.append(("action", " ".join(lines[1:]))); action_since = True
+            elif len(lines) == 1 and (head.startswith(">") or (caps(head) and TRANS.match(head)) or head.upper() in ("FADE OUT.", "FADE TO BLACK.", "SMASH CUT TO BLACK.")):
+                items.append(("trans", head.lstrip(">").strip().upper())); last_speaker = None
+            elif len(lines) > 1 and (head.startswith("@") or (caps(re.sub(r"\(.*?\)", "", head)) and not head.endswith(":") and len(head) < 40)):
+                name = head.lstrip("@").strip().upper()
+                base = re.sub(r"\s*\(.*?\)", "", name).strip()
+                if base == last_speaker and action_since and "CONT" not in name:
+                    name = name + " (CONT'D)"
+                items.append(("char", name)); last_speaker = base; action_since = False
+                para_buf = []
+                for l in lines[1:]:
+                    if l.startswith("(") and l.endswith(")"):
+                        if para_buf: items.append(("dial", " ".join(para_buf))); para_buf = []
+                        items.append(("paren", l))
+                    else: para_buf.append(l)
+                if para_buf: items.append(("dial", " ".join(para_buf)))
+            else:
+                items.append(("action", " ".join(lines))); action_since = True
+        nsc = sum(1 for k, _ in items if k == "scene")
+        words = sum(len(str(v).split()) for k, v in items if k in ("action", "dial"))
+        add("Normal", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line_exact=12)
+        add("SP Scene Heading", font=mf, size=12, color="000000", before=24, after=0, align="left", indent_first=0, line_exact=12, keep_next=True)
+        add("SP Action", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_first=0, line_exact=12)
+        add("SP Character", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_left=158.4, indent_first=0, line_exact=12, keep_next=True)
+        add("SP Parenthetical", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=115.2, indent_right=144, indent_first=0, line_exact=12, keep_next=True)
+        add("SP Dialogue", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=72, indent_right=108, indent_first=0, line_exact=12)
+        add("SP Transition", font=mf, size=12, color="000000", before=12, after=0, align="right", indent_first=0, line_exact=12)
+        add("SP Title", font=mf, size=12, color="000000", before=0, after=0, align="center", indent_first=0, line_exact=12, caps=True)
+        add("SP Title Page", font=mf, size=12, color="000000", before=0, after=0, align="center", indent_first=0, line_exact=12)
+        add("SP Contact", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line_exact=12)
+        # title page (its own section: not counted; the script starts again at page 1, which prints no number)
+        blocks.append({"t": "spacer", "pt": 216})
+        para("SP Title", title)
+        blocks.append({"t": "spacer", "pt": 24}); para("SP Title Page", "written by")
+        blocks.append({"t": "spacer", "pt": 12}); para("SP Title Page", author)
+        if draft:
+            blocks.append({"t": "spacer", "pt": 24}); para("SP Title Page", draft)
+        for i, l in enumerate(contact):
+            if i == 0: blocks.append({"t": "spacer", "pt": 168 if draft else 200})
+            para("SP Contact", l)
+        blocks.append({"t": "sectionbreak"})
+        STYLE = {"scene": "SP Scene Heading", "action": "SP Action", "char": "SP Character", "paren": "SP Parenthetical", "dial": "SP Dialogue", "trans": "SP Transition"}
+        first_script = True
+        for k, v in items:
+            runs = runs_of(v) if k in ("action", "dial") else [(False, v)]
+            para(STYLE[k], *runs)
+            if first_script: first_script = False
+        plan["header"] = {"text": "", "number": True, "align": "right", "suffix": "."}
+        plan["script_header"] = True
+        plan["props"] = {"title": title, "author": author, "subject": "Screenplay (sample)" if not o.get("text") else "Screenplay"}
+        plan["page"]["margins"] = [72.0, 72.0, 108.0, 72.0]
+        notes.append("screenplay: standard spec-script layout (Courier New 12 pt, 12 pt line pitch, left margin 1.5 in); about one page per minute of screen time. Follow a producer's or contest's own rules first.")
+        notes.append("screenplay: %d scene(s), %d words of action and dialogue; (CONT'D) is added when a speaker resumes after action." % (nsc, words))
+
     return plan
 
 
@@ -360,5 +444,5 @@ def parse_argv(argv):
          "fmt": opt.get("format", "apa"), "local_fonts": "local-fonts" in flags,
          "title": opt.get("title"), "author": opt.get("author"), "pen": opt.get("pen"), "surname": opt.get("surname"), "address": opt.get("address"),
          "phone": opt.get("phone"), "email": opt.get("email"), "wordcount": opt.get("wordcount"), "ms_font": opt.get("font"),
-         "ms_layout": opt.get("layout") if opt.get("layout") in ("novel", "short") else None, "text": opt.get("text")}
+         "ms_layout": opt.get("layout") if opt.get("layout") in ("novel", "short") else None, "text": opt.get("text"), "draft": opt.get("draft")}
     return pos[0], pos[1], pos[2], {k: v for k, v in o.items() if v not in (None, "", False)}, flags

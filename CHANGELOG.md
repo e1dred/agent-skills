@@ -8,7 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 
 ### Added
 - **Manuscript format** (`styles/`, kind `manuscript`): standard manuscript layout for publisher and agent submissions in WordCraft and ONLYOFFICE (title page, running header from page 2, double-spaced 12 pt, chapter drops, scene breaks), your own text through `--text=`, Times or Courier, novel or short-story layout, A4 or Letter, and `manuscript_check.py` to verify a file. Gallery image and a WordCraft skill section.
-- Screenplay format: planned next.
+- **Screenplay format** (kind `screenplay`): standard spec-script layout in WordCraft and ONLYOFFICE (Courier 12 pt on a 12 pt pitch, element indents, title page as its own section, numbering from 1 with `2.` `3.` at the top right), Fountain-like plain-text input with automatic `(CONT'D)`, and `screenplay_check.py`.
 
 ## 2026-10-25
 

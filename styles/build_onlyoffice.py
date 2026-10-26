@@ -3,7 +3,7 @@
     python3 -I build_onlyoffice.py STYLE KIND /abs/out.docx [options] > calls.json
     python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 
-STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper | manuscript; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
+STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper | manuscript | screenplay; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
 --page-numbers=bottom-center|bottom-right|top-right, --header-text=…, --columns=2 (doc), --photo=/abs/pic.png (resume/cv), --figure=sample|/abs/pic.png, --merged-table, --footnotes,
 --script=arabic|hebrew|japanese|chinese|korean (doc), --extras (paper),
 --layout=chronological|functional|combined (resume), --format=apa|mla (paper), --local-fonts, --pdf (also save a PDF rendered by
@@ -49,6 +49,8 @@ function setPara(pp, p) {
   if (p.before !== undefined) pp.SetSpacingBefore(tw(p.before));
   if (p.after !== undefined) pp.SetSpacingAfter(tw(p.after));
   if (p.line !== undefined) pp.SetSpacingLine(Math.round(240 * p.line), "auto");
+  if (p.line_exact !== undefined) pp.SetSpacingLine(tw(p.line_exact), "exact");
+  if (p.indent_right !== undefined) pp.SetIndRight(tw(p.indent_right));
   if (p.align) pp.SetJc(JC[p.align] || "left");
   if (p.indent_first !== undefined) pp.SetIndFirstLine(tw(p.indent_first));
   if (p.indent_left !== undefined) pp.SetIndLeft(tw(p.indent_left));
@@ -66,13 +68,13 @@ for (var i = 0; i < PLAN.styles.length; i++) {
   setText(st.GetTextPr(), p); setPara(st.GetParaPr(), p);
 }
 var base = PLAN.styles[0][1];
-if (PLAN.header || PLAN.footer) {
+if (PLAN.header || PLAN.footer || PLAN.script_header) {
   ["Header", "Footer"].forEach(function (n) {
-    try { var s = doc.GetStyle(n); setText(s.GetTextPr(), {font: base.font, size: base.size, color: (PLAN.kind === "paper" || PLAN.kind === "manuscript") ? "000000" : "555555"}); } catch (e) {}
+    try { var s = doc.GetStyle(n); setText(s.GetTextPr(), {font: base.font, size: base.size, color: (PLAN.kind === "paper" || PLAN.kind === "manuscript" || PLAN.kind === "screenplay") ? "000000" : "555555"}); } catch (e) {}
   });
 }
 if (PLAN.different_first) { try { sec.SetTitlePage(true); } catch (e) {} }   // page 1 (title page) gets the empty first-page header
-if (PLAN.header) {
+if (PLAN.header && !PLAN.script_header) {
   var hp = sec.GetHeader("default", true).GetElement(0);
   hp.SetJc(JC[PLAN.header.align]);
   if (PLAN.header.text) hp.AddText(PLAN.header.text);
@@ -92,7 +94,7 @@ function bulletLevel() {
   lvl.SetSuff("tab");
   return lvl;
 }
-var pendingBefore = 0, pendingBreak = false, lastPara = null, COLS = 0;
+var pendingBefore = 0, pendingBreak = false, lastPara = null, COLS = 0, SECBREAK = false;
 function addPara(style, runs, bullet, scr) {
   var p = Api.CreateParagraph();
   p.SetStyle(doc.GetStyle(style));
@@ -142,9 +144,19 @@ for (var j = 0; j < PLAN.blocks.length; j++) {
   else if (b.t === "pagebreak") pendingBreak = true;
   else if (b.t === "table") addTable(b);
   else if (b.t === "columns") { doc.CreateSection(lastPara); COLS = b.n; }
+  else if (b.t === "sectionbreak") { SECBREAK = true; doc.CreateSection(lastPara); }   // the title page ends here
 }
 var f0 = doc.GetElement(0);
 if (f0 && f0.GetClassType() === "paragraph" && f0.GetText().replace(/[\r\n]/g, "") === "" && doc.GetElementsCount() > 1) doc.RemoveElement(0);
+if (SECBREAK) {   // screenplay: the script section restarts numbering at 1, shows no number on its first page, then "2." "3." ...
+  var fs = doc.GetFinalSection();
+  fs.SetPageSize(tw(PLAN.page.w), tw(PLAN.page.h));
+  fs.SetPageMargins(tw(PLAN.page.margins[2]), tw(PLAN.page.margins[0]), tw(PLAN.page.margins[3]), tw(PLAN.page.margins[1]));
+  try { fs.SetStartPageNumber(1); } catch (e) {}
+  try { fs.SetTitlePage(true); } catch (e) {}
+  var shp = fs.GetHeader("default", true).GetElement(0);
+  shp.SetJc(JC[PLAN.header.align]); shp.AddPageNumber(); if (PLAN.header.suffix) shp.AddText(PLAN.header.suffix);
+}
 if (COLS) { var fin = doc.GetFinalSection(); fin.SetType("continuous"); fin.SetEqualColumns(COLS, 360); }
 for (var L = 0; L < PLAN.links.length; L++) { var hits = doc.Search(PLAN.links[L][0], true); if (hits.length) hits[0].AddHyperlink(PLAN.links[L][1], ""); }
 return {elements: doc.GetElementsCount()};
