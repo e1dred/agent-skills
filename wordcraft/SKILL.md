@@ -409,6 +409,9 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - **Faithful reformatting:** keep the author's wording in the clean copy, put judgement into the comment copy, restate (not reinterpret) facts in added summary tables, fix only mechanical things (restarted numbering, tracking parameters in links) and say so.
 - Not run: tracked changes for suggested wording edits (comments only), `review.combine` against the friend's later version.
 
+- **`para.bullets {"kind":"bullet"}` TOGGLES, and `text.newParagraph` keeps the list:** calling it on every item turned bullets OFF on every second item (render: alternate bullets and plain paragraphs). Call it on the first item only, then `para.bullets {"off":true}` after the last one. (0.11.0, 2026-10-26)
+- **Editing a table cell by text in a reviewed document:** `edit.replaceAll` and `select.text` miss text that a comment anchor splits (replaced:0 / "not found"); delete by `select.range` on the cell paragraph path with offsets instead, and check the result with `inspect` (an offset was 3 characters short once). `table.deleteRow` with the caret in a cell (via `select.text` + `select.collapse`) works, but check the row did not hold the only mention of another part. (0.11.0, 2026-10-26)
+
 ## Version note (0.11.0)
 
 WordCraft 0.11.0 added 5 commands (638 → 643), none removed: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
@@ -631,3 +634,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-25 (13): ink (strokes, lasso select/recolour/move/delete, erase, ink to shape, pens, replay) verified headless; page index is 0-based.
 - 2026-10-25 (14): ink drawn by hand in the live window: 226/154-point strokes, lasso mode must be switched on with draw.lasso {}, convertInk made a rectangle from a hand-drawn box.
 - 2026-10-25 (15): reformatting a real document with review comments: style-name collision, header-row shading by caret.up trap, column widths, links in cells, x-of-y footer, landscape appendix with a picture, empty-bullet-before-break fix, comment anchors.
+- 2026-10-26 (16): bullets toggle trap; table-row edit in a commented document; built a 2-page explanation memo from a script.
