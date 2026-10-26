@@ -5,6 +5,7 @@
 Kinds: doc (report), resume (ATS-safe, one column), cv (European CV), paper (student paper, `fmt` apa or mla),
 manuscript (standard manuscript format for publishers/agents; options title author pen surname address phone email wordcount ms_font=times|courier
 ms_layout=novel|short text=/abs/file.txt),
+stageplay (common US playwright layout; options as screenplay plus font=times|courier),
 screenplay (spec-script layout; options title author address phone email draft text=/abs/file.txt).
 Options (all optional): paper "letter"|"a4"; page_numbers "bottom-center"|"bottom-right"|"top-right"; header_text str;
 columns 2..3 (doc body in columns after the subtitle); photo /abs/path.png (resume/cv); layout chronological|functional|combined
@@ -28,7 +29,7 @@ def _rule(h, color, kind):
 
 def make(style_name, kind, o=None):
     o = dict(o or {})
-    if kind in ("paper", "manuscript", "screenplay", "query", "synopsis"):
+    if kind in ("paper", "manuscript", "screenplay", "query", "synopsis", "stageplay"):
         style_name = "academic"
     S = resolve(style_name, portable=not o.get("local_fonts"))
     if o.get("figure") == "sample": o["figure"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "sample-figure.png")
@@ -44,7 +45,7 @@ def make(style_name, kind, o=None):
             "bullet": {"color": C["accent"]}, "columns": None, "footnotes": []}
     m = RS["margins_in"] if kind in ("resume", "cv") else S["margins_in"]
     top, bottom, left, right = [v * 72 for v in m]
-    if kind in ("paper", "manuscript", "screenplay", "query", "synopsis"):
+    if kind in ("paper", "manuscript", "screenplay", "query", "synopsis", "stageplay"):
         top = bottom = left = right = 72.0
     plan["page"] = {"w": PW, "h": PH, "margins": [top, bottom, left, right]}
     width = PW - left - right
@@ -558,6 +559,120 @@ def make(style_name, kind, o=None):
             plan["different_first"] = True
             plan["props"] = {"title": title + ": Synopsis", "author": author, "subject": "Synopsis (sample)" if not o.get("text") else "Synopsis"}
             notes.append("synopsis: single-spaced, present tense, third person; one to two pages is the usual ask. Follow the agent's or publisher's stated length.")
+
+    # ---------------------------------------------------------------- stage play (common US playwright submission layout)
+    elif kind == "stageplay":
+        ST = content.STAGEPLAY
+        mf = {"courier": "Courier New"}.get((o.get("ms_font") or "").lower(), "Times New Roman")
+        txt = open(o["text"], encoding="utf-8").read() if o.get("text") else ST["text"]
+        custom = bool(o.get("text"))
+        meta = {}
+        KEYS = r"(Title|Credit|Authors?|Source|Draft date|Date|Revision|Contact|Copyright|Notes)"
+        mt = re.match(r"((?:" + KEYS + r":[^\n]*\n(?:[ \t]+[^\n]*\n)*)+)\s*\n", txt.lstrip("﻿") + "\n", re.I)
+        if mt:
+            cur = None
+            for ln in mt.group(1).split("\n"):
+                km = re.match(r"^" + KEYS + r":\s*(.*)$", ln, re.I)
+                if km: cur = km.group(1).lower(); meta[cur] = [km.group(2).strip()] if km.group(2).strip() else []
+                elif ln.strip() and cur: meta[cur].append(ln.strip())
+            txt = re.sub(r"^" + re.escape(mt.group(1)), "", txt.lstrip("﻿"), count=1)
+        first = lambda k: (meta.get(k) or [""])[0]
+        title = o.get("title") or first("title") or ("" if custom else ST["title"]) or "Untitled"
+        author = o.get("author") or first("author") or first("authors") or ("" if custom else ST["author"])
+        credit = first("credit") or ("" if custom else ST["credit"])
+        contact = [x.strip() for x in o["address"].split("|")] if o.get("address") else (meta.get("contact") or ([] if custom else list(ST["contact"])))
+        if o.get("phone"): contact.append(o["phone"])
+        if o.get("email"): contact.append(o["email"])
+        draft = o.get("draft") if o.get("draft") is not None else (first("draft date") or first("revision") or first("date") or ("" if custom else ST["draft"]))
+
+        def runs_of(line):
+            out = []
+            for b in re.split(r"(\*\*[^*\n]+\*\*|\*[^*\n]+\*)", line):
+                if b.startswith("**") and b.endswith("**") and len(b) > 4: out.append((True, b[2:-2]))
+                elif len(b) > 2 and b[0] == b[-1] == "*": out.append(("i", b[1:-1]))
+                elif b: out.append((False, b))
+            return out
+        caps = lambda t: not re.search(r"[a-z]", t) and re.search(r"[A-Z]", t)
+        CASTH = re.compile(r"^(CAST OF CHARACTERS|CHARACTERS|DRAMATIS PERSONAE|THE CAST)$", re.I)
+        items, n_acts, n_scenes = [], 0, 0
+        for chunk in re.split(r"\n\s*\n", txt.strip()):
+            lines = [l.strip() for l in chunk.strip().split("\n") if l.strip()]
+            if not lines: continue
+            head = lines[0]
+            if CASTH.match(head):
+                items.append(("casthead", head.upper()))
+                for l in lines[1:]: items.append(("cast", l))
+            elif re.match(r"^(SETTING|TIME|PLACE|AT RISE)\s*:", head, re.I):
+                for l in lines: items.append(("setting", l))
+            elif len(lines) == 1 and re.match(r"^ACT\b", head, re.I):
+                items.append(("act", head.upper())); n_acts += 1
+            elif len(lines) == 1 and re.match(r"^SCENE\b", head, re.I):
+                items.append(("scene", head.upper())); n_scenes += 1
+            elif len(lines) == 1 and head.upper().rstrip(".") in ("BLACKOUT", "CURTAIN", "END OF PLAY", "END OF ACT ONE", "END OF ACT TWO", "LIGHTS DOWN", "END"):
+                items.append(("end", head.upper()))
+            elif head.startswith("(") and lines[-1].endswith(")"):
+                items.append(("dir", " ".join(lines)))
+            elif len(lines) > 1 and caps(re.sub(r"\(.*?\)", "", head)) and not head.endswith(":") and len(head) < 40:
+                items.append(("cue", head.lstrip("@").upper()))
+                buf = []
+                for l in lines[1:]:
+                    if l.startswith("(") and l.endswith(")"):
+                        if buf: items.append(("speech", " ".join(buf))); buf = []
+                        items.append(("paren", l))
+                    else: buf.append(l)
+                if buf: items.append(("speech", " ".join(buf)))
+            else:
+                items.append(("dir", " ".join(lines)))
+        words = sum(len(v.split()) for k, v in items if k in ("speech", "dir"))
+        nspeech = sum(1 for k, _ in items if k == "cue")
+        add("Normal", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line=1.0)
+        add("ST Act", font=mf, size=12, color="000000", before=0, after=12, align="center", indent_first=0, line=1.0, bold=True, caps=True, keep_next=True)
+        add("ST Scene", font=mf, size=12, color="000000", before=12, after=12, align="center", indent_first=0, line=1.0, bold=True, caps=True, keep_next=True)
+        add("ST Direction", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_left=72, indent_right=36, indent_first=0, line=1.0, italic=True)
+        add("ST Cue", font=mf, size=12, color="000000", before=12, after=0, align="center", indent_first=0, line=1.0, caps=True, keep_next=True)
+        add("ST Speech", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=0, indent_right=0, indent_first=0, line=1.0)
+        add("ST Parenthetical", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=72, indent_right=72, indent_first=0, line=1.0, italic=True, keep_next=True)
+        add("ST Cast Heading", font=mf, size=12, color="000000", before=0, after=12, align="center", indent_first=0, line=1.0, bold=True, caps=True)
+        add("ST Cast", font=mf, size=12, color="000000", before=0, after=6, align="left", indent_left=36, indent_first=-36, line=1.0)
+        add("ST Setting", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_left=0, indent_first=0, line=1.0)
+        add("ST End", font=mf, size=12, color="000000", before=12, after=0, align="center", indent_first=0, line=1.0, bold=True, caps=True)
+        add("ST Title", font=mf, size=12, color="000000", before=0, after=0, align="center", indent_first=0, line=1.0, bold=True, caps=True)
+        add("ST Title Page", font=mf, size=12, color="000000", before=0, after=0, align="center", indent_first=0, line=1.0)
+        add("ST Contact", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line=1.0)
+        blocks.append({"t": "spacer", "pt": 200})
+        para("ST Title", title)
+        if credit: blocks.append({"t": "spacer", "pt": 14}); para("ST Title Page", credit)
+        if author:
+            blocks.append({"t": "spacer", "pt": 14}); para("ST Title Page", "by")
+            blocks.append({"t": "spacer", "pt": 14}); para("ST Title Page", author)
+        if draft: blocks.append({"t": "spacer", "pt": 28}); para("ST Title Page", draft)
+        for i, l in enumerate(contact):
+            if i == 0: blocks.append({"t": "spacer", "pt": 150 if draft else 190})
+            para("ST Contact", l)
+        blocks.append({"t": "sectionbreak"})     # title page = its own section; the rest is numbered from 1 (first page unnumbered)
+        STYLE = {"casthead": "ST Cast Heading", "setting": "ST Setting", "act": "ST Act", "scene": "ST Scene", "dir": "ST Direction", "cue": "ST Cue",
+                 "speech": "ST Speech", "paren": "ST Parenthetical", "end": "ST End"}
+        prev = None
+        for k, v in items:
+            if k == "act" and prev is not None:
+                blocks.append({"t": "pagebreak"})      # every act starts a new page (the cast page, if any, comes first)
+            if k == "cast":
+                bits = v.split(",", 1)
+                runs = [(True, bits[0].strip())] + ([(False, "," + bits[1])] if len(bits) > 1 else [])
+                para("ST Cast", *runs)
+            elif k == "setting":
+                m = re.match(r"^([A-Za-z ]+:)\s*(.*)$", v)
+                para("ST Setting", *( [(True, m.group(1)), (False, " " + m.group(2))] if m else [(False, v)] ))
+            elif k in ("dir", "speech"):
+                para(STYLE[k], *runs_of(v))
+            else:
+                para(STYLE[k], (False, v))
+            prev = k
+        plan["header"] = {"text": "%s / " % " ".join(title.upper().split()[:4]), "number": True, "align": "right", "suffix": ""}
+        plan["script_header"] = True
+        plan["props"] = {"title": title, "author": author, "subject": "Stage play" if custom else "Stage play (sample)"}
+        notes.append("stage play: common US playwright submission layout (%s 12 pt, 1-inch margins, single-spaced, centred cues, italic stage directions); theatres and publishers (Samuel French, Dramatists Play Service, contests) set their own rules, follow theirs first." % mf)
+        notes.append("stage play: %d act(s), %d scene(s), %d speech(es), %d words of speech and direction." % (n_acts, n_scenes, nspeech, words))
 
     return plan
 

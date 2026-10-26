@@ -31,7 +31,7 @@ python3 -I build_wordcraft.py modern doc /abs/report.docx > job.json && wordcraf
 python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 ```
 
-`KIND` is `doc`, `resume`, `cv`, `paper`, `manuscript`, `screenplay`, `query` or `synopsis` (see below; the STYLE argument is ignored for the last four). Options, the same in both builders (`--name=value`):
+`KIND` is `doc`, `resume`, `cv`, `paper`, `manuscript`, `screenplay`, `stageplay`, `query` or `synopsis` (see below; the STYLE argument is ignored for the last five). Options, the same in both builders (`--name=value`):
 
 | Option | Applies to | What it does |
 |---|---|---|
@@ -137,6 +137,35 @@ page break that cuts a speech, repeating until stable; build the final file from
 
 
 Not covered: revision pages and colours, a stage-play layout (character names centred, a different margin scheme), a TV teleplay title page with episode details, `(MORE)`/`(CONT'D)` for a speech that straddles a *scene* heading, and a `.fdx` opened and tested inside Final Draft. WordCraft has no "next element on Enter" style flow, so the `.docx` is for submission and printing; keep the plain-text source as your working copy.
+
+## Stage play (`stageplay`)
+
+![Stage play in WordCraft and ONLYOFFICE](gallery/stageplay.png)
+
+A common US playwright submission layout (there is no single standard: Samuel French, Dramatists Play Service, theatres and contests each publish their own, and theirs win). Times New Roman 12 pt (or Courier New, `--font=courier`),
+1-inch margins, single-spaced. **Title page** (title, "a play in one act", "by", author, draft, contact details bottom left; no number), **characters page** (each name in bold with a description, then SETTING and TIME), then the play:
+`ACT ONE` and `SCENE 1` centred and bold (every act starts a new page), stage directions in italics indented 1 inch (usually in parentheses), the character's name centred in capitals above the speech, speeches flush left,
+a parenthetical direction inside a speech in indented italics, `BLACKOUT.` / `CURTAIN.` / `END OF PLAY` centred and bold. A header `TITLE / page` from the page after the characters page: numbering restarts at 1 after the title page.
+
+```sh
+python3 -I build_wordcraft.py x stageplay /abs/play.docx --text=/abs/play.txt --font=times > job.json && wordcraft-cli run --script job.json
+python3 -I stageplay_check.py /abs/play.docx
+```
+
+Plain-text input (`--text=`), with the same Fountain-style title block as the screenplay (`Title:`, `Credit:`, `Author:`, `Draft date:`, `Contact:` with indented lines):
+
+| Write | You get |
+|---|---|
+| `CHARACTERS` (or `CAST OF CHARACTERS`, `DRAMATIS PERSONAE`), then one line per character: `NAME, description` | the characters page |
+| `SETTING: …`, `TIME: …`, `PLACE: …`, `AT RISE: …` | bold label and text under the cast |
+| `ACT ONE`, `ACT 2` (alone on a line) | centred act heading on a new page |
+| `SCENE 1` (alone on a line) | centred scene heading |
+| a paragraph in `( … )`, or any plain paragraph | stage direction (italic, indented) |
+| `NAME` in capitals, then speech lines; a line in `( … )` inside is a parenthetical | centred cue, speech, parenthetical |
+| `BLACKOUT.`, `CURTAIN.`, `LIGHTS DOWN.`, `END OF ACT ONE`, `END OF PLAY` | centred bold line |
+| `*word*`, `**word**` | italic, bold |
+
+Not covered: a musical-theatre libretto or lyric layout, dual (overlapping) dialogue, a cast list with doubling or ages grid, scene-change cue lines, `.fdx`/Fountain export for stage plays (the screenplay exporter is for film), page-break control of long speeches, and any publisher's own house format.
 
 ## ATS-friendly, or good for humans?
 

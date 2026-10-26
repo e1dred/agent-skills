@@ -4,7 +4,7 @@
     wordcraft-cli run --script job.json
 
 STYLE: traditional elegant clean professional academic modern stylish creative   (see styles.json)
-KIND:  doc | resume | cv | paper | manuscript | screenplay | query | synopsis   (paper uses the academic style; add --format=apa|mla; manuscript, screenplay, query and synopsis ignore STYLE)
+KIND:  doc | resume | cv | paper | manuscript | screenplay | query | synopsis | stageplay   (paper uses the academic style; add --format=apa|mla; manuscript, screenplay, query, synopsis and stageplay ignore STYLE)
 Options (all `--name=value`):
   --paper=letter|a4            page size (default letter; cv defaults to a4)
   --page-numbers=bottom-center|bottom-right|top-right      --header-text="Short title"
@@ -70,7 +70,7 @@ def translate(name, p):
     return chr_, par
 
 
-if P["kind"] in ("manuscript", "screenplay", "query", "synopsis"):
+if P["kind"] in ("manuscript", "screenplay", "query", "synopsis", "stageplay"):
     c("tools.autocorrect", enabled=False)   # keep the author's text exactly as typed (no "..." to ellipsis, no capitalising)
 pg = P["page"]
 if P["paper"] == "a4": c("layout.size", name="A4")
@@ -102,7 +102,7 @@ if F:
     c("insert.pageNumber", position="bottom", align=F["align"])
 for hf in ("Header", "Footer"):
     if (H or F or SCRIPT_HDR) and base_font:
-        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript", "screenplay", "query", "synopsis") else "555555"})
+        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript", "screenplay", "query", "synopsis", "stageplay") else "555555"})
 
 BUILTIN = {"Normal", "Heading 1", "Heading 2", "Heading 3"}
 for name, p in P["styles"]:
@@ -178,7 +178,9 @@ for blk in P["blocks"]:
         # order matters: create the header in the default slot first, THEN switch different-first-page on
         c("layout.break", kind="nextPage"); first[0] = True
         c("layout.pageNumberFormat", format="decimal", start=1)
-        c("layout.linkToPrevious"); c("insert.createHeader"); c("insert.pageField"); c("text.insert", text=P["header"].get("suffix", ""))
+        c("layout.linkToPrevious"); c("insert.createHeader")
+        if P["header"].get("text"): c("text.insert", text=P["header"]["text"])
+        c("insert.pageField"); c("text.insert", text=P["header"].get("suffix", ""))
         c("para.set", props={"align": P["header"]["align"]}); c("insert.closeHeader")
         c("caret.docEnd"); c("layout.differentFirstPage")
     elif t_ == "dual":   # dual dialogue: a borderless one-row, two-cell table, a cue and its dialogue in each cell

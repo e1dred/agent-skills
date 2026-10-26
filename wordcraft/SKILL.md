@@ -574,3 +574,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-25 (8): manuscript format (publisher submission) built and checked in WordCraft and ONLYOFFICE; header-skipping-page-1 order, space-before-at-page-top trap, italic carry-over fix.
 - 2026-10-25 (9): screenplay format built and checked in WordCraft and ONLYOFFICE; title-page section with restarted numbering, exact line pitch, indentRight, autocorrect trap.
 - 2026-10-25 (10): screenplay extras (scene numbers, bold/underline, centred, dual dialogue, acts, Fountain title page, Fountain/FDX export, (MORE)/(CONT'D) by two-pass pagination) and manuscript extras (verse, block quote, footnotes, page count, query letter, synopsis) built and checked.
+- 2026-10-25 (11): stage play format (title page and characters page in their own numbering, centred cues, italic directions) built and checked in WordCraft and ONLYOFFICE; section header with a text prefix before the page field.

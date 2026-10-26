@@ -289,3 +289,75 @@ The key opens a hatch at the foot of the cliff, long a village dare. Behind it l
 
 Ida must decide whether to leave and let her mother's lamp go out, or to take over the keeper's work that has kept the village safe for generations, and to learn what the island asks in return.""",
 }
+
+# Invented one-act play. Markup used by --text files too (see styles/README.md, "Stage play"): CHARACTERS block, SETTING:/TIME: lines, ACT ONE, SCENE 1,
+# a paragraph in (parentheses) or any plain paragraph = stage direction, a NAME IN CAPITALS line followed by speech lines = a cue and its speech
+# ((parenthetical) lines inside a speech are kept), BLACKOUT. / CURTAIN. / END OF PLAY close a scene or the play, *word* is italic.
+STAGEPLAY = {
+    "title": "Weather Station", "author": "Casey Larkin", "credit": "a play in one act", "draft": "First draft",
+    "contact": ["14 Example Row", "Harbourside, EX1 2AB", "(555) 010-0142", "casey.larkin@example.com"],
+    "text": """CHARACTERS
+MIRA OKONKWO, 40s, the station keeper
+DEV HALLORAN, 20s, her new assistant
+
+SETTING: A weather station on a headland. One room: a desk, a barometer, a cold stove.
+
+TIME: The present, late autumn.
+
+ACT ONE
+
+SCENE 1
+
+(Evening. Rain on a tin roof. MIRA sits at the desk writing in a ledger. DEV enters, dripping, carrying a suitcase.)
+
+MIRA
+(without looking up)
+You're early.
+
+DEV
+The bus was early. I only followed it.
+
+MIRA
+Nobody warned me you'd be young.
+
+DEV
+Nobody warned me you'd be *here*. The office said the station had been closed for years.
+
+(MIRA closes the ledger and looks at him for the first time.)
+
+MIRA
+The office says a great many things. Put the case down. The floor is the only dry thing in this room, and it is not very dry.
+
+DEV
+(setting it down)
+What do I do first?
+
+MIRA
+You learn to read the barometer. Then you learn to ignore it.
+
+BLACKOUT.
+
+SCENE 2
+
+(Morning. The rain has stopped. DEV stands at the window with a mug. MIRA enters with a bundle of papers.)
+
+DEV
+There's a ship out there. It hasn't moved all night.
+
+MIRA
+(not looking)
+It isn't a ship.
+
+DEV
+Then what is it?
+
+MIRA
+It's what the station is for.
+
+(The lights fade slowly on the two of them, side by side at the window.)
+
+CURTAIN.
+
+END OF PLAY
+""",
+}

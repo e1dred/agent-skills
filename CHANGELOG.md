@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ## Unreleased
 
 ### Added
+- **Stage play format** (kind `stageplay`): common US playwright submission layout in WordCraft and ONLYOFFICE (title page, characters page, centred cues, italic directions, acts and scenes, title-and-number header), plain-text input, Times or Courier, and `stageplay_check.py`.
 - **Manuscript format** (`styles/`, kind `manuscript`): standard manuscript layout for publisher and agent submissions in WordCraft and ONLYOFFICE (title page, running header from page 2, double-spaced 12 pt, chapter drops, scene breaks), your own text through `--text=`, Times or Courier, novel or short-story layout, A4 or Letter, and `manuscript_check.py` to verify a file. Gallery image and a WordCraft skill section.
 - **Manuscript extras:** verse, block quotations and footnotes in the plain-text input, page count and words per page in `manuscript_check.py`, a **query letter** kind (`query`) and a **synopsis** kind (`synopsis`).
 - **Screenplay extras:** scene numbers, bold/underlined scene headings, bold/underline/centred text, dual dialogue, TV act markers (TEASER, ACT ONE, END OF ACT), Fountain title-page keys, `screenplay_paginate.py` (adds `(MORE)` and `(CONT'D)` at page breaks), and `screenplay_export.py` (Fountain and Final Draft `.fdx` output).
