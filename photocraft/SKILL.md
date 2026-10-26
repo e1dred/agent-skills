@@ -339,6 +339,22 @@ Other automation: `file.automate.fitImage {"width":500,"height":500}` (keeps asp
   **Trap:** `channel.options` made that alpha channel the *target* and hid the composite RGB channels in the live state (`compositeVisible:false`); `channel.target {"channel":"composite"}` or `channel.target.composite {}` restores it. `info.channels` shows the same data.
   Not run: `channel.newSpot/mergeSpot/split/merge/move/delete`, `channel.target.slotN`.
 
+## Brushes and paint tools (verified headless, 0.16.0; render checked)
+
+> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
+
+All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `points:[[x,y,pressure],…]` (pressure 0..1 as the third value):
+- `paint.stroke {"points","preset":"Chalk","size":40,"color":"#333333","opacity":0.6,"flow":0.5,"seed":7,"erase":true,"mode":"multiply|…|clear","smoothing","target":"pixels|mask|quickMask|{channel:i}"}` → `{damage:[x,y,w,h]}`.
+  Opacity/flow are **0..1 here** but 1..100 in `paint.cloneStamp/dodge/burn/sponge/blur/smudge…` (hardness 0..1 vs 0..100 likewise). `paint.pencil` is the aliased pencil; `"erase":true` with opacity 0.5 halves what is below.
+- **Presets:** `brush.presets.list {}` → 36 built-ins (Hard Round, Soft Round, Hard Round Pressure Size, Airbrush Soft, Calligraphy Flat, Hard/Soft Pencil, Chalk, Charcoal, Pastel, …; `tip:"sampled"` ones are textured).
+  Render: "Hard Round Pressure Size" tapers with the pressure values (thin ends, fat middle); "Chalk" is grainy and varies with `seed`; "Airbrush Soft" with `flow:0.5` is a soft wide band; a `size` given with a preset overrides its size.
+  `brush.presets.save {"name":"My Marker","brush":{"size":22,"hardness":0.8}}` → `{count:37}`, then `"preset":"My Marker"` works in strokes. `brush.get {}` dumps all brush settings (dynamics, dual brush, scattering, mixer, pose, locks…).
+  Also listed: `.update/.delete/.setCurrent/.rename/.move`, group commands, `brush.presets.importAbr {"path"}`, `importImage {"path"}`, `brush.defineFromSelection {"name"}`, `brush.texturePattern`.
+- **Symmetry:** `paint.setSymmetry {"mode":"vertical","center":[350,0]}` mirrored one stroke into two (verified); `paint.symmetryDisable {}` turns it off (`symmetryFromPath` not run).
+- **Other tools run:** `paint.bucket {"x","y","tolerance","color","sampleAllLayers":true}` (→ `{filled}`; with sampleAllLayers a bucket click on an empty paint layer fills by the composite), `paint.magicEraser {"x","y","tolerance"}` → `{erased}`,
+  `paint.smudge`, `paint.sponge {"points","size"}`, `paint.colorReplacement {"points","size","mode":"hue"}`: **it paints in the FOREGROUND colour (default black), so my "recolour" turned a red stroke dark grey; pass `"color"` or set the foreground first.**
+- Not run: `paint.mixerBrush` + `brush.mixer.load/clean`, `paint.patternStamp`, `paint.patch`, `paint.contentAwareMove`, `paint.remove`, `paint.redEye`, `paint.backgroundEraser`, `paint.historyBrush`, `paint.symmetryFromPath`, sampled/ABR brushes.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -375,3 +391,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-25 (3): layer-style stacking, Camera Raw/lens/tilt-shift, colour modes and formats, Actions (.atn) + droplets + fit image + contact sheet, content-aware scale, transform, warped and path text verified headless.
 - 2026-10-25 (5): six pipelines re-run on 0.15.1 and 0.16.0 (pixel-identical); version labels added per section.
 - 2026-10-25 (6): paths (set/rename/fill/stroke/toSelection/transform) and channels (new/duplicate/rename/options) verified headless on 0.16.0.
+- 2026-10-25 (7): brush presets (list/save/use), pressure strokes, pencil, erase, symmetry, bucket, magic eraser, smudge, sponge, colour replacement verified headless on 0.16.0.
