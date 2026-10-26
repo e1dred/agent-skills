@@ -15,7 +15,7 @@ Unofficial: not affiliated with any of the app projects.
 | [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.15.1, 0.16.0 (6 pipelines re-run on both), Linux AppImage | 290 of 940 | ~85% |
 | [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 tools named; **91 of 93 re-run on 10.0.0 on 2026-10-25** (see the skill's audit section); the full macro API is not covered | ~95% |
 
-Each skill marks, section by section, which version it was tested on and what was re-run on a second version (`> Versions:` lines); where it says "not re-run", treat the text as tested on the older version only.
+Each skill marks, section by section, which version it was tested on and what was re-run on a second version (`> Versions:` lines); where it says "not re-run", treat the text as tested on the older version only. What changed and when: [CHANGELOG.md](CHANGELOG.md).
 
 *Commands documented* is measured by `./coverage.sh` (as of 2026-10-25, after the next-tier workflow round): how many of the app's own command ids (MCP tools for ONLYOFFICE)
 appear in the skill. It is a rough lower bound on what a skill teaches, since a workflow can be described without naming every command, and an
