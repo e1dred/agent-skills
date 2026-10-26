@@ -4,6 +4,12 @@ All notable changes to this repository. Dates are the commit dates; the repo has
 Each skill also labels, section by section, which app version a section was tested on (`> Versions:` lines): this file only summarises.
 Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, Fixed, Known gaps).
 
+## Unreleased
+
+### Added
+- **Manuscript format** (`styles/`, kind `manuscript`): standard manuscript layout for publisher and agent submissions in WordCraft and ONLYOFFICE (title page, running header from page 2, double-spaced 12 pt, chapter drops, scene breaks), your own text through `--text=`, Times or Courier, novel or short-story layout, A4 or Letter, and `manuscript_check.py` to verify a file. Gallery image and a WordCraft skill section.
+- Screenplay format: planned next.
+
 ## 2026-10-25
 
 Tested on: PhotoCraft 0.15.1 and 0.16.0, GridCraft 0.11.1 and 0.12.1, DeckCraft 0.10.0 and 0.11.1, WordCraft 0.10.0 and 0.11.0, ONLYOFFICE Desktop Editors 10.0.0 (flatpak).

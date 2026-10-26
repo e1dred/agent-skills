@@ -4,7 +4,7 @@
     wordcraft-cli run --script job.json
 
 STYLE: traditional elegant clean professional academic modern stylish creative   (see styles.json)
-KIND:  doc | resume | cv | paper          (paper uses the academic style; add --format=apa|mla)
+KIND:  doc | resume | cv | paper | manuscript   (paper uses the academic style; add --format=apa|mla; manuscript ignores STYLE)
 Options (all `--name=value`):
   --paper=letter|a4            page size (default letter; cv defaults to a4)
   --page-numbers=bottom-center|bottom-right|top-right      --header-text="Short title"
@@ -17,6 +17,8 @@ Options (all `--name=value`):
   --footnotes                  doc/paper: one sample footnote
   --script=arabic|hebrew|japanese|chinese|korean   doc only: one sample sentence in that script (RTL handled)
   --extras                     paper only: abstract (APA), block quote, captioned table
+  --title= --author= --pen= --surname= --address="Line 1|Line 2" --phone= --email=   manuscript: title page and header
+  --wordcount=N --font=times|courier --layout=novel|short --text=/abs/file.txt   manuscript: word count shown, font, title-page layout, your own text
   --local-fonts                allow fonts installed here but not shipped with Office
   --overwrite                  replace an existing out.docx (otherwise the script refuses)
 Notes about ATS-safety and other cautions go to stderr. Replace the sample text in content.py with real content.
@@ -72,7 +74,14 @@ c("layout.margins", top=t, bottom=b_, left=l, right=r)
 H, F = P["header"], P["footer"]
 base_font = next((p["font"] for n, p in P["styles"] if n == "Normal"), None)
 base_size = next((p["size"] for n, p in P["styles"] if n == "Normal"), 11)
-if H:
+if H and P.get("different_first"):
+    # header text/number goes in the default slot first; then switch "different first page" on, so page 1 shows nothing
+    c("insert.header", text=H["text"])
+    c("caret.end"); c("insert.pageField")
+    c("para.set", props={"align": H["align"]})
+    c("insert.closeHeader")
+    c("layout.differentFirstPage")
+elif H:
     if H["number"] and not H["text"]:
         c("insert.pageNumber", position="top", align=H["align"])
     else:
@@ -85,7 +94,7 @@ if F:
     c("insert.pageNumber", position="bottom", align=F["align"])
 for hf in ("Header", "Footer"):
     if (H or F) and base_font:
-        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] == "paper" else "555555"})
+        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript") else "555555"})
 
 BUILTIN = {"Normal", "Heading 1", "Heading 2", "Heading 3"}
 for name, p in P["styles"]:
@@ -144,6 +153,7 @@ for blk in P["blocks"]:
         elif prev_script[0]:
             props.update(bidi=False, align=STYLE_ALIGN.get(blk["style"], "left")); prev_script[0] = False
         c("para.set", props=props)
+        if not blk.get("script"): c("format.resetChar")   # a paragraph that ends in italics/bold would otherwise carry it into the next one
         if blk.get("script"):
             f = blk["font"]
             c("format.set", props={"font": f, "fontCs": f, "fontEa": f})

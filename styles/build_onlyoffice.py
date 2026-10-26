@@ -3,7 +3,7 @@
     python3 -I build_onlyoffice.py STYLE KIND /abs/out.docx [options] > calls.json
     python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 
-STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper). Options (`--name=value`): --paper=letter|a4,
+STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper | manuscript; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
 --page-numbers=bottom-center|bottom-right|top-right, --header-text=…, --columns=2 (doc), --photo=/abs/pic.png (resume/cv), --figure=sample|/abs/pic.png, --merged-table, --footnotes,
 --script=arabic|hebrew|japanese|chinese|korean (doc), --extras (paper),
 --layout=chronological|functional|combined (resume), --format=apa|mla (paper), --local-fonts, --pdf (also save a PDF rendered by
@@ -68,9 +68,10 @@ for (var i = 0; i < PLAN.styles.length; i++) {
 var base = PLAN.styles[0][1];
 if (PLAN.header || PLAN.footer) {
   ["Header", "Footer"].forEach(function (n) {
-    try { var s = doc.GetStyle(n); setText(s.GetTextPr(), {font: base.font, size: base.size, color: PLAN.kind === "paper" ? "000000" : "555555"}); } catch (e) {}
+    try { var s = doc.GetStyle(n); setText(s.GetTextPr(), {font: base.font, size: base.size, color: (PLAN.kind === "paper" || PLAN.kind === "manuscript") ? "000000" : "555555"}); } catch (e) {}
   });
 }
+if (PLAN.different_first) { try { sec.SetTitlePage(true); } catch (e) {} }   // page 1 (title page) gets the empty first-page header
 if (PLAN.header) {
   var hp = sec.GetHeader("default", true).GetElement(0);
   hp.SetJc(JC[PLAN.header.align]);

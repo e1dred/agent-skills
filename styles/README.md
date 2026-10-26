@@ -31,7 +31,7 @@ python3 -I build_wordcraft.py modern doc /abs/report.docx > job.json && wordcraf
 python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 ```
 
-`KIND` is `doc`, `resume`, `cv` or `paper`. Options, the same in both builders (`--name=value`):
+`KIND` is `doc`, `resume`, `cv`, `paper` or `manuscript` (see below; the STYLE argument is ignored for it). Options, the same in both builders (`--name=value`):
 
 | Option | Applies to | What it does |
 |---|---|---|
@@ -53,6 +53,38 @@ python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && pytho
 Cautions (for example "photo is not ATS-safe") are printed to stderr. Replace the invented text in `content.py` with real content; keep the
 block types. To restyle a real document instead of the sample, copy the style-setting part of a builder onto the document's existing styles
 and give paragraphs the style names (`Heading 1`, `Heading 2`, `Doc Title`, …). Always work on a copy of someone's document.
+
+## Manuscript for a publisher or agent (`manuscript`)
+
+![Manuscript in WordCraft and ONLYOFFICE](gallery/manuscript.png)
+
+Standard manuscript format as most fiction submissions expect it: 12 pt Times New Roman (or Courier New), double-spaced, 1-inch margins, ragged right,
+0.5-inch first-line indents, no extra space between paragraphs, italics (not underlining) for emphasis, a title page, a running header
+`Surname / TITLE / page` that does not print on page 1, chapters on new pages starting about a third of the way down, `#` for scene breaks, `THE END`.
+**Always follow the publisher's or agent's own guidelines first**: this is the common default, not a rule everyone shares.
+
+```sh
+python3 -I build_wordcraft.py x manuscript /abs/book.docx --title="My Title" --author="Jane Doe" --address="1 Main St|Anytown, ST 00000" \
+    --phone="555-0100" --email=jane@example.com --text=/abs/my-text.txt > job.json && wordcraft-cli run --script job.json
+python3 -I manuscript_check.py /abs/book.docx            # PASS / WARN / FAIL against the rules above
+```
+
+| Option | What it does |
+|---|---|
+| `--text=/abs/file.txt` | Your text. A line `# Chapter One` starts a chapter; a line `#` or `* * *` alone is a scene break; blank lines separate paragraphs; `*word*` is italic; `THE END` closes the book. Without it, an invented sample is built. |
+| `--title=` `--author=` `--pen=` `--surname=` | Title page and header. `--pen` is the byline if it differs from the legal name; the surname defaults to the last word of the author. |
+| `--address="Line 1\|Line 2"` `--phone=` `--email=` | Contact block, top left of the title page. |
+| `--wordcount=N` | The "about N words" line. Default: counted from your text and rounded (nearest 50 under 1,000, 100 under 10,000, otherwise 1,000). |
+| `--font=courier` | Courier New instead of Times New Roman (same layout). |
+| `--layout=short` | Short story: the text starts on the title page below the byline (default `novel`: separate title page, every chapter on a new page). |
+| `--paper=a4` | A4 instead of US Letter. |
+
+What to know (all verified on WordCraft 0.11.0 and ONLYOFFICE 10.0.0; both apps render the same pages):
+- The word count is **not a field**: it is the number the builder counted. Re-run the builder (or change `--wordcount`) after editing the text.
+- Chapter openings use six empty double-spaced paragraphs to drop a third of the way down, because WordCraft's layout ignores "space before" at the top of a page. They are
+  intentional (`manuscript_check.py` allows runs of up to seven).
+- Chapter headings are real `Heading 1` paragraphs, so a Word-style navigation pane or an accessibility checker sees the structure.
+- Not covered: footnotes, tables, pictures, poetry, an end-of-document page count, a table of contents, a synopsis or query letter.
 
 ## ATS-friendly, or good for humans?
 

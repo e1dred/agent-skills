@@ -333,6 +333,16 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
   `shape.textDirection {"dir":"horz|vert|vert270"}`, `shape.alignText {"anchor":"t|ctr|b"}`, `shape.link {"target"}` / `shape.breakLink` (flow text between text boxes), `shape.connect`.
 - Not run: ink (`draw.*`: `draw.stroke {"page","points","tool","color","width"}`, `draw.lasso`, `draw.inkToShape`, `draw.replay`), `insert.object/spreadsheet`, `edit.pasteMerge`/clipboard pane, `edit.advancedFind/findReplace`, `file.*` extras, `picture.removeBackground`, `shape.fill` gradients.
 
+## Manuscript format for publishers (verified headless, 0.11.0; both apps render the same pages)
+
+> **Versions:** 0.11.0 (2026-10-25). Built by `styles/build_wordcraft.py x manuscript …`, checked with `styles/manuscript_check.py`; see `styles/README.md` for the options.
+
+- **Header that skips page 1:** create the header text in the default slot first (`insert.header {"text":"Tilby / TITLE / "}` → `caret.end` → `insert.pageField` → `para.set {"props":{"align":"right"}}` → `insert.closeHeader`), THEN `layout.differentFirstPage`. Page 1 then shows nothing and pages 2+ show "Tilby / TITLE / 2" (render and `pdftotext` checked). The opposite order puts the text into the first-page slot only (see the per-section header notes).
+- **"Space before" is ignored at the top of a page** in WordCraft's layout, even with `pageBreakBefore`: a chapter heading with `spaceBefore:144` after a page break printed at the very top. Use six empty double-spaced paragraphs (a style with no indent) to drop a third of the page, or put the spacing before a paragraph that is not first on the page (the title block's `spaceBefore` worked on page 1).
+- **Italic leaks into the next paragraph:** a paragraph ending in an italic run (`format.italic` → text → `format.resetChar`) still made every following paragraph italic, including a chapter heading. Call `format.resetChar` right after `para.set` at the start of each new paragraph.
+- A right tab inside a one-line style (`tabs: [{pos:468, align:right}]`) puts "about 350 words" at the right margin on the same line as the author's name; `text.insert` with `\t` is a real tab.
+- Real `Heading 1` for chapters (restyled: 12 pt, bold, centred, black, double-spaced), `Normal` body with `indentFirst:36`, `lineSpacing multiple 2.0`, `spaceAfter:0`; the checker reads these back from `styles.xml`.
+
 ## Version note (0.11.0)
 
 WordCraft 0.11.0 added 5 commands (638 → 643), none removed: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
@@ -547,3 +557,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-25 (5): nine headless sections re-run on 0.10.0 and 0.11.0 (identical) and the live-mode steps on the 0.11.0 app; version labels added per section.
 - 2026-10-25 (6): styles management, Design tab, index (mark/insert/update), TOC caret behaviour, equation editing (structures, convert, number), tracked changes by author/one at a time/options/combine verified headless on 0.11.0.
 - 2026-10-25 (7): table editing/styles/nested tables, outline view, quick parts/autotext/doc properties, SmartArt/WordArt/canvas/icons, picture and shape commands verified headless on 0.11.0.
+- 2026-10-25 (8): manuscript format (publisher submission) built and checked in WordCraft and ONLYOFFICE; header-skipping-page-1 order, space-before-at-page-top trap, italic carry-over fix.

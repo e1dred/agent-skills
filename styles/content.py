@@ -147,3 +147,48 @@ PAPER_EXTRAS = {
     "table_caption": ("Table 1", "Survey sample by group"),
     "table_rows": [["Group", "Respondents", "Mean belonging score"], ["Gardeners", "112", "4.1"], ["Neighbours", "102", "3.4"]],
 }
+
+# Invented manuscript (a short novel opening). Markup used by --text files too: a line "# Title" starts a chapter, a line "#" or "* * *" alone is a scene break,
+# blank lines separate paragraphs, *word* is italic, a line "THE END" closes the book.
+MANUSCRIPT = {
+    "title": "Salt and Lantern Light",
+    "author": "Rowan Tilby", "pen": "Rowan Tilby", "surname": "Tilby",
+    "address": ["14 Example Row", "Harbourside, EX1 2AB, United Kingdom"],
+    "phone": "(555) 010-0142", "email": "rowan.tilby@example.com",
+    "text": """# Chapter One: The Last Boat
+
+The ferry horn sounded twice, which meant the tide was turning and Ida had four minutes to decide whether she was leaving.
+
+She stood on the quay with a suitcase that had belonged to her mother and a letter she had read so many times the folds had gone soft. Behind her, the lamp-lit windows of the village were going out one by one, as they always did at nine.
+
+"You'll miss it," said a voice from the shadows. It was Mr. Penhallow, who mended nets and, as far as anyone knew, never slept. "The boat, I mean. Not the place. Nobody misses the place."
+
+"I haven't decided," Ida said.
+
+"Then the tide has decided for you." He nodded at the water, where a line of foam was already creeping back from the steps. "It does that. It's more patient than people, but it does it."
+
+She laughed, and was surprised to hear herself.
+
+#
+
+By the time she climbed the lighthouse stairs the next morning, the question had changed. It was no longer *should I go?* but *what is this place hiding?*
+
+The keeper's door stood open. Inside, a single lantern burned on the table, though the sun was already high, and beside it lay a key on a loop of blue thread.
+
+"That wasn't there yesterday," Ida whispered.
+
+Nobody answered. Somewhere below, the sea went on turning over its stones.
+
+# Chapter Two: What the Tide Kept
+
+The key fitted a door she had walked past all her life, a narrow hatch at the foot of the cliff that the village children dared one another to touch. It opened on the first try.
+
+Beyond it, the passage smelled of rain and old rope. She counted forty steps down before the light from her lantern found the first of the shelves, and on the shelves, row after row, the lamps.
+
+Hundreds of them. Each had a name painted on its base, and each one was lit.
+
+Ida set her own lantern down very carefully. Then she began to read the names, and found her mother's on the ninth shelf, burning low.
+
+THE END
+""",
+}

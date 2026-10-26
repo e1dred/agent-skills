@@ -2,14 +2,16 @@
 
     plan = make("modern", "cv", {"paper": "a4"})        # a dict; see the keys at the bottom of make()
 
-Kinds: doc (report), resume (ATS-safe, one column), cv (European CV), paper (student paper, `fmt` apa or mla).
+Kinds: doc (report), resume (ATS-safe, one column), cv (European CV), paper (student paper, `fmt` apa or mla),
+manuscript (standard manuscript format for publishers/agents; options title author pen surname address phone email wordcount ms_font=times|courier
+ms_layout=novel|short text=/abs/file.txt).
 Options (all optional): paper "letter"|"a4"; page_numbers "bottom-center"|"bottom-right"|"top-right"; header_text str;
 columns 2..3 (doc body in columns after the subtitle); photo /abs/path.png (resume/cv); layout chronological|functional|combined
 (resume); fmt apa|mla (paper); local_fonts bool. All sizes are points, all colours RRGGBB.
 Style property keys: font size color bold italic caps spacing align before after line indent_left indent_first keep_next
 border_bottom=(color,width,space) border_left=(color,width,space) tab_right=pt.
 """
-import os, sys
+import os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import content
 from resolve import resolve
@@ -25,7 +27,7 @@ def _rule(h, color, kind):
 
 def make(style_name, kind, o=None):
     o = dict(o or {})
-    if kind == "paper":
+    if kind in ("paper", "manuscript"):
         style_name = "academic"
     S = resolve(style_name, portable=not o.get("local_fonts"))
     if o.get("figure") == "sample": o["figure"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "sample-figure.png")
@@ -41,7 +43,7 @@ def make(style_name, kind, o=None):
             "bullet": {"color": C["accent"]}, "columns": None, "footnotes": []}
     m = RS["margins_in"] if kind in ("resume", "cv") else S["margins_in"]
     top, bottom, left, right = [v * 72 for v in m]
-    if kind == "paper":
+    if kind in ("paper", "manuscript"):
         top = bottom = left = right = 72.0
     plan["page"] = {"w": PW, "h": PH, "margins": [top, bottom, left, right]}
     width = PW - left - right
@@ -257,6 +259,90 @@ def make(style_name, kind, o=None):
         notes.append("paper: layout only. Check your instructor's or journal's current style guide for rules this sample does not show.")
         if o.get("extras"): notes.append("extras: abstract (APA), block quote and a captioned table. The table uses a plain grid; APA tables normally use horizontal rules only, which neither app's border tools can set per side.")
 
+    # ---------------------------------------------------------------- manuscript (standard manuscript format)
+    elif kind == "manuscript":
+        M = content.MANUSCRIPT
+        mf = {"courier": "Courier New"}.get((o.get("ms_font") or "").lower(), "Times New Roman")
+        layout = o.get("ms_layout") if o.get("ms_layout") in ("novel", "short") else "novel"
+        title = o.get("title") or M["title"]
+        author = o.get("author") or M["author"]
+        pen = o.get("pen") or (author if o.get("author") else M["pen"])
+        surname = o.get("surname") or (author.split()[-1] if o.get("author") else M["surname"])
+        addr = [x.strip() for x in o["address"].split("|")] if o.get("address") else ([] if o.get("author") else M["address"])
+        phone = o.get("phone") or ("" if o.get("author") else M["phone"])
+        email = o.get("email") or ("" if o.get("author") else M["email"])
+        txt = M["text"]
+        if o.get("text"):
+            txt = open(o["text"], encoding="utf-8").read()
+        # parse the simple markup into (kind, runs) items
+        def runs_of(line):
+            out, bits = [], re.split(r"(\*[^*\n]+\*)", line)
+            for b in bits:
+                if len(b) > 2 and b[0] == b[-1] == "*": out.append(("i", b[1:-1]))
+                elif b: out.append((False, b))
+            return out
+        items = []
+        for chunk in re.split(r"\n\s*\n", txt.strip()):
+            chunk = " ".join(l.strip() for l in chunk.strip().split("\n"))
+            if not chunk: continue
+            if chunk.startswith("# ") : items.append(("chapter", chunk[2:].strip()))
+            elif chunk in ("#", "* * *", "***"): items.append(("scene", None))
+            elif chunk.upper() in ("THE END", "END"): items.append(("end", None))
+            else: items.append(("p", runs_of(chunk)))
+        words = sum(len(t.split()) for k, v in items if k == "p" for _, t in v)
+        wc = int(o["wordcount"]) if o.get("wordcount") else None
+        if wc is None:
+            wc = int(round(words, -3)) if words >= 10000 else int(round(words / 100.0) * 100) if words >= 1000 else int(round(words / 50.0) * 50) if words >= 100 else words
+        wc_text = "about {:,} words".format(wc)
+        bs = 12
+        add("Normal", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=36, line=2.0)
+        add("Heading 1", font=mf, size=bs, color="000000", bold=True, align="center", indent_first=0, before=0, after=0, keep_next=True, line=2.0)
+        add("MS Body First", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=0, line=2.0)
+        add("MS Drop", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=0, line=2.0)
+        add("MS Scene Break", font=mf, size=bs, color="000000", before=0, after=0, align="center", indent_first=0, line=2.0)
+        add("MS Contact", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=0, line=1.0, tab_right=468)
+        add("MS Title", font=mf, size=bs, color="000000", before=0, after=0, align="center", indent_first=0, line=2.0, caps=True)
+        add("MS Byline", font=mf, size=bs, color="000000", before=0, after=0, align="center", indent_first=0, line=2.0)
+        add("MS End", font=mf, size=bs, color="000000", before=0, after=0, align="center", indent_first=0, line=2.0)
+        short_title = " ".join(title.split()[:4]).upper()
+        plan["header"] = {"text": "%s / %s / " % (surname, short_title), "number": True, "align": "right"}
+        plan["different_first"] = True
+        # title block
+        lines = [author] + addr + ([phone] if phone else []) + ([email] if email else [])
+        for i, l in enumerate(lines):
+            runs = [l + ("\t" + wc_text if i == 0 else "")]
+            para("MS Contact", *runs)
+        blocks.append({"t": "spacer", "pt": 150 if layout == "novel" else 96})
+        para("MS Title", title)
+        para("MS Byline", "by " + pen)
+        if layout == "novel":
+            blocks.append({"t": "pagebreak"})
+        first_after_break = True
+        started = False
+
+        def drop():   # about a third of the page down: six empty double-spaced lines (space-before is ignored at the top of a page by WordCraft's layout)
+            for _ in range(6): para("MS Drop")
+        for k, v in items:
+            if k == "chapter":
+                if started:
+                    blocks.append({"t": "pagebreak"}); drop()
+                elif layout == "novel":
+                    drop()                                        # the title page already ended with a page break
+                else:
+                    blocks.append({"t": "spacer", "pt": 24})
+                para("Heading 1", v); started = True; first_after_break = True
+            elif k == "scene":
+                para("MS Scene Break", "#"); first_after_break = True
+            elif k == "end":
+                para("MS End", "THE END")
+            else:
+                if layout == "short" and not started:
+                    blocks.append({"t": "spacer", "pt": 24}); started = True
+                para("MS Body First" if first_after_break else "Normal", *v); first_after_break = False
+        plan["props"] = {"title": title, "author": author, "subject": "Manuscript (sample)" if not o.get("text") else "Manuscript"}
+        notes.append("manuscript: standard layout for submissions (%s, 12 pt, double-spaced, 1-inch margins); always follow the publisher's or agent's own guidelines first." % mf)
+        notes.append("manuscript: %s counted from the body text (%d words); header and title page carry no word-count field, so update it after editing." % (wc_text, words))
+
     return plan
 
 
@@ -271,5 +357,8 @@ def parse_argv(argv):
     o = {"figure": opt.get("figure"), "script": opt.get("script"), "footnotes": "footnotes" in flags, "merged_table": "merged-table" in flags, "extras": "extras" in flags,
          "paper": opt.get("paper", "").lower() or None, "page_numbers": opt.get("page_numbers"), "header_text": opt.get("header_text"),
          "columns": opt.get("columns"), "photo": opt.get("photo"), "layout": opt.get("layout", "chronological"),
-         "fmt": opt.get("format", "apa"), "local_fonts": "local-fonts" in flags}
+         "fmt": opt.get("format", "apa"), "local_fonts": "local-fonts" in flags,
+         "title": opt.get("title"), "author": opt.get("author"), "pen": opt.get("pen"), "surname": opt.get("surname"), "address": opt.get("address"),
+         "phone": opt.get("phone"), "email": opt.get("email"), "wordcount": opt.get("wordcount"), "ms_font": opt.get("font"),
+         "ms_layout": opt.get("layout") if opt.get("layout") in ("novel", "short") else None, "text": opt.get("text")}
     return pos[0], pos[1], pos[2], {k: v for k, v in o.items() if v not in (None, "", False)}, flags
