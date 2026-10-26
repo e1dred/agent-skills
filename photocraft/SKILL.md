@@ -353,7 +353,12 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
 - **Symmetry:** `paint.setSymmetry {"mode":"vertical","center":[350,0]}` mirrored one stroke into two (verified); `paint.symmetryDisable {}` turns it off (`symmetryFromPath` not run).
 - **Other tools run:** `paint.bucket {"x","y","tolerance","color","sampleAllLayers":true}` (→ `{filled}`; with sampleAllLayers a bucket click on an empty paint layer fills by the composite), `paint.magicEraser {"x","y","tolerance"}` → `{erased}`,
   `paint.smudge`, `paint.sponge {"points","size"}`, `paint.colorReplacement {"points","size","mode":"hue"}`: **it paints in the FOREGROUND colour (default black), so my "recolour" turned a red stroke dark grey; pass `"color"` or set the foreground first.**
-- Not run: `paint.mixerBrush` + `brush.mixer.load/clean`, `paint.patternStamp`, `paint.patch`, `paint.contentAwareMove`, `paint.remove`, `paint.redEye`, `paint.backgroundEraser`, `paint.historyBrush`, `paint.symmetryFromPath`, sampled/ABR brushes.
+- **Second batch (render checked):** `paint.mixerBrush {"points","size":90,"wet":80,"mix":60,"load":50,"flow":80,"sampleAllLayers":true}` smeared a red/teal pair of shapes into a gradient but the load colour defaults to the black foreground, so the start of the stroke is a dark smear: `brush.mixer.load {"color":"#e63946"}` first, `brush.mixer.clean {}` after (→ `{amount,color,pickup,reservoir}`).
+  `paint.patternStamp {"points","size","pattern":"Checkerboard"}` → `{aligned,pattern:<uuid>,phase}` (the checkerboard looks like a transparency grid). `paint.backgroundEraser {"points","size"}` → `{erased}`.
+  **Own brush tip:** `select.rect` over *painted* pixels → `brush.defineFromSelection {"name":"Stamp1"}` → `{width,height}`; it errors "the pixels contain no paint (all white or transparent)" on an empty region. A stroke with `"preset":"Stamp1"` stamps the shape (a solid blob gave a solid bar in the chosen colour).
+  `path.set` an open 2-knot line, then `paint.symmetryFromPath {"name":"work"}` → `{enabled:true,segments:1,source}`: a stroke was mirrored across the line (verified).
+  `paint.redEye {"x","y"}` errors "no red-eye pixels near the click" on anything that is not red pupils (a correct refusal, not a bug).
+- Not run: `paint.patch`, `paint.contentAwareMove`, `paint.remove`, `paint.historyBrush`, `.abr`/`importImage` brushes, real red-eye.
 
 ## Traps
 
