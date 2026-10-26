@@ -41,7 +41,11 @@ cadcraft-cli commands [FILTER]                  # JSON: id, label, params string
 5. Check at 150 dpi in crops (`gs … -r150`, then PIL `crop`): label overlap was the main problem (text near box edges, labels on wires). Keep labels ≥ 2 mm from lines; right-align (`"R"`) labels that sit left of a box.
 6. 388 commands for a 1-sheet schematic ran in about a second headless.
 
+## Checking a schematic's connections (verified)
+Parse the saved ASCII DXF (LINE, small LWPOLYLINE donuts for junction dots, CIRCLE pads) and union the wire endpoints; a wire connects to another only at a shared endpoint or a junction dot. Compare the resulting nets with the written connection list, and report T-contacts without a dot and wire crossings. It confirmed a 6-switch/relay/controller drawing net by net (0 crossings). It proves the DRAWING matches the text, not that the real parts behave as described.
+
 ## Live window
+- To refresh a drawing the file on disk changed: `execute {"command":"close","params":{"index":N}}` (a clean document closes without a prompt) and `open` it again; `open` alone adds a second copy.
 - `open {"path":"…dxf"}` → `{entities,index,warnings}` opened the drawing as a new document next to the user's empty `Drawing1` (nothing replaced). `execute {"command":"zoom","params":{"mode":"extents"}}` → null.
 - **`screenshot` answers "no frame was presented (screen locked or window hidden)" when the window is not visible**; the offscreen `ui.render` renders only the drawing, not the UI. Ask the user to unlock the screen and bring the window forward before any UI test.
 
