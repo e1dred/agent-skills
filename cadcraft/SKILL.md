@@ -53,7 +53,7 @@ Parse the saved ASCII DXF (LINE, small LWPOLYLINE donuts for junction dots, CIRC
 - Unknown or unloaded linetype in `layer.new` fails the whole run.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
-- Still not tested: authoring dynamic blocks (UI only), DWG/DXF made by other programs, a second CadCraft version, VectorCraft.
+- Still not tested: authoring dynamic blocks (UI only), a second CadCraft version (0.13.0 is the latest release), DWG versions other than 2007 and the CadCraft-written ones, VectorCraft.
 
 ## Round 2 (2026-10-26, cadcraft-cli 0.13.0, headless, rendered and looked at)
 `tools/ccrun.py`: `run([(cmd, params), …], save=, export=)` runs many commands in one `cadcraft-cli run` and returns every result as JSON (raises on the first failure).
@@ -116,6 +116,13 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **Click selection in a dense drawing:** a click within the pick box of ANY object selects that object instead of starting a window, so two "empty" corner clicks often selected the frame polyline only. Select regions with `execute select {"window":[[x0,y0],[x1,y1]]}` (returns the handles; a window takes only objects fully inside) and then run the command: `command_line MOVE`, `ui_click` base point, `ui_click` target moved the two selected objects by exactly (0,-10), and `undo` restored them (verified by text position).
 - `DIST` by two clicks reports in the command history (`Distance = 36.0555, Angle in XY Plane = 326…`), the same text as the JSON `dist`.
 
+## Round 10: a real AutoCAD DWG from another program (2026-10-26, 0.13.0 = latest GitHub release v0.13.0 of 25 Oct; renders looked at)
+- **Version check:** `cadcraft.appimage --version` opens the GUI, so compare the CLI (`cadcraft-cli --version`) with https://github.com/storytold/cadcraft/releases/latest (the page names the tag, e.g. v0.13.0, and its date). Both were 0.13.0.
+- **A 2007-format (AC1021) architectural DWG with 1380 entities** (1178 lines, 56 arcs, 14 hatches, 28 dimensions, 36 multileaders, 16 block references, 9 block definitions, 49 layers, one A-size paper layout with 4 viewports) opened with no warnings and `skipped: 0`, converted to PDF in 0.3 s (letter page; the layout exports at ARCH D, 2592×1728 pt with `exportpdf {"layout":…}`), and DWG → DWG → DXF kept every entity count. The renders showed the sections, stair hatches, dimensions, multileader text, title block and four viewports correctly, in both the exported PDF and the live window's PAPER view (`layout {"option":"set","name":…}` then `zoom extents`).
+- **Reading it:** `texts` returns MText and multileader text with layer, height and style; `entities {"type":"Multileader"}` gives arrow size, dogleg, landing, leader points and the text contents; `entities {"type":"Dimension"}` gives `measurement` and per-dimension overrides (scale 48, text height, arrow size); `scalelistedit {}` lists the drawing's scales; `dataextraction {"file":"x.csv"}` produced a title-block table (columns Count, Name, then every attribute tag: REV, DATE, PROJECT_NAME, …) from the blocks in model and paper space; `audit` found one zero-length line (not fixed unless `fix:true`); `purge` removed an unreferenced dynamic block and 6 layers.
+- **Dynamic blocks (read and edit, verified):** inserts of dynamic blocks are anonymous (`*B9`) and live in the layout's space, so `layout set` first, then `blocks.reference {"handle":"23E8"}` (definition "Drawing Title", property `Distance` 1.2747), `blocks.reference.grips`, `blocks.reference.set {"handle","name":"Distance","value":20}` (end point moved to x+20) and `blocks.reference.grip {"handle","node":80,"part":"end","to":[30,9]}` (distance 25.1583). `blocks.dynamic {"name":"Drawing Title"}` described the parameter (linear distance) and its stretch action; give it the definition name, not `*B9`.
+- Entities in layout (paper) space are only visible to `entities` after `layout set`; block references there: Rev, title and the four viewport-related anonymous blocks.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -126,3 +133,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 7: block editor, refedit, attribute manager, .ctb plot styles, publish, qdim.
 - 2026-10-26: round 8: annotative scaling, real-drawing edit run, basic 3D.
 - 2026-10-26: round 9: real drawing in the live window; find_text contains; selecting in dense drawings.
+- 2026-10-26: round 10: real AutoCAD DWG (layout, multileaders, dimensions, dynamic block read/edit), release check against GitHub.

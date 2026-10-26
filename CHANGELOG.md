@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ### Added
 - WordCraft: recipe and traps from reformatting a real document with review comments (table header shading and column widths, links in cells, landscape appendix, comment anchors).
 - README table: CadCraft row (55 of 441 command ids named, an upper bound because its ids are plain words; everyday estimate ~20% from one task), refreshed counts for the other apps; `coverage.sh` now measures CadCraft too.
+- CadCraft round 10: a real AutoCAD DWG (1380 entities, layout with 4 viewports, 36 multileaders, 28 dimensions, dynamic block) opened, queried, edited and rendered; dynamic-block reference commands verified; how to check for a newer CadCraft release.
 - CadCraft round 9: a real drawing opened in the live window (copy for edits), `find_text` uses `contains`, selecting in dense drawings via `select {window}`, never save inspected files.
 - CadCraft round 8: annotative text across viewport scales (checked in the PDF), editing a real drawing copy, basic 3D commands.
 - CadCraft round 7: block editor and in-place reference editing, attribute manager, block replace, plot-style tables (.ctb, effect checked in the PDF), publish, more dimension tools.
