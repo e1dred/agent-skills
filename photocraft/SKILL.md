@@ -380,6 +380,24 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
   `filter.convertForSmartFilters` is refused on a layer that already is a smart object.
 - Not run: the 47 `filter.gallery.*` artistic/sketch/texture filters, `filter.filterGallery`, `filter.vanishingPoint`, `filter.adaptiveWideAngle`, `filter.lastFilter`, filter masks, `layerComp.restoreLastDocumentState`, `history.deleteState`.
 
+## Filter Gallery, every layer style, all adjustment layers (verified headless, 0.16.0; contact sheets checked)
+
+> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
+
+- **All 47 `filter.gallery.*` filters ran with `{}`** on a flattened 260² test picture and each looked like its name (artistic: coloredPencil, cutout, dryBrush, filmGrain, fresco, neonGlow, paintDaubs, paletteKnife, plasticWrap, posterEdges, roughPastels, smudgeStick, sponge, underpainting, watercolor;
+  brush strokes: accentedEdges, angledStrokes, crosshatch, darkStrokes, inkOutlines, spatter, sprayedStrokes, sumiE; distort: diffuseGlow, glass, oceanRipple; sketch: basRelief, chalkCharcoal, charcoal, chrome, conteCrayon, graphicPen, halftonePattern, notePaper, photocopy, plaster, reticulation, stamp, tornEdges, waterPaper;
+  stylize: glowingEdges; texture: craquelure, grain, mosaicTiles, patchwork, stainedGlass, texturizer). The **sketch family uses the foreground/background colours** (`foreground`/`background` params, default black/white), so on a colour picture they turn it black and white with big areas of white or black (stamp, photocopy, tornEdges, notePaper, plaster, chrome): pass colours or run on a duplicate layer and lower its opacity.
+  Parameter docs per filter are in `commands --json` (e.g. `paintDaubs {"brushSize","sharpness","brushType":"simple|lightRough|…"}`, `texturizer {"texture":"canvas|brick|burlap|sandstone","scaling","relief","light"}`, `grain {"grainType":"regular|soft|sprinkles|clumped|…"}`). Texture-style filters add visible mesh at default scale.
+- **Layer styles, each alone on a rounded rectangle (render checked):** `layer.layerStyle.` + `dropShadow {"distance":10,"size":12,"opacity":70}`, `innerShadow {"distance":8,"size":10}`, `outerGlow {"color","size":20,"spread":20}`, `innerGlow {"color":"#ffffff","size":20}`, `stroke {"size":6,"color","position":"outside"}`, `colorOverlay {"color","opacity":70}`,
+  `gradientOverlay {"from","to","angle":90}` (angle 90: `to` at the TOP), `patternOverlay {"opacity":60}` (default pattern = a checkerboard), `bevelEmboss {"style":"inner","depth":150,"size":10}`, `satin {"opacity":60,"distance":20,"size":25}`. Stack with `"add":true`.
+  Also run: `copyLayerStyle {}` / `pasteLayerStyle {}` (to the active layer), `scaleEffects {"scale":200}`, `globalLight {"angle":45,"altitude":50}`, `blendingOptions {"opacity":80,"fillOpacity":50}` (also `blend`, `blendIf`), `hideAllEffects/showAllEffects`, `contours.list {}`.
+  **`layer.layerStyle.createLayer {}` turns the effects into real layers** ("Ellipse 1's Drop Shadow", "…'s Stroke") and the original layer loses its effects (`info.layers[].effects` was gone afterwards). `info` lists effects as `effects:{enabled,items:[{kind:"Drop Shadow",enabled}]}`.
+  Not run: `replace {"layer","effects":[…]}`, `makeDefault/defaultFor`, `clear {"effect":index}`, `transferEffects {"from","to","copy"}`, the contour save/load commands.
+- **All 16 adjustment layers** (`layer.newAdjustmentLayer.` + `brightnessContrast, levels, curves, exposure, vibrance, hueSaturation, colorBalance, blackWhite, photoFilter, channelMixer, invert, posterize, threshold, gradientMap, selectiveColor, colorLookup`): every one runs with `{}` (defaults are a no-op for most; `invert`, `posterize`, `threshold`, `blackWhite`, `gradientMap` visibly change at defaults).
+  With parameters each changed the picture (mean pixel difference against the no-op version, 255 scale): colorBalance `{"shadows":[20,0,-20],"midtones":[30,-10,-30]}` 26, channelMixer `{"red":[0,100,0,0],"green":[100,0,0,0],"blue":[0,0,100,0]}` 40 (red/green swap), colorLookup `{"lut":"tealOrange"}` 15 (luts: warm, cool, tealOrange, bleachBypass, fadedFilm, dayForNight, monoContrast, crossProcess),
+  blackWhite `{"reds":100,"yellows":100,"greens":0,"cyans":0,"blues":-100,…}` 46, selectiveColor `{"colors":"reds","cyan":60,"magenta":-40}` 5, photoFilter `{"filter":"cooling80","density":50}` 13, hueSaturation `{"hue":120}` 57, levels `{"inBlack":40,"gamma":1.4,"inWhite":220}` 20, curves with a `red` channel curve 21, exposure `{"exposure":1}` 38, gradientMap 26, vibrance 9, posterize `{"levels":3}` 34, threshold `{"level":90}` 124, brightnessContrast 43.
+  Most also accept `"path"` (work path or saved path name) to make the adjustment's **vector mask** from a path; otherwise an active selection becomes the layer mask.
+
 ## Traps
 
 - **Flattening is silent except for one warning line:** exporting to PNG/JPG/WebP drops layers. Always also save a
@@ -418,3 +436,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-25 (6): paths (set/rename/fill/stroke/toSelection/transform) and channels (new/duplicate/rename/options) verified headless on 0.16.0.
 - 2026-10-25 (7): brush presets (list/save/use), pressure strokes, pencil, erase, symmetry, bucket, magic eraser, smudge, sponge, colour replacement verified headless on 0.16.0.
 - 2026-10-25 (8): 65 filters rendered on a contact sheet, layer comps, history/snapshots/history brush, smart filters verified headless on 0.16.0.
+- 2026-10-25 (9): all 47 Filter Gallery filters, ten layer styles plus copy/paste/scale/global light/create layer, and all 16 adjustment layers verified headless on 0.16.0.
