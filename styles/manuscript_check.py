@@ -105,7 +105,7 @@ def check(path):
     for p in paras:
         sm = re.search(r'<w:pStyle w:val="([^"]+)"', p)
         nm = names.get(sm.group(1), ("Normal",))[0] if sm else "Normal"
-        if nm in ("Normal", "MS Body First"): body_text.append(text_of(p).strip())
+        if nm in ("Normal", "MS Body First", "MS Block Quote", "MS Verse"): body_text.append(text_of(p).strip())
     nwords = sum(len(t.split()) for t in body_text)
     if wc:
         diff = abs(nwords - wc) / max(wc, 1)
@@ -119,6 +119,15 @@ def check(path):
     for t in ptexts:
         run = run + 1 if not t.strip() else 0; worst = max(worst, run)
     add("WARN" if worst > 7 else "PASS", "longest run of empty paragraphs: %d (a chapter opening uses 6 on purpose)" % worst)
+    # optional: the page count and words per page, when wordcraft-cli is installed (a double-spaced page holds about 250-300 words)
+    try:
+        import json, os, shutil, subprocess
+        cli = os.environ.get("WORDCRAFT_CLI") or shutil.which("wordcraft-cli") or os.path.expanduser("~/AppImages/wordcraft-cli")
+        info = json.loads(subprocess.run([cli, "info", path], capture_output=True, text=True, timeout=60).stdout)
+        pages = int(info["pages"])
+        add("PASS", "pages: %d (about %d words per page; the title page counts)" % (pages, nwords // max(pages, 1)))
+    except Exception:
+        pass
     return res
 
 

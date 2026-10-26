@@ -4,7 +4,7 @@
     wordcraft-cli run --script job.json
 
 STYLE: traditional elegant clean professional academic modern stylish creative   (see styles.json)
-KIND:  doc | resume | cv | paper | manuscript | screenplay   (paper uses the academic style; add --format=apa|mla; manuscript and screenplay ignore STYLE)
+KIND:  doc | resume | cv | paper | manuscript | screenplay | query | synopsis   (paper uses the academic style; add --format=apa|mla; manuscript, screenplay, query and synopsis ignore STYLE)
 Options (all `--name=value`):
   --paper=letter|a4            page size (default letter; cv defaults to a4)
   --page-numbers=bottom-center|bottom-right|top-right      --header-text="Short title"
@@ -51,6 +51,7 @@ def translate(name, p):
     if "color" in p: chr_["color"] = rgb(p["color"])
     for k in ("bold", "italic", "caps"):
         if p.get(k): chr_[k] = True
+    if p.get("underline"): chr_["underline"] = "single"      # the CharProp takes a style name, not a boolean
     if p.get("spacing"): chr_["spacing"] = p["spacing"]
     if "before" in p: par["spaceBefore"] = p["before"]
     if "after" in p: par["spaceAfter"] = p["after"]
@@ -69,7 +70,7 @@ def translate(name, p):
     return chr_, par
 
 
-if P["kind"] in ("manuscript", "screenplay"):
+if P["kind"] in ("manuscript", "screenplay", "query", "synopsis"):
     c("tools.autocorrect", enabled=False)   # keep the author's text exactly as typed (no "..." to ellipsis, no capitalising)
 pg = P["page"]
 if P["paper"] == "a4": c("layout.size", name="A4")
@@ -101,7 +102,7 @@ if F:
     c("insert.pageNumber", position="bottom", align=F["align"])
 for hf in ("Header", "Footer"):
     if (H or F or SCRIPT_HDR) and base_font:
-        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript", "screenplay") else "555555"})
+        c("styles.modify", style=hf, chr={"font": base_font, "fontCs": base_font, "size": base_size, "sizeCs": base_size, "color": "000000" if P["kind"] in ("paper", "manuscript", "screenplay", "query", "synopsis") else "555555"})
 
 BUILTIN = {"Normal", "Heading 1", "Heading 2", "Heading 3"}
 for name, p in P["styles"]:
@@ -138,6 +139,7 @@ def type_runs(runs):
     for flag, text in runs:
         if flag is True: c("format.bold", value=True)       # never set bold False: direct formatting would override the style
         elif flag == "i": c("format.italic", value=True)
+        elif flag == "u": c("format.underline", value=True)
         c("text.insert", text=text)
         if flag: c("format.resetChar")
 
@@ -179,6 +181,16 @@ for blk in P["blocks"]:
         c("layout.linkToPrevious"); c("insert.createHeader"); c("insert.pageField"); c("text.insert", text=P["header"].get("suffix", ""))
         c("para.set", props={"align": P["header"]["align"]}); c("insert.closeHeader")
         c("caret.docEnd"); c("layout.differentFirstPage")
+    elif t_ == "dual":   # dual dialogue: a borderless one-row, two-cell table, a cue and its dialogue in each cell
+        new_para()
+        c("insert.table", rows=1, cols=2, style="Normal Table")
+        for ci, col in enumerate(blk["cols"]):
+            for pi, (sty, runs) in enumerate(col):
+                if pi: c("text.newParagraph")
+                c("para.style", style=sty); c("para.set", props={"spaceBefore": blk["spacer"] if pi == 0 else 0, "pageBreakBefore": False}); c("format.resetChar")
+                type_runs(runs)
+            if ci == 0: c("caret.right")
+        c("caret.docEnd"); first[0] = True
     elif t_ == "columns":
         c("text.newParagraph")
         c("layout.columns", count=blk["n"], space=24, separator=True, apply="forward"); first[0] = True

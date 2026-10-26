@@ -265,3 +265,27 @@ Come closer. Come *closer*.
 FADE OUT.
 """,
 }
+
+
+# Invented query letter and synopsis (companions of the manuscript sample). Replace with your own text.
+QUERY = {
+    "date": "October 26, 2026",
+    "agent": ["Ms. Dana Example", "Example Literary Agency", "100 Sample Street", "Anytown, ST 00000"],
+    "text": """Dear Ms. Example,
+
+Ida has four minutes to decide whether to leave the island that never lets anyone leave. When a brass key appears in the lighthouse keeper's room on the morning after the last ferry, she follows it into a cave of burning lamps, each one named for a villager, and finds her mother's lamp burning low.
+
+SALT AND LANTERN LIGHT is a 90,000-word fantasy novel for adult readers, in the vein of quiet, atmospheric island stories. It stands alone, with room for a sequel.
+
+I have published short fiction in two small magazines and work as a ferry-timetable clerk, a job that has taught me a great deal about waiting. I would be glad to send the full manuscript or sample chapters.
+
+Thank you for your time and consideration.""",
+}
+
+SYNOPSIS = {
+    "text": """Ida Marsh is about to leave the island of Skerra for good when the tide, and a net-mender named Mr. Penhallow, persuade her to stay one more night. The next morning she finds a key on a loop of blue thread in the empty lighthouse keeper's room.
+
+The key opens a hatch at the foot of the cliff, long a village dare. Behind it lies a passage of lit lamps, hundreds of them, each painted with a villager's name. Ida finds her mother's among them, burning low, and learns that the island keeps its people alive by tending their lamps. Whoever leaves takes a little of the island's light with them.
+
+Ida must decide whether to leave and let her mother's lamp go out, or to take over the keeper's work that has kept the village safe for generations, and to learn what the island asks in return.""",
+}

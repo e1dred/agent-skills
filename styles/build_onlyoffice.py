@@ -3,7 +3,7 @@
     python3 -I build_onlyoffice.py STYLE KIND /abs/out.docx [options] > calls.json
     python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 
-STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper | manuscript | screenplay; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
+STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper | manuscript | screenplay | query | synopsis; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
 --page-numbers=bottom-center|bottom-right|top-right, --header-text=…, --columns=2 (doc), --photo=/abs/pic.png (resume/cv), --figure=sample|/abs/pic.png, --merged-table, --footnotes,
 --script=arabic|hebrew|japanese|chinese|korean (doc), --extras (paper),
 --layout=chronological|functional|combined (resume), --format=apa|mla (paper), --local-fonts, --pdf (also save a PDF rendered by
@@ -38,6 +38,7 @@ function setText(t, p) {
   if (p.bold !== undefined) t.SetBold(!!p.bold);
   if (p.italic !== undefined) t.SetItalic(!!p.italic);
   if (p.caps) t.SetCaps(true);
+  if (p.underline) t.SetUnderline(true);
   if (p.spacing) t.SetSpacing(tw(p.spacing));
 }
 function border(pp, side, b) {
@@ -70,7 +71,7 @@ for (var i = 0; i < PLAN.styles.length; i++) {
 var base = PLAN.styles[0][1];
 if (PLAN.header || PLAN.footer || PLAN.script_header) {
   ["Header", "Footer"].forEach(function (n) {
-    try { var s = doc.GetStyle(n); setText(s.GetTextPr(), {font: base.font, size: base.size, color: (PLAN.kind === "paper" || PLAN.kind === "manuscript" || PLAN.kind === "screenplay") ? "000000" : "555555"}); } catch (e) {}
+    try { var s = doc.GetStyle(n); setText(s.GetTextPr(), {font: base.font, size: base.size, color: (PLAN.kind === "paper" || PLAN.kind === "manuscript" || PLAN.kind === "screenplay" || PLAN.kind === "query" || PLAN.kind === "synopsis") ? "000000" : "555555"}); } catch (e) {}
   });
 }
 if (PLAN.different_first) { try { sec.SetTitlePage(true); } catch (e) {} }   // page 1 (title page) gets the empty first-page header
@@ -107,6 +108,7 @@ function addPara(style, runs, bullet, scr) {
     var seg = runs[i], r = Api.CreateRun();
     if (seg[0] === true) r.SetBold(true);
     if (seg[0] === "i") r.SetItalic(true);
+    if (seg[0] === "u") r.SetUnderline(true);
     var bits = seg[1].split("\t");
     for (var k = 0; k < bits.length; k++) { if (k > 0) r.AddTabStop(); if (bits[k]) r.AddText(bits[k]); }
     p.AddElement(r);
@@ -136,6 +138,29 @@ function addTable(b) {
   ["Top", "Bottom", "Left", "Right", "InsideH", "InsideV"].forEach(function (s) { tbl["SetTableBorder" + s]("single", 4, 0, col(b.border)); });
   doc.Push(tbl);
 }
+function addDualTable(b) {   // dual dialogue: a borderless table with one row and two cells
+  var tbl = Api.CreateTable(1, 2);   // (rows, columns) as in addTable
+  tbl.SetWidth("percent", 100);
+  ["Top", "Bottom", "Left", "Right", "InsideH", "InsideV"].forEach(function (s) { tbl["SetTableBorder" + s]("none", 0, 0, Api.Color("#000000")); });
+  for (var c = 0; c < 2; c++) {
+    var cell = tbl.GetRow(0).GetCell(c), content = cell.GetContent(), col = b.cols[c];
+    for (var q = 0; q < col.length; q++) {
+      var p = (q === 0) ? content.GetElement(0) : Api.CreateParagraph();
+      p.SetStyle(doc.GetStyle(col[q][0]));
+      p.SetSpacingBefore(tw(q === 0 ? b.spacer : 0));
+      var runs = col[q][1];
+      for (var i = 0; i < runs.length; i++) {
+        var r = Api.CreateRun();
+        if (runs[i][0] === true) r.SetBold(true);
+        if (runs[i][0] === "i") r.SetItalic(true);
+        if (runs[i][0] === "u") r.SetUnderline(true);
+        r.AddText(runs[i][1]); p.AddElement(r);
+      }
+      if (q > 0) content.Push(p);
+    }
+  }
+  doc.Push(tbl);
+}
 for (var j = 0; j < PLAN.blocks.length; j++) {
   var b = PLAN.blocks[j];
   if (b.t === "p") addPara(b.style, b.runs, b.bullet, b.script ? {font: b.font, lang: b.lang, rtl: b.rtl} : null);
@@ -143,6 +168,7 @@ for (var j = 0; j < PLAN.blocks.length; j++) {
   else if (b.t === "spacer") pendingBefore = b.pt;
   else if (b.t === "pagebreak") pendingBreak = true;
   else if (b.t === "table") addTable(b);
+  else if (b.t === "dual") addDualTable(b);
   else if (b.t === "columns") { doc.CreateSection(lastPara); COLS = b.n; }
   else if (b.t === "sectionbreak") { SECBREAK = true; doc.CreateSection(lastPara); }   // the title page ends here
 }

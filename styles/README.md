@@ -31,7 +31,7 @@ python3 -I build_wordcraft.py modern doc /abs/report.docx > job.json && wordcraf
 python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 ```
 
-`KIND` is `doc`, `resume`, `cv`, `paper`, `manuscript` or `screenplay` (see below; the STYLE argument is ignored for the last two). Options, the same in both builders (`--name=value`):
+`KIND` is `doc`, `resume`, `cv`, `paper`, `manuscript`, `screenplay`, `query` or `synopsis` (see below; the STYLE argument is ignored for the last four). Options, the same in both builders (`--name=value`):
 
 | Option | Applies to | What it does |
 |---|---|---|
@@ -71,7 +71,7 @@ python3 -I manuscript_check.py /abs/book.docx            # PASS / WARN / FAIL ag
 
 | Option | What it does |
 |---|---|
-| `--text=/abs/file.txt` | Your text. A line `# Chapter One` starts a chapter; a line `#` or `* * *` alone is a scene break; blank lines separate paragraphs; `*word*` is italic; `THE END` closes the book. Without it, an invented sample is built. |
+| `--text=/abs/file.txt` | Your text. A line `# Chapter One` starts a chapter; a line `#` or `* * *` alone is a scene break; blank lines separate paragraphs; `*word*` is italic; a paragraph starting `> ` is a block quotation; lines each starting `\| ` are verse (line breaks kept, single-spaced, indented); `[^note text]` inside a paragraph becomes a real footnote (put it right after the words it belongs to; most fiction submissions should not use footnotes); `THE END` closes the book. Without it, an invented sample is built. |
 | `--title=` `--author=` `--pen=` `--surname=` | Title page and header. `--pen` is the byline if it differs from the legal name; the surname defaults to the last word of the author. |
 | `--address="Line 1\|Line 2"` `--phone=` `--email=` | Contact block, top left of the title page. |
 | `--wordcount=N` | The "about N words" line. Default: counted from your text and rounded (nearest 50 under 1,000, 100 under 10,000, otherwise 1,000). |
@@ -84,7 +84,17 @@ What to know (all verified on WordCraft 0.11.0 and ONLYOFFICE 10.0.0; both apps 
 - Chapter openings use six empty double-spaced paragraphs to drop a third of the way down, because WordCraft's layout ignores "space before" at the top of a page. They are
   intentional (`manuscript_check.py` allows runs of up to seven).
 - Chapter headings are real `Heading 1` paragraphs, so a Word-style navigation pane or an accessibility checker sees the structure.
-- Not covered: footnotes, tables, pictures, poetry, an end-of-document page count, a table of contents, a synopsis or query letter.
+- `manuscript_check.py` also prints the page count and words per page when `wordcraft-cli` is installed. In ONLYOFFICE a footnote mark lands at the END of its paragraph (that tool anchors there).
+- Not covered: tables, pictures and a table of contents (fiction submissions do not use them; a non-fiction proposal needs its own layout); a bibliography.
+
+### Query letter and synopsis (`query`, `synopsis`)
+
+![Query letter and synopsis](gallery/query-synopsis.png)
+
+The two documents that usually travel with a manuscript. `query`: a one-page business letter (contact block, date, the agent's address, salutation, paragraphs, "Sincerely,"), single-spaced Times 12 pt.
+`synopsis`: single-spaced, centred bold heading "TITLE: SYNOPSIS", header `Surname / TITLE / Synopsis / page` from page 2. Same options as the manuscript (`--title --author --address --phone --email --text`), plus for the query
+`--agent="Ms. Name|Agency|Street|City"` and `--date="October 26, 2026"`. The text file is plain paragraphs separated by blank lines (`*italic*` allowed); the letter's salutation is part of your text. Each agent publishes
+their own length and format asks (a query is usually 250-400 words, a synopsis one to two pages): follow theirs.
 
 ## Screenplay (`screenplay`)
 
@@ -112,10 +122,21 @@ Text input (`--text=`) is a Fountain-like subset, so a script written in any pla
 | `FADE IN:` at the start | left-aligned like action |
 | `*word*` | italic |
 
-`(CONT'D)` is added automatically when a speaker resumes after action. Options: `--title --author --address="L1|L2" --phone --email --draft` (title page), `--text`.
+`(CONT'D)` is added automatically when a speaker resumes after action. Options: `--title --author --address="L1|L2" --phone --email --draft` (title page), `--text`, and
+`--scene-numbers` (number at both ends of every scene heading), `--bold-scenes`, `--underline-scenes`.
 
-Not covered (WordCraft has no "next element on Enter" and the file is a plain `.docx`): dual dialogue, `(MORE)` and `(CONT'D)` at page breaks, scene numbers, revision
-pages and colours, bold or underlined sluglines, centred text, Fountain title-page keys, and `.fdx` (Final Draft) or `.fountain` output. TV and stage-play formats differ and are not built.
+More of the markup: `**bold**`, `_underlined_` and `*italic*` runs in action and dialogue; `>THE END<` centred text; a second cue ending in `^` makes **dual dialogue** (a borderless two-cell table, each cell a cue and its speech);
+`TEASER`, `ACT ONE` … `END OF ACT ONE` lines are TV-style act markers (centred, bold underlined; each TEASER/ACT starts a new page); a Fountain title-page block at the top of the file
+(`Title:`, `Credit:`, `Author:`, `Draft date:`, `Contact:` with indented lines) fills the title page (command-line options override it).
+
+![Screenplay extras](gallery/screenplay-extras.png)
+
+**Pages that split a speech:** `screenplay_paginate.py --text=in.txt --out=out.txt` builds the script with WordCraft, reads where each page ends, and writes a copy of the text with `(MORE)` and `NAME (CONT'D)` added at every
+page break that cuts a speech, repeating until stable; build the final file from `out.txt`. It uses WordCraft's page breaks, so another app or a later edit can move them (run it again).
+**Other formats:** `screenplay_export.py --text=script.txt --fountain=out.fountain --fdx=out.fdx` writes Fountain and Final Draft XML from the same parse (the `.fdx` is well-formed XML in Final Draft's structure but was not opened in Final Draft).
+
+
+Not covered: revision pages and colours, a stage-play layout (character names centred, a different margin scheme), a TV teleplay title page with episode details, `(MORE)`/`(CONT'D)` for a speech that straddles a *scene* heading, and a `.fdx` opened and tested inside Final Draft. WordCraft has no "next element on Enter" style flow, so the `.docx` is for submission and printing; keep the plain-text source as your working copy.
 
 ## ATS-friendly, or good for humans?
 

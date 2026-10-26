@@ -8,6 +8,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 
 ### Added
 - **Manuscript format** (`styles/`, kind `manuscript`): standard manuscript layout for publisher and agent submissions in WordCraft and ONLYOFFICE (title page, running header from page 2, double-spaced 12 pt, chapter drops, scene breaks), your own text through `--text=`, Times or Courier, novel or short-story layout, A4 or Letter, and `manuscript_check.py` to verify a file. Gallery image and a WordCraft skill section.
+- **Manuscript extras:** verse, block quotations and footnotes in the plain-text input, page count and words per page in `manuscript_check.py`, a **query letter** kind (`query`) and a **synopsis** kind (`synopsis`).
+- **Screenplay extras:** scene numbers, bold/underlined scene headings, bold/underline/centred text, dual dialogue, TV act markers (TEASER, ACT ONE, END OF ACT), Fountain title-page keys, `screenplay_paginate.py` (adds `(MORE)` and `(CONT'D)` at page breaks), and `screenplay_export.py` (Fountain and Final Draft `.fdx` output).
 - **Screenplay format** (kind `screenplay`): standard spec-script layout in WordCraft and ONLYOFFICE (Courier 12 pt on a 12 pt pitch, element indents, title page as its own section, numbering from 1 with `2.` `3.` at the top right), Fountain-like plain-text input with automatic `(CONT'D)`, and `screenplay_check.py`.
 
 ## 2026-10-25

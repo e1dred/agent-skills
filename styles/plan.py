@@ -28,7 +28,7 @@ def _rule(h, color, kind):
 
 def make(style_name, kind, o=None):
     o = dict(o or {})
-    if kind in ("paper", "manuscript", "screenplay"):
+    if kind in ("paper", "manuscript", "screenplay", "query", "synopsis"):
         style_name = "academic"
     S = resolve(style_name, portable=not o.get("local_fonts"))
     if o.get("figure") == "sample": o["figure"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "sample-figure.png")
@@ -44,7 +44,7 @@ def make(style_name, kind, o=None):
             "bullet": {"color": C["accent"]}, "columns": None, "footnotes": []}
     m = RS["margins_in"] if kind in ("resume", "cv") else S["margins_in"]
     top, bottom, left, right = [v * 72 for v in m]
-    if kind in ("paper", "manuscript", "screenplay"):
+    if kind in ("paper", "manuscript", "screenplay", "query", "synopsis"):
         top = bottom = left = right = 72.0
     plan["page"] = {"w": PW, "h": PH, "margins": [top, bottom, left, right]}
     width = PW - left - right
@@ -284,13 +284,30 @@ def make(style_name, kind, o=None):
             return out
         items = []
         for chunk in re.split(r"\n\s*\n", txt.strip()):
-            chunk = " ".join(l.strip() for l in chunk.strip().split("\n"))
+            raw = [l.strip() for l in chunk.strip().split("\n") if l.strip()]
+            if raw and all(l.startswith("| ") or l == "|" for l in raw):          # verse: one line per paragraph, line breaks kept
+                items.append(("verse", [runs_of(l[2:]) for l in raw if l != "|"])); continue
+            chunk = " ".join(raw)
             if not chunk: continue
             if chunk.startswith("# ") : items.append(("chapter", chunk[2:].strip()))
             elif chunk in ("#", "* * *", "***"): items.append(("scene", None))
             elif chunk.upper() in ("THE END", "END"): items.append(("end", None))
+            elif chunk.startswith("> "): items.append(("quote", runs_of(chunk[2:])))      # block quotation
             else: items.append(("p", runs_of(chunk)))
-        words = sum(len(t.split()) for k, v in items if k == "p" for _, t in v)
+        # footnotes: [^text] inside a paragraph becomes a real footnote anchored on the words just before it
+        for ix, (k, v) in enumerate(items):
+            if k not in ("p", "quote"): continue
+            full, newruns = "", []
+            for fl, t in v:
+                pieces = re.split(r"(\[\^[^\]]+\])", t)
+                for pc in pieces:
+                    if pc.startswith("[^") and pc.endswith("]"):
+                        anchor = full.rstrip()[-26:]
+                        if anchor: plan["footnotes"].append({"anchor": anchor, "text": pc[2:-1]})
+                    elif pc:
+                        newruns.append((fl, pc)); full += pc
+            items[ix] = (k, newruns)
+        words = sum(len(t.split()) for k, v in items if k in ("p", "quote") for _, t in v) + sum(len(t.split()) for k, v in items if k == "verse" for ln in v for _, t in ln)
         wc = int(o["wordcount"]) if o.get("wordcount") else None
         if wc is None:
             wc = int(round(words, -3)) if words >= 10000 else int(round(words / 100.0) * 100) if words >= 1000 else int(round(words / 50.0) * 50) if words >= 100 else words
@@ -300,6 +317,8 @@ def make(style_name, kind, o=None):
         add("Heading 1", font=mf, size=bs, color="000000", bold=True, align="center", indent_first=0, before=0, after=0, keep_next=True, line=2.0)
         add("MS Body First", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=0, line=2.0)
         add("MS Drop", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=0, line=2.0)
+        add("MS Block Quote", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_left=36, indent_first=0, line=2.0)
+        add("MS Verse", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_left=36, indent_first=0, line=1.0)
         add("MS Scene Break", font=mf, size=bs, color="000000", before=0, after=0, align="center", indent_first=0, line=2.0)
         add("MS Contact", font=mf, size=bs, color="000000", before=0, after=0, align="left", indent_first=0, line=1.0, tab_right=468)
         add("MS Title", font=mf, size=bs, color="000000", before=0, after=0, align="center", indent_first=0, line=2.0, caps=True)
@@ -336,6 +355,13 @@ def make(style_name, kind, o=None):
                 para("MS Scene Break", "#"); first_after_break = True
             elif k == "end":
                 para("MS End", "THE END")
+            elif k == "quote":
+                para("MS Block Quote", *v); first_after_break = True
+            elif k == "verse":
+                for li, ln in enumerate(v):
+                    if li == 0: blocks.append({"t": "spacer", "pt": 12})
+                    para("MS Verse", *ln)
+                first_after_break = True; blocks.append({"t": "spacer", "pt": 12})
             else:
                 if layout == "short" and not started:
                     blocks.append({"t": "spacer", "pt": 24}); started = True
@@ -348,23 +374,39 @@ def make(style_name, kind, o=None):
     elif kind == "screenplay":
         SP = content.SCREENPLAY
         mf = "Courier New"
-        title = o.get("title") or SP["title"]
-        author = o.get("author") or SP["author"]
-        custom = bool(o.get("author"))
-        contact = [x.strip() for x in o["address"].split("|")] if o.get("address") else ([] if custom else list(SP["contact"]))
+        txt = open(o["text"], encoding="utf-8").read() if o.get("text") else SP["text"]
+        custom = bool(o.get("text"))
+        # Fountain-style title-page keys at the top of the file (Title: Credit: Author: Draft date: Contact: ...)
+        meta = {}
+        KEYS = r"(Title|Credit|Authors?|Source|Draft date|Date|Revision|Contact|Copyright|Notes)"
+        mt = re.match(r"((?:" + KEYS + r":[^\n]*\n(?:[ \t]+[^\n]*\n)*)+)\s*\n", txt.lstrip("\ufeff") + "\n", re.I)
+        if mt:
+            cur = None
+            for ln in mt.group(1).split("\n"):
+                km = re.match(r"^" + KEYS + r":\s*(.*)$", ln, re.I)
+                if km: cur = km.group(1).lower(); meta[cur] = [km.group(2).strip()] if km.group(2).strip() else []
+                elif ln.strip() and cur: meta[cur].append(ln.strip())
+            txt = txt.lstrip("\ufeff")[mt.end() - 1:] if False else re.sub(r"^" + re.escape(mt.group(1)), "", txt.lstrip("\ufeff"), count=1)
+        first = lambda k: (meta.get(k) or [""])[0]
+        title = o.get("title") or first("title") or ("" if custom else SP["title"]) or "Untitled"
+        author = o.get("author") or first("author") or first("authors") or ("" if custom else SP["author"])
+        credit = first("credit") or "written by"
+        contact = [x.strip() for x in o["address"].split("|")] if o.get("address") else (meta.get("contact") or ([] if custom else list(SP["contact"])))
         if o.get("phone"): contact.append(o["phone"])
         if o.get("email"): contact.append(o["email"])
-        draft = o.get("draft") if o.get("draft") is not None else ("" if custom else SP["draft"])
-        txt = open(o["text"], encoding="utf-8").read() if o.get("text") else SP["text"]
+        draft = o.get("draft") if o.get("draft") is not None else (first("draft date") or first("revision") or first("date") or ("" if custom else SP["draft"]))
 
         def runs_of(line):
             out = []
-            for b in re.split(r"(\*[^*\n]+\*)", line):
-                if len(b) > 2 and b[0] == b[-1] == "*": out.append(("i", b[1:-1]))
+            for b in re.split(r"(\*\*[^*\n]+\*\*|\*[^*\n]+\*|_[^_\n]+_)", line):
+                if b.startswith("**") and b.endswith("**") and len(b) > 4: out.append((True, b[2:-2]))
+                elif len(b) > 2 and b[0] == b[-1] == "*": out.append(("i", b[1:-1]))
+                elif len(b) > 2 and b[0] == b[-1] == "_": out.append(("u", b[1:-1]))
                 elif b: out.append((False, b))
             return out
         SCENE = re.compile(r"^(\.[A-Za-z0-9]|INT\.|EXT\.|EST\.|INT\./EXT\.|INT/EXT|I/E)", re.I)
         TRANS = re.compile(r"^[A-Z0-9 .'()\-]+TO:$")
+        ACT = re.compile(r"^(TEASER|COLD OPEN|ACT (ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN)|END OF (TEASER|COLD OPEN|ACT [A-Z]+))$")
         caps = lambda t: not re.search(r"[a-z]", t) and re.search(r"[A-Z]", t)
         items, last_speaker, action_since = [], None, False
         for chunk in re.split(r"\n\s*\n", txt.strip()):
@@ -374,58 +416,148 @@ def make(style_name, kind, o=None):
             if SCENE.match(head):
                 items.append(("scene", head.lstrip(".").upper())); last_speaker = None
                 if lines[1:]: items.append(("action", " ".join(lines[1:]))); action_since = True
+            elif len(lines) == 1 and ACT.match(head):
+                items.append(("act", head)); last_speaker = None
+            elif len(lines) == 1 and head.startswith(">") and head.endswith("<"):
+                items.append(("center", head.strip("><").strip())); action_since = True
             elif len(lines) == 1 and (head.startswith(">") or (caps(head) and TRANS.match(head)) or head.upper() in ("FADE OUT.", "FADE TO BLACK.", "SMASH CUT TO BLACK.")):
                 items.append(("trans", head.lstrip(">").strip().upper())); last_speaker = None
-            elif len(lines) > 1 and (head.startswith("@") or (caps(re.sub(r"\(.*?\)", "", head)) and not head.endswith(":") and len(head) < 40)):
-                name = head.lstrip("@").strip().upper()
+            elif len(lines) > 1 and (head.startswith("@") or (caps(re.sub(r"\(.*?\)|\^", "", head)) and not head.endswith(":") and len(head) < 40)):
+                dual = head.endswith("^")
+                name = head.rstrip("^").lstrip("@").strip().upper()
                 base = re.sub(r"\s*\(.*?\)", "", name).strip()
                 if base == last_speaker and action_since and "CONT" not in name:
                     name = name + " (CONT'D)"
-                items.append(("char", name)); last_speaker = base; action_since = False
+                sub = [("char", name)]; last_speaker = base; action_since = False
                 para_buf = []
                 for l in lines[1:]:
                     if l.startswith("(") and l.endswith(")"):
-                        if para_buf: items.append(("dial", " ".join(para_buf))); para_buf = []
-                        items.append(("paren", l))
+                        if para_buf: sub.append(("dial", " ".join(para_buf))); para_buf = []
+                        sub.append(("more", l) if l.upper() == "(MORE)" else ("paren", l))
                     else: para_buf.append(l)
-                if para_buf: items.append(("dial", " ".join(para_buf)))
+                if para_buf: sub.append(("dial", " ".join(para_buf)))
+                if dual and items and items[-1][0] == "cue":
+                    items[-1] = ("dual", [items[-1][1], sub])
+                else:
+                    items.append(("cue", sub))
             else:
                 items.append(("action", " ".join(lines))); action_since = True
+        flat = []
+        for k, v in items:
+            if k == "cue": flat.extend(v)
+            elif k == "dual": flat.append(("dual", v))
+            else: flat.append((k, v))
+        items = flat
         nsc = sum(1 for k, _ in items if k == "scene")
         words = sum(len(str(v).split()) for k, v in items if k in ("action", "dial"))
+        sn, bs_, us_ = bool(o.get("scene_numbers")), bool(o.get("bold_scenes")), bool(o.get("underline_scenes"))
         add("Normal", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line_exact=12)
-        add("SP Scene Heading", font=mf, size=12, color="000000", before=24, after=0, align="left", indent_first=0, line_exact=12, keep_next=True)
+        sh = dict(font=mf, size=12, color="000000", before=24, after=0, align="left", indent_first=0, line_exact=12, keep_next=True)
+        if bs_: sh["bold"] = True
+        if us_: sh["underline"] = True
+        if sn: sh.update(indent_first=-54, tab_right=432)
+        add("SP Scene Heading", **sh)
         add("SP Action", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_first=0, line_exact=12)
         add("SP Character", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_left=158.4, indent_first=0, line_exact=12, keep_next=True)
+        add("SP More", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=158.4, indent_first=0, line_exact=12)
         add("SP Parenthetical", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=115.2, indent_right=144, indent_first=0, line_exact=12, keep_next=True)
         add("SP Dialogue", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=72, indent_right=108, indent_first=0, line_exact=12)
         add("SP Transition", font=mf, size=12, color="000000", before=12, after=0, align="right", indent_first=0, line_exact=12)
+        add("SP Centered", font=mf, size=12, color="000000", before=12, after=0, align="center", indent_first=0, line_exact=12)
+        add("SP Act", font=mf, size=12, color="000000", before=0, after=12, align="center", indent_first=0, line_exact=12, bold=True, underline=True, caps=True, keep_next=True)
+        add("SP Dual Character", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=36, indent_first=0, line_exact=12, keep_next=True)
+        add("SP Dual Parenthetical", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=18, indent_right=18, indent_first=0, line_exact=12, keep_next=True)
+        add("SP Dual Dialogue", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=0, indent_right=0, indent_first=0, line_exact=12)
         add("SP Title", font=mf, size=12, color="000000", before=0, after=0, align="center", indent_first=0, line_exact=12, caps=True)
         add("SP Title Page", font=mf, size=12, color="000000", before=0, after=0, align="center", indent_first=0, line_exact=12)
         add("SP Contact", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line_exact=12)
         # title page (its own section: not counted; the script starts again at page 1, which prints no number)
         blocks.append({"t": "spacer", "pt": 216})
         para("SP Title", title)
-        blocks.append({"t": "spacer", "pt": 24}); para("SP Title Page", "written by")
-        blocks.append({"t": "spacer", "pt": 12}); para("SP Title Page", author)
+        if author:
+            blocks.append({"t": "spacer", "pt": 24}); para("SP Title Page", credit)
+            blocks.append({"t": "spacer", "pt": 12}); para("SP Title Page", author)
         if draft:
             blocks.append({"t": "spacer", "pt": 24}); para("SP Title Page", draft)
         for i, l in enumerate(contact):
             if i == 0: blocks.append({"t": "spacer", "pt": 168 if draft else 200})
             para("SP Contact", l)
         blocks.append({"t": "sectionbreak"})
-        STYLE = {"scene": "SP Scene Heading", "action": "SP Action", "char": "SP Character", "paren": "SP Parenthetical", "dial": "SP Dialogue", "trans": "SP Transition"}
-        first_script = True
+        STYLE = {"scene": "SP Scene Heading", "action": "SP Action", "char": "SP Character", "paren": "SP Parenthetical", "dial": "SP Dialogue",
+                 "trans": "SP Transition", "center": "SP Centered", "act": "SP Act", "more": "SP More"}
+        DSTYLE = {"char": "SP Dual Character", "paren": "SP Dual Parenthetical", "dial": "SP Dual Dialogue", "more": "SP Dual Parenthetical"}
+        scene_no, first_item = 0, True
         for k, v in items:
-            runs = runs_of(v) if k in ("action", "dial") else [(False, v)]
-            para(STYLE[k], *runs)
-            if first_script: first_script = False
+            if k == "dual":
+                cols = [[(DSTYLE[kk], runs_of(vv) if kk == "dial" else [(False, vv)]) for kk, vv in col] for col in v]
+                blocks.append({"t": "dual", "cols": cols, "spacer": 12}); first_item = False; continue
+            if k == "act" and not first_item and not v.startswith("END OF"):
+                blocks.append({"t": "pagebreak"})
+            if k == "scene":
+                scene_no += 1
+                text = "%d\t%s\t%d" % (scene_no, v, scene_no) if sn else v
+                para(STYLE[k], (False, text))
+            else:
+                runs = runs_of(v) if k in ("action", "dial", "center") else [(False, v)]
+                para(STYLE[k], *runs)
+            first_item = False
         plan["header"] = {"text": "", "number": True, "align": "right", "suffix": "."}
         plan["script_header"] = True
-        plan["props"] = {"title": title, "author": author, "subject": "Screenplay (sample)" if not o.get("text") else "Screenplay"}
+        plan["sp"] = {"items": items, "title": title, "author": author, "credit": credit, "draft": draft, "contact": contact}
+        plan["props"] = {"title": title, "author": author, "subject": "Screenplay" if custom else "Screenplay (sample)"}
         plan["page"]["margins"] = [72.0, 72.0, 108.0, 72.0]
         notes.append("screenplay: standard spec-script layout (Courier New 12 pt, 12 pt line pitch, left margin 1.5 in); about one page per minute of screen time. Follow a producer's or contest's own rules first.")
         notes.append("screenplay: %d scene(s), %d words of action and dialogue; (CONT'D) is added when a speaker resumes after action." % (nsc, words))
+
+    # ---------------------------------------------------------------- query letter and synopsis (companions of a manuscript submission)
+    elif kind in ("query", "synopsis"):
+        M = content.MANUSCRIPT
+        mf = {"courier": "Courier New"}.get((o.get("ms_font") or "").lower(), "Times New Roman")
+        custom = bool(o.get("author"))
+        title = o.get("title") or M["title"]
+        author = o.get("author") or M["author"]
+        surname = o.get("surname") or (author.split()[-1] if custom else M["surname"])
+        addr = [x.strip() for x in o["address"].split("|")] if o.get("address") else ([] if custom else M["address"])
+        phone = o.get("phone") or ("" if custom else M["phone"]); email = o.get("email") or ("" if custom else M["email"])
+        agent = [x.strip() for x in o["agent"].split("|")] if o.get("agent") else ([] if custom else content.QUERY["agent"])
+        date = o.get("date") or ("" if custom else content.QUERY["date"])
+        Q = content.QUERY if kind == "query" else content.SYNOPSIS
+        txt = open(o["text"], encoding="utf-8").read() if o.get("text") else Q["text"]
+
+        def runs_of(line):
+            out = []
+            for b in re.split(r"(\*[^*\n]+\*)", line):
+                if len(b) > 2 and b[0] == b[-1] == "*": out.append(("i", b[1:-1]))
+                elif b: out.append((False, b))
+            return out
+        add("Normal", font=mf, size=12, color="000000", before=0, after=12, align="left", indent_first=0, line=1.0)
+        add("MS Contact", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line=1.0)
+        add("MS Heading", font=mf, size=12, color="000000", before=0, after=12, align="center", indent_first=0, line=1.0, bold=True, caps=True)
+        contact = [author] + addr + ([phone] if phone else []) + ([email] if email else [])
+        for l in contact: para("MS Contact", l)
+        if kind == "query":
+            if date: blocks.append({"t": "spacer", "pt": 14}); para("MS Contact", date)
+            if agent:
+                blocks.append({"t": "spacer", "pt": 14})
+                for l in agent: para("MS Contact", l)
+            blocks.append({"t": "spacer", "pt": 14})
+            for chunk in re.split(r"\n\s*\n", txt.strip()):
+                chunk = " ".join(l.strip() for l in chunk.strip().split("\n"))
+                if chunk: para("Normal", *runs_of(chunk))
+            para("Normal", "Sincerely,")
+            para("MS Contact", author)
+            plan["props"] = {"title": "Query letter: " + title, "author": author, "subject": "Query letter (sample)" if not o.get("text") else "Query letter"}
+            notes.append("query: one-page business letter (single-spaced, 12 pt). Keep it to about 300-350 words; every agent states their own query rules, follow those.")
+        else:
+            blocks.append({"t": "spacer", "pt": 24}); para("MS Heading", title + ": Synopsis")
+            for chunk in re.split(r"\n\s*\n", txt.strip()):
+                chunk = " ".join(l.strip() for l in chunk.strip().split("\n"))
+                if chunk: para("Normal", *runs_of(chunk))
+            short_title = " ".join(title.split()[:4]).upper()
+            plan["header"] = {"text": "%s / %s / Synopsis / " % (surname, short_title), "number": True, "align": "right"}
+            plan["different_first"] = True
+            plan["props"] = {"title": title + ": Synopsis", "author": author, "subject": "Synopsis (sample)" if not o.get("text") else "Synopsis"}
+            notes.append("synopsis: single-spaced, present tense, third person; one to two pages is the usual ask. Follow the agent's or publisher's stated length.")
 
     return plan
 
@@ -444,5 +576,6 @@ def parse_argv(argv):
          "fmt": opt.get("format", "apa"), "local_fonts": "local-fonts" in flags,
          "title": opt.get("title"), "author": opt.get("author"), "pen": opt.get("pen"), "surname": opt.get("surname"), "address": opt.get("address"),
          "phone": opt.get("phone"), "email": opt.get("email"), "wordcount": opt.get("wordcount"), "ms_font": opt.get("font"),
-         "ms_layout": opt.get("layout") if opt.get("layout") in ("novel", "short") else None, "text": opt.get("text"), "draft": opt.get("draft")}
+         "ms_layout": opt.get("layout") if opt.get("layout") in ("novel", "short") else None, "text": opt.get("text"), "draft": opt.get("draft"),
+         "agent": opt.get("agent"), "date": opt.get("date"), "scene_numbers": "scene-numbers" in flags, "bold_scenes": "bold-scenes" in flags, "underline_scenes": "underline-scenes" in flags}
     return pos[0], pos[1], pos[2], {k: v for k, v in o.items() if v not in (None, "", False)}, flags

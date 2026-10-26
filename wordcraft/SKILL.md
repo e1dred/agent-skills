@@ -352,6 +352,10 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - **Autocorrect rewrites typed text:** `...` became `…` and some lines were capitalised; start screenplay and manuscript builds with `tools.autocorrect {"enabled":false}`.
 - Keep-with-next on scene headings, cues and parentheticals stops a cue from being stranded at the bottom of a page; a transition can still start a page.
 - `pdftotext -layout` drops some blank lines between elements even when the page has them: judge spacing on a render, not on the text dump.
+- **Underline is a style name, not a boolean:** `styles.modify … chr {"underline":true}` fails ("expected string or map"); use `"single"`. `format.underline {"value":true}` works for typed runs.
+- **Dual dialogue** = `insert.table {"rows":1,"cols":2,"style":"Normal Table"}` (borderless), type a cue and its speech in the first cell (`para.style` + `para.set {"props":{"spaceBefore":12}}` on its first paragraph, `text.newParagraph` between paragraphs), `caret.right` to the second cell, then `caret.docEnd` leaves the table. Render checked: two columns side by side.
+- **Scene numbers** in the margin: a hanging first-line indent (`indentFirst:-54`) plus a right tab at the text width, text `N<tab>INT. …<tab>N`.
+- **(MORE)/(CONT'D)** cannot be set in advance (page breaks depend on the layout): the repo's `screenplay_paginate.py` builds, reads the per-page words from the PDF, splits the speech at the break (one line earlier, because the `(MORE)` line needs room) and rebuilds until stable. Identical repeated speeches fool its word matching: test with varied text.
 
 ## Version note (0.11.0)
 
@@ -569,3 +573,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-25 (7): table editing/styles/nested tables, outline view, quick parts/autotext/doc properties, SmartArt/WordArt/canvas/icons, picture and shape commands verified headless on 0.11.0.
 - 2026-10-25 (8): manuscript format (publisher submission) built and checked in WordCraft and ONLYOFFICE; header-skipping-page-1 order, space-before-at-page-top trap, italic carry-over fix.
 - 2026-10-25 (9): screenplay format built and checked in WordCraft and ONLYOFFICE; title-page section with restarted numbering, exact line pitch, indentRight, autocorrect trap.
+- 2026-10-25 (10): screenplay extras (scene numbers, bold/underline, centred, dual dialogue, acts, Fountain title page, Fountain/FDX export, (MORE)/(CONT'D) by two-pass pagination) and manuscript extras (verse, block quote, footnotes, page count, query letter, synopsis) built and checked.
