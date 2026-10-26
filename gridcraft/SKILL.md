@@ -244,6 +244,14 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
 - **Output:** `file.saveBytes {"format":"csv|xlsx|tsv|json|html"}` → `{base64,bytes,name}`, `file.printPreview {"page":1}` → `{pages,page:{paper,orientation,range,scale…}}`, `file.print {"fitToPage":true}` → `{pages,bytes,base64}` (the PDF as base64), `app.commands {"search":"sparkline"}` → ids, labels and parameter docs (a quick parameter lookup).
 - Not run: `.xls/.xlsb/.ods` import, `window.activate`, `view.*` (live window), `pageLayout.themeFonts/themeEffects`, `slicer.selectAll` outside one run.
 
+## Ink in GridCraft (verified headless, 0.12.1; saved file read back)
+
+> **Versions:** 0.12.1 (2026-10-25). Compared with WordCraft ink (see that skill): there is no page index and no lasso/erase-by-point; each stroke is a drawing object on the sheet.
+
+- `draw.stroke {"points":[[x,y],…],"color":"#C00000","width":2}` (sheet points) → `{shape:id}`: the stroke becomes a freeform shape immediately (saved as `a:custGeom` in `xl/drawings/drawing1.xml`). `draw.inkToShape {}` converts **the last stroke** (or `{"id"}`) to a clean shape and names its kind: a closed four-corner stroke → `{kind:"Rectangle"}`, a 24-point loop → `Ellipse`, a closed three-corner stroke → `Triangle`, a zig-zag open stroke → `Line` (it never refuses; WordCraft's `draw.convertInk` refuses non-shapes). Saved as `a:prstGeom prst="rect|ellipse|triangle|line"`.
+- Converted shapes appear in `arrange.selectionPane` as ordinary shapes (`"Rectangle 1"`, `"Ellipse 2"`, anchored at the cell they start in, `anchorMode:"absolute"`), so `arrange.*`, `object.*` and `chart.shapeOutline` work on them. A highlighter-style wide yellow stroke (`width:10`) is just a thick stroke (no translucency flag).
+- `draw.pen {"on","color","width"}`, `draw.eraser {"on"}` set the tool state for pointer drawing in the live window; `draw.lasso {}` takes no points (selects by dragging).
+
 ## Version note (2026-10-25)
 
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
@@ -263,3 +271,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
 - 2026-10-25 (8): 12 conditional-format types, validation types + `data.validate`, all ToolPak tools, threaded comments/notes/protection/edit ranges, 40 functions verified headless on 0.12.1.
 - 2026-10-25 (9): cell styles and themes, formatting helpers, table design, slicers (single run), remaining pivot commands, shapes/pictures/text boxes, sheet/view/page helpers and formula helpers verified headless on 0.12.1.
 - 2026-10-25 (10): formula auditing, selection helpers, undo/redo, scripts and recording, ink, comments/notes, grouping, rules, objects and print helpers verified headless on 0.12.1.
+- 2026-10-25 (11): ink strokes and ink-to-shape (rectangle, ellipse, triangle, line) verified headless on 0.12.1; saved as drawing shapes.

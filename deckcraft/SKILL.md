@@ -215,6 +215,13 @@ One `run` built title + bullets + table + chart + text box + link + background +
 - **Data and discovery:** `file.render {"slide":0,"scale":0.3}` → `{png:<base64>,width,height}`, `file.saveBytes {"format":"pptx|deckcraft"}` → `{data:<base64>,bytes}`, `file.openBytes {"name","data"}`, `design.variants {}` → the current theme's four colour variants (`{current,theme,variants:[{colors:[hex…]}]}`), `commands.list {"filter":"media."}` → `[{id,label,params,enabled,disabled_reason:"nothing selected"}]` (tells you why a command is unavailable), `shape.presets {}` → `[{name,label,category}]` (the shape gallery), `font.rescan {}` → `{faces:601,families:236}`, `picture.compress {"ppi":96,"all":true}` → `{pictures,before,after}`.
 - Not run: video files, `media.posterFrame` on a video, `file.recovery.*`, `window.next`, input-method composition, `review.accept/endCompare` outside a compare, the point-editing commands on a real freeform (`shape.movePoint/moveHandle/pointType/deletePoint`).
 
+## Ink in DeckCraft (what is and is not possible headless, 0.11.1)
+
+> **Versions:** 0.11.1 (2026-10-25).
+
+- DeckCraft has ONE ink command: `draw.inkToShape {}` → `{shapes:[ids],kept:n}` ("turns recognisable ink strokes on the slide into lines, rectangles, ellipses and triangles"; `{"shapes":[],"kept":0}` on a slide without ink). There is **no `draw.stroke`, `draw.pen` or lasso command** (`unknown command`): ink strokes come only from pointer input in the live window (the control channel offers `ui.drag {x,y,…}` and `ui.pointer {events}`) or from a file that already contains ink.
+- `ui.screenshot` answers "no frame was presented (screen locked or window hidden); use ui.render" when the window is not visible; `ui.render {"path"}` then renders only the SLIDE (960×540), not the ribbon, so pen selection and drawing through the UI need the window visible and the screen unlocked.
+
 ## Version note (2026-10-25)
 
 App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`); none removed. The full-deck recipe
@@ -233,3 +240,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - 2026-10-25 (7): 45 SmartArt layouts rendered, animation/transition catalogues, animation edit commands + pptx round trip, transition sound/timing/applyAll, layout-level master editing verified headless on 0.11.1.
 - 2026-10-25 (8): shape formatting/freeform points, text and paragraph formatting, table cell commands, photo album, action buttons/zoom/slide actions, sections, slide/notes/handout masters, artistic picture effects, file properties/templates verified headless on 0.11.1.
 - 2026-10-25 (9): character formats, text movement, edit/selection helpers, arrange, table columns, audio media options, slide navigation, render/saveBytes and command discovery verified headless on 0.11.1.
+- 2026-10-25 (10): ink: only `draw.inkToShape` exists; strokes need pointer input in a visible window.
