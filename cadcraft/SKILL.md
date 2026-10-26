@@ -110,6 +110,12 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **3D (basic):** `3dpoly {"points":[[x,y,z]…]}`, `helix {"center","baseRadius","topRadius","height","turns"}` (entity type Helix), `volume.measure {"handle":closed2D,"height":3}` → volume 75 for a 5×5 rectangle, `thickness {"thickness":5}` sets the current thickness, `flatten {"handles"}`. CadCraft is a 2D drafter: no solids modelling was found beyond these and regions.
 - Dynamic blocks cannot be created by commands (authoring is in the block editor UI); `blocks.dynamic {"name"}` answers null for an ordinary block.
 
+## Round 9: a real drawing in the live window (2026-10-26, app 0.13.0; screenshots looked at)
+- `open {"path"}` loaded a 285-entity schematic as a new tab (`{entities, index, warnings:[]}`) and a screenshot after `zoom extents` showed it complete: frame, wires in net colours, symbols, text, legend. Read-only actions (zoom, `find_text`, `dist` by clicks, `view save/delete`) still mark the tab modified (`*`): **never save** a user's file you opened for inspection; do edits on a COPY opened as another tab (`open` the copy).
+- **`find_text` filters with `contains`** (`{"contains":"RF REMOTE"}`, case-insensitive substring, returns `at`, `height`, `layer`, `handle`); `{"text":…}` is ignored and lists all 114 texts. Zoom to a found text with `zoom {"mode":"window","p1","p2"}` around `at`.
+- **Click selection in a dense drawing:** a click within the pick box of ANY object selects that object instead of starting a window, so two "empty" corner clicks often selected the frame polyline only. Select regions with `execute select {"window":[[x0,y0],[x1,y1]]}` (returns the handles; a window takes only objects fully inside) and then run the command: `command_line MOVE`, `ui_click` base point, `ui_click` target moved the two selected objects by exactly (0,-10), and `undo` restored them (verified by text position).
+- `DIST` by two clicks reports in the command history (`Distance = 36.0555, Angle in XY Plane = 326…`), the same text as the JSON `dist`.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -119,3 +125,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 6: live window (screenshots, click-driven drawing, selection, what ui_click cannot do).
 - 2026-10-26: round 7: block editor, refedit, attribute manager, .ctb plot styles, publish, qdim.
 - 2026-10-26: round 8: annotative scaling, real-drawing edit run, basic 3D.
+- 2026-10-26: round 9: real drawing in the live window; find_text contains; selecting in dense drawings.
