@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ## Unreleased
 
 ### Added
+- README table: CadCraft row (55 of 441 command ids named, an upper bound because its ids are plain words; everyday estimate ~20% from one task), refreshed counts for the other apps; `coverage.sh` now measures CadCraft too.
 - **CadCraft skill** (first version, from a real wiring-schematic task): headless `cadcraft-cli` (run, export PDF/DXF), layers and linetypes, readable text style, drawing schematics from primitives, the live MCP bridge and its limits; `tools/schem.py` helper, `tools/ccmcp.py` bridge client, and an invented example.
 - **Craft apps, further rounds (2026-10-25):** WordCraft (character effects, paragraph helpers, find, content-control actions, file/privacy/versions/export/print commands, labels and envelopes), GridCraft (formula auditing, selection helpers, undo/redo, scripts and recording, ink, objects, comments, grouping, print helpers), DeckCraft (character formats, text movement, edit/arrange helpers, audio options, slide navigation, render and save-to-data commands), PhotoCraft (image auto adjustments and modes, measurement and notes, selection tools, brush state, actions editing, timeline, type styles, layer-style defaults).
 - **Stage play format** (kind `stageplay`): common US playwright submission layout in WordCraft and ONLYOFFICE (title page, characters page, centred cues, italic directions, acts and scenes, title-and-number header), plain-text input, Times or Courier, and `stageplay_check.py`.

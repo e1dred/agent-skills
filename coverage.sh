@@ -11,11 +11,12 @@ tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
 tokens() { grep -rIhoE --exclude='tool-names.txt' --exclude-dir='__pycache__' '[A-Za-z0-9_][A-Za-z0-9_.]*' "$1" | LC_ALL=C sort -u; }
 
-for app in wordcraft gridcraft deckcraft photocraft; do
+for app in wordcraft gridcraft deckcraft photocraft cadcraft; do
     cli="$dir/$app-cli"; [ -x "$cli" ] || { echo "$app: no CLI at $cli" >&2; continue; }
     ver=$("$cli" --version 2>/dev/null | sed -n '1s/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p')
-    if [ "$app" = photocraft ]; then
-        "$cli" commands --json 2>/dev/null | python3 -c 'import json,sys;d=json.load(sys.stdin);d=d if isinstance(d,list) else d["commands"];print("\n".join(x["id"] for x in d))'
+    if [ "$app" = photocraft ] || [ "$app" = cadcraft ]; then
+        if [ "$app" = cadcraft ]; then cargs=commands; else cargs="commands --json"; fi   # cadcraft-cli prints JSON from plain `commands`
+        "$cli" $cargs 2>/dev/null | python3 -c 'import json,sys;d=json.load(sys.stdin);d=d if isinstance(d,list) else d["commands"];print("\n".join(x["id"] for x in d))'
     else
         "$cli" commands 2>/dev/null | grep -oE '^[a-z][A-Za-z0-9]*\.[A-Za-z0-9.]+'
     fi | LC_ALL=C sort -u > "$tmp/$app.all"
