@@ -696,6 +696,22 @@ view.proofSetup.workingCyanPlate view.proofSetup.workingMagentaPlate view.proofS
   Results: (1) 8 parallel highlight strokes in light beige at 55 % looked like a straw hat band (clear the layer: `layer.select`, `select.all`, `edit.clear`); (2) wavy dark locks (sine amplitude 3-6 px, 10-16 px wide at 55 %) plus 2.4 px warm highlights at 35 % on every second lock read as hair; (3) at 260 % zoom, 1.8-5 px strokes drew convincing lash lines with a wing, a lip highlight and mouth line, individual brow hairs (16 short strokes of 1.8 px along the brow) and nostril marks; use small sizes and zoom in. About 130 pointer strokes ran in one `pcmcp` session.
 - **Live painting (2026-10-26, 0.16.0, app on 47825):** `python3 -I tools/pcmcp.py 47825 calls.json` drove the user's open window from Python-generated stroke lists while they watched: `ui_set {"fields":{"zoom":1.7,"center":[x,y]}}` frames the area, then `command_batch` + `ui_screenshot`. **`command_batch` allows at most 256 steps per call** (headless `run` took 1482): chunk to ~240. New layers are created ABOVE the active layer (my "streaks" layer landed under the hair layer: `layer.select` the top layer first if order matters). `paint.stroke {"erase":true}` on a layer removes a stray stroke (used to delete a pale bar I had painted). A document opened with `doc_open` was found closed once between two bridge sessions (cause unknown, possibly the user closing the tab): reopen and carry on; never call `session_list` repeatedly in bridge mode (about 10 KB per call).
 
+## The last 28 command ids (2026-10-26, 0.16.0, headless; smoke test)
+> **Versions:** 0.16.0 only, CLI only. Each id ran in `photocraft-cli run --new` with a shape layer (and a second document where needed).
+- **Ran (21):**
+
+```
+document.move edit.preferences.cursors edit.preferences.enhancedControls edit.preferences.fileHandling
+edit.preferences.guidesGridAndSlices edit.preferences.historyLog edit.preferences.integrations
+edit.preferences.interface edit.preferences.performance edit.preferences.plugIns edit.preferences.rawDefaults
+edit.preferences.scratchDisks edit.preferences.tools edit.preferences.transparencyAndGamut edit.preferences.type
+edit.preferences.unitsAndRulers edit.preferences.workspace file.closeOthers file.print.printers file.printers
+session.inspect
+```
+- `document.move {"document":0,"to":1}` reorders the tabs (needs two documents: `image.duplicate` first); `file.closeOthers {"document":0}` → `{closed:1}`; the 16 `edit.preferences.*` ids are the read-only sections listed earlier; `file.printers` and `file.print.printers` → `{printers:[],…}` here (the spooler lists none; "supported" is Windows-only); `session.inspect {}` → documents, foreground colour.
+- **Refused:** `file.closeAll` (error: no document open); `file.openExrParts` (error: `file.openExrParts`: /nonexistent.exr: No such file or directory (os error 2)); `plugin.reload` (error: `plugin.reload`: invalid parameters for `plugin.reload`: no folder: pass `path` or ); `plugin.remove` (error: `plugin.remove`: no plug-in "nope" is installed); `plugin.run` (error: `plugin.run`: command `plugin.run` is not available right now: filters need a pixel). `file.closeAll` closed the only document and the run then had nothing to save; `plugin.*` need an installed `.wasm` plug-in or a plug-ins folder.
+- **Skipped on purpose (they print):** `file.print.page`, `file.printOneCopy`.
+
 ## Log
 
 - 2026-10-24: Second background-removal run with a dense, grid-read trace + smooth/contract: IoU vs a good reference
@@ -727,3 +743,4 @@ view.proofSetup.workingCyanPlate view.proofSetup.workingMagentaPlate view.proofS
 - 2026-10-26 (9): align/distribute, shape combining, rasterize variants, channels, layer comps, destructive adjustments, warps, masks, vector masks, variable data sets, import/export odds verified headless on 0.16.0.
 - 2026-10-26 (10): sweep of every remaining command id on a scratch document (355 ran, 22 refused with a reason, 33 skipped on purpose); not rendered.
 - 2026-10-26 (11): painted a portrait from code (paths, selection-clipped shading, tapered strokes, oil-paint background); lessons and tools/paintlib.py.
+- 2026-10-26 (12): the last 28 command ids run (26 ran or refused with a reason, 2 print commands skipped on purpose; smoke test).

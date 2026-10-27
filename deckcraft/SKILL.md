@@ -233,6 +233,19 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - **`insert.textBox` takes `rect: [x,y,w,h]` in points of a 960×540 slide** (the PNG export is 1920×1080). `x`, `y`, `width`, `height` are ignored: two boxes without `rect` were stacked at the default position and overlapped, and `rect:[1,1,6,1]` made a 6-point-wide box that wrapped one letter per line.
 - `edit.undo` then `edit.redo` in one `run` both succeed (a text box added and removed again, then restored).
 
+## The last 28 command ids (2026-10-26, 0.11.1, headless; smoke test)
+> **Versions:** 0.11.1 only, CLI only. Each id ran with `deckcraft-cli run --cmd … --save` on a slide holding the objects it needs; `info` of the saved file differed from the same script without the command (`info` also reflects the current slide, so a difference proves little for the navigation commands). **Smoke test only: effects were not rendered.**
+- **Ran (26):**
+
+```
+arrange.bringForward arrange.flipHorizontal arrange.flipVertical arrange.rotateLeft arrange.sendBackward edit.cut
+edit.pasteText file.adopt format.justify format.outdent format.subscript review.endCompare review.replaceWord
+selection.showAll shape.addPoint shape.deletePoint shape.moveHandle shape.pointType shape.setDefault slide.last
+slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumnRight text.commit
+```
+- **Setups:** shapes for the `arrange.*` and `shape.setDefault` commands (`shape.insert {"preset":"rect","rect":[x,y,w,h],"text"}` twice; they act on the selected shapes); `insert.textBox` + `text.edit {"at":[0,0]}` + `text.selectAll` for `format.justify|outdent|subscript`, `edit.pasteText {"text"}`, `review.replaceWord {"with"}`, `text.commit {"text"}`; `shape.freeform {"points":[…],"closed":true}` + `shape.editPoints {"on":true}` for `shape.addPoint {"path":0,"segment":1,"t":0.5}`, `shape.deletePoint {"path":0,"index":1}`, `shape.pointType {"path":0,"index":1,"type":"smooth"}`; **`shape.moveHandle {"path":0,"index":1,"side":"out","x","y"}` needs the point to be smooth first** ("that side of the point has no handle"); `insert.smartArt {"kind":"list","items":["A","\tB","C"]}` for `smartArt.demote {"index":2}` and `smartArt.removeNode {"index":1}`; three slides + `slide.first` for `slide.next|previous|last`; `insert.table` for `table.insertColumnRight {"col":0}`; **`review.endCompare` needs a running compare** (`review.compare {"path":other.deckcraft}` first; "not comparing" otherwise); `edit.cut {}` (scope slides optional), `file.adopt {"path"}` opens a file like `file.open`.
+- **Refused:** `file.recovery.discard` (no recovery folder is set); `file.recovery.save` (no recovery folder is set) (an app setting, not a parameter: the desktop app sets a recovery folder).
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.10.0): headless run/save/convert/render/info, live new/slide/shape/table/chart/
@@ -248,3 +261,4 @@ App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segment
 - 2026-10-25 (9): character formats, text movement, edit/selection helpers, arrange, table columns, audio media options, slide navigation, render/saveBytes and command discovery verified headless on 0.11.1.
 - 2026-10-25 (10): ink: only `draw.inkToShape` exists; strokes need pointer input in a visible window.
 - 2026-10-26: gap round: format.alignLeft/Center/Right, edit.redo, textBox rect units.
+- 2026-10-26: the last 28 command ids run with their setups (smoke test).

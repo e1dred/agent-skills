@@ -257,6 +257,30 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
 App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
 `view.showOutlineSymbols`, `automate.stopAction`); none removed. Twelve of this file's scripts (the sort/pivot/table/chart build, the report-formatting build, goal seek and scenarios, data table and solver, forecast, ToolPak, subtotals, consolidate and advanced filter, print and chart settings, array functions and JSON import) were run on both 0.11.1 and 0.12.1 and gave identical `info`, sheet contents and formulas. The traps and Flash Fill note were not re-run.
 
+## The last 58 command ids (2026-10-26, 0.12.1, headless; smoke test)
+> **Versions:** 0.12.1 only, CLI only. Each id ran with `gridcraft-cli run --sample sales --cmd 'id={json}'` (plus the setup it needs) and returned without an error; the saved workbook's `cat --formulas` and `info --json` were compared with the same script without the command. **Smoke test only: effects were not looked at.** Sample "sales" has its table at B4 (Region, Q1..Q4, Total).
+- **Changed the workbook (58):**
+
+```
+data.scenarioDelete data.showDetail data.sortDescending edit.beginEdit edit.clearClipboard edit.clearComments
+edit.clearContents edit.clearHyperlinks edit.fillLeft file.new file.options formulas.dateTime formulas.logical
+formulas.lookupReference formulas.mathTrig formulas.selectDependents formulas.text home.addIns home.alignBottom
+home.alignMiddle home.alignRight home.alignTop home.decreaseDecimal home.decreaseFontSize home.doubleUnderline
+home.insertCopiedCells home.justify home.shrinkToFit home.strikethrough home.subscript home.unhideColumns
+home.unmergeCells insert.recommendedCharts pageLayout.themeEffects pivot.fieldList review.previousComment
+sheet.previous sheet.unhide table.bandedColumns table.firstColumn table.lastColumn view.arrangeAll view.formulaBar
+view.freezeFirstColumn view.gridlines view.headings view.hideWindow view.macros view.newWindow view.pageLayout
+view.rightToLeft view.ruler view.showObjects view.switchWindows view.unfreezePanes view.unhideWindow view.zoom100
+view.zoomToSelection
+```
+- **Ran, workbook unchanged (0):** window, view and ribbon-state commands that return a value or only change the app (`view.*`, `formulas.dateTime|logical|lookupReference|mathTrig|text` (open the function library), `home.addIns`, `file.options`, `edit.beginEdit|clearClipboard`, `pivot.fieldList`, `review.previousComment`, `sheet.previous` ...), or commands whose effect is not stored in the file:
+
+```
+
+```
+- **Setups that mattered:** `selection.set {"range":"C5"}` first for anything that needs "a cell in a table" (`table.firstColumn|lastColumn|bandedColumns {"on":true}` answered "select a cell in a table" without it); `home.insertSheet {"name":"Extra"}` then `sheet.hide {"sheet":"Extra"}` before `sheet.unhide {"sheet":"Extra"}`; `sheet.activate {"sheet":"Extra"}` before `sheet.previous`; `cell.set {"cell":"H1","input":"=C5"}` before `formulas.selectDependents {"cell":"C5","all":true}`; `data.scenarioAdd {"name":"S1","changing":"C5:C6"}` before `data.scenarioDelete {"name":"S1"}`; `insert.pivotTable {"rows":["Region"],"values":[{"field":"Q1","func":"sum"}]}` (with a cell of the table selected) before `data.showDetail {"rows":true}`; `edit.copy {"range":"A1:A2"}` + `selection.set {"range":"J3"}` before `home.insertCopiedCells {"at":"J3","shift":"down"}` (**it refused to shift cells that sit in a table: "it would shift cells in a table on your worksheet"**); `home.hideColumns {"cols":"B:C"}` before `home.unhideColumns {"cols":"B:C"}`; `home.mergeCells` before `home.unmergeCells`.
+- Parameter shapes: `data.sortDescending {"range":"B5:G8","column":"C"}`, `home.strikethrough|subscript|shrinkToFit {"range","on":true}`, `home.decreaseDecimal|decreaseFontSize|doubleUnderline|justify|alignTop|alignMiddle|alignBottom|alignRight {"range"}`, `edit.fillLeft|clearContents|clearComments|clearHyperlinks {"range"}`, `view.formulaBar|gridlines|headings|rightToLeft|ruler|showObjects {"on":false}`, `view.zoomToSelection {"viewWidth","viewHeight"}`, `pageLayout.themeEffects {"name":"Subtle"}`, `insert.recommendedCharts {"range":"A1:C6"}`, `file.new {"sample":"budget"}`.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.11.1): headless build/check/eval/info, live cell/table/chart/format/save/PDF,
@@ -272,3 +296,4 @@ App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, 
 - 2026-10-25 (9): cell styles and themes, formatting helpers, table design, slicers (single run), remaining pivot commands, shapes/pictures/text boxes, sheet/view/page helpers and formula helpers verified headless on 0.12.1.
 - 2026-10-25 (10): formula auditing, selection helpers, undo/redo, scripts and recording, ink, comments/notes, grouping, rules, objects and print helpers verified headless on 0.12.1.
 - 2026-10-25 (11): ink strokes and ink-to-shape (rectangle, ellipse, triangle, line) verified headless on 0.12.1; saved as drawing shapes.
+- 2026-10-26: the last 58 command ids run with their setups (smoke test, workbook compared with and without the command).

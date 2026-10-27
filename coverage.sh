@@ -1,7 +1,7 @@
 #!/bin/sh
 # Print the "commands documented" figure for each skill, measured against the installed CLIs. Read-only.
 # Usage: ./coverage.sh            (CLIs in $AIMG, default ~/AppImages)
-# A command counts as documented when its id appears anywhere in the skill's text. That is a lower bound on
+# A command counts as documented when its id (a leading "-" counts, as in cadcraft `-block`) appears anywhere in the skill's text. That is a lower bound on
 # what the skill teaches (a workflow can be described without naming every command) and an upper bound on
 # what was tested (an id can be named without being run). Unit: engine commands for the Craft apps,
 # MCP tools for ONLYOFFICE (names listed in onlyoffice/tool-names.txt).
@@ -9,7 +9,7 @@ dir=${AIMG:-"$HOME/AppImages"}
 repo=$(cd "$(dirname "$0")" && pwd)
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
-tokens() { grep -rIhoE --exclude='tool-names.txt' --exclude-dir='__pycache__' '[A-Za-z0-9_][A-Za-z0-9_.]*' "$1" | LC_ALL=C sort -u; }
+tokens() { grep -rIhoE --exclude='tool-names.txt' --exclude-dir='__pycache__' -e '-?[A-Za-z0-9_][A-Za-z0-9_.]*' "$1" | LC_ALL=C sort -u; }
 
 for app in wordcraft gridcraft deckcraft photocraft cadcraft; do
     cli="$dir/$app-cli"; [ -x "$cli" ] || { echo "$app: no CLI at $cli" >&2; continue; }

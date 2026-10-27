@@ -156,6 +156,22 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - **Housekeeping:** `-xref {option:"?"}` lists xrefs, `drawingrecovery {action:"list"}` (empty), `recover {path}` errors cleanly on a missing file, `document.switch {index}`, `closeall`. **Not available in 0.13.0:** `3dorbit` ("CADCraft draws in 2D (plan view) only") and `share` (use `export` or `publish`).
 - Not run: `arc.continue` after an arc, `-plottermanager`, `-xref` attach/detach options (see Round 4 for `xattach`), `compare*` and `grip.*` (mouse/UI tools), `ai_deselect`.
 
+## The last 62 command ids (2026-10-26, 0.13.0, headless; smoke test)
+> **Versions:** 0.13.0 only. These were run in round 13 under short names (`arc.sce|sca|scl` and so on); here each exact id is run again with its setup in its own `cadcraft-cli run --metric` and returned without an error. Results were not rendered.
+- **Ran (61):**
+
+```
+-attedit -block -group -linetype -plottermanager -vports -xref annovisible.all annovisible.toggle arc.csa arc.csl
+arc.sca arc.scl arc.sed arc.ser attdisp.normal attdisp.off attdisp.on compare.next compare.previous compareclose
+compareexport constraintbar constraintbar.hideall dcdisplay dcdisplay.hideall dimstyle.current dimstyle.delete
+dimstyle.rename dimtedit.angle dimtedit.center dimtedit.right draworder.above draworder.under grip.mirror grip.move
+grip.option grip.rotate grip.scale grip.stretch layerstate.delete layerstate.rename mleaderedit pan pan.down pan.right
+pan.up style.current style.delete style.rename table.deletecol table.insertcol table.unmerge texttofront.all
+texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vports.4 zoom.out
+```
+- **Setups that mattered:** `compare {"path":other.dxf}` before `compare.next|previous|compareexport|compareclose`; `attdef` + `block` + `insert {"attribs"}` for `-attedit`; `layerstate.save` for `layerstate.rename|delete`; **`dimstyle.current {"name":"ISO-25"}` / `style.current {"name":"Standard"}` before `dimstyle.delete` / `style.delete`** (the current style cannot be deleted); `grip.move|stretch {"handle","index","to"}`, `grip.mirror|rotate|scale {"handles","base",…}`, `grip.option {"handle","index","option":"addVertex","to"}` ran on a line or polyline; `-vports {"option":"list"}`, `-xref {"option":"?"}`, `-linetype {"load":"CENTER"}`, `-group {"option":"create","name","handles"}`, `-block {"name","base","handles","keep":"retain"}`.
+- **Refused:** `arrayclose` (No array is being edited.). `arrayclose {}` answered "No array is being edited": `arrayedit` finishes at once headless, so there is nothing to close.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -171,3 +187,4 @@ Traps seen: (1) **`viewport.set` scale is paper units per model unit**: in a met
 - 2026-10-26: round 12: parametric imperial part (constraints not imported, metric scaling), dynamic ISO title block (visibility states).
 - 2026-10-26: gap round: erase and qsave.
 - 2026-10-26: round 13: the remaining draw/dimension/constraint/layer/table/view/layout/settings ids (no live window).
+- 2026-10-26: the last 62 command ids run with their setups (smoke test).
