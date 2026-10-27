@@ -7,6 +7,8 @@ confirmed on a named app version go in.
 
 Unofficial: not affiliated with any of the app projects.
 
+**Craft apps** (the [storytold](https://github.com/storytold) editors):
+
 | Skill | App | Tested on | Commands documented (measured) | Everyday tasks covered (checklist) |
 |---|---|---|---|---|
 | [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.10.0, 0.11.0 (headless sections re-run on both; see the skill), Linux AppImage | 643 of 643 (231 ids only smoke-tested, listed in `smoke-tested/wordcraft.txt`; the rest were run and looked at) | 25 of 25 (100%) |
@@ -14,7 +16,15 @@ Unofficial: not affiliated with any of the app projects.
 | [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.10.0, 0.11.1 (3 build sequences re-run on both; live channel re-checked on 0.11.1), Linux AppImage | 327 of 327 (28 ids only smoke-tested, listed in `smoke-tested/deckcraft.txt`) | 30 of 30 (100%) |
 | [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.15.1, 0.16.0 (6 pipelines re-run on both), Linux AppImage | 940 of 940 (152 ids still only smoke-tested, listed in `smoke-tested/photocraft.txt`; the rest were run and looked at) | 34 of 34 (100%) |
 | [`cadcraft/`](cadcraft/) | [CadCraft](https://github.com/storytold/cadcraft) 2D drafting (AutoCAD-style, DXF/DWG): headless CLI, layers and linetypes, dimensions, hatch, blocks and attributes, layouts and PDF plotting, editing, tables, drawing schematics from primitives, live MCP bridge, checking a drawing's connections from the DXF | 0.13.0 (CLI and live bridge), Linux AppImage; latest release (v0.13.0), nothing re-run on a second version; tested on CadCraft-made and AutoCAD-made drawings and in the live window; the last 186 ids (draw variants, constraints, layers, tables, views, layouts, settings) were run headless only | 441 of 441 (62 ids only smoke-tested, listed in `smoke-tested/cadcraft.txt`; an upper bound: CadCraft's ids are plain words such as `line` and `text`) | 33 of 33 (100%) |
+
+**ONLYOFFICE and GenOffice** (not Craft apps; ONLYOFFICE through its MCP server, GenOffice as a supplement to its own skills):
+
+| Skill | App | Tested on | Commands documented (measured) | Everyday tasks covered (checklist) |
+|---|---|---|---|---|
 | [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 tools named; **91 of 93 re-run on 10.0.0 on 2026-10-25** (see the skill's audit section); the full macro API is not covered | ~95% |
+| [`genoffice-supplement/`](genoffice-supplement/) | GenOffice (Docs, Sheets, Slides, Markdown, HTML, PDF editors; `genoffice` CLI and MCP). **Supplementary only:** it never includes GenOffice's own bundled skills, only what they do not cover. So far the Word (`docs apply`) ops, traps and units, and the document styles rebuilt in GenOffice and compared with WordCraft and ONLYOFFICE | 0.12.117, Linux AppImage; headless only; Sheets, Slides, Markdown, HTML, PDF and the live editor not covered yet | not measured (GenOffice's ops are not command ids; about 50 Word ops run and checked) | not measured |
+
+A hard rule for GenOffice: this repo only ever holds *supplementary* skills for it, things GenOffice's bundled skills do not provide (see [`genoffice-supplement/`](genoffice-supplement/)); none of GenOffice's own skills are copied here.
 
 Each skill marks, section by section, which version it was tested on and what was re-run on a second version (`> Versions:` lines); where it says "not re-run", treat the text as tested on the older version only. What changed and when: [CHANGELOG.md](CHANGELOG.md).
 
