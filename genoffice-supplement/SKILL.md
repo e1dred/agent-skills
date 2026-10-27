@@ -85,6 +85,13 @@ Needs the GenOffice app running (the CLI starts it if not); `~/.config/GenOffice
 - **Recipe for working with the user in the app:** copy the file to a scratch folder, `open` it at the spot you mean, ask the user to select or click, read `selection`, make the change with `--out` to a new file, then `open` that file. Avoid `--force`.
 - Screenshots the user takes are the fastest way to check what the window shows (the folder path they give may contain a typo: list the folder first).
 
+## Docs gaps closed (2026-10-27, GenOffice 0.12.117, headless)
+- **Batch flags (`docs apply`):** `--dry-run` validates and prints the plan without writing; with an unknown op it returns `unknown_op` and the list of supported ops (nothing written). `--best-effort` applied 2 of 3 ops and wrote the file (status `partial`, `detail.failures` names the bad op and why); `--stop-on-error` applied the first op, failed the second and skipped the third (`1 failed, 1 skipped`). The default is all or nothing.
+- **Clearing font settings:** `setFont` with `null` removes a property (`color`, `fontSize` and `fontFamily` set to null left only `<w:b/>`); fields you leave out stay as they were.
+- **Coloured borders, letter-spacing and bullet colour cannot be set with ops** (`setParagraphFormat borders` takes only the letters "tblr", unknown fields such as `borderColor` are rejected). **Workaround that works:** after the last `apply`, rewrite the .docx zip and patch `word/styles.xml` (insert `<w:pBdr>` with colour, size and space into the style's `w:pPr` before `w:shd/tabs/spacing/ind/jc`, and `<w:spacing w:val="N"/>` before `w:sz` in its `w:rPr` for letter-spacing) and `word/numbering.xml` (a `<w:color>` in the bullet level's `w:rPr`). `build_genoffice.py` does this in `post_process`. Result, rendered against WordCraft: the professional (navy title and heading rules, spaced caps), elegant (burgundy hairlines), creative (teal rules), stylish (gold bar) and traditional (title rule) styles now match, and bullets take the accent colour. Order matters in OOXML, which is why the insert points are fixed.
+- **Résumé and CV kinds** now build too (`build_genoffice.py STYLE resume|cv /abs/out.docx`): both consist only of paragraphs, so the same path works. Right-aligned dates come from a style tab stop (`define_style paragraph.tabs: [{"pos":"506pt","align":"right"}]`) plus a tab in the text; **in the HTML input a tab character is lost, it must be written `<span data-tab></span>`**. Compared page 1 with WordCraft's version for the professional style: the same layout, headings, rules, bullets and right-aligned dates (education dates are not bold in the GenOffice version).
+- **Not done:** partial-selection edits (they need a selection made in the app).
+
 ## Style rebuild: `modern` doc via GenOffice vs WordCraft vs ONLYOFFICE (2026-10-27)
 Builder: `build_genoffice.py` in this folder (imports `../styles/plan.py` read-only, so the same plan feeds all three apps). Run: `PYTHONDONTWRITEBYTECODE=1 python3 build_genoffice.py modern doc /abs/out.docx --paper=a4 --page-numbers=bottom-center`. Handles block types p/heading/bullets/table/figure caption text of kind doc; figure picture, footnote, merged title row, columns, header text are not done yet.
 All three docx files were rendered with the same renderer (`genoffice render`) and compared side by side (WordCraft: `wordcraft-cli run --script job.json`).
@@ -101,7 +108,7 @@ Traps from this build:
 ## All eight styles, doc kind, GenOffice vs WordCraft (2026-10-27, A4, rendered with the same renderer)
 build_genoffice.py now also does: figure (insert_picture after the caption's predecessor, done last, in reverse order), footnote (insert_footnote with afterText), merged title row (mergeTableCells + sub-header fill), columns (insert_section_break continuous, then set_page_setup section 1 columns), header text and page number (header text comes out centred, the plan wants right-aligned: no header alignment op).
 Match (no visible difference except bullets): clean, academic, modern.
-Gaps, worst first (all from the border/spacing limits above):
+Gaps at first, worst first (CLOSED later the same day by the styles.xml/numbering.xml patch, see "Docs gaps closed"):
 1. professional: no navy title rule and no heading rules, no letter-spacing on the caps headings.
 2. elegant: no burgundy hairline under the headings, no letter-spacing on the caps headings.
 3. creative: no teal heading rules.  4. stylish: no gold bar left of the headings.  5. traditional: no title rule.

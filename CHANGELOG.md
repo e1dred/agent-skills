@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ## Unreleased
 
 ### Added
+- `genoffice-supplement` (2026-10-27): Docs gaps closed. `--dry-run`, `--best-effort`, `--stop-on-error` and `null` clearing verified; coloured rules, letter-spacing and bullet colour (impossible with the ops) done by patching `styles.xml` and `numbering.xml` after the build, so professional, elegant, creative, stylish and traditional now match WordCraft; résumé and CV kinds added to `build_genoffice.py` (tabs in HTML need `<span data-tab></span>`).
 - `genoffice-supplement` (2026-10-27): live editor checked with the user watching: `open` at a block, range, element or page; `selection` as the user's pointer; `--force` writes to an open file are NOT shown reliably in the window (spreadsheet tab did not update; Word tab showed bold but not the colour), so use `--out` and reopen.
 - README: GenOffice row now links its repository (https://github.com/genspark-ai/genoffice) in the App column, like the other apps.
 - `genoffice-supplement` (2026-10-27): Markdown, HTML and PDF conversion routes checked with one rich document (what survives md to html/pdf/docx, docx to md, pdf to docx/md/html/xlsx); traps: html to docx hangs on any `<img>`, math and footnotes do not become Word math or footnotes, md-generated HTML breaks `create --from html` tables.

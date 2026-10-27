@@ -26,6 +26,6 @@ Markdown, HTML and PDF are covered through conversion and reading only (the CLI 
 PYTHONDONTWRITEBYTECODE=1 python3 build_genoffice.py modern doc /abs/report.docx --paper=a4 --page-numbers=bottom-center
 ```
 
-Options: `--paper`, `--page-numbers`, `--header-text`, `--figure=sample`, `--footnotes`, `--merged-table`, `--columns=2`. Sample text is invented.
+Kinds: `doc`, `report`-style blocks, `resume`, `cv`. Options: `--paper`, `--page-numbers`, `--header-text`, `--figure=sample`, `--footnotes`, `--merged-table`, `--columns=2`. It also patches `styles.xml` and `numbering.xml` for coloured rules, letter-spacing and bullet colour, which the GenOffice ops cannot set. Sample text is invented.
 
 Unofficial: not affiliated with GenOffice.

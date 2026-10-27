@@ -27,8 +27,13 @@ def apply(path, ops):
     f = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False); json.dump(ops, f); f.close()
     return go("docs", "apply", path, "--ops", f.name)
 
-STYLE_IDS = {"Normal": "Normal", "Heading 1": "Heading1", "Heading 2": "Heading2", "Doc Title": "DocTitle", "Doc Subtitle": "DocSubtitle",
+_BASE_IDS = {"Normal": "Normal", "Heading 1": "Heading1", "Heading 2": "Heading2", "Doc Title": "DocTitle", "Doc Subtitle": "DocSubtitle",
              "Doc Quote": "DocQuote", "Doc Bullet": "DocBullet", "Doc Table": "DocTable", "Doc Figure": "DocFigure", "Doc Caption": "DocCaption"}
+
+import re as _re
+def sid(name):
+    return _BASE_IDS.get(name) or _re.sub(r"\W", "", name)
+STYLE_IDS = type("S", (), {"__getitem__": lambda self, k: sid(k), "__contains__": lambda self, k: True})()
 
 def style_op(name, p):
     para, run = {}, {}
@@ -45,21 +50,58 @@ def style_op(name, p):
     for k in ("bold", "italic"):
         if k in p: run[k] = bool(p[k])
     if p.get("caps"): run["caps"] = True
-    sid = STYLE_IDS[name]
-    op = {"op": "define_style", "styleId": sid, "name": name if sid.startswith("Doc") else None}
+    if p.get("tab_right"): para["tabs"] = [{"pos": "%dpt" % round(p["tab_right"]), "align": "right"}]
+    style_id = sid(name)
+    op = {"op": "define_style", "styleId": style_id, "name": name if style_id not in ("Normal", "Heading1", "Heading2") else None}
     if op["name"] is None: del op["name"]
-    if sid.startswith("Doc"): op["basedOn"] = "Normal"
+    if style_id not in ("Normal", "Heading1", "Heading2"): op["basedOn"] = "Normal"
     if para: op["paragraph"] = para
     if run: op["run"] = run
     return op
 
+
+def _border(side, spec):
+    color, width, space = spec
+    return '<w:%s w:val="single" w:sz="%d" w:space="%d" w:color="%s"/>' % (side, round(width * 8), round(space), color)
+
+def post_process(out, P):
+    """GenOffice's ops cannot set a coloured paragraph border, letter-spacing or a bullet colour, so patch styles.xml
+    and numbering.xml of the finished .docx (a plain zip rewrite; Word and the other apps read the result normally)."""
+    import zipfile, re, shutil
+    styles = dict(P["styles"])
+    ids = {n: sid(n) for n in styles if n != "Normal"}
+    zin = zipfile.ZipFile(out); files = {n: zin.read(n) for n in zin.namelist()}; infos = {i.filename: i for i in zin.infolist()}; zin.close()
+    st = files["word/styles.xml"].decode("utf-8")
+    for name, style_id in ids.items():
+        p = styles.get(name, {})
+        m = re.search(r'<w:style [^>]*w:styleId="%s".*?</w:style>' % style_id, st, re.S)
+        if not m: continue
+        blk = m.group(0)
+        bdr = "".join(_border(side, p["border_" + side]) for side in ("top", "left", "bottom", "right") if p.get("border_" + side))
+        if bdr:
+            blk = re.sub(r"(<w:pPr>.*?)(<w:(?:shd|tabs|spacing|ind|jc|outlineLvl)\b)", lambda mm: mm.group(1) + "<w:pBdr>" + bdr + "</w:pBdr>" + mm.group(2), blk, count=1, flags=re.S)
+        if p.get("spacing"):   # letter-spacing in twentieths of a point, goes before w:sz in rPr
+            blk = blk.replace("<w:sz ", '<w:spacing w:val="%d"/><w:sz ' % round(p["spacing"] * 20), 1)
+        st = st.replace(m.group(0), blk)
+    files["word/styles.xml"] = st.encode("utf-8")
+    if "word/numbering.xml" in files and P.get("bullet"):
+        nx = files["word/numbering.xml"].decode("utf-8")
+        nx = nx.replace('<w:rPr><w:rFonts w:ascii="Symbol"', '<w:rPr><w:color w:val="%s"/><w:rFonts w:ascii="Symbol"' % P["bullet"]["color"])
+        files["word/numbering.xml"] = nx.encode("utf-8")
+    tmp = out + ".tmp"
+    with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
+        for n, b in files.items(): z.writestr(n, b)
+    shutil.move(tmp, out)
+
 def build(style, kind, o, out):
     P = planmod.make(style, kind, o)
-    assert kind in ("doc", "report"), "only doc/report block types handled"
+    assert kind in ("doc", "report", "resume", "cv"), "only doc/report/resume/cv block types handled"
     parts, order = [], []   # order: (style, payload) per document block, in document order
     bl = P["blocks"]; n = 0
+    def esc(t):
+        return "<span data-tab></span>".join(html.escape(x) for x in t.split("\t"))   # a tab in the HTML input must be this span
     def runs_html(b):
-        return "".join("<strong>%s</strong>" % html.escape(r[1]) if r[0] is True else "<em>%s</em>" % html.escape(r[1]) if r[0] == "i" else html.escape(r[1]) for r in b["runs"])
+        return "".join("<strong>%s</strong>" % esc(r[1]) if r[0] is True else "<em>%s</em>" % esc(r[1]) if r[0] == "i" else esc(r[1]) for r in b["runs"])
     while n < len(bl):
         b = bl[n]
         if b["t"] == "p" and b["bullet"]:
@@ -67,7 +109,7 @@ def build(style, kind, o, out):
             while n < len(bl) and bl[n]["t"] == "p" and bl[n]["bullet"]:
                 items.append(bl[n]); n += 1
             parts.append("<ul>%s</ul>" % "".join("<li>%s</li>" % runs_html(x) for x in items))
-            order += [("Doc Bullet", "li")] * len(items); continue
+            order += [(items[0]["style"], "li")] * len(items); continue
         if b["t"] == "columns":
             order.append(("columns", b))          # marker only, no block
         elif b["t"] == "p":
@@ -83,7 +125,7 @@ def build(style, kind, o, out):
         n += 1
     tmp = tempfile.mkdtemp(); h = os.path.join(tmp, "in.html"); open(h, "w").write("\n".join(parts))
     go("create", "--type", "docx", "--from", h, "--out", out, "--force")
-    apply(out, [style_op(nm, p) for nm, p in P["styles"] if nm in STYLE_IDS])      # styles first: later ops cannot see them in the same batch
+    apply(out, [style_op(nm, p) for nm, p in P["styles"]])      # styles first: later ops cannot see them in the same batch
     ops, idx, tabs, figs, cols = [], 0, [], [], None
     for st, kd in order:
         if st == "columns": cols = (idx - 1, kd); continue       # section break goes after the previous block
@@ -123,6 +165,7 @@ def build(style, kind, o, out):
         aft, b = cols
         apply(out, [{"op": "insert_section_break", "afterBlockIndex": aft, "type": "continuous"}])
         apply(out, [{"op": "set_page_setup", "section": 1, "columns": {"count": b["n"], "spacing": "24pt"}}])
+    post_process(out, P)
     return P, order
 
 if __name__ == "__main__":
