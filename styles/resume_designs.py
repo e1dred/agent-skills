@@ -27,6 +27,7 @@ class Doc:
         self.fresh, self.page, self.made = True, page, set()
         self.padl = self.padr = self.top = 0.0      # per-column padding: table.cellMargins is ROW-wide in WordCraft, so columns are inset with paragraph indents
         self.sty = {}
+        self.prev = None                           # style name of the paragraph the caret is in (for bridging a left border across spaceBefore)
         self.c("tools.autocorrect", enabled=False)
         self.c("styles.modify", style="Normal", chr={"size": 1, "sizeCs": 1}, para={"spaceBefore": 0, "spaceAfter": 0, "lineSpacing": {"rule": "exactly", "value": 1}})
         self.npara, self.in_cell = 0, 0
@@ -60,10 +61,17 @@ class Doc:
         for k, v in (("bottom", bottom), ("top", top), ("left", leftb)):
             if v: col, w, sp = v; b[k] = {"style": "single", "width": w, "color": col.lstrip("#"), "space": sp}
         if b: par["borders"] = b
-        self.sty[name] = (left, first, right)
+        self.sty[name] = (left, first, right, before, after, bool(leftb))
         if name not in self.made:
             self.c("styles.create", name=name, basedOn="Normal"); self.made.add(name)
         self.c("styles.modify", style=name, chr=chr_, para=par)
+        return name
+
+    def vline_style(self, name, color="A9A9A9", width=0.75):
+        """A table style whose only border is the vertical line BETWEEN columns: one continuous hairline through every row (paragraph borders break at row gaps)."""
+        if name not in self.made:
+            self.c("table.newStyle", name=name, basedOn="Normal Table", wholeTable={"borders": {"edges": "insideV", "style": "single", "width": width, "color": color.lstrip("#")}})
+            self.made.add(name)
         return name
 
     def page_setup(self, top, bottom, left, right):
@@ -72,16 +80,23 @@ class Doc:
     # ---- text
     def P(self, style, *runs, shade=None):
         """One paragraph. runs: str, or (str, {props}) with props bold/italic/color/size/font/caps/spacing/underline."""
-        if not self.fresh: self.c("text.newParagraph")
+        bridge = False
+        if not self.fresh:
+            pv, nw = self.sty.get(self.prev), self.sty.get(style)
+            if pv and nw and pv[5] and nw[5] and nw[3] > 0:      # a left border is not drawn across spaceBefore (it is across spaceAfter): move it
+                self.c("para.set", props={"spaceAfter": pv[4] + nw[3]}); bridge = True
+            self.c("text.newParagraph")
         self.fresh = False
+        self.prev = style
         if not self.in_cell: self.npara += 1
         self.c("para.reset")                      # a new paragraph inherits the last one's direct formatting (align, indents, spacing)
         self.c("para.style", style=style)
         self.c("format.resetChar")                # ...and its character formatting (a bold run leaked into the next paragraph)
-        if self.padl or self.padr or self.top:
-            l, f, r = self.sty.get(style, (0, 0, 0))
+        if self.padl or self.padr or self.top or bridge:
+            l, f, r = self.sty.get(style, (0, 0, 0))[:3]
             props = {"indentLeft": l + self.padl, "indentFirst": f, "indentRight": r + self.padr}
             if self.top: props["spaceBefore"] = self.top; self.top = 0.0
+            elif bridge: props["spaceBefore"] = 0
             self.c("para.set", props=props)
         if shade: self.c("para.shading", color=shade)
         for r in runs:
@@ -103,6 +118,7 @@ class Doc:
         self.c("para.set", props={"align": align, "spaceBefore": before + self.top, "spaceAfter": after, "indentLeft": self.padl, "indentRight": self.padr})
         self.top = 0.0
         self.c("insert.picture", path=path, width=width, alt="Photo placeholder")
+        self.prev = None
 
     # ---- tables
     def table(self, widths, rows, fills=None, heights=None, margins=None, valign=None):
@@ -162,10 +178,10 @@ def bar(doc, width, pct, fill, track, thick=4):
     doc.c("table.selectCell"); doc.c("table.shading", color=track.lstrip("#")); doc.c("select.collapse")
     doc.c("table.columnWidth", width=round(w2, 1)); doc.c("table.cellMargins", top=0, left=0, bottom=0, right=0)
     doc.c("caret.right")
-    doc.fresh = True
+    doc.fresh = True; doc.prev = None
 
 
-def grid(doc, widths, rows, pre=None):
+def grid(doc, widths, rows, pre=None, style="Normal Table"):
     """A general table. widths: column widths (pt, each >= 6). rows: list of dict(h=pt|None, rule="exact"|"atLeast", m=(t,l,b,r) row-wide cell
     margins, cells=[cell, ...]) where cell = dict(span=1, fill=RRGGBB|None, v="top"|"center"|"bottom", pad=(top,left,right), fn=callable|None).
     A spanning cell takes the sum of its columns. `pad` insets one column with paragraph indents (cellMargins is ROW-wide here).
@@ -174,7 +190,7 @@ def grid(doc, widths, rows, pre=None):
     n = len(widths)
     spans = any(c.get("span", 1) > 1 for r in rows for c in r["cells"])
     pre = doc.npara if pre is None else pre
-    doc.c("insert.table", rows=len(rows), cols=n, style="Normal Table")
+    doc.c("insert.table", rows=len(rows), cols=n, style=style)
     doc.c("table.autofit", mode="fixed")                  # without this a narrow column is widened and squeezes its neighbours
 
     def home():
@@ -209,7 +225,7 @@ def grid(doc, widths, rows, pre=None):
                 doc.c("table.cellMargins", top=t, left=l, bottom=b, right=rr)
                 first_cell = False
             if cell.get("v"): doc.c("table.cellAlign", value=cell["v"])
-            doc.fresh = True
+            doc.fresh = True; doc.prev = None
             pt, pl, pr = cell.get("pad", (0, 0, 0))
             doc.top, doc.padl, doc.padr = float(pt), float(pl), float(pr)
             doc.in_cell += 1
@@ -606,10 +622,11 @@ def traditional_b(doc, D, out_dir):
     S["t"] = doc.style("TB Text", BF, 9.5, GREY, after=4, line=1.15)
     S["dt"] = doc.style("TB Date", BF, 10, INK, bold=True, before=6, after=0)
     S["dp"] = doc.style("TB Place", BF, 9.5, GREY, after=0)
-    S["job"] = doc.style("TB Job", HF, 13, INK, before=6, after=0, left=14, leftb=(LINE, 1.0, 10))
-    S["org"] = doc.style("TB Org", BF, 10, GREY, bold=True, after=2, left=14, leftb=(LINE, 1.0, 10))
-    S["blurb"] = doc.style("TB Blurb", BF, 9, GREY, after=2, left=14, leftb=(LINE, 1.0, 10), line=1.1)
-    S["bul"] = doc.style("TB Bullet", BF, 9.5, GREY, after=2, left=26, first=-10, leftb=(LINE, 1.0, 10), line=1.12)
+    TL = doc.vline_style("Timeline", LINE, 0.75)
+    S["job"] = doc.style("TB Job", HF, 13, INK, before=6, after=0)
+    S["org"] = doc.style("TB Org", BF, 10, GREY, bold=True, after=2)
+    S["blurb"] = doc.style("TB Blurb", BF, 9, GREY, after=2, line=1.1)
+    S["bul"] = doc.style("TB Bullet", BF, 9.5, GREY, after=2, left=10, first=-10, line=1.12)
     S["ach"] = doc.style("TB AchHead", HF, 11, INK, bold=True, after=2)
     doc.P(S["name"], D["name"]); doc.P(S["ttl"], D["tagline"])
     doc.c("styles.modify", style=S["con"], para={"tabs": [{"pos": 200, "align": "left", "leader": "none"}, {"pos": 400, "align": "left", "leader": "none"}]})
@@ -627,14 +644,14 @@ def traditional_b(doc, D, out_dir):
             if place: doc.P(S["dp"], place)
 
         def b():
-            doc.P(S["job"], ("●  ", {"size": 7}), title); doc.P(S["org"], org)
+            doc.P(S["job"], title); doc.P(S["org"], org)
             if blurb: doc.P(S["blurb"], blurb)
             for x in bullets: doc.P(S["bul"], ("•", None), ("\t", None), x)
-        return {"cells": [{"fn": a}, {"fn": b}]}
+        return {"cells": [{"pad": (0, 0, 12), "fn": a}, {"pad": (0, 14, 0), "fn": b}]}
 
-    grid(doc, [DATEW, MAINW], [row(j["dates"], j["place"], j["title"], j["org"], "", j["bullets"]) for j in D["jobs"]])
+    grid(doc, [DATEW, MAINW], [row(j["dates"], j["place"], j["title"], j["org"], "", j["bullets"]) for j in D["jobs"]], style=TL)
     doc.P(S["h"], "Education")
-    grid(doc, [DATEW, MAINW], [row(e["dates"], e["place"], e["degree"], e["school"], "", []) for e in D["education"]])
+    grid(doc, [DATEW, MAINW], [row(e["dates"], e["place"], e["degree"], e["school"], "", []) for e in D["education"]], style=TL)
     doc.P(S["h"], "Skills")
     doc.P(S["t"], "   ·   ".join(n for n, p in D["skills"]))
 
