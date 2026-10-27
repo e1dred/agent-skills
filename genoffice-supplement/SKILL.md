@@ -9,7 +9,7 @@ description: Supplementary, verified notes on GenOffice (Docs editor and the gen
 a GenOffice-provided skill (its generated `genoffice` skill, the ~45 recommended app skills). Read those first; this adds
 what running the app showed. Tested on GenOffice 0.12.117 (Linux AppImage), CLI and MCP, headless.
 
-GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx) and Sheets (.xlsx) ops are covered so far.
+GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx), Sheets (.xlsx) and Slides (.pptx ops and the page-spec build) are covered so far.
 
 ## Word-op sweep, 2026-10-27, GenOffice 0.12.117 (headless CLI `genoffice docs apply`)
 Method: fresh copy of a 9-block docx per op, apply, then read back with `docs read` flags, unzip the XML, and render (`genoffice render x.docx --out dir`, one PNG per page) and look.
@@ -48,6 +48,19 @@ Traps found:
 - Rendered (`genoffice render`): fills, fonts, colour scale, chart and shape appear; **data bars and sparklines did not show in the render** (their XML exists; not checked in Excel or another app). Wide content splits across pages when printed.
 - Dates from the CSV import arrive as real dates (serial numbers with a date format).
 - Editor-only ops (`refresh_pivot`, table row and column edits, `edit_shape`, `delete_visual`) answer "not available headless (use the GenOffice app)".
+
+## Slides sweep (`genoffice slides apply`), 2026-10-27, GenOffice 0.12.117 (headless)
+Method: a 2-slide deck made with `genoffice create --type pptx --ops` (a text box, a filled rectangle and an ellipse on slide 0, an empty slide 1), a copy per case, `slides apply`, then `slides read --full`, the XML, and renders of 14 results on one contact sheet. Insert ops cannot reference the element they create in the same batch (ids come back in `created`; read the slide to get them), so editing a new table is two `apply` calls.
+Verified (read back, XML or render): setText (runs, alignment, bullet and level; unstyled runs inherit the old run's size), setFont, setParagraphFormat, insertEquation (a native `m:oMathPara`), setFill (gradient stops with angle; `"none"` clears), setStroke (null removes), setTransform (box and rotation), flipElements and reorderElement, setShapeGeometry (hexagon) and setShapeAdjust, setShapeCustomGeometry (a triangle path), setTextAnchor and setTextBodyProps (vertical text, insets), setEffects (shadow, glow and soft edge all written and the shadow and blur rendered), setLink (url and slide jump), alignElements and distributeElements, groupElements, deleteElement, addElement (roundRect with adjustments, star5, lineArrow), addConnector (elbow, glued, arrow end), addTable and the table ops (setTableCell, tableMerge, tableStructure, row height, column width, anchor, style), addChart (bar with colours, pie, comboBarLine), addSmartArt (process: three chevrons rendered), duplicateSlide, addSlideWithLayout, moveSlide, setBackground (solid and gradient), setHidden (`show="0"`), setTransition (fade) with setAdvanceTime (`advTm`), addAnimation (preset ids 10 and 23, five timeline parts), setNotes and addComment (notes slide, comment part and author part), findReplace across the deck, setSlideSize (elements rescaled in proportion: x 914400 became 685800 going from 16:9 to 4:3), applyHeaderFooter (a footer and slide number shape on every slide), applyTheme (accent1 and the two fonts in `theme1.xml`), setSections (`p14:section`).
+Designed-deck path: `genoffice create --type pptx --spec page.json` built a one-page deck from a 1280x720 px spec (text and shape elements) and answered with the next-step commands. `slides audit` reports `out_of_bounds` and `text_overflow` as errors with a ready `setTransform` suggestion (a rectangle 190 px past the right edge; text 477 px over its box), and it does NOT report one shape sitting on top of another. Its metrics are heuristic glyph widths.
+
+Traps found:
+- Field shapes differ from what you guess: `setFont` takes `font:{fontFamily,fontSizePt,bold,italic,underline,strike,color}` and `setParagraphFormat` takes `format:{align,bullet,lineSpacingPct,spaceBeforePt,spaceAfterPt}` (flat fields are rejected with a usage message); `addElement` text runs use `fontSize` (pt) but `setFont` uses `fontSizePt`.
+- `setTableStyle` with `shadingColor` shades the WHOLE table (first row included) and keeps black text: on a dark colour the text is nearly unreadable. Set a light shade, or set white text on the header row with setTableCell/setFont.
+- `tableStructure` `insert-col` at `index` equal to the current column count fails with "merges crossing the boundary?"; use the index of an existing column (2 for a 3-column table). Do structure ops before merges.
+- `addChart` ignores `colorScheme` for pie charts (series colours came out default orange and blue); bar colours applied.
+- Elements and ids: `slides read` ids (`e_*`) are the targets; a created element's temporary id is not usable in the same batch.
+- Deck ops such as `applyHeaderFooter` add the footer and number as real shapes on each slide (they show up in `slides read`), and `setSlideSize` rescales every element.
 
 ## Style rebuild: `modern` doc via GenOffice vs WordCraft vs ONLYOFFICE (2026-10-27)
 Builder: `build_genoffice.py` in this folder (imports `../styles/plan.py` read-only, so the same plan feeds all three apps). Run: `PYTHONDONTWRITEBYTECODE=1 python3 build_genoffice.py modern doc /abs/out.docx --paper=a4 --page-numbers=bottom-center`. Handles block types p/heading/bullets/table/figure caption text of kind doc; figure picture, footnote, merged title row, columns, header text are not done yet.
