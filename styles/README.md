@@ -16,10 +16,11 @@ WordCraft and ONLYOFFICE, so they produce the same look. All sample text is inve
 | `creative` | Coral headings, teal rule, Trebuchet, big title | Portfolios, workshop handouts, creative-field résumés |
 
 ![WordCraft documents](gallery/wordcraft-doc.png)
-![ONLYOFFICE résumés](gallery/onlyoffice-resume.png)
+![The redesigned résumés rendered by WordCraft](gallery/wordcraft-resume.png)
+![The same résumés rendered by ONLYOFFICE](gallery/onlyoffice-resume.png)
 ![WordCraft options: columns, APA, MLA, résumé layouts, CV with photo, header and footer](gallery/wordcraft-features.png)
 
-More in `gallery/` (both apps; documents, résumés, A4 CVs, features).
+The résumé previews show the redesigned layouts (nine styles, two layouts each; see "Redesigned résumés" below). The plain single-column ATS résumé is still the `resume` kind of `build_wordcraft.py`. More in `gallery/` (both apps; documents, A4 CVs, features; the CV and feature images were made before the sample name changed to Jane Doe).
 
 ## Use
 
