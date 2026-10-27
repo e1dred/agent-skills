@@ -628,6 +628,52 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - Paragraph shading for a highlighted heading bar: `para.shading {"color":"DCE6F2"}` after `para.style`; with left/right indents it makes a highlight bar behind a centred name.
 - Avatar/photo: `insert.picture {"path","width":118,"alt"}` in a centred paragraph; a generated PNG circle (PIL) worked. Fonts: Century Gothic, Georgia, Calibri, Corbel, Times New Roman, Arial are installed and portable; Poppins and Montserrat exist locally only.
 
+## Sweep of every remaining command id on a blank document (2026-10-26, 0.11.0, headless; effect checked by `inspect`, partly by render)
+> **Versions:** 0.11.0 only, CLI only. **What this proves and what it does not:** each id was run with `wordcraft-cli run --script` on a blank document holding a heading, two paragraphs, a 2x2 table and a sentence ("quick brown" selected), plus the object or state its family needs (a SmartArt, chart, WordArt, canvas, equation, field, mail-merge list, picture, bookmark/link/comment, outline view, header). Parameters came from `wordcraft-cli commands --json`. Two checks per id: the command returned without an error, and the saved document's `inspect` JSON was compared with the same script WITHOUT the command (changed or not). The seven commands marked R below were also compared by rendering page 1. Effects were NOT otherwise read back or looked at, so "ran" means the command exists and takes those parameters. Scratch files only.
+- **Ran and changed the document (77 ids):**
+
+```
+arrange.bringForward arrange.copyTo arrange.rotate arrange.sendBackward canvas.expand canvas.scale chart.dataLabels
+chart.editData chart.title chart.type design.pageBorders developer.buildingBlock document.setText equation.backspace
+equation.enter equation.normalText equation.structureActions fields.lock fields.unlink file.new format.engrave
+format.growFont1 format.shrinkFont format.shrinkFont1 format.wordUnderline hf.position insert.deleteBookmark
+insert.removeLink insert.spreadsheet insert.timeField layout.documentGrid layout.pageSetup layout.sectionRtl
+layout.textDirection outline.demoteToBody outline.level outline.promoteToHeading1 para.alignLeft para.alignRight
+para.asianTypography para.defineBullet para.defineNumber para.distribute para.double para.heading3 para.justify
+para.ltr para.moveUp para.oneAndHalf para.outdent para.promote para.removeHanging para.rtl picture.iconColor
+references.endnote references.tableOfAuthorities smartArt.addShape smartArt.colors smartArt.demote smartArt.items
+smartArt.layout smartArt.reset styles.apply table.deleteCells table.deleteColumn table.deleteTable
+table.insertColumnLeft table.insertColumnRight table.insertRowAbove text.backTab text.columnBreak
+text.deleteWordForward view.draft view.marks view.readMode view.webLayout wordArt.transform
+```
+- **Ran, changed the rendered page but not `inspect` (R, 7 ids):** `table.distributeRows`, `table.rtl`, `design.pageColor`, `format.textEffects`, `wordArt.style`, `wordArt.textFill`, `wordArt.textOutline`
+- **Ran, document unchanged (124 ids).** Most are reads or window/view state (zoom, panes, read mode, caret/selection moves, `document.*`, `readAloud.*`, `tools.customize*`). A few are mutating commands that need a different state to show an effect: `fields.toggleCode|setCode|unlock` (select the field first: `fields.selected` listed the DATE field), `mailings.next|previous` (merge preview on), `chart.legend`, `canvas.fit`, `arrange.wrapText` (a floating picture), `equation.delete`, `references.updateFields|updateAuthorities`, `styles.inspectorClear`, `table.borderPainter`, `design.effects`, `tools.detachTemplate|linkStyles` (no template attached):
+
+```
+arrange.selectionPane arrange.wrapText canvas.fit caret.home caret.left caret.pageDown caret.pageUp caret.wordLeft
+caret.wordRight chart.legend design.effects design.setDefault developer.control document.inspect document.layout
+document.paragraph document.selection document.text draw.highlighter draw.pencil edit.clipboardPane edit.findReplace
+equation.delete equation.edit fields.next fields.previous fields.selected fields.setCode fields.toggleCode
+fields.unlock file.options file.print font.list font.loadSystem format.fontDialog link.targets list.get
+mailings.editRecipients mailings.highlightFields mailings.matchFields mailings.next mailings.previous
+mailings.sortRecipients outline.expand outline.showAll outline.showFormatting outline.showLevel1 outline.showLevel2
+outline.showLevel3 outline.showLevel4 outline.showLevel5 outline.showLevel6 outline.showLevel7 outline.showLevel8
+outline.showLevel9 outline.toggle para.dialog readAloud.next readAloud.playPause readAloud.previous
+readAloud.skipCitations readAloud.speed readAloud.status readAloud.stop references.notes references.researcher
+references.updateAuthorities references.updateFields review.editor review.previousComment review.proofing
+select.addObject select.column select.dragUnit select.extend select.line select.objects select.paragraph
+select.sentence select.similar smartArt.textPane styles.inspector styles.inspectorClear styles.pane
+table.borderPainter table.selectTable table.viewGridlines text.overtype tools.customizeKeyboard tools.customizeRibbon
+tools.detachTemplate tools.linkStyles tools.templates view.accessibilityPane view.altTextPane view.commentsPane
+view.darkMode view.fieldCodes view.focus view.formatShapePane view.fullScreen view.fullScreenView view.gridlines
+view.hideWhiteSpace view.immersive view.interfaceTheme view.multiplePages view.navigationPane view.newWindow
+view.numeral view.onePage view.pageWidth view.readColumnWidth view.readLineSpacing view.readTextSize view.ruler
+view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 view.zoomIn view.zoomOut
+```
+- **Refused with a reason (23):** `text.toggleUnicode` (select a character code (like 00E9) or one character); `font.add` (/nonexistent.ttf: No such file or directory (os error 2)); `font.remove` ("Nope" isn't a font you added); `para.moveDown` (a table is in the way); `para.demote` (nothing to demote); `outline.demote` (nothing to demote); `outline.moveDown` (already at the bottom); `table.eraser` (there's no border between two cells there); `table.resizeDrag` (there's no table border or resize handle there); `table.selectAt` (there's no table selection area or button there); `table.insertAt` (there's no table selection area or button there); `table.moveDrag` (there's no table selection area or button there); `table.fitColumn` (there's no column border there); `mailings.findRecipient` (bad parameters: `text` (string) is required); `arrange.moveWithText` (not available: arrange.moveWithText: select a floating picture or shape first); `arrange.group` (not available: arrange.group: select two or more pictures or shapes first (Shift+click)); `arrange.ungroup` (not available: arrange.ungroup: select a group first); `smartArt.promote` (this item is already at the top level); `canvas.member` (bad parameters: no member 0 (the canvas has 0)); `hf.next` (not available: edit a header or footer first); `hf.previous` (not available: edit a header or footer first); `tools.updateStyles` (bad parameters: no template is attached; give `path`); `caret.pastCitation` (there's no citation after the caret)
+- **Useful read results:** `document.text {}` → `{text}` (paragraphs joined by `\n`, table cells by `\t`); `document.layout {}` → caret rectangle and per-page info (`pages[].firstBlock`, header/footer); `document.selection {}` → `{anchor,focus,format}`; `document.inspect {"text":true}` = `inspect` with text; `select.sentence|paragraph|line {}` → `{anchor,focus}` (a sentence of 45 characters was selected from a caret in it); `link.targets {}` → `{bookmarks,headings:[{block,level,text}],top}`; `list.get {}` → the caret's list levels (as `list.define`); `fields.selected {}` → `[{code,instr,locked,pos,range}]`; `arrange.selectionPane {}` → `[{hidden,index,kind,name,pos,size}]`; `smartArt.items {"items":["One","Two",{"text":"Sub","level":1}]}` returns the whole SmartArt; `mailings.editRecipients {}` → `{headers,records,rows,rules,sort}`; `mailings.matchFields {}` → the address/greeting mapping; `view.zoom {"value":150}` → `{fit:"",zoom:1.5}`; `outline.showLevelN {}` → `{showLevel:N}`; `file.options {"pane":"general"}` → author, checkSpelling, dictionaries; `tools.customizeKeyboard {"command":"format.bold"}` → its keys (`Mod+B`); `readAloud.status {}` → `{state:"stopped",rate:1.0,…}`; `font.list {}` → `{folder:null,fonts:[]}` (no fonts added); `layout.pageSetup {}` → the whole section (columns, header/footer distances, docGrid).
+- **Traps and facts:** `text.toggleUnicode` needs a selected character or code (like `00E9`); `para.moveDown`/`outline.moveDown` refuse when a table is in the way or the paragraph is last; `para.demote`/`outline.demote` say "nothing to demote" on a level-1 paragraph; the table mouse commands (`table.eraser|resizeDrag|selectAt|insertAt|moveDrag|fitColumn`) take `{page,x,y,…}` in page points and answer "there's no table border or resize handle there" unless the point sits on one (headless page geometry was not worked out); `arrange.group|ungroup|moveWithText` need a selected floating object ("select two or more pictures or shapes first"); `hf.next|previous` need a header or footer being edited; `mailings.findRecipient` needs `text`; `canvas.member {"index"}` needs a canvas with members; `tools.updateStyles` needs a `path` when no template is attached; `font.add {"path"|"data","name"}` fails on a missing file and `font.remove {"family"}` only removes fonts that were added; `caret.pastCitation` needs a citation after the caret. `view.*` commands that toggle a window pane return a value but nothing renders headless.
+
 ## Log
 
 - 2026-10-24: Paragraph formatting, lists, tabs, sort, clipboard/paste, format painter, undoTo, goto, spike; two traps.
@@ -662,3 +708,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-26 (18): table layouts for designed pages (banner, sidebar, colour blocks, hairlines, nested bars, row-wide cellMargins, 6 pt minimum column, fixed autofit) from the 18 résumé redesigns.
 - 2026-10-26 (19): continuous vertical lines: insideV table style for timelines, border bridging across spaceBefore, hanging-indent alignment (traditional-b fixed).
 - 2026-10-26 (20): résumé designs now built for A4 as well as Letter (page width/height as variables, full-page row = page height - 14 pt) and without photos (initials monogram in colour blocks).
+- 2026-10-26 (21): sweep of the remaining 231 command ids on a blank document with inspect/render comparison (208 ran, 23 refused with a reason); smoke test, effects not read back.
