@@ -16,7 +16,7 @@ RESUME = {
     "name": "ALEX MORGAN",
     "headline": "Landscape Designer  |  Nursery Manager  |  Estimator",
     "location": "Portland, OR, USA",
-    "email": "alex.morgan@example.com",
+    "email": "jane.doe@example.com",
     "profile": "linkedin.com/in/example",
     "summary": ("Landscape designer with 9 years of experience planning residential gardens and running a retail "
                 "nursery. Drafts planting plans, prices projects accurately, and schedules crews and suppliers "

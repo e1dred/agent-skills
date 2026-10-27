@@ -269,11 +269,12 @@ Modelled on the *vibe* (colour, type, structure, ornament) of reference résumé
 
 ```
 python3 -I styles/resume_designs.py --list                         # traditional-a, traditional-b, elegant-a ... minimal-b
-python3 -I styles/resume_designs.py stylish-a /abs/out.docx [--data=/abs/content.json] [--local-fonts] [--overwrite] > job.json
+python3 -I styles/resume_designs.py stylish-a /abs/out.docx [--a4] [--no-photo] [--local-fonts] [--overwrite] > job.json
 wordcraft-cli run --script job.json                                # writes out.docx and out.pdf
-styles/build_all_resumes.sh /abs/folder                            # all 18 + PNGs + sheet.png
+python3 -I styles/resume_designs.py --list-photo                   # the 8 designs that show a photo placeholder (they also come photo-free)
+styles/build_all_resumes.sh /abs/folder                            # letter/ and a4/, each: 18 designs + 8 photo-free variants (-nophoto) + PNGs + sheet.png, sheet-nophoto.png
 ```
-`--data` overlays your own content on `resume_data.DATA` (same keys: name, title, tagline, phone, email, location, web, summary, jobs, education, skills (name, percent), skill_groups, languages, achievements, certs, interests, references, links, volunteer).
+The sample content is generic and invented (Jane Doe for the `-a` layouts, John Doe for the `-b` layouts; references Richard Roe and Mary Major). By the maintainer's choice there is no option for personal content: the designs are reference looks. `--a4` builds the A4 version (Letter by default); `--no-photo` drops the photo placeholder (the eight designs from `--list-photo`; the two colour-block creative designs show the initials as a monogram instead). CV-style variants are deliberately not made: a CV is its own format (see the `cv` kind).
 
 | Style | a | b |
 |---|---|---|

@@ -1,6 +1,6 @@
 """Redesigned, human-first résumés built from tables, shaded cells, tracked headings, skill bars and timelines (WordCraft).
 
-    python3 -I resume_designs.py DESIGN /abs/out.docx [--data=/abs/content.json] [--local-fonts] [--overwrite] > job.json
+    python3 -I resume_designs.py DESIGN /abs/out.docx [--a4] [--no-photo] [--local-fonts] [--overwrite] > job.json
     wordcraft-cli run --script job.json            # writes out.docx and out.pdf next to it
 
     python3 -I resume_designs.py --list            # the designs
@@ -14,16 +14,19 @@ import json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from resolve import installed
-from resume_data import DATA
+from resume_data import DATA, for_design
 
 LETTER = (612.0, 792.0)
+A4 = (595.3, 841.9)
 
 
 class Doc:
     """A recorder of WordCraft commands with a small layout vocabulary (styles, paragraphs, tables)."""
 
-    def __init__(self, local_fonts=False, page=LETTER):
+    def __init__(self, local_fonts=False, page=LETTER, photo=True):
         self.cmds, self.have, self.local = [], installed(), local_fonts
+        self.PW, self.PH, self.photo = page[0], page[1], photo
+        if page == A4: self.c("layout.size", name="A4")
         self.fresh, self.page, self.made = True, page, set()
         self.padl = self.padr = self.top = 0.0      # per-column padding: table.cellMargins is ROW-wide in WordCraft, so columns are inset with paragraph indents
         self.sty = {}
@@ -110,6 +113,7 @@ class Doc:
             if props: self.c("format.resetChar")
 
     def picture(self, path, width, align="left", before=0, after=0, style="Photo"):
+        if not self.photo: return                                   # photo-free variant
         self.style("Photo", "Calibri", 10, "000000", line=1.0)     # Normal is 1 pt high (see __init__): a picture paragraph needs real line height
         if not self.fresh: self.c("text.newParagraph")
         self.fresh = False
@@ -255,6 +259,7 @@ def entry(doc, S, job, width, dates_right=True, blurb=True, bullet_char="•"):
 
 # ---------------------------------------------------------------------------------------------------- designs
 DESIGNS = {}
+PHOTO_DESIGNS = {"elegant-a", "elegant-b", "clean-b", "modern-a", "stylish-a", "stylish-b", "creative-a", "creative-b"}   # show an avatar placeholder unless --no-photo
 
 
 def design(name):
@@ -267,7 +272,7 @@ def elegant_a(doc, D, out_dir):
     """Navy banner with a gold, widely tracked name; sidebar (avatar, contact, languages as gold bars) + hairline + main column."""
     NAVY, GOLD, INK, GREY, RULE = "2F3E5B", "C2A25C", "222222", "6B6B6B", "BFBFBF"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Calibri", "Corbel", "Arial")
-    W, SIDE = 612.0, 196.0; MAIN = W - SIDE
+    W, SIDE = doc.PW, 196.0; MAIN = W - SIDE
     doc.page_setup(0, 0, 0, 0)
     S = {}
     S["name"] = doc.style("EL Name", HF, 25, GOLD, spacing=4, align="center", after=3)
@@ -369,7 +374,7 @@ def stylish_a(doc, D, out_dir):
     """Full-height dark slate sidebar (avatar, contact, education, expertise, language) + main column with a dated timeline."""
     SLATE, INK, GREY, LINE = "2D3A55", "3C3C3C", "7A7A7A", "9AA3B5"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Calibri", "Corbel", "Arial")
-    SIDE, MAIN = 190.0, 422.0
+    SIDE = 190.0; MAIN = doc.PW - SIDE
     doc.page_setup(0, 0, 0, 0)
     S = dict(datefont=BF, datesize=8.5, datecolor=GREY, bulcolor=SLATE)
     S["sh"] = doc.style("SA SideHead", HF, 12.5, "FFFFFF", bold=True, before=16, after=5, bottom=("FFFFFF", 0.75, 3))
@@ -410,7 +415,7 @@ def stylish_a(doc, D, out_dir):
         doc.P(S["h"], "Reference")
         for n, role, ph in D["references"]: doc.P(S["ref"], n); doc.P(S["t"], role + "  |  " + ph)
 
-    grid(doc, [SIDE, MAIN], [{"h": 778, "rule": "atLeast", "cells": [
+    grid(doc, [SIDE, MAIN], [{"h": doc.PH - 14, "rule": "atLeast", "cells": [
         {"fill": SLATE, "pad": (30, 22, 18), "fn": side}, {"pad": (34, 30, 34), "fn": main}]}])
 
 
@@ -419,7 +424,7 @@ def modern_a(doc, D, out_dir):
     """Teal banner with a tracked serif name; right-aligned left column, thin spine, contact and experience on the right."""
     TEAL, INK, GREY, LINE = "24657F", "3A3A3A", "6E6E6E", "C5D3DC"
     HF, BF, SF = doc.font("Century Gothic", "Calibri"), doc.font("Calibri", "Corbel"), doc.font("Georgia", "Cambria", "Times New Roman")
-    LEFT, RIGHT = 224.0, 388.0
+    LEFT = 224.0; RIGHT = doc.PW - LEFT
     doc.page_setup(0, 0, 0, 0)
     S = dict(datefont=BF, datesize=8.5, datecolor=TEAL, bulcolor=TEAL)
     S["name"] = doc.style("MA Name", SF, 25, "FFFFFF", spacing=5, align="center", after=3)
@@ -468,7 +473,7 @@ def clean_a(doc, D, out_dir):
     """Monochrome: wide-tracked name, hairline rule, two columns split by a thin vertical line."""
     INK, GREY, LINE = "1E1E1E", "6A6A6A", "B8B8B8"
     HF, BF = doc.font("Century Gothic", "Calibri"), doc.font("Calibri", "Corbel")
-    MAINW, SIDEW = 346.0, 190.0
+    SIDEW = 190.0; MAINW = doc.PW - 72 - SIDEW
     doc.page_setup(40, 0, 36, 36)
     S = dict(datefont=BF, datesize=8.5, datecolor=GREY, bulcolor=INK)
     S["name"] = doc.style("CA Name", HF, 26, INK, spacing=6, align="center", after=2, before=6)
@@ -517,7 +522,7 @@ def clean_b(doc, D, out_dir):
     """Light-grey header band with a round avatar and a big bold name; two grey columns split by a thin line."""
     BAND, INK, GREY, LINE = "F1F1F1", "2B2B2B", "6B6B6B", "CFCFCF"
     HF, BF = doc.font("Century Gothic", "Calibri"), doc.font("Calibri", "Corbel")
-    A, C = 200.0, 412.0
+    A = 200.0; C = doc.PW - A
     doc.page_setup(0, 0, 0, 0)
     DIV = (LINE, 0.75, 16)
     S = dict(datefont=BF, datesize=8.5, datecolor=GREY, bulcolor=GREY)
@@ -559,8 +564,9 @@ def clean_b(doc, D, out_dir):
         doc.P(S["mh"], "References:")
         for n, role, ph in D["references"]: doc.P(S["mjn"], n); doc.P(S["mst"], role + "  |  " + ph)
 
-    grid(doc, [A, C], [
-        {"h": 150, "cells": [{"fill": BAND, "v": "center", "fn": hdr_a}, {"fill": BAND, "v": "center", "pad": (0, 24, 20), "fn": hdr_b}]},
+    head = ({"h": 150, "cells": [{"fill": BAND, "v": "center", "fn": hdr_a}, {"fill": BAND, "v": "center", "pad": (0, 24, 20), "fn": hdr_b}]} if doc.photo else
+            {"h": 118, "cells": [{"span": 2, "fill": BAND, "v": "center", "pad": (0, 34, 20), "fn": hdr_b}]})
+    grid(doc, [A, C], [head,
         {"h": 610, "rule": "atLeast", "cells": [{"pad": (0, 34, 18), "fn": side}, {"pad": (0, 8, 34), "fn": main}]}])
 
 
@@ -575,7 +581,7 @@ def traditional_a(doc, D, out_dir):
     """Classic: centred serif name, blue title and employers, centred serif section headings over a full-width rule, right-aligned dates."""
     INK, BLUE, GREY = "151515", "2272C3", "5A5A5A"
     HF, BF = doc.font("Georgia", "Cambria", "Times New Roman"), doc.font("Calibri", "Corbel", "Arial")
-    W = 612.0 - 2 * 52
+    W = doc.PW - 2 * 52
     doc.page_setup(46, 36, 52, 52)
     S = dict(datefont=BF, datesize=10, datecolor=INK, bulcolor=INK)
     S["name"] = doc.style("TA Name", HF, 22, INK, bold=True, caps=True, align="center", after=1)
@@ -612,7 +618,7 @@ def traditional_b(doc, D, out_dir):
     """Left-aligned bold name and tagline, three-part contact row, caps headings, and a timeline (dates left, dotted line, details right)."""
     INK, GREY, LINE, DOT = "111111", "6B6B6B", "A9A9A9", "111111"
     HF, BF = doc.font("Calibri", "Corbel", "Arial"), doc.font("Calibri", "Corbel", "Arial")
-    DATEW, MAINW = 110.0, 612.0 - 2 * 52 - 110.0
+    DATEW = 110.0; MAINW = doc.PW - 2 * 52 - DATEW
     doc.page_setup(50, 36, 52, 52)
     S = dict(datefont=BF, datesize=9, datecolor=GREY, bulcolor=GREY)
     S["name"] = doc.style("TB Name", HF, 30, INK, bold=True, caps=True, after=0)
@@ -633,7 +639,7 @@ def traditional_b(doc, D, out_dir):
     doc.P(S["con"], D["phone"], ("\t", None), D["email"], ("\t", None), D["web"])
     doc.P(S["con"], D["location"])
     doc.P(S["h"], "Key achievements")
-    grid(doc, [252.0, 252.0], [{"cells": [
+    grid(doc, [(doc.PW - 104) / 2, (doc.PW - 104) / 2], [{"cells": [
         {"pad": (0, 0, 14), "fn": lambda: [doc.P(S["ach"], D["achievements"][0][0]), doc.P(S["t"], D["achievements"][0][1])]},
         {"pad": (0, 0, 0), "fn": lambda: [doc.P(S["ach"], D["achievements"][1][0]), doc.P(S["t"], D["achievements"][1][1])]}]}])
     doc.P(S["h"], "Experience")
@@ -661,7 +667,7 @@ def professional_a(doc, D, out_dir):
     """Executive résumé: small-caps serif name between rules, centred caps headline, justified summary, expertise columns, bold lead-ins."""
     INK, GREY, LINK = "000000", "444444", "1F3FBF"
     HF = BF = doc.font("Times New Roman", "Georgia", "Cambria")
-    W = 612.0 - 2 * 54
+    W = doc.PW - 2 * 54
     doc.page_setup(36, 30, 54, 54)
     S = dict(datefont=BF, datesize=10.5, datecolor=INK, bulcolor=INK)
     S["name"] = doc.style("PA Name", HF, 21, INK, bold=True, smallcaps=True, align="center", spacing=1, before=2, after=1, top=(INK, 0.5, 6))
@@ -679,7 +685,7 @@ def professional_a(doc, D, out_dir):
     doc.P(S["ttl"], D["title"] + " | Nursery Operations")
     doc.P(S["t"], D["summary"] + " ", ("Areas of expertise include:", {"bold": True}))
     cols = [D["skill_groups"][0][1][:3], D["skill_groups"][0][1][3:] + D["skill_groups"][1][1][:1], D["skill_groups"][1][1][1:4]]
-    grid(doc, [162.0, 162.0, 162.0], [{"cells": [{"fn": (lambda c=c: [doc.P(S["xp"], ("•", None), ("\t", None), x) for x in c])} for c in cols]}])
+    grid(doc, [W / 3, W / 3, W / 3], [{"cells": [{"fn": (lambda c=c: [doc.P(S["xp"], ("•", None), ("\t", None), x) for x in c])} for c in cols]}])
     doc.P(S["h"], "Professional Experience")
     for j in D["jobs"]:
         doc.P(S["job"], (j["org"], None), ", " + j["place"], ("\t", None), j["dates"])
@@ -697,7 +703,7 @@ def professional_b(doc, D, out_dir):
     """Bold geometric sans: heavy centred name, light title, contact row between hairlines, bold caps headings with rules, 3-column skills."""
     INK, GREY, RULE = "262626", "5C5C5C", "7A7A7A"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Calibri", "Corbel", "Arial")
-    W = 612.0 - 2 * 54
+    W = doc.PW - 2 * 54
     doc.page_setup(42, 30, 54, 54)
     S = dict(datefont=BF, datesize=9, datecolor=GREY, bulcolor=INK)
     S["name"] = doc.style("PB Name", HF, 28, INK, bold=True, caps=True, align="center", after=0)
@@ -722,7 +728,7 @@ def professional_b(doc, D, out_dir):
         doc.P(S["org"], e["school"] + "  |  " + e["dates"]); doc.P(S["job"], e["degree"])
     doc.P(S["h"], "Skills")
     items = [n for n, p in D["skills"]]
-    grid(doc, [162.0, 162.0, 162.0], [{"cells": [{"fn": (lambda c=items[k::3]: [doc.P(S["sb"], ("•", None), ("\t", None), x) for x in c])} for k in range(3)]}])
+    grid(doc, [W / 3, W / 3, W / 3], [{"cells": [{"fn": (lambda c=items[k::3]: [doc.P(S["sb"], ("•", None), ("\t", None), x) for x in c])} for k in range(3)]}])
 
 
 @design("academic-a")
@@ -730,7 +736,7 @@ def academic_a(doc, D, out_dir):
     """Dense two-column page: heavy-ruled caps headings, skills as underlined chips, Interests and Strengths on the right."""
     INK, GREY, RULE = "1A1A1A", "5E5E5E", "1A1A1A"
     HF, BF = doc.font("Calibri", "Corbel", "Arial"), doc.font("Calibri", "Corbel", "Arial")
-    LW, RW = 340.0, 612.0 - 2 * 36 - 340.0
+    LW = 340.0; RW = doc.PW - 2 * 36 - LW
     doc.page_setup(34, 24, 36, 36)
     S = dict(datefont=BF, datesize=8.2, datecolor=GREY, bulcolor=INK)
     S["name"] = doc.style("AA Name", HF, 27, INK, bold=True, caps=True, after=0)
@@ -782,7 +788,7 @@ def academic_b(doc, D, out_dir):
     """US graduate style: centred bold name, spaced contact row, pale-blue shaded heading bars, institution in bold, italic role, right-aligned place and dates."""
     INK, GREY, BAND = "000000", "444444", "DCE6F2"
     HF = BF = doc.font("Arial", "Liberation Sans", "Calibri")
-    W = 612.0 - 2 * 48
+    W = doc.PW - 2 * 48
     doc.page_setup(40, 30, 48, 48)
     S = dict(datefont=BF, datesize=9, datecolor=INK, bulcolor=INK)
     S["name"] = doc.style("AB Name", HF, 21, INK, bold=True, align="center", after=3)
@@ -818,7 +824,7 @@ def elegant_b(doc, D, out_dir):
     """Airy variant: no banner, a wide-tracked light-grey name, round avatar and grey tracked headings, hairline between sidebar and page."""
     INK, GREY, LIGHT, RULE = "333333", "8A8A8A", "B5B5B5", "E3E3E3"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Calibri", "Corbel", "Arial")
-    SIDE, MAIN = 200.0, 412.0
+    SIDE = 200.0; MAIN = doc.PW - SIDE
     doc.page_setup(0, 0, 0, 0)
     DIV = (RULE, 0.75, 22)
     S = dict(datefont=BF, datesize=8.5, datecolor=GREY, bulcolor=GREY)
@@ -852,7 +858,7 @@ def elegant_b(doc, D, out_dir):
             doc.P(S["org"], j["org"] + ",  " + j["place"])
             for b in j["bullets"]: doc.P(S["bul"], ("•", None), ("\t", None), b)
 
-    grid(doc, [SIDE, MAIN], [{"h": 778, "rule": "atLeast", "cells": [{"pad": (40, 34, 14), "fn": side}, {"pad": (56, 0, 34), "fn": main}]}])
+    grid(doc, [SIDE, MAIN], [{"h": doc.PH - 14, "rule": "atLeast", "cells": [{"pad": (40, 34, 14), "fn": side}, {"pad": (56, 0, 34), "fn": main}]}])
 
 
 @design("modern-b")
@@ -860,7 +866,7 @@ def modern_b(doc, D, out_dir):
     """Bold navy name over a rule; narrow left column with ruled headings; right column with a hairline spine and round markers."""
     NAVY, INK, GREY, LINE = "1F2A44", "2B2B2B", "6A6A6A", "BCC3D0"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Calibri", "Corbel", "Arial")
-    LW, RW = 186.0, 612.0 - 2 * 40 - 186.0
+    LW = 186.0; RW = doc.PW - 2 * 40 - LW
     doc.page_setup(40, 24, 40, 40)
     DIV = (LINE, 1.0, 12)
     S = dict(datefont=BF, datesize=8.5, datecolor=GREY, bulcolor=NAVY)
@@ -906,7 +912,7 @@ def stylish_b(doc, D, out_dir):
     """Three columns: blush side panel (avatar, profile, contact) | experience under a brown name | education and skill bars."""
     BROWN, GREEN, INK, GREY, BLUSH, LINE = "8A4B1B", "2E6B57", "2E2E2E", "6B6B6B", "F9EEE9", "D9D2CD"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Calibri", "Corbel", "Arial")
-    A, B, C = 176.0, 258.0, 178.0
+    A, C = 176.0, 178.0; B = doc.PW - A - C
     doc.page_setup(0, 0, 0, 0)
     DIV = (LINE, 0.75, 14)
     S = dict(datefont=BF, datesize=8.5, datecolor=GREY, bulcolor=BROWN)
@@ -950,7 +956,7 @@ def stylish_b(doc, D, out_dir):
         for lang, p, lvl in D["languages"]:
             doc.P(S["cl"], lang, ("\t", None), (lvl, {"color": GREY})); bar(doc, C - 40, p, GREEN, "E2E8E5", 4)
 
-    grid(doc, [A, B, C], [{"h": 778, "rule": "atLeast", "cells": [
+    grid(doc, [A, B, C], [{"h": doc.PH - 14, "rule": "atLeast", "cells": [
         {"fill": BLUSH, "pad": (34, 20, 18), "fn": a}, {"pad": (40, 24, 8), "fn": b}, {"pad": (40, 14, 20), "fn": c}]}])
 
 
@@ -959,7 +965,7 @@ def creative_a(doc, D, out_dir):
     """Pale tinted page, deep-teal block with a round avatar, huge two-tone rounded-sans name, two columns split by a hairline."""
     TEAL, DARK, TINT, GREY, LINE = "2A6F6B", "1B4F4C", "E8F1F1", "5C6B6A", "BFCFCF"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Century Gothic", "Corbel", "Calibri")
-    A, B = 214.0, 398.0
+    A = 214.0; B = doc.PW - A
     doc.page_setup(0, 0, 0, 0)
     DIV = (LINE, 0.75, 16)
     S = dict(datefont=BF, datesize=8.3, datecolor=GREY, bulcolor=TEAL)
@@ -974,7 +980,11 @@ def creative_a(doc, D, out_dir):
     S["rj"] = doc.style("CR RightJob", BF, 8.8, "6F8886", bold=True, before=7, after=1, leftb=DIV)
     av = avatar(os.path.join(out_dir, "avatar-creative.png"), "F2F6F6", "7FA5A2")
 
-    def hdr_a(): doc.picture(av, 128, align="center", before=0, after=0)
+    def hdr_a():
+        if doc.photo: doc.picture(av, 128, align="center", before=0, after=0)
+        else:
+            S["mono"] = doc.style("CR Monogram", HF, 58, "FFFFFF", bold=True, align="center", spacing=3)
+            doc.P(S["mono"], "".join(w[0] for w in D["name"].split(" ")))
 
     def hdr_b():
         doc.P(S["n1"], D["name"].split(" ")[0]); doc.P(S["n2"], D["name"].split(" ")[1]); doc.P(S["ttl"], D["title"])
@@ -998,7 +1008,7 @@ def creative_a(doc, D, out_dir):
 
     grid(doc, [A, B], [
         {"h": 190, "cells": [{"fill": TEAL, "v": "center", "fn": hdr_a}, {"fill": TINT, "v": "center", "pad": (0, 22, 10), "fn": hdr_b}]},
-        {"h": 588, "rule": "atLeast", "cells": [{"fill": TINT, "pad": (6, 34, 20), "fn": left}, {"fill": TINT, "pad": (6, 10, 26), "fn": right}]}])
+        {"h": doc.PH - 204, "rule": "atLeast", "cells": [{"fill": TINT, "pad": (6, 34, 20), "fn": left}, {"fill": TINT, "pad": (6, 10, 26), "fn": right}]}])
 
 
 @design("creative-b")
@@ -1006,7 +1016,7 @@ def creative_b(doc, D, out_dir):
     """Earthy colour blocks: olive header with a white display name, warm panel for the avatar, grey sidebar, terracotta experience panel."""
     OLIVE, OLIVE2, TERRA, SAND, GREYBG, INK, WHITE = "6B7C4B", "596A3D", "B2682E", "DDD6CB", "ECEAE6", "4A4A4A", "FFFFFF"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Century Gothic", "Corbel", "Calibri")
-    A, B, C = 190.0, 210.0, 212.0
+    A, B = 190.0, 210.0; C = doc.PW - A - B
     doc.page_setup(0, 0, 0, 0)
     S = dict(datefont=BF, datesize=9, datecolor=WHITE, bulcolor=WHITE)
     S["name"] = doc.style("CB2 Name", HF, 31, WHITE, bold=True, after=2, line=0.95)
@@ -1026,7 +1036,11 @@ def creative_b(doc, D, out_dir):
         doc.P(S["name"], D["name"].split(" ")[0]); doc.P(S["name"], D["name"].split(" ")[1]); doc.P(S["ttl"], D["title"])
         doc.P(S["ah"], "About me"); doc.P(S["at"], D["summary"])
 
-    def photo(): doc.picture(av, 138, align="center")
+    def photo():
+        if doc.photo: doc.picture(av, 138, align="center")
+        else:
+            S["mono"] = doc.style("CB2 Monogram", HF, 64, OLIVE2, bold=True, align="center", spacing=3)
+            doc.P(S["mono"], "".join(w[0] for w in D["name"].split(" ")))
 
     def side():
         doc.P(S["lh"], "Contact")
@@ -1048,7 +1062,7 @@ def creative_b(doc, D, out_dir):
 
     grid(doc, [A, B, C], [
         {"h": 214, "cells": [{"span": 2, "fill": OLIVE, "pad": (30, 30, 20), "fn": hdr}, {"fill": SAND, "v": "center", "fn": photo}]},
-        {"h": 560, "rule": "atLeast", "cells": [{"fill": GREYBG, "pad": (4, 26, 14), "fn": side}, {"span": 2, "fill": TERRA, "pad": (4, 26, 26), "fn": right}]}])
+        {"h": doc.PH - 232, "rule": "atLeast", "cells": [{"fill": GREYBG, "pad": (4, 26, 14), "fn": side}, {"span": 2, "fill": TERRA, "pad": (4, 26, 26), "fn": right}]}])
 
 
 @design("minimal-a")
@@ -1056,7 +1070,7 @@ def minimal_a(doc, D, out_dir):
     """Lots of white: a very tracked name over a pastel mint highlight, lowercase tagline, serif body, tracked headings, mint skill bars."""
     MINT, INK, GREY = "D3EBDD", "222222", "5A5A5A"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Georgia", "Cambria", "Times New Roman")
-    W = 612.0 - 2 * 62
+    W = doc.PW - 2 * 62
     doc.page_setup(48, 30, 62, 62)
     S = dict(datefont=BF, datesize=9, datecolor=INK, bulcolor=INK)
     S["name"] = doc.style("MN Name", HF, 25, INK, spacing=9, caps=True, align="center", after=4, left=4, right=4)
@@ -1070,7 +1084,7 @@ def minimal_a(doc, D, out_dir):
     S["sl"] = doc.style("MN SkillLabel", BF, 9.3, INK, after=0, before=3)
     S["foot"] = doc.style("MN Footer", BF, 9, INK, align="center", before=24, after=0, top=(MINT, 2.0, 10))
     doc.P(S["name"], D["name"], shade=MINT); doc.P(S["ttl"], "•  " + D["title"].lower() + "  •")
-    grid(doc, [250.0, 238.0], [{"cells": [
+    grid(doc, [W * 0.512, W * 0.488], [{"cells": [
         {"pad": (0, 0, 22), "fn": lambda: [doc.P(S["h"], "About me"), doc.P(S["t"], D["summary"])]},
         {"fn": lambda: [doc.P(S["h"], "Education")] + [x for e in D["education"] for x in (doc.P(S["t"], e["dates"] + "  •  " + e["school"]), doc.P(S["t"], e["degree"]))]}]}])
     doc.P(S["h"], "Experience")
@@ -1083,7 +1097,7 @@ def minimal_a(doc, D, out_dir):
             for x in j["bullets"]: doc.P(S["bul"], ("•", None), ("\t", None), x)
         return {"cells": [{"fn": a}, {"fn": b}]}
 
-    grid(doc, [58.0, 430.0], [jobrow(j) for j in D["jobs"]])
+    grid(doc, [58.0, W - 58.0], [jobrow(j) for j in D["jobs"]])
     doc.P(S["h"], "Skills")
 
     def skills(items):
@@ -1092,7 +1106,7 @@ def minimal_a(doc, D, out_dir):
                 doc.P(S["sl"], n); bar(doc, 200, p, MINT, "F0F5F2", 6)
         return f
 
-    grid(doc, [250.0, 238.0], [{"cells": [{"fn": skills(D["skills"][:3])}, {"fn": skills(D["skills"][3:6])}]}])
+    grid(doc, [W * 0.512, W * 0.488], [{"cells": [{"fn": skills(D["skills"][:3])}, {"fn": skills(D["skills"][3:6])}]}])
     doc.P(S["foot"], D["phone"] + "  •  " + D["email"] + "  •  " + D["web"])
 
 
@@ -1122,9 +1136,9 @@ def minimal_b(doc, D, out_dir):
         return {"cells": [{"fn": lambda: doc.P(S["dt"], date)},
                           {"fn": lambda: [doc.P(S["job"], title), doc.P(S["org"], org)] + [doc.P(S["bul"], ("–", {"color": ACC}), ("\t", None), b) for b in bullets]}]}
 
-    grid(doc, [104.0, 364.0], [row(j["dates"], j["title"], j["org"] + ", " + j["place"], j["bullets"]) for j in D["jobs"]])
+    grid(doc, [104.0, doc.PW - 144 - 104.0], [row(j["dates"], j["title"], j["org"] + ", " + j["place"], j["bullets"]) for j in D["jobs"]])
     doc.P(S["h"], "Education")
-    grid(doc, [104.0, 364.0], [row(e["dates"], e["degree"], e["school"] + ", " + e["place"], []) for e in D["education"]])
+    grid(doc, [104.0, doc.PW - 144 - 104.0], [row(e["dates"], e["degree"], e["school"] + ", " + e["place"], []) for e in D["education"]])
     doc.P(S["h"], "Skills"); doc.P(S["t"], "  /  ".join(n for n, p in D["skills"]))
 
 
@@ -1133,15 +1147,15 @@ def main(argv):
     import tempfile
     if "--list" in argv:
         print("\n".join(sorted(DESIGNS))); return
+    if "--list-photo" in argv:                          # the designs that show a photo placeholder (they have a photo-free variant)
+        print("\n".join(sorted(PHOTO_DESIGNS))); return
     args = [a for a in argv[1:] if not a.startswith("--")]
     if len(args) != 2: sys.exit(__doc__)
     name, out = args
     if name not in DESIGNS: sys.exit("unknown design %r; try --list" % name)
     if os.path.exists(out) and "--overwrite" not in argv: sys.exit("refusing to overwrite %s (pass --overwrite)" % out)
-    data = dict(DATA)
-    for a in argv:
-        if a.startswith("--data="): data.update(json.load(open(a.split("=", 1)[1])))     # your own content: same keys as resume_data.DATA
-    doc = Doc(local_fonts="--local-fonts" in argv)
+    data = for_design(name)
+    doc = Doc(local_fonts="--local-fonts" in argv, page=A4 if "--a4" in argv else LETTER, photo="--no-photo" not in argv)
     assets = os.path.join(tempfile.gettempdir(), "resume-design-avatars"); os.makedirs(assets, exist_ok=True)   # silhouette PNGs are only needed while the job runs
     DESIGNS[name](doc, data, assets)
     if doc.fresh:                                        # the design ended with a table: its trailing empty paragraph must not inherit a heading's border

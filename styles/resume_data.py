@@ -1,16 +1,16 @@
-"""Invented sample content for the redesigned résumés (every name, employer and number is made up).
+"""Invented sample content for the redesigned résumés (every name, employer and number is made up; the names are the usual placeholders Jane Doe, John Doe, Richard Roe and Mary Major).
 
 Richer than content.RESUME: skills with levels (for bars and gauges), languages, achievements, certifications,
 references and links, so every layout has something to show. Replace it with real content for a real résumé.
 """
 DATA = {
-    "name": "Alex Morgan",
+    "name": "Jane Doe",
     "title": "Landscape Designer",
     "tagline": "Gardens that look planned and cost what the estimate said.",
     "phone": "(555) 010-0100",
-    "email": "alex.morgan@example.com",
+    "email": "jane.doe@example.com",
     "location": "Portland, OR",
-    "web": "alexmorgan.example.com",
+    "web": "janedoe.example.com",
     "summary": ("Landscape designer with nine years of experience planning residential gardens and running a retail nursery. "
                 "Drafts planting plans, prices projects accurately, and schedules crews and suppliers from first sketch to final walkthrough."),
     "jobs": [
@@ -43,10 +43,20 @@ DATA = {
     "certs": [("Certified Landscape Professional (sample)", "Example Trade Association", "2022"),
               ("Irrigation Auditor (sample)", "Demo Water Institute", "2019")],
     "interests": ["Trail running", "Community gardening", "Seed saving", "Photography"],
-    "references": [("Jordan Ellis", "Director, Sample Garden Studio", "(555) 010-0111"),
-                   ("Riley Chen", "Owner, Demo Plant Nursery", "(555) 010-0122")],
-    "links": [("Website", "alexmorgan.example.com"), ("LinkedIn", "linkedin.com/in/example")],
+    "references": [("Richard Roe", "Director, Sample Garden Studio", "(555) 010-0111"),
+                   ("Mary Major", "Owner, Demo Plant Nursery", "(555) 010-0122")],
+    "links": [("Website", "janedoe.example.com"), ("LinkedIn", "linkedin.com/in/example")],
     "publications": [("Native plants for small city gardens", "Example Garden Review, May 2021")],
     "volunteer": [{"title": "Volunteer Garden Lead", "org": "Example Community Garden", "dates": "2018 – Present",
                    "bullets": ["Organised monthly work parties for 25 volunteers.", "Raised $3,200 for a rain-water tank."]}],
 }
+
+
+def for_design(design):
+    """Jane Doe for the "a" layouts, John Doe for the "b" layouts (same content, generic names that cannot be a real person)."""
+    import copy
+    d = copy.deepcopy(DATA)
+    if design.endswith("-b"):
+        d["name"] = "John Doe"; d["email"] = "john.doe@example.com"; d["web"] = "johndoe.example.com"
+        d["references"] = [("Mary Major", "Director, Sample Garden Studio", "(555) 010-0111"), ("Richard Roe", "Owner, Demo Plant Nursery", "(555) 010-0122")]
+    return d

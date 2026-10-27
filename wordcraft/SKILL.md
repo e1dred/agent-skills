@@ -660,3 +660,4 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - 2026-10-26 (17): gap round: layout.section, section breaks (nextPage/continuous), per-section orientation.
 - 2026-10-26 (18): table layouts for designed pages (banner, sidebar, colour blocks, hairlines, nested bars, row-wide cellMargins, 6 pt minimum column, fixed autofit) from the 18 résumé redesigns.
 - 2026-10-26 (19): continuous vertical lines: insideV table style for timelines, border bridging across spaceBefore, hanging-indent alignment (traditional-b fixed).
+- 2026-10-26 (20): résumé designs now built for A4 as well as Letter (page width/height as variables, full-page row = page height - 14 pt) and without photos (initials monogram in colour blocks).

@@ -31,11 +31,11 @@ DOC = [
 ]
 
 RESUME = {
-    "name": "Alex Morgan",
+    "name": "Jane Doe",
     "headline": "Landscape Designer  |  Nursery Manager  |  Estimator",
     "location": "Portland, OR, USA",
     "phone": "(555) 010-0100",
-    "email": "alex.morgan@example.com",
+    "email": "jane.doe@example.com",
     "profile": "linkedin.com/in/example",
     "summary": ("Landscape designer with 9 years of experience planning residential gardens and running a retail nursery. "
                 "Drafts planting plans, prices projects accurately, and schedules crews and suppliers from first sketch to final walkthrough."),
