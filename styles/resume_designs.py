@@ -1,6 +1,6 @@
 """Redesigned, human-first résumés built from tables, shaded cells, tracked headings, skill bars and timelines (WordCraft).
 
-    python3 -I resume_designs.py DESIGN /abs/out.docx [--local-fonts] [--overwrite] > job.json
+    python3 -I resume_designs.py DESIGN /abs/out.docx [--data=/abs/content.json] [--local-fonts] [--overwrite] > job.json
     wordcraft-cli run --script job.json            # writes out.docx and out.pdf next to it
 
     python3 -I resume_designs.py --list            # the designs
@@ -1113,6 +1113,7 @@ def minimal_b(doc, D, out_dir):
 
 
 def main(argv):
+    import tempfile
     if "--list" in argv:
         print("\n".join(sorted(DESIGNS))); return
     args = [a for a in argv[1:] if not a.startswith("--")]
@@ -1120,8 +1121,12 @@ def main(argv):
     name, out = args
     if name not in DESIGNS: sys.exit("unknown design %r; try --list" % name)
     if os.path.exists(out) and "--overwrite" not in argv: sys.exit("refusing to overwrite %s (pass --overwrite)" % out)
+    data = dict(DATA)
+    for a in argv:
+        if a.startswith("--data="): data.update(json.load(open(a.split("=", 1)[1])))     # your own content: same keys as resume_data.DATA
     doc = Doc(local_fonts="--local-fonts" in argv)
-    DESIGNS[name](doc, DATA, os.path.dirname(os.path.abspath(out)))
+    assets = os.path.join(tempfile.gettempdir(), "resume-design-avatars"); os.makedirs(assets, exist_ok=True)   # silhouette PNGs are only needed while the job runs
+    DESIGNS[name](doc, data, assets)
     if doc.fresh:                                        # the design ended with a table: its trailing empty paragraph must not inherit a heading's border
         doc.c("para.reset"); doc.c("para.style", style="Normal"); doc.c("format.resetChar")
     print(json.dumps(doc.script(out)))

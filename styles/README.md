@@ -260,3 +260,32 @@ both apps and rendered (WordCraft with its own renderer, ONLYOFFICE through its 
 overwrite an existing file unless asked.
 
 Not covered: the official Europass template (see above); app-managed citations and bibliographies (WordCraft has a citation feature that this sample does not use; ONLYOFFICE's reference tooling was not checked; here references are typed text); vertical CJK text; mixed-direction paragraphs; real-ATS testing.
+
+
+## Redesigned résumés: 9 styles x 2 layouts, human-first (2026-10-26)
+
+Modelled on the *vibe* (colour, type, structure, ornament) of reference résumés the user supplied for each style, never on their text or branding; every name and number in the samples is invented (`resume_data.py`).
+`resume_designs.py` builds them with tables, shaded cells, hairlines and skill bars; the output is an ordinary `.docx` and renders the same in WordCraft and ONLYOFFICE (checked: all 18 stay on one page and look alike in both).
+
+```
+python3 -I styles/resume_designs.py --list                         # traditional-a, traditional-b, elegant-a ... minimal-b
+python3 -I styles/resume_designs.py stylish-a /abs/out.docx [--data=/abs/content.json] [--local-fonts] [--overwrite] > job.json
+wordcraft-cli run --script job.json                                # writes out.docx and out.pdf
+styles/build_all_resumes.sh /abs/folder                            # all 18 + PNGs + sheet.png
+```
+`--data` overlays your own content on `resume_data.DATA` (same keys: name, title, tagline, phone, email, location, web, summary, jobs, education, skills (name, percent), skill_groups, languages, achievements, certs, interests, references, links, volunteer).
+
+| Style | a | b |
+|---|---|---|
+| traditional | centred serif name, blue title and employers, centred serif headings over full-width rules | left bold sans name, 3-part contact row, caps headings, timeline (dates left, dotted line, details right), 2-column achievements |
+| elegant | navy banner, gold wide-tracked name, sidebar with avatar, gold skill bars | airy: light-grey tracked name, grey tracked headings, hairline between sidebar and page |
+| clean | monochrome, wide-tracked name, two columns split by a hairline | light-grey header band with round avatar, bold name, tracked headings with colons |
+| professional | executive serif: small-caps name between rules, caps headline, justified summary, expertise columns, bold lead-ins | heavy geometric sans, contact row between hairlines, ruled caps headings, 3-column skills |
+| academic | dense two columns, heavy-ruled caps headings, underlined skill chips, interests and strengths | US graduate style: pale-blue heading bars, bold institution, italic role, right-aligned place and dates |
+| modern | teal banner with tracked serif name, right-aligned left column, hairline spine | bold navy name over a rule, narrow ruled left column, spine with round markers |
+| stylish | full-height dark slate sidebar, dated timeline with a left line | blush side panel, brown caps headings, three columns, green bars |
+| creative | pale tinted page, deep-teal block with avatar, two-tone name | earthy colour blocks: olive header, grey sidebar, terracotta experience panel |
+| minimal | very tracked name on a mint highlight, lowercase tagline, serif body, mint bars | quiet serif page, spaced small-caps headings, date column, one muted accent |
+
+**For humans, not parsers.** Columns, sidebars, shaded blocks, nested bars and avatars read out of order in an ATS (and several designs repeat text in cells). Use the single-column `resume` kind above when a parser reads the file. The avatar is a generic silhouette placeholder (`avatar()` draws it): replace it with a real photo only where the market expects one.
+Known limits: a full-bleed sidebar stops about 14 pt above the page bottom (the empty paragraph after a table needs room); skill gauges are bars, not circles; icons are plain bullets, not glyphs; fonts are portable Office ones (Century Gothic stands in for Poppins/Montserrat, Georgia/Times for serif display faces).
