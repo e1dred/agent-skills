@@ -366,6 +366,7 @@ for the table, gallery, ATS notes and options. Verified: every style in 3 kinds 
 - Picture alt text: the image tools have no parameter; use `doc.GetAllDrawingObjects()[n].SetDescription("…")` (also `SetTitle`, `SetName`) in a macro afterwards (document order).
 - `word_add_image {"src","width","height","index"}` inserts BEFORE the element at `index` (1-based, top-level elements); when adding several pictures in ascending order, add 1 for each already inserted.
 - Introspect objects when the reference is silent: `for (var k in obj) if (typeof obj[k] === "function" && /pattern/i.test(k)) …` inside `word_write_macro`.
+- **`report` kind (quarterly review), 2026-10-26:** in a `word_write_macro`, `cell.SetWidth("twips", n)` per cell gives column widths, `cell.SetShd("clear", color)` the status fills, and `SetTableBorder*("none", 0, 0, color)` a borderless fact-sheet/KPI table; all matched WordCraft in the PDF render. See `styles/build_onlyoffice.py` (`addRichTable`).
 
 ## Next-tier workflows through macros (verified headless via `tools/ooc.py`, 2026-10-25)
 

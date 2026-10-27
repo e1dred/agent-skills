@@ -4,7 +4,7 @@
     wordcraft-cli run --script job.json
 
 STYLE: traditional elegant clean professional academic modern stylish creative   (see styles.json)
-KIND:  doc | resume | cv | paper | manuscript | screenplay | query | synopsis | stageplay   (paper uses the academic style; add --format=apa|mla; manuscript, screenplay, query, synopsis and stageplay ignore STYLE)
+KIND:  doc | report | resume | cv | paper | manuscript | screenplay | query | synopsis | stageplay   (paper uses the academic style; add --format=apa|mla; manuscript, screenplay, query, synopsis and stageplay ignore STYLE)
 Options (all `--name=value`):
   --paper=letter|a4            page size (default letter; cv defaults to a4)
   --page-numbers=bottom-center|bottom-right|top-right      --header-text="Short title"
@@ -204,6 +204,28 @@ for blk in P["blocks"]:
         new_para(); c("para.style", style=blk["style"])
         c("insert.picture", path=blk["path"], width=blk["w"], alt=blk["alt"])
         c("text.newParagraph"); c("para.style", style=blk["caption_style"]); c("text.insert", text=blk["caption"])
+    elif t_ == "table" and blk.get("rich"):
+        # report tables: per-cell styles and fills (status colours), optional column widths, optional header row, optional grid
+        new_para()
+        rows = blk["rows"]; ncol = len(rows[0]); fills = blk.get("fills", {})
+        c("insert.table", rows=len(rows), cols=ncol, style="Table Grid" if blk["grid"] else "Normal Table")
+        c("table.autofit", mode="fixed")
+        if blk["header"]:   # shade the header FIRST (caret.up moves by visual line, not by row)
+            c("table.selectRow"); c("table.shading", color=rgb(blk["fill"])); c("table.repeatHeader"); c("select.collapse")
+        for ri, row in enumerate(rows):
+            for ci, cell in enumerate(row):
+                if ri == 0 and blk.get("widths"): c("table.columnWidth", width=round(blk["widths"][ci] * P["width"], 1))
+                fill, tcol = fills.get("%d,%d" % (ri, ci), (None, None))
+                if fill: c("table.selectCell"); c("table.shading", color=rgb(fill)); c("select.collapse")
+                c("para.style", style=blk["cell_styles"][ri][ci])
+                head = blk["header"] and ri == 0
+                if head: c("format.set", props={"bold": True, "color": rgb(blk["text"])})
+                elif tcol: c("format.set", props={"bold": True, "color": rgb(tcol)})
+                if cell: c("text.insert", text=cell)
+                if head or tcol: c("format.resetChar")
+                if not (ri == len(rows) - 1 and ci == ncol - 1): c("caret.right")
+        if blk["grid"]: c("table.borders", color=rgb(blk["border"]), width=0.5)
+        c("caret.docEnd"); first[0] = True
     elif t_ == "table":
         new_para()
         rows = blk["rows"]; ncol = len(rows[0]); merged = bool(blk.get("merge"))

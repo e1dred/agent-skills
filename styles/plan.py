@@ -2,7 +2,7 @@
 
     plan = make("modern", "cv", {"paper": "a4"})        # a dict; see the keys at the bottom of make()
 
-Kinds: doc (report), resume (ATS-safe, one column), cv (European CV), paper (student paper, `fmt` apa or mla),
+Kinds: doc (generic styled document), report (quarterly program review: fact sheet, KPI row, status tables), resume (ATS-safe, one column), cv (European CV), paper (student paper, `fmt` apa or mla),
 manuscript (standard manuscript format for publishers/agents; options title author pen surname address phone email wordcount ms_font=times|courier
 ms_layout=novel|short text=/abs/file.txt),
 stageplay (common US playwright layout; options as screenplay plus font=times|courier),
@@ -115,6 +115,68 @@ def make(style_name, kind, o=None):
                                    "style": "Doc Figure", "caption_style": "Doc Caption", "alt": "Bar chart of workshop attendance by session"})
         plan["props"] = {"title": "Style sample: " + style_name, "author": "Sample Author", "subject": S["summary"]}
         if o.get("columns"): notes.append("columns: fine for newsletters and handouts; never use them in a résumé (see styles/README.md on ATS).")
+
+    # ---------------------------------------------------------------- report (quarterly review)
+    elif kind == "report":
+        R = content.REPORT
+        bs = SZ["body"]
+        tint = lambda hx, k: "".join("%02X" % round(int(hx[i:i + 2], 16) * (1 - k) + 255 * k) for i in (0, 2, 4))
+        add("Normal", font=BF, size=bs, color=C["text"], before=0, after=max(B["after"], 6), align="left", indent_first=0, line=min(B["line"], 1.2))   # a report is single-spaced even in the double-spaced academic style
+        hp = dict(font=HF, size=SZ["h1"], color=C["heading"], bold=H["bold"], italic=H["italic"], caps=H["caps"], spacing=H["spacing"],
+                  before=max(H["before"], 16), after=max(H["after"], 6), keep_next=True, align="left", indent_first=0, line=1.0)
+        hp.update(_rule(H, C["accent"], kind)); add("Heading 1", **hp)
+        add("Heading 2", font=HF, size=SZ["h2"], color=C["heading"], bold=True, italic=H["italic"], before=8, after=3, keep_next=True, align="left", indent_first=0, line=1.0)
+        tp = dict(font=HF, size=SZ["title"], color=C["heading"], bold=T["bold"], caps=T["caps"], align="left", after=2, indent_first=0, line=1.0)
+        if T["rule"] == "bottom": tp["border_bottom"] = (C["accent"], 1.5, 4)
+        add("Doc Title", **tp)
+        add("Doc Subtitle", font=HF, size=SZ["h1"], color=C["accent"], bold=False, align="left", after=12, indent_first=0, line=1.0)
+        add("Doc Bullet", indent_first=0, after=3, align="left")
+        add("Doc Table", font=BF, size=max(bs - 1, 8), color=C["text"], before=2, after=2, align="left", indent_first=0, line=1.0)
+        add("Rpt Label", font=BF, size=max(bs - 1.5, 8), color=C["muted"], bold=True, before=2, after=2, align="left", indent_first=0, line=1.0)
+        add("Rpt KPI Value", font=HF, size=22, color=C["accent"] if C["accent"] != C["muted"] else C["heading"], bold=True, before=6, after=0, align="center", indent_first=0, line=1.0)
+        add("Rpt KPI Label", font=BF, size=max(bs - 1.5, 8), color=C["muted"], before=0, after=6, align="center", indent_first=0, line=1.0)
+        add("Rpt Note", font=BF, size=max(bs - 2, 8), color=C["muted"], italic=True, before=10, after=0, align="left", indent_first=0, line=1.0)
+        soft = tint(C["accent"], 0.88)
+        TBL = dict(t="table", rich=True, text=TB["header_text"], border=TB["border"], style="Doc Table")
+        RAG = {"Complete": ("C8E6C9", "1B5E20"), "On track": ("C8E6C9", "1B5E20"), "At risk": ("FFE9A8", "6B4A00"), "Delayed": ("F8C9C4", "8E1B10"),
+               "High": ("F8C9C4", "8E1B10"), "Medium": ("FFE9A8", "6B4A00"), "Low": ("C8E6C9", "1B5E20")}
+
+        def rag_cells(rows, col):
+            return {"%d,%d" % (r, col): RAG[row[col]] for r, row in enumerate(rows) if r and row[col] in RAG}
+
+        para("Doc Title", R["title"]); para("Doc Subtitle", R["subtitle"])
+        # label / value pairs in two rows of two, so the table reads as a quick fact sheet
+        meta = [[R["meta"][0][0], R["meta"][0][1], R["meta"][1][0], R["meta"][1][1]], [R["meta"][2][0], R["meta"][2][1], R["meta"][3][0], R["meta"][3][1]]]
+        fills = {"%d,%d" % (r, c): (soft, None) for r in range(2) for c in range(4)}
+        fills.update({"1,3": RAG[R["meta"][3][1]]})
+        blocks.append(dict(TBL, rows=meta, header=False, grid=False, fills=fills, widths=[0.17, 0.33, 0.17, 0.33],
+                           cell_styles=[["Rpt Label", "Doc Table", "Rpt Label", "Doc Table"]] * 2))
+        para("Heading 1", "1. Executive summary"); para("Normal", R["summary"])
+        k = R["kpis"]
+        blocks.append(dict(TBL, rows=[[v for v, _ in k], [l for _, l in k]], header=False, grid=False,
+                           fills={"%d,%d" % (r, c): (soft, None) for r in range(2) for c in range(len(k))},
+                           cell_styles=[["Rpt KPI Value"] * len(k), ["Rpt KPI Label"] * len(k)]))
+        para("Heading 1", "2. Highlights")
+        for b in R["highlights"]: para("Doc Bullet", b, bullet=True)
+        para("Heading 1", "3. Milestones")
+        rows = R["milestones"]
+        blocks.append(dict(TBL, rows=rows, header=True, grid=True, fill=TB["header_fill"], fills=rag_cells(rows, 3), widths=[0.40, 0.22, 0.14, 0.24],
+                           cell_styles=[["Doc Table"] * 4] * len(rows)))
+        para("Heading 1", "4. Budget")
+        rows = R["budget"]
+        blocks.append(dict(TBL, rows=rows, header=True, grid=True, fill=TB["header_fill"], fills={}, widths=[0.40, 0.20, 0.20, 0.20],
+                           cell_styles=[["Doc Table"] * 4] * len(rows)))
+        para("Heading 1", "5. Risks and issues")
+        rows = R["risks"]
+        blocks.append(dict(TBL, rows=rows, header=True, grid=True, fill=TB["header_fill"], fills=rag_cells(rows, 1), widths=[0.34, 0.14, 0.52],
+                           cell_styles=[["Doc Table"] * 3] * len(rows)))
+        para("Heading 1", "6. Next quarter")
+        for b in R["next"]: para("Doc Bullet", b, bullet=True)
+        para("Rpt Note", R["note"])
+        if not o.get("page_numbers"): plan["footer"] = {"number": True, "align": "right"}
+        if not o.get("header_text"): plan["header"] = {"text": R["title"] + "  |  " + R["subtitle"], "number": False, "align": "left"}
+        plan["props"] = {"title": R["title"] + ": " + R["subtitle"], "author": "Sample Author", "subject": S["summary"]}
+        notes.append("report: status cells carry the word (Complete, At risk, High...) as well as the colour, so the table still reads in greyscale or to a screen reader.")
 
     # ---------------------------------------------------------------- resume / cv
     elif kind in ("resume", "cv"):

@@ -3,7 +3,7 @@
     python3 -I build_onlyoffice.py STYLE KIND /abs/out.docx [options] > calls.json
     python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 
-STYLE and KIND as in build_wordcraft.py (doc | resume | cv | paper | manuscript | screenplay | query | synopsis | stageplay; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
+STYLE and KIND as in build_wordcraft.py (doc | report | resume | cv | paper | manuscript | screenplay | query | synopsis | stageplay; the manuscript options --title --author --pen --surname --address --phone --email --wordcount --font --layout --text work here too). Options (`--name=value`): --paper=letter|a4,
 --page-numbers=bottom-center|bottom-right|top-right, --header-text=…, --columns=2 (doc), --photo=/abs/pic.png (resume/cv), --figure=sample|/abs/pic.png, --merged-table, --footnotes,
 --script=arabic|hebrew|japanese|chinese|korean (doc), --extras (paper),
 --layout=chronological|functional|combined (resume), --format=apa|mla (paper), --local-fonts, --pdf (also save a PDF rendered by
@@ -138,6 +138,25 @@ function addTable(b) {
   ["Top", "Bottom", "Left", "Right", "InsideH", "InsideV"].forEach(function (s) { tbl["SetTableBorder" + s]("single", 4, 0, col(b.border)); });
   doc.Push(tbl);
 }
+function addRichTable(b) {   // report tables: per-cell styles and fills, optional widths / header row / grid
+  var rows = b.rows, nr = rows.length, nc = rows[0].length, W = PLAN.width;
+  var tbl = Api.CreateTable(nr, nc);
+  tbl.SetWidth("percent", 100);
+  for (var r = 0; r < nr; r++) {
+    for (var c = 0; c < nc; c++) {
+      var cell = tbl.GetRow(r).GetCell(c), p = cell.GetContent().GetElement(0), f = b.fills[r + "," + c];
+      if (b.widths) { try { cell.SetWidth("twips", tw(b.widths[c] * W)); } catch (e) {} }
+      p.SetStyle(doc.GetStyle(b.cell_styles[r][c]));
+      var run = Api.CreateRun(); run.AddText(rows[r][c]); p.AddElement(run);
+      if (b.header && r === 0) { cell.SetShd("clear", col(b.fill)); run.SetBold(true); run.SetColor(col(b.text)); }
+      else if (f) { cell.SetShd("clear", col(f[0])); if (f[1]) { run.SetBold(true); run.SetColor(col(f[1])); } }
+    }
+  }
+  ["Top", "Bottom", "Left", "Right", "InsideH", "InsideV"].forEach(function (s) {
+    if (b.grid) tbl["SetTableBorder" + s]("single", 4, 0, col(b.border)); else tbl["SetTableBorder" + s]("none", 0, 0, Api.Color("#000000"));
+  });
+  doc.Push(tbl);
+}
 function addDualTable(b) {   // dual dialogue: a borderless table with one row and two cells
   var tbl = Api.CreateTable(1, 2);   // (rows, columns) as in addTable
   tbl.SetWidth("percent", 100);
@@ -167,7 +186,7 @@ for (var j = 0; j < PLAN.blocks.length; j++) {
   else if (b.t === "figure") addPara(b.caption_style, [[false, b.caption]], false);   // caption only; word_add_image puts the picture before it
   else if (b.t === "spacer") pendingBefore = b.pt;
   else if (b.t === "pagebreak") pendingBreak = true;
-  else if (b.t === "table") addTable(b);
+  else if (b.t === "table") { if (b.rich) addRichTable(b); else addTable(b); }
   else if (b.t === "dual") addDualTable(b);
   else if (b.t === "columns") { doc.CreateSection(lastPara); COLS = b.n; }
   else if (b.t === "sectionbreak") { SECBREAK = true; doc.CreateSection(lastPara); }   // the title page ends here

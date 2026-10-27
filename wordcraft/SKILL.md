@@ -270,6 +270,7 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - Right-to-left: `para.set {"props":{"bidi":true,"align":"left"}}` — in a bidi paragraph "left" is the START edge, so it renders on the right of the page ("right" renders left). Set the font with `format.set {"props":{"font":"Arial","fontCs":"Arial"}}`; for CJK add `"fontEa":"Noto Sans CJK JP"`. Reset the next paragraph with `bidi:false` and `format.resetChar`.
 - Figure: `insert.picture {"path","width":300,"alt":"…"}` in a `Doc Figure` paragraph, then `text.newParagraph` and the caption paragraph; the alt text lands as `descr` on the drawing.
 - `wordcraft-cli commands` lists ids only (no parameter docs, no `describe`): learn parameters from this file or by trial, and remember unknown parameter names are silently ignored.
+- **`report` kind (quarterly review), 2026-10-26, 0.11.0:** a table with per-cell fills is built in one pass: `insert.table` (`Normal Table` for borderless KPI/fact-sheet tables, `Table Grid` otherwise) → `table.autofit {"mode":"fixed"}` → shade the header row first (`table.selectRow`, `table.shading`, `table.repeatHeader`, `select.collapse`) → per cell `table.columnWidth` (row 0 only), then for a filled cell `table.selectCell` + `table.shading` + `select.collapse` BEFORE `para.style`/`text.insert`, `format.set` + `format.resetChar` around coloured text, `caret.right`. Widths and fills all rendered correctly. See `styles/plan.py` (`kind == "report"`).
 
 ## Next-tier workflows (verified headless, 0.11.0)
 

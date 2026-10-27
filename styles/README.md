@@ -12,7 +12,7 @@ WordCraft and ONLYOFFICE, so they produce the same look. All sample text is inve
 | `professional` | Calibri, navy all-caps headings with a bottom rule | Business reports, proposals, ATS résumés |
 | `academic` | Times 12 pt, double-spaced, first-line indents, plain bold headings | Essays and papers (with `paper`: APA or MLA layout) |
 | `modern` | Century Gothic headings in teal, Corbel body, large title | Product docs, newsletters, design-aware résumés |
-| `stylish` | Georgia italic plum headings with a gold bar, Candara body | Programmes, editorial handouts, brand-conscious proposals |
+| `stylish` | Georgia italic plum headings with a gold bar, Candara body | Programs, editorial handouts, brand-conscious proposals |
 | `creative` | Coral headings, teal rule, Trebuchet, big title | Portfolios, workshop handouts, creative-field résumés |
 
 ![WordCraft documents](gallery/wordcraft-doc.png)
@@ -32,7 +32,7 @@ python3 -I build_wordcraft.py modern doc /abs/report.docx > job.json && wordcraf
 python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && python3 -I ../onlyoffice/tools/ooc.py new:docx calls.json
 ```
 
-`KIND` is `doc`, `resume`, `cv`, `paper`, `manuscript`, `screenplay`, `stageplay`, `query` or `synopsis` (see below; the STYLE argument is ignored for the last five). Options, the same in both builders (`--name=value`):
+`KIND` is `doc` (generic styled document), `report` (quarterly program review), `resume`, `cv`, `paper`, `manuscript`, `screenplay`, `stageplay`, `query` or `synopsis` (see below; the STYLE argument is ignored for the last five). Options, the same in both builders (`--name=value`):
 
 | Option | Applies to | What it does |
 |---|---|---|
@@ -54,6 +54,22 @@ python3 -I build_onlyoffice.py modern doc /abs/report.docx > calls.json && pytho
 Cautions (for example "photo is not ATS-safe") are printed to stderr. Replace the invented text in `content.py` with real content; keep the
 block types. To restyle a real document instead of the sample, copy the style-setting part of a builder onto the document's existing styles
 and give paragraphs the style names (`Heading 1`, `Heading 2`, `Doc Title`, …). Always work on a copy of someone's document.
+
+## Quarterly review / status report (`report`)
+
+![Quarterly review in all eight styles (WordCraft)](gallery/report-styles.png)
+
+`report` is a business-report layout, not a résumé variant: title and subtitle, a **fact-sheet table** (project, period, prepared by, status), a numbered
+**executive summary**, a **KPI row** (four big numbers with captions), bullets, and three tables: **milestones** and **risks** with colour-coded status
+cells, and a **budget** table. Page header carries the report title; page number bottom right. Any of the eight styles works
+(`python3 -I build_wordcraft.py professional report /abs/review.docx > job.json`); the style picks fonts, heading colour, table header fill and the KPI tint.
+Layout ideas came from looking at common quarterly-review and QBR templates (fact sheet on top, KPI tiles, RAG status columns); no template was copied.
+
+- Status cells carry the word (Complete, On track, At risk, Delayed, High, Medium, Low) as well as the colour, so the table still reads in greyscale or in a screen reader.
+- The report is single-spaced even in `academic`; fonts and colours otherwise follow the style.
+- Replace the invented data in `content.REPORT`; keep the keys. The tables take their column widths from fractions in `plan.py`.
+- Built and rendered in WordCraft (all 8 styles) and ONLYOFFICE (`modern` checked: same look, fills, widths and KPI row).
+- Known gap: a heading can land alone at the bottom of a page when the table after it moves to the next one (keep-with-next does not hold a heading to a table). Check page breaks after you replace the sample data.
 
 ## Manuscript for a publisher or agent (`manuscript`)
 

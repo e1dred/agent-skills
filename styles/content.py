@@ -1,12 +1,12 @@
-"""Invented sample content used to show a style on a real-looking page. Nothing here describes a real person or organisation."""
+"""Invented sample content used to show a style on a real-looking page. Nothing here describes a real person or organization."""
 
 DOC = [
-    ("title", "Community Garden Programme: Quarterly Review"),
+    ("title", "Community Garden Program: Quarterly Review"),
     ("subtitle", "Prepared for the Riverside Trust board  |  October 2026"),
-    ("p", "This review summarises the third quarter of the community garden programme. It covers what was planted, who took part, "
+    ("p", "This review summarizes the third quarter of the community garden program. It covers what was planted, who took part, "
           "and what the team recommends for the winter months. Figures are from the volunteer sign-in sheets and the seed log."),
     ("h1", "Background"),
-    ("p", "The programme began with four raised beds and a shared tool shed. Since then it has grown to eleven beds, a compost area and a "
+    ("p", "The program began with four raised beds and a shared tool shed. Since then it has grown to eleven beds, a compost area and a "
           "weekly open session. Volunteers range from first-time gardeners to retired growers who now lead the Saturday workshops."),
     ("h1", "What we did"),
     ("h2", "Spring planting"),
@@ -26,7 +26,7 @@ DOC = [
     ("h1", "Next steps"),
     ("bullets", ["Lay a gravel path to the far corner before the first frost",
                  "Install a second water butt beside the compost area",
-                 "Plan the winter programme: bulbs, pruning and tool-sharpening days"]),
+                 "Plan the winter program: bulbs, pruning and tool-sharpening days"]),
     ("p", "The team will report back at the January meeting with costs and a volunteer rota."),
 ]
 
@@ -73,7 +73,7 @@ CV = {
                      "Wrote four successful grant applications totalling EUR 850,000."]},
         {"title": "Project Officer", "dates": "09/2017 \u2013 02/2021", "org": "Demo Urban Greening Office  \u2022  Otherville, Exampleland",
          "bullets": ["Planned and monitored 30 pocket-park installations.",
-                     "Introduced a shared monitoring spreadsheet used by six partner organisations."]},
+                     "Introduced a shared monitoring spreadsheet used by six partner organizations."]},
     ],
     "education": [("MSc Environmental Management", "Example University of Technology, Sampletown", "2015 \u2013 2017"),
                   ("BSc Geography", "Sample State University, Otherville", "2012 \u2013 2015")],
@@ -99,7 +99,7 @@ RESUME_EXTRA = {
 
 # Invented student paper. The sources are fictional; replace them with real ones.
 PAPER = {
-    "title": "Community Gardens and Neighbourhood Wellbeing",
+    "title": "Community Gardens and Neighborhood Wellbeing",
     "author": "Jane Doe", "surname": "Doe", "affiliation": "Example University",
     "course": "SOC 210: Urban Communities", "instructor": "Dr. Mary Major", "date": "October 26, 2026",
     "body": [
@@ -107,10 +107,10 @@ PAPER = {
               "This paper reviews two recent studies and argues that the clearest benefit is social rather than nutritional {c1}."),
         ("h1", "Background"),
         ("p", "Early work on urban gardening focused on food production and cost savings. More recent studies ask instead how shared growing spaces "
-              "change the way neighbours know and trust one another {c2}."),
+              "change the way neighbors know and trust one another {c2}."),
         ("h2", "Measuring wellbeing"),
         ("p", "Both studies rely on short surveys given at the start and end of a growing season. Respondents rate their sense of belonging, "
-              "and the researchers compare gardeners with a matched group of non-gardening neighbours."),
+              "and the researchers compare gardeners with a matched group of non-gardening neighbors."),
         ("h1", "Discussion"),
         ("p", "The two studies agree on the direction of the effect and differ on its size. The larger effect appears where gardens run open weekly sessions, "
               "which suggests that the schedule matters as much as the soil {c1}."),
@@ -139,13 +139,13 @@ SCRIPTS = {
 # Extra blocks for papers (--extras): an abstract, a block quote and a captioned table.
 PAPER_EXTRAS = {
     "abstract": ("This paper compares two recent studies of community gardens and argues that their clearest benefit is social. "
-                 "It summarises how each study measured belonging, notes where the findings agree, and suggests that weekly open sessions "
+                 "It summarizes how each study measured belonging, notes where the findings agree, and suggests that weekly open sessions "
                  "matter more than garden size."),
-    "keywords": "community gardens, belonging, urban neighbourhoods",
+    "keywords": "community gardens, belonging, urban neighborhoods",
     "quote": ("The garden gate is rarely locked, and that, more than the vegetables, seems to be the point: anyone may walk in, "
               "pick up a trowel, and be asked what they are growing."),
     "table_caption": ("Table 1", "Survey sample by group"),
-    "table_rows": [["Group", "Respondents", "Mean belonging score"], ["Gardeners", "112", "4.1"], ["Neighbours", "102", "3.4"]],
+    "table_rows": [["Group", "Respondents", "Mean belonging score"], ["Gardeners", "112", "4.1"], ["Neighbors", "102", "3.4"]],
 }
 
 # Invented manuscript (a short novel opening). Markup used by --text files too: a line "# Title" starts a chapter, a line "#" or "* * *" alone is a scene break,
@@ -153,7 +153,7 @@ PAPER_EXTRAS = {
 MANUSCRIPT = {
     "title": "Salt and Lantern Light",
     "author": "Rowan Tilby", "pen": "Rowan Tilby", "surname": "Tilby",
-    "address": ["14 Example Row", "Harbourside, EX1 2AB, United Kingdom"],
+    "address": ["14 Example Row", "Harborside, OR 97000"],
     "phone": "(555) 010-0142", "email": "rowan.tilby@example.com",
     "text": """# Chapter One: The Last Boat
 
@@ -198,7 +198,7 @@ THE END
 # lines is a character cue with dialogue, and a line in (parentheses) inside it is a parenthetical; everything else is action. *word* is italic.
 SCREENPLAY = {
     "title": "The Last Signal", "author": "Sam Whitlock",
-    "contact": ["14 Example Row", "Harbourside, EX1 2AB", "(555) 010-0142", "sam.whitlock@example.com"],
+    "contact": ["14 Example Row", "Harborside, OR 97000", "(555) 010-0142", "sam.whitlock@example.com"],
     "draft": "First draft",
     "text": """FADE IN:
 
@@ -295,7 +295,7 @@ Ida must decide whether to leave and let her mother's lamp go out, or to take ov
 # ((parenthetical) lines inside a speech are kept), BLACKOUT. / CURTAIN. / END OF PLAY close a scene or the play, *word* is italic.
 STAGEPLAY = {
     "title": "Weather Station", "author": "Casey Larkin", "credit": "a play in one act", "draft": "First draft",
-    "contact": ["14 Example Row", "Harbourside, EX1 2AB", "(555) 010-0142", "casey.larkin@example.com"],
+    "contact": ["14 Example Row", "Harborside, OR 97000", "(555) 010-0142", "casey.larkin@example.com"],
     "text": """CHARACTERS
 MIRA OKONKWO, 40s, the station keeper
 DEV HALLORAN, 20s, her new assistant
@@ -360,4 +360,37 @@ CURTAIN.
 
 END OF PLAY
 """,
+}
+
+# Invented quarterly program review (the `report` kind). Nothing here is real.
+REPORT = {
+    "title": "Community Garden Program",
+    "subtitle": "Quarterly Review, Q3 2026",
+    "meta": [("Project", "Community Garden Program"), ("Period", "July – September 2026"),
+             ("Prepared by", "Program team"), ("Status", "On track")],
+    "summary": ("The garden finished the third quarter on schedule and slightly under budget. Eleven of twelve planned beds are in use, "
+                "six workshops ran with strong attendance, and volunteer numbers held steady through the summer heat. "
+                "One item needs a board decision: funding for a water point in the far corner."),
+    "kpis": [("11 of 12", "Raised beds in use"), ("86%", "Volunteer retention"), ("$9,400", "Spent of $12,000 budget"), ("6", "Workshops held")],
+    "highlights": ["Beds 10 and 11 were built and planted in August with the help of a school group",
+                   "The seed-saving evening was fully booked a week in advance",
+                   "Volunteer sign-ins rose 12% over the second quarter"],
+    "milestones": [["Milestone", "Owner", "Due", "Status"],
+                   ["Build beds 9–11", "Facilities", "Aug 15", "Complete"],
+                   ["Autumn workshop series", "Education", "Oct 31", "On track"],
+                   ["Second water butt installed", "Facilities", "Sep 30", "At risk"],
+                   ["Gravel path to far corner", "Facilities", "Sep 15", "Delayed"]],
+    "budget": [["Category", "Budget", "Actual", "Variance"],
+               ["Soil and compost", "$3,000", "$2,750", "+$250"],
+               ["Tools and materials", "$4,500", "$4,380", "+$120"],
+               ["Workshops", "$2,500", "$2,270", "+$230"],
+               ["Contingency", "$2,000", "$0", "+$2,000"]],
+    "risks": [["Risk", "Rating", "Mitigation"],
+              ["Far corner has no water point", "High", "Request board approval for a water line in October"],
+              ["Fewer weekday volunteers", "Medium", "Pair weekday sessions with the school visit schedule"],
+              ["Early frost before bulbs go in", "Low", "Keep row covers in the tool shed"]],
+    "next": ["Lay the gravel path and install the second water butt before the first frost",
+             "Run the three remaining autumn workshops",
+             "Bring costs for the water line to the January board meeting"],
+    "note": "Figures are from the volunteer sign-in sheets, the seed log and the treasurer's ledger (invented sample data).",
 }
