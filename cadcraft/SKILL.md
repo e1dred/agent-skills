@@ -172,6 +172,12 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - **Setups that mattered:** `compare {"path":other.dxf}` before `compare.next|previous|compareexport|compareclose`; `attdef` + `block` + `insert {"attribs"}` for `-attedit`; `layerstate.save` for `layerstate.rename|delete`; **`dimstyle.current {"name":"ISO-25"}` / `style.current {"name":"Standard"}` before `dimstyle.delete` / `style.delete`** (the current style cannot be deleted); `grip.move|stretch {"handle","index","to"}`, `grip.mirror|rotate|scale {"handles","base",…}`, `grip.option {"handle","index","option":"addVertex","to"}` ran on a line or polyline; `-vports {"option":"list"}`, `-xref {"option":"?"}`, `-linetype {"load":"CENTER"}`, `-group {"option":"create","name","handles"}`, `-block {"name","base","handles","keep":"retain"}`.
 - **Refused:** `arrayclose` (No array is being edited.). `arrayclose {}` answered "No array is being edited": `arrayedit` finishes at once headless, so there is nothing to close.
 
+## Touching up an existing drawing: label clearance (2026-10-26, 0.13.0; before/after PDFs looked at)
+> **Versions:** 0.13.0 only. A finished 285-entity schematic was copied, checked and edited without changing any geometry (same entity counts before and after); the original files were left alone and the result saved under new names.
+- **Find tight labels by script:** `entities {"type":"Text","limit":500}` gives each text's `insert`, `height`, `halign` (left/center/right), `valign`, `rotation`; estimate its box as width = 0.52 x height x characters, expand it by 1 mm, and test it against every `Line` segment and `Polyline` segment (`geometry.vertices[].p.{x,y}`, closed polylines add the last edge) and against other texts. It flagged the six switch symbols (12 hits: "SW1" and "LED OUT +" hugging the box outline) and nothing else, which matched what the 220 dpi render showed.
+- **Fix with `move {"handles":[h],"delta":[dx,dy]}`** on the copy (`run copy.dxf --cmd 'move {...}' ... --save new.dxf --export new.pdf`): +1.2/+1.0 mm for the switch name labels and -1.5/+1.4 mm for right-aligned pin labels cleared the box edges (hits 12 to 0); pin labels beside a terminal circle moved 2 mm away from it.
+- **Check every nudge in the render:** moving "DC IN +" 2 mm right made it run into the next text line ("controller"), and moving it down put it against the switch's contact arm: both were reverted. The script's text-width estimate did not catch the first (0 hits) because the neighbouring text was centred: always look at the crop at 220 dpi (`gs -sDEVICE=png16m -r220`) before and after.
+
 ## Log
 - 2026-10-25: first task: a 6-switch/relay/controller/strip wiring schematic on A3 (layers, symbols, legend, export to DXF/PDF/PNG), opened in the live window.
 - 2026-10-26: round 2 (headless + live bridge): dimensions, hatch/gradient, blocks/attributes, layouts/viewports/PDF, editing, properties, DWG, .scr; `tools/ccrun.py`.
@@ -188,3 +194,4 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - 2026-10-26: gap round: erase and qsave.
 - 2026-10-26: round 13: the remaining draw/dimension/constraint/layer/table/view/layout/settings ids (no live window).
 - 2026-10-26: the last 62 command ids run with their setups (smoke test).
+- 2026-10-26: label-clearance touch-up of a finished schematic (text-box vs segment check, `move` deltas, render comparison).
