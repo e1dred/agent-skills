@@ -1,0 +1,7 @@
+Region,Product,Qty,Price,Date
+North,Widget,10,2.5,2026-01-05
+South,Gadget,4,10,2026-02-11
+North,Gadget,7,10,2026-02-20
+East,Widget,12,2.5,2026-03-02
+South,Widget,3,2.5,2026-03-15
+East,Gizmo,9,7.25,2026-04-01

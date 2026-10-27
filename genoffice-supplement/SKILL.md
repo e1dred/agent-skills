@@ -12,7 +12,7 @@ what running the app showed. Tested on GenOffice 0.12.117 (Linux AppImage), CLI 
 GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx), Sheets (.xlsx) and Slides (.pptx ops and the page-spec build) are covered, plus the conversions that reach the Markdown, HTML and PDF editors. The live editor (`open`, `selection`, writes to an open file) is covered too.
 
 ## Word-op sweep, 2026-10-27, GenOffice 0.12.117 (headless CLI `genoffice docs apply`)
-Method: fresh copy of a 9-block docx per op, apply, then read back with `docs read` flags, unzip the XML, and render (`genoffice render x.docx --out dir`, one PNG per page) and look.
+Method (scripts in `tools/`, re-run with `tools/run_sweeps.sh`): fresh copy of a 9-block docx per op, apply, then read back with `docs read` flags, unzip the XML, and render (`genoffice render x.docx --out dir`, one PNG per page) and look.
 
 Status "ok" only means the op was accepted. Check the XML or the render.
 

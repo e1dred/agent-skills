@@ -14,6 +14,7 @@ Use it **next to** GenOffice's own skills, not instead of them. If GenOffice lat
 | File | What it is |
 |---|---|
 | [`SKILL.md`](SKILL.md) | The skill: results of a sweep of the Word (`docs apply`) ops, traps, and the document-style rebuilds compared with WordCraft and ONLYOFFICE |
+| [`tools/`](tools/) | Scripts to re-run the sweeps and the style comparison when GenOffice updates (sample data invented): `tools/run_sweeps.sh` |
 | [`build_genoffice.py`](build_genoffice.py) | Builds a styled document in GenOffice from the same app-neutral plan as `../styles` (reads `../styles/plan.py`, changes nothing there) |
 
 Everything is tested on GenOffice 0.12.117 (Linux AppImage), headless. Each result says whether it was read back from the XML or rendered.

@@ -1,0 +1,6 @@
+[
+{"op":"addElement","target":{"slide":0},"kind":"textbox","offset":{"x":914400,"y":457200,"cx":7315200,"cy":762000},"paragraphs":[{"runs":[{"text":"Quarterly Review","bold":true,"fontSize":32}]}]},
+{"op":"addElement","target":{"slide":0},"kind":"rect","offset":{"x":914400,"y":1600200,"cx":3200400,"cy":1371600},"fill":"#1F4E79","paragraphs":[{"runs":[{"text":"Box A","color":"#FFFFFF"}],"align":"center"}]},
+{"op":"addElement","target":{"slide":0},"kind":"ellipse","offset":{"x":4800600,"y":1600200,"cx":1828800,"cy":1371600},"fill":"#C00000"},
+{"op":"addBlankSlide","target":{"slide":0}}
+]
