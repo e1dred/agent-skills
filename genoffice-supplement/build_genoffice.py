@@ -80,6 +80,12 @@ def post_process(out, P):
         bdr = "".join(_border(side, p["border_" + side]) for side in ("top", "left", "bottom", "right") if p.get("border_" + side))
         if bdr:
             blk = re.sub(r"(<w:pPr>.*?)(<w:(?:shd|tabs|spacing|ind|jc|outlineLvl)\b)", lambda mm: mm.group(1) + "<w:pBdr>" + bdr + "</w:pBdr>" + mm.group(2), blk, count=1, flags=re.S)
+        if p.get("indent_first") == 0:   # define_style drops a zero first-line indent, so the style inherits Normal's (academic: 0.5 in); write it
+            if "<w:ind " in blk:
+                if "w:firstLine=" not in blk and "w:hanging=" not in blk:
+                    blk = blk.replace("<w:ind ", '<w:ind w:firstLine="0" ', 1)
+            else:
+                blk = re.sub(r"(<w:pPr>.*?)(<w:(?:contextualSpacing|jc|outlineLvl)\b|</w:pPr>)", lambda mm: mm.group(1) + '<w:ind w:firstLine="0"/>' + mm.group(2), blk, count=1, flags=re.S)
         if p.get("spacing"):   # letter-spacing in twentieths of a point, goes before w:sz in rPr
             blk = blk.replace("<w:sz ", '<w:spacing w:val="%d"/><w:sz ' % round(p["spacing"] * 20), 1)
         st = st.replace(m.group(0), blk)
@@ -134,11 +140,41 @@ def build(style, kind, o, out):
             figs.append((idx, kd))
             ops.append({"op": "applyStyle", "target": {"blockIndexes": [idx]}, "styleId": STYLE_IDS[kd["caption_style"]]}); idx += 1; continue
         ops.append({"op": "applyStyle", "target": {"blockIndexes": [idx]}, "styleId": STYLE_IDS[st]}); idx += 1
+    styles_d = dict(P["styles"])
     for ti, t in tabs:
         tgt = {"blockIndexes": [ti]}; ncol = len(t["rows"][0]); merged = bool(t.get("merge"))
+        if t.get("rich"):      # report tables: per-cell styles and status fills, optional widths, header row and grid
+            ops.append({"op": "setTableCellFormat", "target": tgt, "borders": ({"all": {"style": "single", "width": 0.5, "color": "#" + t["border"]}} if t["grid"] else None), "vAlign": "center"})
+            base = styles_d.get(t["style"], {})
+            ops.append({"op": "setFont", "target": tgt, "fontFamily": base.get("font", P["font"]["body"]), "fontSize": base.get("size", 9.5), "color": "#" + base.get("color", "000000")})
+            ops.append({"op": "setParagraphFormat", "target": tgt, "spaceBefore": int(base.get("before", 2) * 20), "spaceAfter": int(base.get("after", 2) * 20), "lineSpacing": 1.0})
+            if t.get("widths"):
+                for ci, fr in enumerate(t["widths"]):
+                    ops.append({"op": "setTableCellFormat", "target": tgt, "range": {"row": 0, "col": ci}, "width": int(fr * P["width"] * 20)})
+            if t["header"]:
+                ops.append({"op": "setTableCellFormat", "target": tgt, "range": {"row": 0, "col": 0, "colEnd": ncol - 1}, "fill": "#" + t["fill"]})
+            for key, (fill, tcol) in t.get("fills", {}).items():
+                r_, c_ = map(int, key.split(","))
+                ops.append({"op": "setTableCellFormat", "target": tgt, "range": {"row": r_, "col": c_}, "fill": "#" + fill})
+            for ri, row in enumerate(t["rows"]):
+                for ci, cell in enumerate(row):
+                    if not cell: continue
+                    cs = styles_d.get(t["cell_styles"][ri][ci], {}); f = {}
+                    if cs.get("font"): f["fontFamily"] = cs["font"]
+                    if cs.get("size"): f["fontSize"] = cs["size"]
+                    if cs.get("color"): f["color"] = "#" + cs["color"]
+                    if cs.get("bold"): f["bold"] = True
+                    if cs.get("italic"): f["italic"] = True
+                    if t["header"] and ri == 0: f.update(bold=True, color="#" + t["text"])
+                    tcol = t.get("fills", {}).get("%d,%d" % (ri, ci), (None, None))[1]
+                    if tcol: f.update(bold=True, color="#" + tcol)
+                    if t["cell_styles"][ri][ci] != t["style"] or "bold" in f:
+                        ops.append(dict({"op": "setMatchedFont", "text": cell, "target": tgt}, **f))
+            continue
         ops.append({"op": "setTableCellFormat", "target": tgt, "range": {"row": 0, "col": 0, "colEnd": ncol - 1}, "fill": "#" + t["fill"], "vAlign": "center"})
         ops.append({"op": "setTableCellFormat", "target": tgt, "borders": {"all": {"style": "single", "width": 0.5, "color": "#" + t["border"]}}})
         ops.append({"op": "setFont", "target": tgt, "fontFamily": P["font"]["body"], "fontSize": 9.5})
+        ops.append({"op": "setParagraphFormat", "target": tgt, "spaceBefore": 40, "spaceAfter": 40, "lineSpacing": 1.0})   # cell paragraphs otherwise take Normal's spacing
         ops.append({"op": "setMatchedFont", "text": t["rows"][0][0], "color": "#" + t["text"], "bold": True, "target": tgt})
         if merged:
             ops.append({"op": "mergeTableCells", "target": tgt, "range": {"row": 0, "col": 0, "colEnd": ncol - 1}})
