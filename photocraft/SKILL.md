@@ -582,6 +582,106 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - **File and view odds:** `file.import.videoFramesToLayers {"path":"/abs/anim.gif"}` → `{layers:3}` (one layer per frame); `layer.videoLayers.newBlankVideoLayer` then `file.export.renderVideo {"dir":"vout"}` → `{dir,frames:1}` and wrote `vout/base_0000.png` (a PNG sequence, not a movie); `file.import.wiaSupport {}` → `{available:false,…}` (Windows scanner import only); `file.scripts.flattenAllLayerEffects {}` → `{flattened:0}`, `file.scripts.flattenAllMasks {}` → `{flattened:0,skipped:0}`; `file.scripts.scriptEventsManager {}` → `{bindings:[],enabled:false,events:[…]}`; `file.scripts.browse {}` needs `path`, `script` or `steps`; `file.export.presets.list {}` → `{presets:[]}` on a fresh install; `view.setRulerOrigin {"x":100,"y":50}`, `view.resetRulerOrigin`, `view.moveGuide`, `view.clearGuides`, `view.clearCanvasGuides` ran; `view.thirtyTwoBitPreviewOptions` only on a 32-bit document.
 - Not run: `layer.new.artboardFromLayers`, `layer.new.frameFromLayers`, `channel.merge`, `file.export.artboardsToPdf`, `layer.setEffectsVisible`/`setEffectsExpanded`, `layerComp.next`/`previous`/`reorder`.
 
+## Round: every remaining command id swept on a scratch document (2026-10-26, 0.16.0, headless)
+> **Versions:** 0.16.0 only, CLI only. **What this proves and what it does not:** each id below was run with `photocraft-cli run --new` on a 400x300 document holding a rectangle, an ellipse and a type layer (or the state the id needs: a flattened pixel layer with a selection, a smart object with a smart filter, a video layer, layer comps, a path with a vector mask, saved alpha channels, a warp grid), with `{}` or the minimal parameters its error asked for, and **returned without an error**. Results were NOT rendered or compared, so "ran" means the command exists and accepts those parameters; effects are documented in the sections above wherever they were looked at. Scratch files only; `preferences.json` was not touched.
+- **Ran (355 ids, written out in full so `coverage.sh` can count them):**
+
+```
+brush.presets.delete brush.presets.importImage brush.presets.move brush.presets.moveGroup brush.presets.setCurrent
+brush.presets.update channel.target.slot4 channel.target.slot5 channel.target.slot6 channel.target.slot7
+channel.target.slot8 channel.target.slot9 cloneSource.select color.profileMismatch count.deleteGroup
+document.presets.delete document.presets.get document.presets.list edit.menus edit.pasteSpecial.pasteInto
+edit.pasteSpecial.pasteOutside edit.toolbar edit.transform.removeWarpSplit edit.transform.rotate180
+edit.transform.rotate90Ccw edit.transform.rotate90Cw edit.transform.splitWarpCrosswise
+edit.transform.splitWarpHorizontally edit.transform.splitWarpVertically file.export.layerCompsToFiles
+file.export.layersToFiles file.export.presets.delete file.export.presets.get file.placeLinked filter.blur.average
+filter.blur.blur filter.blur.blurMore filter.blur.boxBlur filter.blur.lensBlur filter.blur.motionBlur
+filter.blur.radialBlur filter.blur.shapeBlur filter.blur.smartBlur filter.blur.surfaceBlur
+filter.blurGallery.fieldBlur filter.blurGallery.irisBlur filter.blurGallery.pathBlur filter.blurGallery.spinBlur
+filter.distort.pinch filter.distort.polarCoordinates filter.distort.ripple filter.distort.shear filter.distort.twirl
+filter.distort.wave filter.distort.zigZag filter.gallery.accentedEdges filter.gallery.angledStrokes
+filter.gallery.basRelief filter.gallery.chalkCharcoal filter.gallery.charcoal filter.gallery.chrome
+filter.gallery.coloredPencil filter.gallery.conteCrayon filter.gallery.craquelure filter.gallery.crosshatch
+filter.gallery.cutout filter.gallery.darkStrokes filter.gallery.diffuseGlow filter.gallery.dryBrush
+filter.gallery.filmGrain filter.gallery.fresco filter.gallery.glass filter.gallery.glowingEdges filter.gallery.grain
+filter.gallery.graphicPen filter.gallery.halftonePattern filter.gallery.inkOutlines filter.gallery.mosaicTiles
+filter.gallery.neonGlow filter.gallery.notePaper filter.gallery.oceanRipple filter.gallery.paintDaubs
+filter.gallery.paletteKnife filter.gallery.patchwork filter.gallery.photocopy filter.gallery.plaster
+filter.gallery.plasticWrap filter.gallery.posterEdges filter.gallery.reticulation filter.gallery.roughPastels
+filter.gallery.smudgeStick filter.gallery.spatter filter.gallery.sponge filter.gallery.sprayedStrokes
+filter.gallery.stainedGlass filter.gallery.stamp filter.gallery.sumiE filter.gallery.texturizer
+filter.gallery.tornEdges filter.gallery.underpainting filter.gallery.waterPaper filter.gallery.watercolor
+filter.noise.despeckle filter.noise.dustAndScratches filter.noise.median filter.other.colorToAlpha filter.other.custom
+filter.other.highPass filter.other.hsbHsl filter.other.maximum filter.other.minimum filter.pixelate.colorHalftone
+filter.pixelate.crystallize filter.pixelate.facet filter.pixelate.fragment filter.pixelate.mezzotint
+filter.pixelate.mosaic filter.pixelate.pointillize filter.render.clouds filter.render.differenceClouds
+filter.render.fibers filter.render.lensFlare filter.render.lightingEffects filter.render.relight
+filter.sharpen.sharpenEdges filter.sharpen.sharpenMore filter.stylize.diffuse filter.stylize.emboss
+filter.stylize.extrude filter.stylize.findEdges filter.stylize.solarize filter.stylize.tiles
+filter.stylize.traceContour filter.stylize.wind filter.video.deInterlace filter.video.ntscColors
+gradient.presets.reset history.deleteSnapshot history.stepBackward history.stepForward image.adjustments.colorBalance
+image.adjustments.colorLookup image.adjustments.desaturate image.adjustments.gradientMap image.adjustments.hdrToning
+image.adjustments.invert image.adjustments.posterize image.adjustments.selectiveColor image.adjustments.threshold
+image.analysis.placeScaleMarker image.analysis.selectDataPoints image.imageRotation.flipCanvasVertical
+image.mode.colorTable jobs.cancel jobs.list layer.addBelowToSelection layer.align.bottomEdges
+layer.align.horizontalCenters layer.align.rightEdges layer.align.verticalCenters layer.arrange.reverse
+layer.arrange.sendToBack layer.artboard.set layer.combineShapes.excludeOverlappingShapes
+layer.combineShapes.intersectShapeAreas layer.combineShapes.mergeShapeComponents layer.distribute.bottomEdges
+layer.distribute.horizontalCenters layer.distribute.horizontally layer.distribute.rightEdges layer.distribute.topEdges
+layer.distribute.verticalCenters layer.distribute.vertically layer.fill.pattern.set layer.fill.solidColor.set
+layer.layerMask.edit layer.layerMask.enabled layer.layerMask.linked layer.layerStyle.bevelEmboss
+layer.layerStyle.blendingOptions layer.layerStyle.colorOverlay layer.layerStyle.contours.list
+layer.layerStyle.contours.new layer.layerStyle.copyLayerStyle layer.layerStyle.globalLight
+layer.layerStyle.gradientOverlay layer.layerStyle.hideAllEffects layer.layerStyle.innerGlow
+layer.layerStyle.innerShadow layer.layerStyle.makeDefault layer.layerStyle.outerGlow layer.layerStyle.pasteLayerStyle
+layer.layerStyle.patternOverlay layer.layerStyle.satin layer.layerStyle.scaleEffects layer.layerStyle.showAllEffects
+layer.matting.colorDecontaminate layer.matting.removeBlackMatte layer.matting.removeWhiteMatte
+layer.newAdjustmentLayer.blackWhite layer.newAdjustmentLayer.brightnessContrast layer.newAdjustmentLayer.channelMixer
+layer.newAdjustmentLayer.colorBalance layer.newAdjustmentLayer.curves layer.newAdjustmentLayer.exposure
+layer.newAdjustmentLayer.gradientMap layer.newAdjustmentLayer.invert layer.newAdjustmentLayer.photoFilter
+layer.newAdjustmentLayer.posterize layer.newAdjustmentLayer.threshold layer.newAdjustmentLayer.vibrance
+layer.newFillLayer.pattern layer.rasterize.smartObject layer.rasterize.vectorMask layer.rasterize.video
+layer.selectAbove layer.selectBelow layer.selectBottom layer.setEffectsExpanded layer.smartFilter.blendingOptions
+layer.smartFilter.clearSmartFilters layer.smartFilter.delete layer.smartFilter.deleteFilterMask
+layer.smartFilter.disableSmartFilters layer.smartFilter.move layer.smartFilter.setVisible
+layer.smartObjects.convertToEmbedded layer.smartObjects.convertToLayers layer.smartObjects.editContents
+layer.smartObjects.exportContents layer.smartObjects.newSmartObjectViaCopy layer.smartObjects.puppetWarp
+layer.smartObjects.rasterize layer.smartObjects.relinkToFile layer.smartObjects.replaceContents
+layer.smartObjects.stackMode.entropy layer.smartObjects.stackMode.kurtosis layer.smartObjects.stackMode.maximum
+layer.smartObjects.stackMode.mean layer.smartObjects.stackMode.median layer.smartObjects.stackMode.minimum
+layer.smartObjects.stackMode.none layer.smartObjects.stackMode.range layer.smartObjects.stackMode.skewness
+layer.smartObjects.stackMode.standardDeviation layer.smartObjects.stackMode.summation
+layer.smartObjects.stackMode.variance layer.smartObjects.updateAllModifiedContent layer.smartObjects.updateChanged
+layer.smartObjects.updateModifiedContent layer.vectorMask.currentPath layer.vectorMask.delete layer.vectorMask.edit
+layer.vectorMask.enabled layer.vectorMask.hideAll layer.vectorMask.linked layer.vectorMask.revealAll
+layer.videoLayers.deleteFrame layer.videoLayers.duplicateFrame layer.videoLayers.insertBlankFrame
+layer.videoLayers.interpretFootage layer.videoLayers.newVideoLayerFromFile layer.videoLayers.rasterize
+layer.videoLayers.replaceFootage layer.videoLayers.restoreAllFrames layer.videoLayers.restoreFrame
+layer.videoLayers.showAlteredVideo layerComp.delete layerComp.duplicate layerComp.list layerComp.previous
+layerComp.rename layerComp.reorder layerComp.setOptions measurementLog.delete measurementLog.export
+measurementLog.list paint.blur paint.burn paint.sharpen path.clippingPath.clear path.style.pasteFill
+pattern.presets.select prefs.get prefs.reset shape.presets.edit shape.presets.list shape.presets.reset
+style.presets.reset swatches.delete swatches.deleteGroup swatches.move swatches.renameGroup swatches.reset
+swatches.use timeline.previousFrame tool.presets.edit tool.presets.reset tools.decreaseBrushHardness
+tools.decreaseBrushSize tools.increaseBrushHardness tools.lastBrush tools.previousBrush type.antiAlias.crisp
+type.antiAlias.sharp type.antiAlias.smooth type.antiAlias.strong type.antiAlias.windows type.antiAlias.windowsLcd
+type.characterStyle.apply type.characterStyle.clearOverride type.characterStyle.delete type.characterStyle.duplicate
+type.characterStyle.list type.characterStyle.redefine type.characterStyle.rename type.characterStyle.set
+type.decreaseSize type.decreaseSizeMore type.detachFromPath type.increaseSizeMore type.loadDefaultTypeStyles
+type.openType.contextualAlternates type.openType.discretionaryLigatures type.openType.fractions type.openType.oldstyle
+type.openType.ordinals type.openType.ornaments type.openType.stylisticAlternates type.openType.swash
+type.openType.titlingAlternates type.orientation.horizontal type.paragraphStyle.apply
+type.paragraphStyle.clearOverride type.paragraphStyle.delete type.paragraphStyle.duplicate type.paragraphStyle.list
+type.paragraphStyle.redefine type.paragraphStyle.rename type.paragraphStyle.set type.rasterizeTypeLayer
+type.replaceAllMissingFonts variables.list view.clearSelectedArtboardGuides view.colorSamplers.clear
+view.colorSamplers.delete view.colorSamplers.list view.proofSetup view.proofSetup.colorBlindnessDeuteranopia
+view.proofSetup.legacyMacintoshRgb view.proofSetup.workingBlackPlate view.proofSetup.workingCmyPlate
+view.proofSetup.workingCyanPlate view.proofSetup.workingMagentaPlate view.proofSetup.workingYellowPlate
+```
+- **Refused with a reason on the default state (22; the reason is the lesson):** `brush.presets.deleteGroup` (invalid parameters for brush.presets.deleteGroup: no brush preset gr); `brush.presets.renameGroup` (invalid parameters for brush.presets.renameGroup: no brush preset gr); `document.recent.add` (invalid parameters for document.recent.add: settings must be an ob); `edit.presets.migratePresets` (invalid parameters for edit.presets.migratePresets: need path to a); `file.exrParts` (invalid parameters for file.exrParts: missing "path"); `file.import.notes` (swap.png has no notes); `file.revealInFinder` (invalid parameters for file.revealInFinder: document 0 has no saved ); `file.revert` (command file.revert is not available right now: the document has nev); `gradient.presets.importGrd` (invalid parameters for gradient.presets.importGrd: not a readable gr); `layer.layerStyle.contours.delete` (invalid parameters for layer.layerStyle.contours.delete: no user con); `layer.layerStyle.contours.load` (not a contour file: invalid signature [137, 80, 78, 71], expected 8BFS); `layer.layerStyle.contours.save` (invalid parameters for layer.layerStyle.contours.save: there are no ); `layer.smartFilter.disableFilterMask` (command layer.smartFilter.disableFilterMask is not available right n); `layer.smartFilter.transfer` (invalid parameters for layer.smartFilter.transfer: the smart filters); `layer.smartObjects.convertToLinked` (the smart object's contents are unavailable (missing linked file?), so); `layer.smartObjects.revealInFinder` (command layer.smartObjects.revealInFinder is not available right now); `layer.smartObjects.saveContents` (command layer.smartObjects.saveContents is not available right now: ); `layer.videoLayers.reloadFrame` (invalid parameters for layer.videoLayers.reloadFrame: this layer has); `path.style.copyStroke` (command path.style.copyStroke is not available right now: shape has ); `path.style.pasteStroke` (command path.style.copyStroke is not available right now: shape has ); `pattern.presets.edit` (invalid parameters for pattern.presets.edit: missing action); `prefs.set` (invalid parameters for prefs.set: give path and value, or value)
+- **Not run on purpose (33):** `file.print*`, `file.open`, `file.close*`, `file.newFromClipboard`, `help.*`, `plugin.*`, `session.*`, `command.list`, `updates.*`, `document.activate|move`, `edit.preferences.*` setters (they are read-only anyway), `prefs.set` (writes the user's preference file).
+- **Patterns worth knowing:** (1) **101 filter ids answered "filters need a pixel layer"** when the active layer was a shape or type layer: `layer.flattenImage` or rasterize first, or `layer.smartObjects.convertToSmartObject` to make them smart filters; (2) commands for smart objects, video layers, layer comps, vector masks, artboards, warps and alpha channels say what object they need ("select a video layer", "the active layer is not a smart object", "no channel for slot 6"): create it in the same `run`; (3) a shape layer's path already is its vector mask (`layer.vectorMask.add` refuses), so test vector masks on a pixel layer; (4) preset-library commands need the real names (`brush.presets.moveGroup {"group":"General","to":0}`, `swatches.move {"swatch":"Black","to":"Grays"}` where `to` is a GROUP name, `tool.presets.edit {"action":"rename","preset":"Hard Round 12 px","name":"HR"}`, `type.characterStyle.* {"id":1,…}`, `file.export.presets.get|delete {"name"}`, `document.presets.get|delete {"name"}`); (5) `layer.layerStyle.contours.new {"name":"C1","contour":"linear"}` makes a user contour; `contours.delete|save` need one to exist; (6) `layer.smartFilter.move {"index":0,"to":1}` (index of the filter, `to` 0..1 here with two filters); `edit.transform.splitWarpVertically {"at":[x,y]}` needs a warp grid first (`edit.transform.warpGrid {"size":"3"}` on a smart object); (7) `measurementLog.delete {"all":true}` or `{"rows":[ids]}`; `paint.burn|dodge|blur|sharpen` need a PIXEL layer.
+
 ## Log
 
 - 2026-10-24: Second background-removal run with a dense, grid-read trace + smooth/contract: IoU vs a good reference
@@ -611,3 +711,4 @@ gradient test would have looked fine in `info` but had its colours the wrong way
 - 2026-10-26 (7): perspective crop corrected again (user: result looked warped): the true page quad from fitted side lines, not a rotated box; pagecorners.py rewritten.
 - 2026-10-26 (8): live marquees, polygon lasso, crop, pen, type (ui.type), move, clone stamp with alt-click verified on 0.16.0.
 - 2026-10-26 (9): align/distribute, shape combining, rasterize variants, channels, layer comps, destructive adjustments, warps, masks, vector masks, variable data sets, import/export odds verified headless on 0.16.0.
+- 2026-10-26 (10): sweep of every remaining command id on a scratch document (355 ran, 22 refused with a reason, 33 skipped on purpose); not rendered.
