@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ## Unreleased
 
 ### Added
+- `genoffice-supplement` (2026-10-27): live editor checked with the user watching: `open` at a block, range, element or page; `selection` as the user's pointer; `--force` writes to an open file are NOT shown reliably in the window (spreadsheet tab did not update; Word tab showed bold but not the colour), so use `--out` and reopen.
 - README: GenOffice row now links its repository (https://github.com/genspark-ai/genoffice) in the App column, like the other apps.
 - `genoffice-supplement` (2026-10-27): Markdown, HTML and PDF conversion routes checked with one rich document (what survives md to html/pdf/docx, docx to md, pdf to docx/md/html/xlsx); traps: html to docx hangs on any `<img>`, math and footnotes do not become Word math or footnotes, md-generated HTML breaks `create --from html` tables.
 - `genoffice-supplement` (2026-10-27): Sheets sweep (about 45 ops, pivots verified against the data; traps: `protect_sheet` ignores password and allow, formulas the engine lacks get no cached value, batch-visibility splits) and Slides sweep (about 50 ops, `slides audit`, spec build; traps: `setFont`/`setParagraphFormat` field shapes, `setTableStyle` shading the whole table, chart colour scheme ignored on pies).
