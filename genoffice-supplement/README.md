@@ -1,6 +1,6 @@
 # genoffice-supplement
 
-Supplementary [Agent Skill](https://agentskills.io) for GenOffice (Docs, Sheets, Slides, Markdown, HTML and PDF editors, with a `genoffice` CLI and MCP server).
+Supplementary [Agent Skill](https://agentskills.io) for [GenOffice](https://github.com/genspark-ai/genoffice) (Docs, Sheets, Slides, Markdown, HTML and PDF editors, with a `genoffice` CLI and MCP server).
 
 ## What this is, and the one hard rule
 
