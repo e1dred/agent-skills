@@ -9,7 +9,7 @@ description: Supplementary, verified notes on GenOffice (Docs editor and the gen
 a GenOffice-provided skill (its generated `genoffice` skill, the ~45 recommended app skills). Read those first; this adds
 what running the app showed. Tested on GenOffice 0.12.117 (Linux AppImage), CLI and MCP, headless.
 
-GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. Only the Docs (.docx) ops are covered so far.
+GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx) and Sheets (.xlsx) ops are covered so far.
 
 ## Word-op sweep, 2026-10-27, GenOffice 0.12.117 (headless CLI `genoffice docs apply`)
 Method: fresh copy of a 9-block docx per op, apply, then read back with `docs read` flags, unzip the XML, and render (`genoffice render x.docx --out dir`, one PNG per page) and look.
@@ -32,6 +32,22 @@ Verified (XML and/or render): setFont (bold, colour, size, family; link), setMat
 ## Not yet tested
 setFont null (clear), partial-selection edits, setImageProperties on a floating picture, insert_content formula render, insertField IF/PAGEREF, docs apply on a file open in the app (needs --force), `--dry-run`, `--best-effort`, live `open`/`selection`, and comparison with WordCraft/ONLYOFFICE styles.
 
+
+## Sheets sweep (`genoffice sheet apply`), 2026-10-27, GenOffice 0.12.117 (headless)
+Method as for Docs: a 7-row sales table (text, numbers, dates; made with `genoffice create --type xlsx --from base.csv --header`, which freezes row 1 and adds an AutoFilter) copied per case, apply, then `sheet read --range` (values, formulas, `features`) plus the XML (`unzip -p x.xlsx xl/worksheets/sheet1.xml`) and one render.
+Verified (value or XML read back): set_cell (`type:"text"` keeps "=1+1" as literal text), set_formula (SUMIFS, IFERROR+VLOOKUP, XLOOKUP, TEXTJOIN computed and cached), set_range, clear_cell/clear_range, fill_range (formula copies adjust: F2:F7), copy_range (also `filterColumn`/`filterValues`: copied only the North rows), move_range, find_replace, sort_range (desc by Qty with `hasHeader`), format_range (fill, font, bold, alignment, `$#,##0.00`, `yyyy-mm-dd` as real number formats), add_conditional_format (number, colorScale, dataBar, text, duplicate, top10, formula; 6 rules stacked) and clear_conditional_formats, set_data_validation (list, numberBetween, listRef, dateBetween, checkbox, formula), merge/unmerge, row height and column width, hidden rows and columns, freeze, filter and `clear_filter`, set_page_setup (landscape, A4, fit-to-page, narrow margins, print area and titles as defined names, header, footer, row break, gridlines), hyperlink and note, defined names, add_table, add_pivot, add_chart (column, pie, line), edit_chart, add_image, add_shape (roundRect, textbox), add_sparkline (XML written), insert/delete rows and columns (later ops use the shifted grid), add/rename/duplicate/move/hide/delete sheet.
+Pivots work and compute real numbers: rows Region by columns Product with a sum gave North 10/7, South 3/4, East 12/9 and grand totals 45; `showDataAs:"percentOfTotal"`, an `average`, a label filter, and a month grouping of a date row field (Jan 10, Feb 11, Mar 15, Apr 9) all matched the data.
+
+Traps found:
+- **`protect_sheet` ignores `password` and `allow`** (headless): the XML only had `sheet="1" objects="1" scenarios="1"`, no password hash and no allowed-action attributes. Do not rely on it for protection.
+- **Formulas the engine lacks are stored without a cached value:** `FILTER` was written as an array formula with no `<v>`, and `sheet read` showed `#NAME?`; Excel computes it on open. `XLOOKUP`, `TEXTJOIN`, `SUMIFS` and `VLOOKUP` were cached correctly.
+- `convert_to_values` refuses a batch that also edits the cells it converts ("earlier ops in this batch edit cells"): write the formulas in one `apply`, convert in the next.
+- `add_table` fails ("overlaps the sheet…") on a range that has the sheet's AutoFilter: `clear_filter` in a first `apply`, then `add_table`. Same split rule as the Docs ops (later ops in one batch cannot see some earlier ones): also `duplicate_sheet` then `move_sheet` on the copy, and a new sheet then `add_pivot` into it.
+- `move_sheet` `position` is 1-based (0 is rejected). `add_pivot` `sourceRange` takes plain `A1:E7` (a `base!A1:E7` prefix fails the pattern; name the sheet with `sheet`), and `filters`/`groupings` fields must also be row or column fields of the pivot.
+- `add_chart` needs a numeric column in `dataRange` ("needs at least one numeric column"); `edit_chart`'s `chartPath` accepted `xl/charts/chart1.xml` and changed the title and type even though `sheet read` calls the chart `visual-1`.
+- Rendered (`genoffice render`): fills, fonts, colour scale, chart and shape appear; **data bars and sparklines did not show in the render** (their XML exists; not checked in Excel or another app). Wide content splits across pages when printed.
+- Dates from the CSV import arrive as real dates (serial numbers with a date format).
+- Editor-only ops (`refresh_pivot`, table row and column edits, `edit_shape`, `delete_visual`) answer "not available headless (use the GenOffice app)".
 
 ## Style rebuild: `modern` doc via GenOffice vs WordCraft vs ONLYOFFICE (2026-10-27)
 Builder: `build_genoffice.py` in this folder (imports `../styles/plan.py` read-only, so the same plan feeds all three apps). Run: `PYTHONDONTWRITEBYTECODE=1 python3 build_genoffice.py modern doc /abs/out.docx --paper=a4 --page-numbers=bottom-center`. Handles block types p/heading/bullets/table/figure caption text of kind doc; figure picture, footnote, merged title row, columns, header text are not done yet.
