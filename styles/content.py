@@ -58,11 +58,11 @@ RESUME = {
 }
 
 CV = {
-    "name": "Sam Rivera",
+    "name": "John Doe",
     "headline": "Environmental Project Coordinator",
     "address": "Example Street 12, 1000 Sampletown, Exampleland",
     "phone": "+00 000 000 000",
-    "email": "sam.rivera@example.com",
+    "email": "john.doe@example.com",
     "profile": ("Project coordinator with 8 years of experience delivering river-restoration and urban-greening projects across "
                 "three countries. Works comfortably between engineers, local authorities and volunteer groups, and writes the "
                 "funding reports that keep projects running."),
@@ -100,8 +100,8 @@ RESUME_EXTRA = {
 # Invented student paper. The sources are fictional; replace them with real ones.
 PAPER = {
     "title": "Community Gardens and Neighbourhood Wellbeing",
-    "author": "Jordan Morgan", "surname": "Morgan", "affiliation": "Example University",
-    "course": "SOC 210: Urban Communities", "instructor": "Dr. Rowan Ellis", "date": "October 26, 2026",
+    "author": "Jane Doe", "surname": "Doe", "affiliation": "Example University",
+    "course": "SOC 210: Urban Communities", "instructor": "Dr. Mary Major", "date": "October 26, 2026",
     "body": [
         ("p", "Community gardens have become a common feature of mid-sized cities, yet their effect on the people who use them is still debated. "
               "This paper reviews two recent studies and argues that the clearest benefit is social rather than nutritional {c1}."),
