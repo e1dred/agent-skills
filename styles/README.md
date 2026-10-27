@@ -291,4 +291,8 @@ The sample content is generic and invented (Jane Doe for the `-a` layouts, John 
 **For humans, not parsers.** Columns, sidebars, shaded blocks, nested bars and avatars read out of order in an ATS (and several designs repeat text in cells). Use the single-column `resume` kind above when a parser reads the file. The avatar is a generic silhouette placeholder (`avatar()` draws it): replace it with a real photo only where the market expects one.
 Known limits: a full-bleed sidebar stops about 14 pt above the page bottom (the empty paragraph after a table needs room); skill gauges are bars, not circles; icons are plain bullets, not glyphs; fonts are portable Office ones (Century Gothic stands in for Poppins/Montserrat, Georgia/Times for serif display faces).
 
+![The 18 redesigned résumé layouts (Letter)](gallery/resume-designs.png)
+
+![The eight photo-free variants](gallery/resume-designs-nophoto.png)
+
 Vertical lines (fixed 2026-10-26 after a review): timelines use a table style with only the inside-vertical border (one continuous line through all rows, same in ONLYOFFICE), and bordered paragraphs bridge the space before headings by moving it onto the previous paragraph, so lines have no gaps and bullets share the title's left edge.
