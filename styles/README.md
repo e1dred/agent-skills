@@ -285,7 +285,7 @@ The sample content is generic and invented (Jane Doe for the `-a` layouts, John 
 | academic | dense two columns, heavy-ruled caps headings, underlined skill chips, interests and strengths | US graduate style: pale-blue heading bars, bold institution, italic role, right-aligned place and dates |
 | modern | teal banner with tracked serif name, right-aligned left column, hairline spine | bold navy name over a rule, narrow ruled left column, spine with round markers |
 | stylish | full-height dark slate sidebar, dated timeline with a left line | blush side panel, brown caps headings, three columns, green bars |
-| creative | pale tinted page, deep-teal block with avatar, two-tone name | earthy colour blocks: olive header, grey sidebar, terracotta experience panel |
+| creative | pale-blue page, deep-blue block with avatar, two-tone name (navy + sky blue) | colour blocks in two blues: deep-blue header, grey-blue sidebar, medium-blue experience panel |
 | minimal | very tracked name on a mint highlight, lowercase tagline, serif body, mint bars | quiet serif page, spaced small-caps headings, date column, one muted accent |
 
 **For humans, not parsers.** Columns, sidebars, shaded blocks, nested bars and avatars read out of order in an ATS (and several designs repeat text in cells). Use the single-column `resume` kind above when a parser reads the file. The avatar is a generic silhouette placeholder (`avatar()` draws it): replace it with a real photo only where the market expects one.

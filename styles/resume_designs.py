@@ -962,14 +962,14 @@ def stylish_b(doc, D, out_dir):
 
 @design("creative-a")
 def creative_a(doc, D, out_dir):
-    """Pale tinted page, deep-teal block with a round avatar, huge two-tone rounded-sans name, two columns split by a hairline."""
-    TEAL, DARK, TINT, GREY, LINE = "2A6F6B", "1B4F4C", "E8F1F1", "5C6B6A", "BFCFCF"
+    """Pale-blue page, deep-blue block with a round avatar, huge two-tone rounded-sans name, two columns split by a hairline."""
+    TEAL, DARK, TINT, GREY, LINE = "1F5FA8", "12335E", "E9F1FA", "55657A", "BFD0E4"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Century Gothic", "Corbel", "Calibri")
     A = 214.0; B = doc.PW - A
     doc.page_setup(0, 0, 0, 0)
     DIV = (LINE, 0.75, 16)
     S = dict(datefont=BF, datesize=8.3, datecolor=GREY, bulcolor=TEAL)
-    S["n1"] = doc.style("CR First", HF, 34, "6F9C99", bold=True, after=0, line=0.92)
+    S["n1"] = doc.style("CR First", HF, 34, "6FA3D8", bold=True, after=0, line=0.92)
     S["n2"] = doc.style("CR Last", HF, 34, DARK, bold=True, after=2, line=0.92, bottom=(TEAL, 1.0, 6))
     S["ttl"] = doc.style("CR Title", HF, 17, GREY, before=4, after=0)
     S["h"] = doc.style("CR Head", HF, 12, DARK, bold=True, before=16, after=5)
@@ -977,8 +977,8 @@ def creative_a(doc, D, out_dir):
     S["rh"] = doc.style("CR RightHead", HF, 12, DARK, bold=True, before=16, after=5, leftb=DIV)
     S["rt"] = doc.style("CR RightText", BF, 8.6, DARK, after=3, line=1.2, leftb=DIV)
     S["rb"] = doc.style("CR RightBullet", BF, 8.6, DARK, after=2, left=10, first=-10, leftb=DIV)
-    S["rj"] = doc.style("CR RightJob", BF, 8.8, "6F8886", bold=True, before=7, after=1, leftb=DIV)
-    av = avatar(os.path.join(out_dir, "avatar-creative.png"), "F2F6F6", "7FA5A2")
+    S["rj"] = doc.style("CR RightJob", BF, 8.8, "5F7FA6", bold=True, before=7, after=1, leftb=DIV)
+    av = avatar(os.path.join(out_dir, "avatar-creative.png"), "F2F6FB", "7FA3D0")
 
     def hdr_a():
         if doc.photo: doc.picture(av, 128, align="center", before=0, after=0)
@@ -1013,24 +1013,24 @@ def creative_a(doc, D, out_dir):
 
 @design("creative-b")
 def creative_b(doc, D, out_dir):
-    """Earthy colour blocks: olive header with a white display name, warm panel for the avatar, grey sidebar, terracotta experience panel."""
-    OLIVE, OLIVE2, TERRA, SAND, GREYBG, INK, WHITE = "6B7C4B", "596A3D", "B2682E", "DDD6CB", "ECEAE6", "4A4A4A", "FFFFFF"
+    """Colour blocks in two complementary blues: deep-blue header with a white display name, pale-blue panel for the avatar, grey-blue sidebar, medium-blue experience panel."""
+    OLIVE, OLIVE2, TERRA, SAND, GREYBG, INK, WHITE = "1B4D8C", "123A6E", "2F78C4", "D6E4F4", "EAF0F7", "3F4B5E", "FFFFFF"
     HF, BF = doc.font("Century Gothic", "Corbel", "Calibri"), doc.font("Century Gothic", "Corbel", "Calibri")
     A, B = 190.0, 210.0; C = doc.PW - A - B
     doc.page_setup(0, 0, 0, 0)
     S = dict(datefont=BF, datesize=9, datecolor=WHITE, bulcolor=WHITE)
     S["name"] = doc.style("CB2 Name", HF, 31, WHITE, bold=True, after=2, line=0.95)
-    S["ttl"] = doc.style("CB2 Title", HF, 10, "E6EBD9", italic=True, spacing=3, caps=True, after=10)
+    S["ttl"] = doc.style("CB2 Title", HF, 10, "D6E6F8", italic=True, spacing=3, caps=True, after=10)
     S["ah"] = doc.style("CB2 AboutHead", HF, 13, WHITE, bold=True, after=3)
-    S["at"] = doc.style("CB2 AboutText", BF, 8.8, "F1F4E8", after=3, line=1.2)
-    S["lh"] = doc.style("CB2 SideHead", HF, 12, "4F5A3B", bold=True, before=16, after=5)
+    S["at"] = doc.style("CB2 AboutText", BF, 8.8, "EAF2FB", after=3, line=1.2)
+    S["lh"] = doc.style("CB2 SideHead", HF, 12, "1B4D8C", bold=True, before=16, after=5)
     S["lt"] = doc.style("CB2 SideText", BF, 8.8, INK, after=4, line=1.15)
     S["rh"] = doc.style("CB2 RightHead", HF, 13, WHITE, bold=True, before=14, after=6)
     S["yr"] = doc.style("CB2 Year", HF, 9, WHITE, bold=True, after=0)
     S["jt"] = doc.style("CB2 JobTitle", HF, 10, WHITE, bold=True, after=0)
-    S["ji"] = doc.style("CB2 JobOrg", BF, 8.8, "F6E3D2", italic=True, after=2)
+    S["ji"] = doc.style("CB2 JobOrg", BF, 8.8, "E3EFFC", italic=True, after=2)
     S["jb"] = doc.style("CB2 JobText", BF, 8.6, WHITE, after=3, line=1.2)
-    av = avatar(os.path.join(out_dir, "avatar-creative-b.png"), "EDE6DC", "A9937F")
+    av = avatar(os.path.join(out_dir, "avatar-creative-b.png"), "E6EEF8", "7FA3D0")
 
     def hdr():
         doc.P(S["name"], D["name"].split(" ")[0]); doc.P(S["name"], D["name"].split(" ")[1]); doc.P(S["ttl"], D["title"])
@@ -1044,7 +1044,7 @@ def creative_b(doc, D, out_dir):
 
     def side():
         doc.P(S["lh"], "Contact")
-        for (lab, val), col in zip(contact_lines(D)[:3], [TERRA, OLIVE, "5A5A4A"]): doc.P(S["lt"], ("●  ", {"color": col}), val)
+        for (lab, val), col in zip(contact_lines(D)[:3], [TERRA, OLIVE, "5A6A80"]): doc.P(S["lt"], ("●  ", {"color": col}), val)
         doc.P(S["lh"], "Skills")
         for n, p in D["skills"][:4]: doc.P(S["lt"], "-  " + n)
         doc.P(S["lh"], "Language")
