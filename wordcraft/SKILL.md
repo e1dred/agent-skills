@@ -75,6 +75,7 @@ Unverified hints from the docs: CharProps has a `link` field (URL or `#bookmark`
   `execute file.exportPdf {"path":ABS}` (written, text extracted correctly). `file.save`/`file.saveAs`/`save_document`
   would bind the open document to that file and clear the Edited state: only do that when the user asks.
 - Leave the user's document as found: it stays dirty with my test text; tell them to close it without saving.
+- **Showing the user a long text (notes, a report) in their live window, 2026-10-27, 0.11.0 app on port 47826:** convert it first (`pandoc notes.md -o notes.docx`: headings, bullets and inline code come out styled), then `open_document {"path":ABS}` through `wcmcp.py` (it answered `{encrypted,paragraphs,words,path}`) and check with `render_page {"page":1,"scale":1.2}` (1-based here, unlike `draw.*`; the reply carries `pages`). Check `ui_inspect` first: the open replaced a blank, not-dirty `Document1`; never do this over a dirty document. Keep the converted file in scratch; the user saves it with Save As if they want it.
 
 ## Opening real résumés (.docx) in WordCraft: fidelity check (verified on copies, 2 designs)
 
@@ -709,3 +710,4 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 - 2026-10-26 (19): continuous vertical lines: insideV table style for timelines, border bridging across spaceBefore, hanging-indent alignment (traditional-b fixed).
 - 2026-10-26 (20): résumé designs now built for A4 as well as Letter (page width/height as variables, full-page row = page height - 14 pt) and without photos (initials monogram in colour blocks).
 - 2026-10-26 (21): sweep of the remaining 231 command ids on a blank document with inspect/render comparison (208 ran, 23 refused with a reason); smoke test, effects not read back.
+- 2026-10-27 (22): showing long text in the live window: pandoc docx + `open_document` + `render_page`.
