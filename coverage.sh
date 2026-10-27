@@ -32,3 +32,13 @@ if [ -f "$names" ]; then
     total=$(wc -l < "$tmp/oo.all"); have=$(LC_ALL=C comm -12 "$tmp/oo.all" "$tmp/oo.tok" | wc -l)
     printf '%-11s %-7s %4s / %-4s tools documented (%s%%)\n' onlyoffice "$(flatpak info org.onlyoffice.desktopeditors 2>/dev/null | sed -n 's/^ *Version: *//p')" "$have" "$total" "$((100 * have / total))"
 fi
+
+# GenOffice: the unit is the ops documented by `genoffice guide docs|sheets|slides` (listed by genoffice-supplement/op_names.py;
+# editor-only sheet ops and not-AI-callable slide ops are excluded). The supplement is supplementary: this counts how many of those ops it names.
+if command -v genoffice >/dev/null 2>&1 && [ -f "$repo/genoffice-supplement/op_names.py" ]; then
+    python3 -I "$repo/genoffice-supplement/op_names.py" | LC_ALL=C sort -u > "$tmp/go.pairs"
+    awk '{print $2}' "$tmp/go.pairs" | LC_ALL=C sort -u > "$tmp/go.all"
+    tokens "$repo/genoffice-supplement" > "$tmp/go.tok"
+    total=$(wc -l < "$tmp/go.all"); have=$(LC_ALL=C comm -12 "$tmp/go.all" "$tmp/go.tok" | wc -l)
+    printf '%-11s %-7s %4s / %-4s ops documented (%s%%)\n' genoffice "$(genoffice --version | sed 's/[^0-9.]//g')" "$have" "$total" "$((100 * have / total))"
+fi

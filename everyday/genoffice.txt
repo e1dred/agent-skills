@@ -1,0 +1,50 @@
+Bold, italic, colour, size and font of text | setFont
+Highlight or restyle matching words | setMatchedFont
+Align, indent, space and shade paragraphs | setParagraphFormat
+Make a heading or change its level | setHeadingLevel applyStyle
+Find and replace text in a document | findReplace
+Add headings, paragraphs and lists from HTML | insert_content
+Rewrite a section | replace_blocks
+Bulleted and numbered lists | setList clearList
+Add a row or column to a table | insertTableRow insertTableColumn
+Merge cells and shade a table header | mergeTableCells setTableCellFormat
+Insert and resize a picture in a document | insert_image setImageProperties
+Table of contents | insertToc
+Header, footer and page numbers | set_header_footer
+Page size, margins, orientation and columns | set_page_setup
+Footnote | insert_footnote
+Comment, reply and resolve | add_comment reply_comment resolve_comment
+Track changes, accept and reject | accept_changes reject_changes
+Define and apply a style | define_style applyStyle
+Watermark | set_watermark
+Document properties | set_properties
+Enter values and formulas | set_cell set_formula set_range
+Sort a range | sort_range
+Number formats, fills and fonts in cells | format_range
+Conditional formatting | add_conditional_format
+Drop-down list and validation | set_data_validation
+Freeze the header row and add a filter | set_freeze set_filter
+Column width and hidden columns | set_col_width set_cols_hidden
+Add and rename a sheet | add_sheet rename_sheet
+Insert and delete rows | insert_rows delete_rows
+Chart in a spreadsheet | add_chart edit_chart
+Pivot table | add_pivot
+Excel table | add_table
+Find and replace in a range | find_replace
+Add a text box or shape to a slide | addElement
+Change slide text | setText
+Fill and outline a shape | setFill setStroke
+Move, resize and rotate an element | setTransform
+Table on a slide | addTable setTableCell
+Chart on a slide | addChart
+Add, copy, delete and move slides | addBlankSlide duplicateSlide deleteSlide moveSlide
+Slide background | setBackground
+Transition and animation | setTransition addAnimation
+Speaker notes | setNotes
+Footer and slide numbers | applyHeaderFooter
+Theme colours and fonts | applyTheme
+Align and distribute elements | alignElements distributeElements
+Group elements | groupElements ungroupElement
+Convert between formats (docx, pdf, md, html, xlsx) | convert
+Fill a template from data | merge
+Look at the pages | render

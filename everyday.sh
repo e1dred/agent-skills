@@ -21,3 +21,19 @@ for app in wordcraft gridcraft deckcraft photocraft cadcraft; do
     done < "$f"
     printf '%-11s %2s / %-2s everyday tasks covered (%s%%)\n' "$app" "$ok" "$n" "$((100 * ok / n))"
 done
+# GenOffice: ids are ops from `genoffice guide` (genoffice-supplement/op_names.py) or CLI commands; covered when every id exists and the supplement names it.
+f="$repo/everyday/genoffice.txt"
+if command -v genoffice >/dev/null 2>&1 && [ -f "$f" ]; then
+    { python3 -I "$repo/genoffice-supplement/op_names.py" | awk '{print $2}'; genoffice --help 2>&1 | awk '/^  [a-z-]+ /{print $1}'; } | LC_ALL=C sort -u > "$tmp/go.all"
+    grep -rIhoE --exclude-dir='__pycache__' '[A-Za-z0-9_][A-Za-z0-9_.]*' "$repo/genoffice-supplement" | LC_ALL=C sort -u > "$tmp/go.tok"
+    n=0; ok=0
+    while IFS='|' read -r task ids; do
+        [ -n "$ids" ] || continue; n=$((n+1)); miss=""
+        for id in $ids; do
+            grep -qxF "$id" "$tmp/go.all" || miss="$miss $id(not in genoffice)"
+            grep -qxF "$id" "$tmp/go.tok" || miss="$miss $id(not in skill)"
+        done
+        if [ -z "$miss" ]; then ok=$((ok+1)); else [ -n "$VERBOSE" ] && echo "  gap: $task:$miss"; fi
+    done < "$f"
+    printf '%-11s %2s / %-2s everyday tasks covered (%s%%)\n' genoffice "$ok" "$n" "$((100 * ok / n))"
+fi
