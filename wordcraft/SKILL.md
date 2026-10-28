@@ -172,6 +172,20 @@ caret.docEnd ; layout.break {"kind":"nextPage"} ; text.insert "Section two."    
 layout.linkToPrevious {}            ; insert.createHeader {} ; text.insert "Head2" ; insert.closeHeader
 layout.linkToPrevious {"footer":true} ; insert.createFooter {} ; text.insert "Foot2" ; insert.closeHeader
 ```
+The same recipe as a script for `wordcraft-cli run --script hdr.json` (re-run 2026-10-27: page 1 "Head1 … Foot1", page 2 "Head2 … Foot2"; commands without parameters need no `params`):
+```
+{"template":"blank","commands":[
+ {"command":"text.insert","params":{"text":"Section one."}},
+ {"command":"insert.header","params":{"text":"Head1"}},{"command":"insert.closeHeader"},
+ {"command":"insert.footer","params":{"text":"Foot1"}},{"command":"insert.closeHeader"},
+ {"command":"caret.docEnd"},{"command":"layout.break","params":{"kind":"nextPage"}},
+ {"command":"text.insert","params":{"text":"Section two."}},
+ {"command":"layout.linkToPrevious","params":{}},{"command":"insert.createHeader","params":{}},
+ {"command":"text.insert","params":{"text":"Head2"}},{"command":"insert.closeHeader"},
+ {"command":"layout.linkToPrevious","params":{"footer":true}},{"command":"insert.createFooter","params":{}},
+ {"command":"text.insert","params":{"text":"Foot2"}},{"command":"insert.closeHeader"}],
+ "save":["hdr.pdf","hdr.docx"]}
+```
 Result: page 1 "Head1…Foot1", page 2 "Head2…Foot2", and a THIRD section added afterwards inherits section 2's header and footer
 (`inspect` section props: `headers.default` / `footers.default` ids `[(1,2),(3,4),(3,4)]`). Rules learnt by failing first:
 - Run `layout.linkToPrevious` (once; twice gave the same result, reply `{"linked":true}`) with the caret in the new section BEFORE

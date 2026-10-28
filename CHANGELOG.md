@@ -51,6 +51,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 ### Changed
 - All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains; CadCraft and PhotoCraft also name the export formats and edits an agent guessed at in a pick test. Bodies are unchanged.
 - DeckCraft: the `chart.options` "nothing selected" note no longer contradicts the later one (a just-inserted chart is already selected). PhotoCraft: `run` takes `--quality`, so a crop to JPEG is one command (checked on a test image).
+- WordCraft: the per-section header and footer recipe is also given as a complete `--script` JSON file, re-run and checked page by page.
 
 ## 2026-10-25
 
