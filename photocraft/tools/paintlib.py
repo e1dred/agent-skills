@@ -1,7 +1,7 @@
 """Helpers for painting from code with photocraft-cli: collect commands in `cmds`, then `run(out)` executes them in ONE `photocraft-cli run`.
 
 smooth closed/open paths (Catmull-Rom handles), fills, selection-clipped shading, tapered pressure strokes, quadratic curves.
-See the "Painting a portrait from code" section of photocraft/SKILL.md for the lessons.
+See the "Painting a portrait from code" section of photocraft/reference/painting-a-portrait.md for the lessons.
 """
 import json,math,random,subprocess,os
 CLI=os.path.expanduser("~/AppImages/photocraft-cli")

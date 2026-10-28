@@ -52,6 +52,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 - All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains; CadCraft and PhotoCraft also name the export formats and edits an agent guessed at in a pick test. Bodies are unchanged.
 - DeckCraft: the `chart.options` "nothing selected" note no longer contradicts the later one (a just-inserted chart is already selected). PhotoCraft: `run` takes `--quality`, so a crop to JPEG is one command (checked on a test image).
 - WordCraft: the per-section header and footer recipe is also given as a complete `--script` JSON file, re-run and checked page by page.
+- WordCraft and PhotoCraft (2026-10-27): `SKILL.md` is now a short front page (13,033 to about 1,700 words and 16,598 to about 1,300) with setup, CLI essentials, traps, verification and a "Where things are" table; the other sections moved unchanged into `reference/*.md` (8 files for WordCraft, 6 for PhotoCraft). Every original line was checked to be present, `coverage.sh` still reports 100% for both, and six fresh agents per skill found the right command from the new layout in 0 to 2 lookups.
 
 ## 2026-10-25
 

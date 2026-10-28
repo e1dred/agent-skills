@@ -13,7 +13,8 @@ Tested with WordCraft 0.10.0 on Linux (AppImage). Unofficial: not affiliated wit
 
 | Path | What it is |
 |---|---|
-| `SKILL.md` | The skill: setup, live vs headless editing, commands, traps, verification, recipe index |
+| `SKILL.md` | The skill's front page: setup, live vs headless editing, CLI essentials, traps, verification, and a table of the reference files |
+| `reference/` | The detailed sections (live editing, existing documents, mail merge, headers and tables, formatting, document formats, command reference, log) |
 | `recipes/resume_ats.py` | Builds an ATS-friendly résumé (`.docx` + `.pdf`) with `wordcraft-cli run --script`; fictional sample data |
 | `tools/wcmcp.py` | Calls WordCraft's MCP bridge tools on the running app from a shell (saves `screenshot`/`render_page` images to `IMGDIR`) |
 
