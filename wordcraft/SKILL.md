@@ -685,6 +685,13 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 - **Real tracked changes in the middle of a document:** `file.setAuthor` once, then per entry: type the paragraph with tracking OFF, `review.trackChanges {"value":true}`, `select.text {"text":"legacy phrase"}` + `text.insert {"text":"new phrase"}`, `review.trackChanges {"value":false}`, `caret.docEnd`. Five edits gave 5 `<w:ins>` and 5 `<w:del>`, all by that author. The legacy phrase must occur ONCE in the whole document (the matrix repeats the old numbers, so each appendix phrase is worded differently from the table). The insertion is stored BEFORE the deletion.
 - **A normal PDF export shows the accepted text only.** To print the markup: `wordcraft-cli run --file x.docx --cmd 'review.showMarkup={"value":true}' --cmd 'file.printMarkup={"value":true}' --cmd 'file.exportPdf={"path":ABS}'` → `{markup:true}`; the render showed insertions underlined and deletions struck through, in a magenta author colour, with change bars in the margin.
 
+## A whole public-domain novel as a manuscript (2026-10-27, 0.11.0; opened in three apps)
+> **Versions:** 0.11.0 (WordCraft), ONLYOFFICE 10.0.0, GenOffice app. A ~75,000-word novel taken from an ebook publisher's single-page HTML.
+- **HTML to builder text:** a small `html.parser` script (not a regex over the whole page: the CSS in the page also contains tags) walked the chapter sections: `<h2>` becomes `# Chapter I`, `<p>` a paragraph, `<i>`/`<em>` `*italic*` (move edge spaces outside the asterisks), letter headers/footers and poems become `| ` verse lines, `<hr>` a `#` scene break, note-reference links and the endnotes section are dropped. Strip U+2060 and thin spaces, and replace U+2E3A/U+2E3B (two- and three-em dashes), which Times New Roman lacks, with em dashes. 812 blocks, 74,900 words.
+- **Build:** `build_wordcraft.py x manuscript OUT.docx --title=… --author=… --address=… --text=book.txt` (add `--overwrite` on a rebuild; without it the builder prints "refusing to overwrite" and writes an EMPTY job file, which then fails as "bad JSON"). 0.5 s to run the 239-page job, every `manuscript_check.py` rule passed.
+- **Same pages in three apps:** WordCraft, ONLYOFFICE (headless count 239) and the GenOffice app window all showed 239 pages with the same first word on the last page. **GenOffice's headless `render` gave 235 pages for the same file, so do not judge pagination from it.** `ui_inspect` is huge (every page rectangle and the settings): filter it, never print it.
+- Launching the apps with a file works from a shell with the Claude session variables removed (`env -u …`): `flatpak run org.onlyoffice.desktopeditors FILE` reused the running window, `wordcraft.appimage --control PORT FILE` opened it, `genoffice open` did the third.
+
 ## Log
 
 - 2026-10-24: Paragraph formatting, lists, tabs, sort, clipboard/paste, format painter, undoTo, goto, spike; two traps.
@@ -722,3 +729,4 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 - 2026-10-26 (21): sweep of the remaining 231 command ids on a blank document with inspect/render comparison (208 ran, 23 refused with a reason); smoke test, effects not read back.
 - 2026-10-27 (22): showing long text in the live window: pandoc docx + `open_document` + `render_page`.
 - 2026-10-27 (23): policy manual (styles, callouts, TOC at a placeholder, 5-column matrix, tracked-change change log, markup PDF); review.trackChanges takes `value`, not `on`.
+- 2026-10-27 (24): a 239-page novel manuscript built and opened in WordCraft, ONLYOFFICE and GenOffice (same pagination); GenOffice headless page count differs.
