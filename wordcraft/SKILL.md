@@ -692,6 +692,8 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 - **Same pages in three apps:** WordCraft, ONLYOFFICE (headless count 239) and the GenOffice app window all showed 239 pages with the same first word on the last page. **GenOffice's headless `render` gave 235 pages for the same file, so do not judge pagination from it.** `ui_inspect` is huge (every page rectangle and the settings): filter it, never print it.
 - Launching the apps with a file works from a shell with the Claude session variables removed (`env -u …`): `flatpak run org.onlyoffice.desktopeditors FILE` reused the running window, `wordcraft.appimage --control PORT FILE` opened it, `genoffice open` did the third.
 
+- **Query letter and synopsis for the same book** (`build_wordcraft.py x query|synopsis OUT.docx --agent="Ms. Name|Agency|Street|City" --date=… --text=file.txt`): the letter (275 words of text) fits one page with the contact, date and agent blocks; a 600-word synopsis ran two pages with 4 lines on the second, and cutting to about 500 words (a few sentences, not the plot) gave one clean page. Check with `info` (`pages`) and `pdftotext -f 2`. **`manuscript_check.py` on a query or synopsis reports FAIL for double spacing, indent and paragraph spacing: expected, those rules are for the manuscript, not these single-spaced documents.** Write the text in present tense; keep the tense of embedded stories consistent.
+
 ## Log
 
 - 2026-10-24: Paragraph formatting, lists, tabs, sort, clipboard/paste, format painter, undoTo, goto, spike; two traps.
