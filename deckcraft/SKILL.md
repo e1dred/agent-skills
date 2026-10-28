@@ -247,7 +247,7 @@ slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumn
 - **Refused:** `file.recovery.discard` (no recovery folder is set); `file.recovery.save` (no recovery folder is set) (an app setting, not a parameter: the desktop app sets a recovery folder).
 
 ## Board deck from sample data: charts, axis, alt text (2026-10-27, 0.11.1 headless; every slide rendered and looked at)
-> **Versions:** 0.11.1 only. Task: part 3 of Downloads/TRAINING3 (7 slides, native charts, 60-30-10 palette, notes). Rebuildable script: `~/Downloads/training-part3/build.sh` (invented sample data).
+> **Versions:** 0.11.1 only. Task: a 7-slide board review (native charts, 60-30-10 palette, notes) from invented sample data, built by one `deckcraft-cli run` script.
 - The CLI is `~/AppImages/deckcraft-cli` and is **not on PATH**: `export PATH=$HOME/AppImages:$PATH`.
 - **60-30-10 palette**: `design.colors` with `lt2` = background (60%), `dk1/dk2/accent1` = navy for text, cards and chart bars (30%), `accent2` = orange used only for key-metric text boxes (10%); `design.background {"color","all":true}` last. SmartArt then colours its three boxes accent1, accent2, accent3 (the orange one looks like emphasis).
 - **No axis control**: there is no command for axis minimum, number format or label format (`chart.options` has title, legend, dataLabels, gridlines, textColor only). The renderer starts the value axis above zero when the data are close together (revenue 118k to 125k drew from 116,000; CAC 396 to 450 from 390) but at 0 for churn 3.1 to 4.2. A truncated axis exaggerates changes: say so in a caption on the slide and in the notes. Data labels show raw numbers (`120000`, no `$`), so put the unit in the chart title.
