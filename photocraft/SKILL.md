@@ -1,6 +1,6 @@
 ---
 name: photocraft
-description: Verified working knowledge for driving the PhotoCraft image editor (storytold/photocraft) from an AI agent: the headless photocraft-cli (convert, info, run, batch), the MCP bridge to a running app, exact command parameter formats, recipes and traps. Load before any PhotoCraft or image-editing task on this machine, and add what you learn at the end of it.
+description: Use when editing, converting or batch-processing images, layers, selections or photos, when running photocraft-cli, or when connecting to the PhotoCraft app (storytold) on this machine
 ---
 
 # PhotoCraft

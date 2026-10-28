@@ -1,6 +1,6 @@
 ---
 name: onlyoffice
-description: Verified working knowledge for driving ONLYOFFICE Desktop Editors from an AI agent through its built-in AI-tools MCP server (onlyoffice-document-builder) — enabling it, connecting from outside the app (Linux flatpak), LIVE editing of documents open in the editor, headless editing/preview, Word macro API details that work, recipes and traps. Load before any ONLYOFFICE task, and add what you learn at the end of it.
+description: Use when editing documents, spreadsheets, slides, PDFs or forms in ONLYOFFICE Desktop Editors, live in an open window or headless, through its AI-tools MCP server (onlyoffice-document-builder), including Word macros and connecting from the Linux flatpak
 ---
 
 # ONLYOFFICE Desktop Editors

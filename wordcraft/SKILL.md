@@ -1,6 +1,6 @@
 ---
 name: wordcraft
-description: Verified working knowledge for driving the WordCraft word processor (storytold/wordcraft) from an AI agent — live editing through its control server / MCP bridge, headless builds with wordcraft-cli, exact command parameter formats, formatting recipes and known traps. Load before any WordCraft task, and add what you learn at the end of it.
+description: Use when writing, formatting or converting Word documents (.docx), manuscripts, letters, reports or résumés, when running wordcraft-cli, or when connecting to the WordCraft app (storytold) live on this machine
 ---
 
 # WordCraft

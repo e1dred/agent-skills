@@ -1,6 +1,6 @@
 ---
 name: cadcraft
-description: Verified working knowledge for the CadCraft 2D drafting app (storytold, an AutoCAD-style editor for DXF/DWG) driven from an AI agent: the headless cadcraft-cli (run --cmd, export PDF/SVG/PNG), layers, linetypes, text styles, drawing wiring schematics from primitives, the live MCP bridge and its limits. Load before any CadCraft or 2D-drawing/schematic task on this machine, and add what you learn at the end of it.
+description: Use when drawing or editing 2D CAD, DXF/DWG files, wiring schematics, floor plans or engineering drawings, when running cadcraft-cli, or when connecting to the CadCraft app (storytold) on this machine
 ---
 
 # CadCraft

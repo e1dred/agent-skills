@@ -1,6 +1,6 @@
 ---
 name: genoffice-supplement
-description: Supplementary, verified notes on GenOffice (Docs editor and the genoffice CLI/MCP) that its own bundled skills do not cover: what each Word op really does, traps, units, document-style rebuilds compared with WordCraft and ONLYOFFICE. Load next to GenOffice's own skill before editing .docx with GenOffice; add what you learn.
+description: Use when editing .docx or other Office files with GenOffice (Docs editor, genoffice CLI/MCP) and its own bundled skill leaves a Word op, unit, page-count difference or document-style rebuild unclear; load next to GenOffice's own skill
 ---
 
 # GenOffice supplement

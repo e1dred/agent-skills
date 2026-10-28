@@ -48,6 +48,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 - **Screenplay extras:** scene numbers, bold/underlined scene headings, bold/underline/centred text, dual dialogue, TV act markers (TEASER, ACT ONE, END OF ACT), Fountain title-page keys, `screenplay_paginate.py` (adds `(MORE)` and `(CONT'D)` at page breaks), and `screenplay_export.py` (Fountain and Final Draft `.fdx` output).
 - **Screenplay format** (kind `screenplay`): standard spec-script layout in WordCraft and ONLYOFFICE (Courier 12 pt on a 12 pt pitch, element indents, title page as its own section, numbering from 1 with `2.` `3.` at the top right), Fountain-like plain-text input with automatic `(CONT'D)`, and `screenplay_check.py`.
 
+### Changed
+- All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains. Bodies are unchanged.
+
 ## 2026-10-25
 
 Tested on: PhotoCraft 0.15.1 and 0.16.0, GridCraft 0.11.1 and 0.12.1, DeckCraft 0.10.0 and 0.11.1, WordCraft 0.10.0 and 0.11.0, ONLYOFFICE Desktop Editors 10.0.0 (flatpak).

@@ -1,6 +1,6 @@
 ---
 name: gridcraft
-description: Verified working knowledge for driving the GridCraft spreadsheet app (storytold/gridcraft, an Excel-style editor that reads and writes .xlsx) from an AI agent: the headless gridcraft-cli (info, cat, eval, run, check, convert), the live control channel / MCP bridge to a running app, exact command parameter formats, traps and verification steps. Load before any GridCraft or spreadsheet task on this machine, and add what you learn at the end of it.
+description: Use when building, editing, checking or converting spreadsheets (.xlsx, .csv), formulas, pivots or charts, when running gridcraft-cli, or when connecting to the GridCraft app (storytold) on this machine
 ---
 
 # GridCraft

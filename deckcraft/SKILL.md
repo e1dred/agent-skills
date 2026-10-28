@@ -1,6 +1,6 @@
 ---
 name: deckcraft
-description: Verified working knowledge for driving the DeckCraft presentation app (storytold/deckcraft, a PowerPoint-style editor for .deckcraft and .pptx) from an AI agent: the headless deckcraft-cli (info, render, convert, run), the live control channel / MCP bridge to a running app, exact command parameter formats, traps and verification steps. Load before any DeckCraft or slide-deck task on this machine, and add what you learn at the end of it.
+description: Use when building, editing, rendering or converting slide decks (.deckcraft, .pptx), when running deckcraft-cli, or when connecting to the DeckCraft app (storytold) on this machine
 ---
 
 # DeckCraft
