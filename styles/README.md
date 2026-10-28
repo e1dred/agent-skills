@@ -181,6 +181,8 @@ Plain-text input (`--text=`), with the same Fountain-style title block as the sc
 | `NAME` in capitals, then speech lines; a line in `( … )` inside is a parenthetical | centred cue, speech, parenthetical |
 | `BLACKOUT.`, `CURTAIN.`, `LIGHTS DOWN.`, `END OF ACT ONE`, `END OF PLAY` | centred bold line |
 | `*word*`, `**word**` | italic, bold |
+| speech lines each starting `\| ` (after the cue), or a chunk of such lines with no cue (a song) | verse: every line kept as its own line (hanging indent for a run-over), not reflowed into a paragraph |
+| `PROLOGUE`, `EPILOGUE` alone on a line | centred bold scene-level heading |
 
 Not covered: a musical-theatre libretto or lyric layout, dual (overlapping) dialogue, a cast list with doubling or ages grid, scene-change cue lines, `.fdx`/Fountain export for stage plays (the screenplay exporter is for film), page-break control of long speeches, and any publisher's own house format.
 

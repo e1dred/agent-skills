@@ -694,6 +694,12 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 
 - **Query letter and synopsis for the same book** (`build_wordcraft.py x query|synopsis OUT.docx --agent="Ms. Name|Agency|Street|City" --date=… --text=file.txt`): the letter (275 words of text) fits one page with the contact, date and agent blocks; a 600-word synopsis ran two pages with 4 lines on the second, and cutting to about 500 words (a few sentences, not the plot) gave one clean page. Check with `info` (`pages`) and `pdftotext -f 2`. **`manuscript_check.py` on a query or synopsis reports FAIL for double spacing, indent and paragraph spacing: expected, those rules are for the manuscript, not these single-spaced documents.** Write the text in present tense; keep the tense of embedded stories consistent.
 
+## A verse play from an ebook HTML (2026-10-27, 0.11.0; opened in three apps)
+> **Versions:** 0.11.0, ONLYOFFICE 10.0.0, GenOffice app. A five-act verse and prose play (about 17,000 words) from an ebook publisher's single-page HTML, built with the `stageplay` kind.
+- **The stage-play builder used to JOIN a speech's lines into one paragraph**, which would reflow verse. It now keeps lines that start with `| ` (after the cue, or as a cue-less chunk for a song) as separate `ST Verse` paragraphs (single-spaced, hanging indent 0.5 in), and treats `PROLOGUE`/`EPILOGUE` like a scene heading. Prose speeches stay joined paragraphs.
+- **HTML to text:** the source marks speeches as table rows (persona cell + text cell, verse as `<span>` lines, songs and stage directions marked by `epub:type`). A `html.parser` walk gave `NAME` + `| line` blocks, `(Enter …)` for entrances, inline `*Exit.*` in italics, `SETTING:` and a characters list. 732 chunks, 643 speeches, 80 pages with the title page.
+- **Checks:** `stageplay_check.py` passes everything (10 of 10 scene headings after the epilogue regex fix); WordCraft and ONLYOFFICE (headless) both gave 80 pages with the same last page ("I'll deliver all;" at the top of the final page).
+
 ## Log
 
 - 2026-10-24: Paragraph formatting, lists, tabs, sort, clipboard/paste, format painter, undoTo, goto, spike; two traps.
@@ -732,3 +738,4 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 - 2026-10-27 (22): showing long text in the live window: pandoc docx + `open_document` + `render_page`.
 - 2026-10-27 (23): policy manual (styles, callouts, TOC at a placeholder, 5-column matrix, tracked-change change log, markup PDF); review.trackChanges takes `value`, not `on`.
 - 2026-10-27 (24): a 239-page novel manuscript built and opened in WordCraft, ONLYOFFICE and GenOffice (same pagination); GenOffice headless page count differs.
+- 2026-10-27 (25): a verse play built as a stage play; builder now keeps verse lines (`| ` prefix) and handles epilogue.

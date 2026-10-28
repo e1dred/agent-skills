@@ -668,12 +668,14 @@ def make(style_name, kind, o=None):
                 for l in lines: items.append(("setting", l))
             elif len(lines) == 1 and re.match(r"^ACT\b", head, re.I):
                 items.append(("act", head.upper())); n_acts += 1
-            elif len(lines) == 1 and re.match(r"^SCENE\b", head, re.I):
+            elif len(lines) == 1 and re.match(r"^(SCENE|PROLOGUE|EPILOGUE)\b", head, re.I):
                 items.append(("scene", head.upper())); n_scenes += 1
             elif len(lines) == 1 and head.upper().rstrip(".") in ("BLACKOUT", "CURTAIN", "END OF PLAY", "END OF ACT ONE", "END OF ACT TWO", "LIGHTS DOWN", "END"):
                 items.append(("end", head.upper()))
             elif head.startswith("(") and lines[-1].endswith(")"):
                 items.append(("dir", " ".join(lines)))
+            elif head.startswith("| "):
+                for l in lines: items.append(("verse", l[2:].strip() if l.startswith("| ") else l))
             elif len(lines) > 1 and caps(re.sub(r"\(.*?\)", "", head)) and not head.endswith(":") and len(head) < 40:
                 items.append(("cue", head.lstrip("@").upper()))
                 buf = []
@@ -681,11 +683,14 @@ def make(style_name, kind, o=None):
                     if l.startswith("(") and l.endswith(")"):
                         if buf: items.append(("speech", " ".join(buf))); buf = []
                         items.append(("paren", l))
+                    elif l.startswith("| "):      # a verse line: kept as its own line (a speech of `| ` lines is not reflowed)
+                        if buf: items.append(("speech", " ".join(buf))); buf = []
+                        items.append(("verse", l[2:].strip()))
                     else: buf.append(l)
                 if buf: items.append(("speech", " ".join(buf)))
             else:
                 items.append(("dir", " ".join(lines)))
-        words = sum(len(v.split()) for k, v in items if k in ("speech", "dir"))
+        words = sum(len(v.split()) for k, v in items if k in ("speech", "dir", "verse"))
         nspeech = sum(1 for k, _ in items if k == "cue")
         add("Normal", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_first=0, line=1.0)
         add("ST Act", font=mf, size=12, color="000000", before=0, after=12, align="center", indent_first=0, line=1.0, bold=True, caps=True, keep_next=True)
@@ -693,6 +698,7 @@ def make(style_name, kind, o=None):
         add("ST Direction", font=mf, size=12, color="000000", before=12, after=0, align="left", indent_left=72, indent_right=36, indent_first=0, line=1.0, italic=True)
         add("ST Cue", font=mf, size=12, color="000000", before=12, after=0, align="center", indent_first=0, line=1.0, caps=True, keep_next=True)
         add("ST Speech", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=0, indent_right=0, indent_first=0, line=1.0)
+        add("ST Verse", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=36, indent_first=-36, line=1.0)
         add("ST Parenthetical", font=mf, size=12, color="000000", before=0, after=0, align="left", indent_left=72, indent_right=72, indent_first=0, line=1.0, italic=True, keep_next=True)
         add("ST Cast Heading", font=mf, size=12, color="000000", before=0, after=12, align="center", indent_first=0, line=1.0, bold=True, caps=True)
         add("ST Cast", font=mf, size=12, color="000000", before=0, after=6, align="left", indent_left=36, indent_first=-36, line=1.0)
@@ -713,7 +719,7 @@ def make(style_name, kind, o=None):
             para("ST Contact", l)
         blocks.append({"t": "sectionbreak"})     # title page = its own section; the rest is numbered from 1 (first page unnumbered)
         STYLE = {"casthead": "ST Cast Heading", "setting": "ST Setting", "act": "ST Act", "scene": "ST Scene", "dir": "ST Direction", "cue": "ST Cue",
-                 "speech": "ST Speech", "paren": "ST Parenthetical", "end": "ST End"}
+                 "speech": "ST Speech", "verse": "ST Verse", "paren": "ST Parenthetical", "end": "ST End"}
         prev = None
         for k, v in items:
             if k == "act" and prev is not None:
@@ -725,7 +731,7 @@ def make(style_name, kind, o=None):
             elif k == "setting":
                 m = re.match(r"^([A-Za-z ]+:)\s*(.*)$", v)
                 para("ST Setting", *( [(True, m.group(1)), (False, " " + m.group(2))] if m else [(False, v)] ))
-            elif k in ("dir", "speech"):
+            elif k in ("dir", "speech", "verse"):
                 para(STYLE[k], *runs_of(v))
             else:
                 para(STYLE[k], (False, v))

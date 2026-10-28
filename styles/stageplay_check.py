@@ -70,7 +70,7 @@ def check(path):
     cues = by.get("ST Cue", [])
     low = [c for c in cues if re.search(r"[a-z]", c)]
     add("FAIL" if low else "PASS", "character cues in capitals: %d of %d%s" % (len(cues) - len(low), len(cues), (" (e.g. %r)" % low[0]) if low else ""))
-    for nm, rx in (("ST Act", r"^ACT\b"), ("ST Scene", r"^SCENE\b")):
+    for nm, rx in (("ST Act", r"^ACT\b"), ("ST Scene", r"^(SCENE|PROLOGUE|EPILOGUE)\b")):
         bad = [t for t in by.get(nm, []) if not re.match(rx, t, re.I)]
         add("WARN" if bad else "PASS", "%s headings read ACT/SCENE: %d of %d" % (nm[3:], len(by.get(nm, [])) - len(bad), len(by.get(nm, []))))
     add("PASS" if by.get("ST Cast Heading") else "WARN", "a CHARACTERS page: %s" % ("yes (%d characters)" % len(by.get("ST Cast", [])) if by.get("ST Cast Heading") else "not found"))
