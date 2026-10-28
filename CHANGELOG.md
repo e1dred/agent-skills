@@ -49,7 +49,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 - **Screenplay format** (kind `screenplay`): standard spec-script layout in WordCraft and ONLYOFFICE (Courier 12 pt on a 12 pt pitch, element indents, title page as its own section, numbering from 1 with `2.` `3.` at the top right), Fountain-like plain-text input with automatic `(CONT'D)`, and `screenplay_check.py`.
 
 ### Changed
-- All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains. Bodies are unchanged.
+- All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains; CadCraft and PhotoCraft also name the export formats and edits an agent guessed at in a pick test. Bodies are unchanged.
 
 ## 2026-10-25
 

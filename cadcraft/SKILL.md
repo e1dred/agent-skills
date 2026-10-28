@@ -1,6 +1,6 @@
 ---
 name: cadcraft
-description: Use when drawing or editing 2D CAD, DXF/DWG files, wiring schematics, floor plans or engineering drawings, when running cadcraft-cli, or when connecting to the CadCraft app (storytold) on this machine
+description: Use when drawing or editing 2D CAD, DXF/DWG files, wiring schematics, floor plans or engineering drawings, exporting drawings to PDF, SVG or PNG, when running cadcraft-cli, or when connecting to the CadCraft app (storytold) on this machine
 ---
 
 # CadCraft

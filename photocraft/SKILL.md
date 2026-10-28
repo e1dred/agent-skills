@@ -1,6 +1,6 @@
 ---
 name: photocraft
-description: Use when editing, converting or batch-processing images, layers, selections or photos, when running photocraft-cli, or when connecting to the PhotoCraft app (storytold) on this machine
+description: Use when editing, converting or batch-processing images, layers, selections or photos (crop, resize, brightness and colour, background removal, export to JPEG, PNG, WebP or PSD), when running photocraft-cli, or when connecting to the PhotoCraft app (storytold) on this machine
 ---
 
 # PhotoCraft
