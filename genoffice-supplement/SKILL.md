@@ -132,5 +132,8 @@ Everywhere: bullets stay black and indent further than in WordCraft.
 More traps: with columns=2 the table keeps its full width and is clipped in a narrow column (the last columns vanish); there is no op to resize the table to the column. Header/footer text has no alignment option (centred only).
 Untried workaround for the rules: `setParagraphFormat borders:"b"` on each heading block gives a thin auto-coloured line (black), so right position, wrong colour.
 
+## Page count: headless `render` vs the app window (2026-10-27, GenOffice 0.12.117)
+A 239-page manuscript .docx (Times New Roman 12 pt, double-spaced, 1-inch margins) showed 239 pages in the GenOffice app window, in WordCraft and in ONLYOFFICE, with the same first word on the last page. **`genoffice render` (headless export + pdfium) said "page out of range (1-235)" for the same file.** Chapter I still started on page 21 there, so the two paths drift later in the book. Judge pagination in the app window or a PDF made by the app, not from the headless page range. Cause not determined.
+
 ## Keep this file growing
 Add what you learn, labelled with the GenOffice version and what was checked (XML, read-back or render). Do not paste text from GenOffice's own skills.
