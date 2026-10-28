@@ -49,6 +49,7 @@ photocraft-cli run --new '{"width":800,"height":500,"background":"#ffffff"}' \
 photocraft-cli run in.pcraft --cmd … --out out.pcraft       # open, edit, save
 photocraft-cli info file [--compact]                         # JSON: size, mode, depth, layers[] with id/name/kind/opacity/bounds
 photocraft-cli convert in out [--quality 1-100] [--format ext]
+photocraft-cli run in.jpg --cmd image.crop --params '{"x":100,"y":50,"width":800,"height":600}' --out new.jpg --quality 85   # crop to a JPEG in one step (checked 2026-10-27: 800x600, same bytes as crop to PNG + convert --quality 85; the source is untouched)
 photocraft-cli batch --actions act.json --in DIR --out DIR2 --format jpg --quality 85
 photocraft-cli commands --json --filter <text>               # find ids; each has a "params" signature string
 ```

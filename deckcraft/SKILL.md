@@ -100,7 +100,7 @@ One `run` built title + bullets + table + chart + text box + link + background +
    just-inserted/selected table, or pass `id`). Bullets: `\n` separates paragraphs, a leading `\t` indents a level.
 3. **Select, then format.** `format.size/bold/italic/color/alignCenter/bullets/font` act on the *selection* (inserting a shape
    selects it; otherwise `edit.select {"ids":[266]}` → `{"selected":[266]}`). Chart/alt-text commands also need a selection or `ids`:
-   `chart.options` without a selection fails with "nothing selected".
+   `chart.options` fails with "nothing selected" when no chart is selected (a chart you just inserted is selected, see the board-deck note below).
 4. **Chart**: `insert.chart {"type":"column","rect":[…],"categories":["Q1","Q2","Q3"],"series":[{"name":"Sales","values":[10,14,19]}]}`;
    afterwards `edit.select` it, then `chart.options {"title":"Sales by quarter","dataLabels":true,"legend":null|"b"|"r"}`,
    `chart.type {"type":"line"}`, `chart.data {"categories","series"}`. The default title is "Chart Title" — always set one or `title:null`.
