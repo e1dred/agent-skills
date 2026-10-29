@@ -185,3 +185,18 @@ Pipeline that worked (one `run`, then layers added one run at a time):
 7. **Subtle eye colour:** two small feathered ellipse selections on the irises, `layer.new.layer {"mode":"Color","opacity":0.22}`, `edit.fill {"contents":"color","color":"#8a9aa6"}`. At opacity 0.35 and a saturated blue it looked painted.
 8. **Film grain on top:** `layer.new.layer`, `edit.fill` 50% grey `#808080`, `filter.noise.addNoise {"amount":14,"distribution":"gaussian","monochromatic":true,"seed":7}`, blend Overlay at 0.4: grain stays editable and is not graded by the LUT below it.
 A new adjustment layer picks up a still-active selection as its mask, so deselect (or check `hasMask` in `info`) before adding one. Always look at 100% crops of the face and of fine patterns, not only the downsized overview: the overview hid both the stair-steps and the halos.
+
+## Colorizing a black-and-white photo from a colour reference: frequency split (verified headless; 100% crops looked at)
+
+Exercise: a 2317×1545 black-and-white print and a 1264×842 AI colorization of the same framing; goal a PhotoCraft file at the reference's size that keeps the original's sharpness. **PhotoCraft cannot invent colour**: the colours come from the reference image; PhotoCraft does the compositing. Check alignment first (shift/scale correlation search: scale 1.0, shift 0 here), then:
+
+1. `image.imageSize {"width":1264,"height":842,"resample":"bicubicSharper"}` (a downscale: Sharper) and a light `filter.sharpen.unsharpMask {"amount":40,"radius":0.9,"threshold":2}` on the base.
+2. `file.placeEmbedded {"path":"/abs/reference.png","scale":100,"center":[632,421]}` lands exactly on a canvas of the same size (a Smart Object). Name it, then `filter.blur.gaussianBlur {"radius":10}`: this is the low-frequency tone and colour layer.
+3. `layer.duplicate {"layer":"Background","name":"Detail"}` (layers can be addressed by name), `layer.moveTo {"layer":"Detail","target":"<the placed layer>","position":"above"}`, `layer.select {"name":"Detail"}`, `filter.other.highPass {"radius":10}`, `layer.setProps {"blend":"Linear Light","opacity":0.55}`. The high-pass radius should equal the blur radius; opacity 0.5 reproduces the detail faithfully, 0.55-0.6 adds a little local contrast, 0.62 made film grain on skin crunchy.
+4. A second copy of the reference above, `layer.setProps {"blend":"Color","opacity":0.6}` with `gaussianBlur {"radius":2}`, restores the saturation of small coloured details (flower petals) that the radius-10 blur washed out.
+
+What did NOT work, and why it matters:
+- **A single Colour-blend layer over the grey photo** keeps the original's brightness, so it cannot follow the reference's re-lighting (its skin was much lighter and its maroon shirt much darker than the print's greys): colour/tone distance to the reference only fell from 23 to 20.
+- **A fitted 3D LUT (`tools/fitlut.py`) scored better (12) but wrecked the faces**: pale patches on the forehead and brown blotches on the chin, because it overfitted the reference's local re-lighting. **Do not trust a global error number for portraits: look at the faces at 100%.** A global luminance curve was safe but only reached 19.5.
+- **Blur 18 / high-pass 18** left a ghost halo beside an ear (a few pixels of misalignment between the two images, enlarged by the wider split); 7-10 was clean.
+Final numbers (mean abs difference to the reference at 632×421): grey print 23.4 → 5.8; fine-detail energy (Laplacian variance) 105 → 251 against 253 in the reference. The result is layered (`Fine colour`, `Detail`, `Tone and colour`, `Background`) and every colour layer stays a live Smart Object.
