@@ -43,3 +43,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-10-28 (18): training exercise: hand colorization of a black-and-white portrait without a colour reference (region fill layers in Color blend with lasso and tonal masks); masks debugged at 100%; see `workflows-and-tools.md`.
 - 2026-10-28 (19): reviewed the hand colorization (grey lawn pockets and grey hair): saturation map to find leftovers, two-layer warm-grey hair, shared mask edges; see `workflows-and-tools.md`.
 - 2026-10-28 (20): user rejected the faint hair tint (still greyscale): rebuilt the hair as five tonal bands (brown shadows to cool silver highlights); a single strong tint was blond.
+- 2026-10-28 (21): second review round on the hand colorization: neck masks along the real neckline, shared shirt outline subtracted from background masks, lamp glass showing the trees; see `workflows-and-tools.md`.
