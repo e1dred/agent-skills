@@ -7,6 +7,12 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 Five newer commands: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
 (after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`.
 
+Five more (headless, checked by reading the saved file back):
+- **`design.scaleFontSizes {"percent":50}` or `{"delta":2}`** (exactly one; both is an error): scales the **style** sizes, not direct formatting. A blank document's Heading 1 went 20 → 30 pt (+50%) and Title 28 → 42; text with a direct `format.size` kept its size, and Normal (no explicit size in the style) did not change.
+- **`equation.deleteSurrounding {"before":1,"after":0}`**: deletes around the caret inside an equation being edited (`insert.equation {"linear":"a+b","edit":true}`, `equation.type {"text":"cd"}` → `a+bcd`; delete 1 before → `a+bc`) → `{before,after,changed}`.
+- **`file.closeDocument {"id"?,"force"?}`**: a document with unsaved changes is an error ("pass force") and stays open; with `force` → `{closed,active,documents:[{id,title,path,dirty,active}]}` and closing the last one leaves a new blank document.
+- **`view.switchWindows {"id"?}`** lists the open documents (`{documents:[…]}`) or makes one active; **`view.stylesPaneDock {"dock":"left|right|float"}`** → `{dock}`.
+
 ## Property names (verified via `inspect`)
 
 Paragraph props (`para.set {"props":…}`, `styles.modify {"para":…}`):

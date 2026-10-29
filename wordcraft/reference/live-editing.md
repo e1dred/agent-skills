@@ -4,7 +4,8 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Live mode, verified (WordCraft, app started with `--control 47822`, blank document open)
 
-> Not re-checked: `screenshot`, `batch`, `key`, `click`, `new_document`, `save_document`.
+> Re-checked on the current app (port 47826, a blank unsaved document): `type_text`, `execute para.style`, `select_text` + `format.bold`, `get_text`, `inspect_document`, `ui_inspect`, `render_page`, `design.scaleFontSizes` (the caret grew with the text), `file.closeDocument`. Not re-checked: `batch`, `key`, `click`, `new_document`, `save_document`.
+> Traps: `screenshot` answers "the window is minimized" when it is; `render_page` saves its PNG as `./img_N.png` in the **working folder of the client** (`wcmcp.py` left `img_1.png` in the repo): run it from a scratch folder.
 
 - Connect: `WORDCRAFT_PORT=47822 IMGDIR=DIR python3 -I tools/wcmcp.py '[["tool",{args}],…]'` (the helper now SAVES image
   results such as `screenshot` and `render_page` to `IMGDIR/img_N.png`; before, they were dropped as `<image>`).

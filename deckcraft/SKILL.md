@@ -7,8 +7,8 @@ description: Use when building, editing, rendering or converting slide decks (.d
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **deckcraft-cli 0.11.1** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
-presentation app in Rust. Everything is a command with an id (321 of them); CLI, MCP and the live control channel run the
+Field notes from real tasks, last tested on **deckcraft-cli 0.12.0** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
+presentation app in Rust. Everything is a command with an id (330 of them); CLI, MCP and the live control channel run the
 same commands. If `deckcraft-cli --version` is newer, re-check before relying on this.
 
 ## Surfaces
@@ -217,6 +217,11 @@ One `run` built title + bullets + table + chart + text box + link + background +
 Six newer commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`). The full-deck recipe
 (select chart → `chart.options`, accessibility check, `.pptx` round trip with a hidden slide) is covered in "Building a real deck".
 
+Three newer commands (headless, checked in the saved file):
+- `slide.selectRange {"from"?,"to","add"?}` → `{selected:[slideIds]}`; commands that act on the selected slides then apply to all of them: `slide.hide {"hidden":true}` after `selectRange {"from":1,"to":2}` hid both.
+- `format.languageAll {"lang":"fr-FR","noProof"?}` sets the proofing language of every text (slides, tables, notes, masters, layouts, default for new text; one undo step): the `.pptx` slide XML then carries `lang="fr-FR"`.
+- `text.deleteSurrounding {"before":2,"after":0,"bytes"?}` acts on text being edited: `text.edit {"id":261}` (caret at the end), `text.deleteSurrounding {"before":2}`, `text.insert {"text":"!"}` turned "Hello" into "Hel!" → `{deleted}`.
+
 ## Alignment and redo (verified headless, 2026-10-26; render looked at)
 - `format.alignLeft`, `format.alignCenter`, `format.alignRight` (no parameters) act on the selected text or shapes: after `insert.textBox` the new box is selected, so `--cmd 'insert.textBox={"text":"Right aligned","rect":[100,100,800,100]}' --cmd format.alignRight` right-aligned the text inside its 800-point-wide box (render: it sat at the right end), `alignCenter` centred and `alignLeft` left-aligned it.
 - **`insert.textBox` takes `rect: [x,y,w,h]` in points of a 960×540 slide** (the PNG export is 1920×1080). `x`, `y`, `width`, `height` are ignored: two boxes without `rect` were stacked at the default position and overlapped, and `rect:[1,1,6,1]` made a 6-point-wide box that wrapped one letter per line.
@@ -263,3 +268,4 @@ slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumn
 - 2026-10-26: gap round: format.alignLeft/Center/Right, edit.redo, textBox rect units.
 - 2026-10-26: the last 28 command ids run with their setups (smoke test).
 - 2026-10-27: board deck from invented sample data (3 native charts, table, SmartArt, notes, alt text, 60-30-10 palette); chart-axis gap recorded.
+- 2026-10-28: CLI refreshed; 19 decks (the six starters with title/bullets/shape/table/chart/text box/notes/transition, a blank deck with duplicate/move/hide/section/background/variant, seven chart types, five layouts) built with the old and new CLI: identical `info`, identical parts in every `.pptx`, 64 rendered slides pixel-identical. Three new commands verified; live app re-checked (file.new, slide.new, selectRange, languageAll, document.inspect, ui.render, file.close); `ui.screenshot` refused (window hidden), `ui.render` works.

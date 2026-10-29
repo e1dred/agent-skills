@@ -5,7 +5,7 @@ description: Use when drawing or editing 2D CAD, DXF/DWG files, wiring schematic
 
 # CadCraft
 
-Field notes from one real task (a wiring schematic), last tested on **cadcraft-cli 0.13.0** (Linux AppImage). CadCraft is an AutoCAD-style 2D drafting app (441 commands, DXF/DWG in and out). The CLI, the live control channel and the MCP bridge run the same commands. VectorCraft (illustration, not CAD) was extracted too but not tested; for precise, labelled, orthogonal drawings CadCraft is the better fit.
+Field notes from one real task (a wiring schematic), last tested on **cadcraft-cli 0.14.0** (Linux AppImage). CadCraft is an AutoCAD-style 2D drafting app (444 commands, DXF/DWG in and out). The CLI, the live control channel and the MCP bridge run the same commands. VectorCraft (illustration, not CAD) was extracted too but not tested; for precise, labelled, orthogonal drawings CadCraft is the better fit.
 
 ## Keep this file growing
 At the end of every CadCraft task add what you verified (render and look), fix what proved wrong, keep it general (no personal data or other people's documents), add a log line.
@@ -206,3 +206,10 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - 2026-10-26: the last 62 command ids run with their setups (smoke test).
 - 2026-10-26: label-clearance touch-up of a finished schematic (text-box vs segment check, `move` deltas, render comparison).
 - 2026-10-27: parametric ECO plate (Config_Params.txt), block files with attributes, true 1:1 A3 PDF (fit:false), radius text override.
+- 2026-10-28: CLI refreshed; five drawings (shapes and text, dimensions and hatch, blocks, copy/offset/mirror/array, the relay-lamp example) built with the old and new CLI: identical DXF (handles aside), `info`, SVG and PDF pixels. Three new commands verified (below); live window re-checked on a scratch drawing (`new_drawing`, `execute`, `inspect_drawing`, `render`, `close`).
+
+## Newer commands (verified headless and live)
+- `blocks.description {"name","description"}` → `{block,description}`; `description` is required (an empty string clears it; there is no read form). `block {…,"description":"…"}` sets it at creation (it is stored in the DXF). Up to 255 characters, one line.
+- `layout.saveas {"name"?,"path"}` (also `layout {"option":"saveas","name","path"}`) → `{name,path,bytes}`; a path with no extension gets `.dwt`; `.dwg` and `.dxf` are accepted. It writes wherever the path says: use a scratch folder.
+- `vports.named {"name"?,"delete"?,"p1"?,"p2"?,"layout"?}`: no name lists `{current,configurations:[{name,viewports}]}`; a name restores a saved configuration (an unknown name is an error); on a layout it puts one viewport per tile over p1–p2 or the printable area. Save one first: `-vports {"option":"2","arrangement":"vertical"}` then `-vports {"option":"save","name":"TwoUp"}`.
+- Traps: a `--cmd` value starting with `-` must be written `--cmd=-vports {…}` (the CLI reads a separate `-vports` as a flag); `"{last}"` works in headless `run` but a live `execute` needs the real handle (`"100"`).

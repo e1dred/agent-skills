@@ -7,7 +7,7 @@ how to verify results, and ready-to-run recipes.
 
 It complements WordCraft's official docs (`docs/mcp.md`, `docs/control-protocol.md`) rather than repeating them.
 
-Last tested with WordCraft 0.11.0 on Linux (AppImage). Unofficial: not affiliated with the WordCraft project.
+Last tested with WordCraft 0.12.0 on Linux (AppImage). Unofficial: not affiliated with the WordCraft project.
 
 ## Contents
 

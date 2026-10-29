@@ -7,8 +7,8 @@ description: Use when building, editing, checking or converting spreadsheets (.x
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **gridcraft-cli 0.12.1** (Linux AppImage). GridCraft is an alpha, Excel-style
-spreadsheet in Rust. Every ribbon button is an *engine command* (346 of them); the CLI, the MCP server and the app's
+Field notes from real tasks, last tested on **gridcraft-cli 0.13.0** (Linux AppImage). GridCraft is an alpha, Excel-style
+spreadsheet in Rust. Every ribbon button is an *engine command* (355 of them); the CLI, the MCP server and the app's
 control channel all run the same commands. If `gridcraft-cli version` is newer, re-check before relying on this.
 
 ## Surfaces
@@ -251,6 +251,12 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
 Seven newer commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
 `view.showOutlineSymbols`, `automate.stopAction`).
 
+Newer window commands (headless `run` has one window; the live app can have several on one workbook):
+- `window.list {}` → `[{window,doc,index,title,dirty,active,hidden}]`; `window.close {"window"?,"doc"?,"force"?}` → `{closed,document}` (a workbook closes with its last window; unsaved changes need `force`).
+- `view.newWindow {}` now returns `{window,doc,title}` (titles `Book1:1`, `Book1:2`; saving from either saves the one workbook).
+- `window.activate` takes `{"window":id}`, `{"doc":id}` or `{"index":n}`; `file.close {"document":true}` closes the workbook and all its windows (`{closed:false,dirty:true}` while it has unsaved changes, `force` discards).
+- A saved `.xlsx` now writes `<scheme val="minor"/>` for the bold font entry too (cosmetic: values, formulas, tables, charts and PDF pages are unchanged).
+
 ## The last 58 command ids (2026-10-26, headless; smoke test)
 > Each id ran with `gridcraft-cli run --sample sales --cmd 'id={json}'` (plus the setup it needs) and returned without an error; the saved workbook's `cat --formulas` and `info --json` were compared with the same script without the command. **Smoke test only: effects were not looked at.** Sample "sales" has its table at B4 (Region, Q1..Q4, Total).
 - **Changed the workbook (58):**
@@ -303,3 +309,4 @@ view.zoomToSelection
 - 2026-10-25 (11): ink strokes and ink-to-shape (rectangle, ellipse, triangle, line) verified headless on 0.12.1; saved as drawing shapes.
 - 2026-10-26: the last 58 command ids run with their setups (smoke test, workbook compared with and without the command).
 - 2026-10-27: three-sheet financial model (names, XLOOKUP, sensitivity formula grid, burn alert, cross-sheet chart) built and checked; chart-from-other-sheet traps recorded.
+- 2026-10-28: CLI refreshed; nine workbook builds (table, sort, pivot, charts, conditional formats and validation, names and spill, fills/freeze/page setup, filter, financial functions) made with the old and new CLI: identical `cat --formulas`, `info`, `check`, PDF text and 10 PDF pages pixel-identical (only the font `scheme` tag in styles.xml differs). Window commands verified; live app re-checked (cell.set/range.setValues, bold, sheet.read, view.newWindow, window.list/close); `ui.screenshot` timed out (window minimized).

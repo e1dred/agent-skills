@@ -7,7 +7,7 @@ description: Use when writing, formatting or converting Word documents (.docx), 
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **WordCraft 0.11.0** (Linux AppImage). If `wordcraft-cli --version`
+Field notes from real tasks, last tested on **WordCraft 0.12.0** (Linux AppImage). If `wordcraft-cli --version`
 reports something newer, treat anything in this skill as "probably still true" and re-check it before relying on it.
 
 ## Keep this file growing

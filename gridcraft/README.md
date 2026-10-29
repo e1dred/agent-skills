@@ -1,6 +1,6 @@
 # gridcraft skill
 
-Working notes for driving [GridCraft](https://github.com/storytold/gridcraft) from an AI agent. Last tested on 0.12.1 (Linux AppImage).
+Working notes for driving [GridCraft](https://github.com/storytold/gridcraft) from an AI agent. Last tested on 0.13.0 (Linux AppImage).
 
 Live editing: start the app with `--control 47823` (e.g. in its `.desktop` launcher), then register
 `claude mcp add gridcraft -- gridcraft-cli mcp --connect 47823`. Headless use needs only `gridcraft-cli`
