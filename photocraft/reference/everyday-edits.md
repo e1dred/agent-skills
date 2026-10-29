@@ -66,8 +66,32 @@ are still unverified.
   `style.presets.exportAsl {"path":"x.asl","group"?,"styles"?}` → `{count:21,bytes,patterns,warnings}` (31 KB);
   `style.presets.importAsl {"path":"x.asl","group":"Name","replace":true}` → imports 21; a name clashing with a built-in group gets " 2" appended, built-ins are never replaced.
   `help.checkForUpdates {}` / `updates.status {}` take no params.
-- New commands in 0.16.0: `type.fillPath`, `style.presets.importAsl/exportAsl`, `help.checkForUpdates`, `updates.status` (935 → 940). Nothing removed; every recipe
-  above (crop, curves, unsharp mask, resize, saves) gave the same results on both CLIs. `select.subject/object/focusArea/quick` parameter docs are unchanged.
+- New commands in 0.16.0: `type.fillPath`, `style.presets.importAsl/exportAsl`, `help.checkForUpdates`, `updates.status` (935 → 940). `select.subject/object/focusArea/quick` parameter docs are unchanged.
+
+## Newer commands and options (verified headless)
+
+Each ran on a synthetic document and was read back or rendered; the earlier recipes (most rows of the everyday table, selection → mask,
+the card recipe, shape stroke, type on a shape, style presets as ASL, `.pcraft`/`.psd`/`.jpg`/`.webp`/`.tiff` output) gave **identical pixels** on the
+new CLI as on the one before it. PNG files are about 13% smaller (same pixels).
+
+- **`file.new {"artboard":true}`**: one artboard group ("Artboard 1") over the canvas holding an empty Layer 1, no Background layer. An older CLI **rejects** the key
+  (`unknown parameter`), unlike most other commands, which silently ignore unknown keys: check `commands --json` before relying on a new key.
+- **`paint.stroke {"fill":true}`** with a closed `points` loop fills the enclosed region with the brush colour (centre pixel `#aa0000`); without it the loop is a stamped outline.
+- **Groups:** `layer.new.group`, `layer.groupLayers`, `layer.new.groupFromLayers` take `name`, `color` (layer colour label), `mode` (default `passThrough`) and `opacity` (0–100);
+  `layer.new.group` also `position:"above|below"`. Checked in `info`: `labelColor`, `blend:"Multiply"`, `opacity:0.5`.
+- **`layer.new.artboardFromLayers {"name","background":"white|black|transparent|custom","color","width","height"}`** (the selected layers) → `{layer,rect}`; width/height 0 keeps the layers' bounds.
+- **Gradient fills on shapes:** `shape.create`/`shape.edit` `fill:{"gradient":{"stops":[[0,"#ff0000"],[1,"#0000ff"]],"angle":0,"style":"linear","opacityStops":[[0,1],[1,0]],"midpoints":[0.3],"dither":true}}`:
+  the render faded from red to transparent-over-white as asked. A fill written as `{"type":"gradient","from":…,"to":…}` is rejected ("unrecognised fill").
+- **`filter.cameraRaw`** now acts on `shadowTint` (-100..100) and `calibrationHue` / `calibrationSat` (`[red,green,blue]`, -100..100). An older CLI ignored them and returned `identity:true` with the picture unchanged.
+- **`paint.bucket {"mode":"multiply"}`** blend mode (the fill of `#336699` on white came out `#336699`, as multiply by white should).
+- **`view.layerMask {"mask":"layer|filter"}`**: `filter` is a smart object's filter mask; on a pixel layer it is refused ("has no filter mask"). `edit.fill {"target":"filterMask"}` likewise needs a smart object ("not available right now").
+  Painting tools (`paint.dodge/burn/blur/…`) accept `"target":"filterMask"` too.
+- **`paint.artHistoryBrush {"points","size","snapshot"|"state","style":"tightShort|…|dab","area","tolerance"}`**: paints stylised strokes of a history source. Checked by `history.newSnapshot`, then `image.adjustments.invert`, then the brush: the stroke
+  area came back to the original colours (outside it stayed inverted). After a Gaussian blur instead of the invert nothing changed (pixel-identical to the blurred picture), so test it on a colour change.
+- **`brush.mixer.sample {"points":[[x,y]]}`** → `{color:[r,g,b,a],width:64,height:64}` (the colour the Mixer brush picks up); `paint.mixerBrush` takes `mixerState`.
+- **`history.options {}`** reports `{allowNonLinearHistory:false,makeLayerVisibilityChangesUndoable:true}`; pass either key to set it.
+- **`type.font.favorite {"family":"Arial","on":true}`** → `{family,favorite,favorites}` (omit `on` to toggle); **`type.font.library {}`** → `{favorites}`.
+- **`type.fillPath`** needs `{"shape":<shape layer id>}` unless the document has a work path ("the document has no work path"); with `--new` the first shape layer is id 3. Path commands (`path.addAnchor`, `path.moveAnchors`, …) take `"typePath":true` for the Type Path of a type layer that also has a vector mask.
 
 ## Retouching, compositing and selections (verified headless on a portrait; renders checked)
 

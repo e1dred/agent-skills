@@ -2,6 +2,8 @@
 
 Part of the photocraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
+> Not re-checked: the live bridge, window tools and AI selection below (the headless CLI was re-run; see `everyday-edits.md`, "Newer commands and options").
+
 ## Live mode and removing a background (verified on a portrait with a blurred, busy background)
 
 

@@ -36,3 +36,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-10-26 (12): the last 28 command ids run (26 ran or refused with a reason, 2 print commands skipped on purpose; smoke test).
 - 2026-10-26 (13): phase 2: 222 smoke-tested ids verified in detail (rendered or read back); see `command-sweeps.md`.
 - 2026-10-26 (13): phase 2: 29 smoke-tested ids verified in detail (rendered or read back); see `command-sweeps.md`.
+- 2026-10-28 (14): CLI refreshed; 31 outputs (most rows of the everyday table, selection mask, card, shape stroke, type on a shape, style presets exported as ASL, .pcraft/.psd/.jpg/.webp/.tiff) made with the old and new CLI: identical pixels (the .asl file is byte-identical too). Newer commands and options verified headless (see `everyday-edits.md`). Live bridge not re-run.

@@ -1,12 +1,14 @@
 # Changelog
 
 All notable changes to this repository. Dates are the commit dates; the repo has no version numbers, so entries are grouped by day.
-Each skill also labels, section by section, which app version a section was tested on (`> Versions:` lines): this file only summarises.
+Each skill names the one app version it was last tested on; this file only summarises.
 Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, Fixed, Known gaps).
 
 ## Unreleased
 
 ### Added
+- PhotoCraft (2026-10-28): CLI refreshed to 0.17.0 and re-run headless: 31 outputs identical to the previous CLI except the new `paint.stroke` `fill` option; new commands and options documented and checked (artboards, groups, gradient opacity stops, Camera Raw calibration, art history brush, mixer sample, font favourites, history options). Live bridge not re-run.
+- `check-versions.sh` (2026-10-28): CadCraft added to the default app list.
 - `check-versions.sh` (2026-10-27): also checks GenOffice, whose AppImage opens the GUI on `--version`: it compares the AppImage's size and SHA-512 with the vendor's update feed and the `genoffice` CLI's version with the feed's, prints a clear line when the feed is unreadable, and tells you when the AppImage is not the feed's latest (a managing tool once installed an older build).
 - Four end-to-end office and CAD tasks (2026-10-27), each recorded in its skill with invented sample data only: WordCraft policy manual (TOC at a placeholder, callout boxes, 5-column matrix, real tracked-change log, markup PDF; `review.trackChanges` takes `value`, not `on`, which corrects an earlier note), GridCraft three-sheet financial model (named ranges, live `SUMPRODUCT`/`SEQUENCE` sensitivity grid, cross-sheet chart workaround), DeckCraft 7-slide board review (native charts, no axis control so truncated axes are captioned, alt text needs the current slide), CadCraft parametric plate drawing (block files with attributes; the default PDF export is 1.8% over scale, `fit:false` gives true 1:1).
 - `genoffice-supplement/tools/` (2026-10-27): the sweep scripts for the Docs, Sheets and Slides ops, the staged Sheets cases, the XML checks, the style-pair builder and the page comparison, with invented sample data and `run_sweeps.sh` (verified end to end in a fresh folder, about 2 minutes) so the checks can be repeated when GenOffice updates.
@@ -49,6 +51,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 - **Screenplay format** (kind `screenplay`): standard spec-script layout in WordCraft and ONLYOFFICE (Courier 12 pt on a 12 pt pitch, element indents, title page as its own section, numbering from 1 with `2.` `3.` at the top right), Fountain-like plain-text input with automatic `(CONT'D)`, and `screenplay_check.py`.
 
 ### Changed
+- Version labels (2026-10-28): each skill names only the latest tested version; per-section `> Versions:` lines and "tested on A and B" lists removed.
 - All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains; CadCraft and PhotoCraft also name the export formats and edits an agent guessed at in a pick test. Bodies are unchanged.
 - DeckCraft: the `chart.options` "nothing selected" note no longer contradicts the later one (a just-inserted chart is already selected). PhotoCraft: `run` takes `--quality`, so a crop to JPEG is one command (checked on a test image).
 - WordCraft: the per-section header and footer recipe is also given as a complete `--script` JSON file, re-run and checked page by page.
