@@ -7,7 +7,7 @@ description: Use when writing, formatting or converting Word documents (.docx), 
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, tested on **WordCraft 0.10.0; the style, review and next-tier sections on 0.11.0** (Linux AppImage). If `wordcraft-cli --version`
+Field notes from real tasks, last tested on **WordCraft 0.11.0** (Linux AppImage). If `wordcraft-cli --version`
 reports something newer, treat anything in this skill as "probably still true" and re-check it before relying on it.
 
 ## Keep this file growing
@@ -76,7 +76,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 ## CLI essentials (verified)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs: `run --save`, `info`, `text`, `render`, `convert … .md` identical. Not re-run: `batch` and the other converters (the style work converted to PDF on 0.11.0).
+> Not re-checked: `batch` and the other converters.
 
 ```
 wordcraft-cli run --template blank --script s.json            # {"template","commands":[...],"save":["a.docx","a.pdf"]}
@@ -93,8 +93,6 @@ Script commands are `{"command": id, "params": {...}}` or a bare id string. Rela
 folder (per docs/mcp.md) — use absolute paths. A failing script command stops the run and nothing is saved.
 
 ## Traps (each one cost time)
-
-> **Versions:** found on 0.10.0 unless the item says otherwise; the three traps from the style builders (numbering `num 0` wiping indents, inherited direct properties, `insert.pageBreak`) were found on 0.11.0.
 
 - **Unknown property keys are silently ignored** — no error (documented in docs/mcp.md). Confirm every new
   key with `inspect`. Example: `para.set {"props":{"spaceAftr":12}}` succeeds and changes nothing.

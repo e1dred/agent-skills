@@ -4,7 +4,6 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 
 ## Live mode and removing a background (verified on a portrait with a blurred, busy background)
 
-> **Versions:** 0.15.1 app and CLI (2026-10-24). The live bridge was re-verified on 0.16.0 (see 'Version 0.16.0 notes'); `select.subject` was re-tested on 0.16.0 and still fails on this kind of photo.
 
 Helper when the `photocraft` MCP tools are not loaded in the session: `python3 -I tools/pcmcp.py PORT calls.json` (see its docstring) runs the same tool calls through the bridge from the shell and saves screenshots.
 Live mode: the app must be started with `--control PORT --control-token-file FILE --automation-read-root DIR
@@ -100,9 +99,8 @@ is classical. The Craft AI layer (https://github.com/storytold/craft-ai-integrat
 SAM 2.1/SAM 3 engines and a ComfyUI `image.segment` role that would give real subject selection. When a newer PhotoCraft
 exposes it, re-test the portrait background removal above before using the manual lasso method.
 
-## Live session and wider toolbox (verified, 0.16.0)
+## Live session and wider toolbox (verified)
 
-> **Versions:** 0.16.0 only (2026-10-25); live bridge session, not re-run on 0.15.1 (its bridge needs the matching CLI).
 
 **Live bridge session (MCP server `photocraft` → app on 47825):** `doc_open {"path":"~/Pictures/x.png"}` (under the read root) → `{name,path,warnings}`;
 `command_batch {"steps":[{"id":…,"params":…},…]}` (the argument is **`steps`**, not `commands`) → `{completed,failed,results:[{ok,result}]}` (one history step each);
@@ -121,8 +119,8 @@ Headless batch checked on a photo: `select.colorRange {"select":"sampledColors",
 `paint.pencil`, `paint.bucket {"x","y","tolerance","color"}`, `paint.gradient {"from":[x,y],"to":[x,y],"style","colors"}`, mixer brush, magic eraser), `filter.stylize` 9, `filter.distort` 9, `filter.noise` 5, `filter.other` 7
 (`highPass {"radius"}`), `filter.render` 9 (`clouds`, `lensFlare`, `pictureFrame {"frame":"…"}`), `channel.*` 22, `layerComp.*` 14, `history.*` 13, `brush.*` 17.
 
-## Live UI tools: pointer, tools, straighten, remove, perspective crop (verified live on 0.16.0, app on port 47825, 2026-10-26; screenshots checked)
-> **Versions:** 0.16.0 app and CLI, live bridge only (the window must be visible, screen unlocked). Test photos: a landscape with a clear sky, a hillside with a sloping tree line, power lines over a field, a phone photo of a framed certificate on a dark blanket, a wide-angle building, prints lying on a wooden table. No photo content is recorded here.
+## Live UI tools: pointer, tools, straighten, remove, perspective crop (verified live, app on port 47825, 2026-10-26; screenshots checked)
+> The window must be visible and the screen unlocked. Test photos: a landscape with a clear sky, a hillside with a sloping tree line, power lines over a field, a phone photo of a framed certificate on a dark blanket, a wide-angle building, prints lying on a wooden table. No photo content is recorded here.
 - **Paths for the live tools:** `doc_open {"path":"/abs/file"}` needs an ABSOLUTE path (`~` is not expanded: "automation read … NotFound"). `doc_save`, like `doc_open`, works under the app's read/write roots (here the Pictures folder): **a `doc_save` aimed at a scratch name saved into the user's photo folder**: use a name you delete afterwards, or a subfolder meant for results. `doc_new {"width","height","background"}` → `{document}`; the new document becomes the active tab.
 - **`ui_set {"fields":{"tool":"Name","brushSize":14}}`** switches tool (an unknown name answers "unknown tool `x`" without listing the valid ones). Tool names that WORK: Move, Lasso, MagneticLasso, QuickSelection, MagicWand, ObjectSelection, Crop, PerspectiveCrop, Slice, Eyedropper, ColorSampler, Ruler, Note, Count, SpotHealing, Healing, Patch, ContentAwareMove, RedEye, Remove, Brush, Pencil, MixerBrush, CloneStamp, PatternStamp, HistoryBrush, Eraser, BackgroundEraser, MagicEraser, Gradient, PaintBucket, Blur, Sharpen, Smudge, Dodge, Burn, Sponge, Pen, FreeformPen, CurvaturePen, Type, VerticalType, DirectSelection, Rectangle, Ellipse, Line, Polygon, CustomShape, Hand, Zoom, Artboard, Frame. **NOT valid:** Marquee, RectangularMarquee, EllipticalMarquee, PolygonalLasso, HealingBrush, Path, Rotate (try other spellings). Other `ui.set` fields are listed in the tool description (zoom, center, theme, crop overlay, eyedropper sample…); an unknown field is an error.
 - **`ui_pointer {"events":[{"kind":"down|move|up","x","y","pressure"?}]}`** sends document-pixel events to the ACTIVE tool; the reply is only `{status}` (the status-bar text, often stale: ignore it), so verify by `ui_inspect` (`document.history`, `measurement`, `selectionBounds`) or a screenshot. Every stroke needs a `down`, a few `move`s and an `up`; a straight wire needs ~15 interpolated points. **`ui_screenshot {"max_side":800}`** is how you see the result; screenshots are numbered by call order in the helper's output (`/tmp/pcshot_<call>_0.png`).
@@ -140,8 +138,8 @@ Headless batch checked on a photo: `select.colorRange {"select":"sampledColors",
 - **`filter.lensCorrection {"profile":"generic","distortion":40,"vignetteAmount":30}`** (headless `run` on the JPEG) → `{profile:"Generic Lens (50 mm equivalent)",scale,layer,ms}`; on a wide-angle building photo `+40` straightened the bowed roofline and `-40` with `autoScale:true` bowed it more; look at the roofline/horizon, there is no automatic profile from EXIF here (`"profile":"auto"` was not run).
 - **Housekeeping after live tests:** each opened photo stays as a tab, modified ones show a dot: tell the user to close them WITHOUT saving (my edits were on the open copies; the files on disk are untouched). Remove any scratch file saved to the Pictures folder.
 
-## More live tools: marquees, polygon lasso, crop, pen, type, move, clone stamp (verified live on 0.16.0, 2026-10-26)
-> **Versions:** 0.16.0 app and CLI, live bridge (`ui_set`, `ui_pointer`, `control_call`), results read back with `command_run {"id":"document.inspect"}` (history names, `selectionBounds`, layer list) and screenshots. Test images: a landscape photo and a blank 500×350 document.
+## More live tools: marquees, polygon lasso, crop, pen, type, move, clone stamp (verified live, 2026-10-26)
+> Live bridge (`ui_set`, `ui_pointer`, `control_call`), results read back with `command_run {"id":"document.inspect"}` (history names, `selectionBounds`, layer list) and screenshots. Test images: a landscape photo and a blank 500×350 document.
 - **Tool names that fix the earlier "not valid" list:** `RectMarquee`, `EllipseMarquee`, `SingleRowMarquee`, `SingleColumnMarquee`, `PolygonLasso`, `PathSelection`, `RotateView`, `ColorReplacement`, `MoveTool` are accepted. **`Ellipse` selected the Elliptical Marquee here** (history "Elliptical Marquee", no shape layer), while `Rectangle` earlier made a shape layer: check `document.inspect` → `history` after the first stroke with a tool name you have not used before; the history label is the real tool.
 - **`selectionBounds` is `[x, y, width, height]`:** a RectMarquee drag from (100,60) to (500,300) gave `[100,60,400,240]`, an EllipseMarquee drag (700,100)→(1000,300) gave `[700,100,300,200]`; `hasSelection:true`, history "Rectangular Marquee"/"Elliptical Marquee".
 - **PolygonLasso:** one click pair (`down`+`up`) per vertex, the last click on the first vertex closes it → history "Lasso", `selectionBounds [200,330,250,150]` for a 4-vertex shape.

@@ -4,7 +4,7 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Accessibility checker (verified headless)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (picture, table and 'click here' link, no title): identical issue lists. Not re-run: the full fix recipe down to `ok:true`, and the tagged-PDF check.
+> Not re-checked: the full fix recipe down to `ok:true`, and the tagged-PDF check.
 
 `file.accessibility {}` → `{"ok":bool,"issues":[{"kind":"error|warning|tip","issue","fix"?,"action"?:{command,params},"pos"}]}`.
 On a deliberately flawed document it found 6: picture without alt text (error, fix `object.altText`/`picture.altText`),
@@ -19,7 +19,7 @@ first cell `table.altText` + `table.repeatHeader`; real header text such as `ins
 
 ## Paragraph formatting, lists and editing commands (verified headless; props read back with `inspect`, lists by `pdftotext`)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs: `para.align/indents/spacing/lineSpacing/tabs`, `para.numbering` (numbered, lowerRoman), `para.bullets` and `edit.paste {html}` gave identical text and properties. Not re-run: the pagination keeps, multilevel lists, `setNumberingValue`, `para.sort`, copy/paste format, `edit.undoTo`, `edit.goto`, the spike.
+> Not re-checked: the pagination keeps, multilevel lists, `setNumberingValue`, `para.sort`, copy/paste format, `edit.undoTo`, `edit.goto`, the spike.
 
 Paragraph (one call each; `text.newParagraph` carries the settings forward, see traps):
 - `para.align {"value":"left|center|right|justify|distribute"}`; `para.indents {"left":36,"right":36,"firstLine":18}` (pt, negative
@@ -45,9 +45,8 @@ Editing:
   start of page 1; `edit.spike` cuts the selection into the spike, `edit.insertSpike` pastes it back (collects text, then
   empties); `edit.replace`/`findNext`/`advancedFind` exist (not run).
 
-## Next-tier workflows (verified headless, 0.11.0)
+## Next-tier workflows (verified headless)
 
-> **Versions:** 0.11.0 only (2026-10-25); not run on 0.10.0.
 
 **Seeing results:** `wordcraft-cli run --file F.docx --cmd id={json} --print` (or a `--script`) prints every command's result (the older notes only showed "wrote …"). `--author NAME` names who the tracked changes and comments are by (default "WordCraft User").
 - **Tracked changes**: `review.trackChanges {"value":true}` (the parameter is `value`; `on` is silently ignored and the command then just TOGGLES, which only looked right from an untracked start), then ordinary edits (`select.text {"text":"quick brown"}` + `text.insert` → one insertion + one deletion; `text.delete`) become `<w:ins>`/`<w:del>`.
@@ -66,9 +65,9 @@ Editing:
 - **Other**: `layout.lineNumbers {"value":"restartPage","countBy":1}`, `insert.textBox {"text":"Callout box","width":150,"height":60}`, `insert.shape`, `insert.dateTime`/`insert.field`, `insert.dropCap`.
 - **Converting**: `wordcraft-cli convert base.docx base.{pdf,odt,rtf,html,md,tex,txt,png}` all wrote files (png renders page 1); the `.md`/`.txt` exports keep text only.
 
-## Styles management, index and TOC, equations, tracked changes in depth (verified headless, 0.11.0; equation render checked)
+## Styles management, index and TOC, equations, tracked changes in depth (verified headless; equation render checked)
 
-> **Versions:** 0.11.0 only (2026-10-25); not run on 0.10.0. `wordcraft-cli commands --json` DOES give each command's parameter signature (the older note that only ids exist is about the plain listing): use it before guessing.
+> `wordcraft-cli commands --json` DOES give each command's parameter signature (the older note that only ids exist is about the plain listing): use it before guessing.
 
 - **Styles:** `styles.create {"name","basedOn"}` → `{id}`; `styles.modify {"style","chr","para"}`; `styles.updateToMatch {}` (style := the caret paragraph's direct formatting); `styles.rename {"style","name"}` → `{id,name}` (**the id stays "Note" after renaming to "Aside"**, so later calls such as `styles.setVisibility` report `style:"Note"`);
   `styles.setVisibility {"style","gallery":true,"hidden":false}` (needs `gallery` and/or `hidden`, not `visible`) → `{hidden,inGallery,style}`; `styles.addToGallery {"style"}`; `styles.delete {"style"}` → `{deleted:[…],restyled:1}` (paragraphs using it fall back to Normal);
@@ -88,9 +87,8 @@ Editing:
   `review.combine {"text":"revised text","author":"Merge","caseChanges":true}` → `{changes,notHonoured}` (also `path`, `original`, `whiteSpace`, `formatting`): a "beta gamma." → "BETA gamma delta." case change became one delete plus one insert.
 - Not run: `styles.manage/pane/apply`, `tools.attachTemplate`, TOA (`references.markCitation/tableOfAuthorities`), `references.noteOptions`, `references.convertNotes`, `review.restrict` per section, `file.privacyOptions`, equation `structureActions` listing.
 
-## Character effects, paragraph helpers, find, content controls, files and labels (verified headless, 0.11.0; props read back with `inspect`)
+## Character effects, paragraph helpers, find, content controls, files and labels (verified headless; props read back with `inspect`)
 
-> **Versions:** 0.11.0 (2026-10-25); not run on 0.10.0.
 
 - **Character effects** (act on the selection; `inspect` shows the run props): `format.smallCaps` → `smallCaps`, `format.shadow` → `shadow`, `format.outline` → `outline`, `format.doubleStrikethrough` → `doubleStrike`, `format.hidden` → `hidden`, `format.doubleUnderline`, `format.emboss/engrave`, `format.shading {"color":"FFFF00"}` → `shading:[255,255,0]`, `format.border {"value":true}` → `border:{style,width,space}`,
   `format.scale {"percent":150}` → `scale`, `format.position {"points":3}` → `position` (raised), `format.font {"name":"Georgia"}` (sets `font` and `fontCs`), `format.size {"size":16}`, `format.underline {"value":true}` + `format.underlineColor {"color":"FF0000"}` → `underlineColor:[255,0,0]`, `format.changeCase {"mode":"upper|lower|title|sentence|toggle"}`, `format.growFont/shrinkFont` (step through the standard sizes: grow then shrink returns to the start), `format.charStyle {"style"}`, `format.clear`.
@@ -107,9 +105,9 @@ Editing:
 - **Labels and envelopes (mail merge):** `mailings.start {"kind":"labels"}` → `mailings.recipients {"csv"}` → `mailings.labels {"product":"letter-3x10|a4-3x7|…","fromRecipients":true}` → `{filled:2,labels:30,product}`; **with the standard column names (First Name, Last Name, Address Line 1, City, State, Postal Code) the labels read "Ada Example 1 Main St Boston, MA 02101"**; a custom `"text":"{Name}\n{Street}\n{City}"` lost its first line (only Street and City printed), so use the standard columns. `mailings.envelopes {"delivery","return","size":"Envelope #10"}` → `{width:684,height:297}` and a new document with the return address top left (the delivery address text was not found in `text` output of the new document: look at the render before relying on it).
 - Not run or not possible headless: `arrange.align` (needs a selected picture or shape), table mouse commands (`table.draw/eraser/resizeDrag/selectAt/moveDrag/fitColumn`), `layout.manualHyphenation`, `file.recover`, `edit.undoHistory`, `review.readAloud`.
 
-## Ink (verified headless and on the live window, 0.11.0; render checked)
+## Ink (verified headless and on the live window; render checked)
 
-> **Versions:** 0.11.0 (2026-10-25). **This corrects an earlier note that ink needs the live app: the `page` parameter is 0-BASED** (`"page":1` means the second page and failed with "no page 1" on a one-page document; `"page":0` works headless).
+> **This corrects an earlier note that ink needs the live app: the `page` parameter is 0-BASED** (`"page":1` means the second page and failed with "no page 1" on a one-page document; `"page":0` works headless).
 
 - `draw.stroke {"page":0,"points":[[x,y],…],"tool":"pen|pencil|highlighter","color":"C00000","width":2}` → `{page,pos,rect:[x,y,w,h],shape:null}` (page points, at most 5000; the stroke is anchored to the paragraph at `pos`). Render: a red polyline, a wide translucent yellow highlighter bar, a thin grey pencil line (points are joined by straight segments, no smoothing).
 - **Select, edit, delete:** `draw.lasso {"page":0,"points":[loop]}` → `{count:1,selected:[pos]}` (every stroke inside the loop), `draw.lasso {"page":0,"clear":true}` → `{count:0}`; then `draw.lassoColor {"color":"0000FF"}` → `{recolored:1}`, `draw.lassoMove {"dx":150,"dy":10}` → `{moved:1}`, `draw.lassoDelete` → `{deleted:1}`. Without a lasso selection they answer "nothing is selected with the lasso".

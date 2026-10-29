@@ -4,7 +4,7 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Opening real résumés (.docx) in WordCraft: fidelity check (verified on copies, 2 designs)
 
-> **Versions:** tested 2026-10-24 on 0.10.0 with two older résumé files (the figures below come from those). re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs on two current résumé files (one style-based, one table-based, copies in scratch): `info`, the open+save round trip, style/table/link/numbering/margin counts and the PDF word-sequence ratio came out **identical** on both versions. Not re-compared against ONLYOFFICE's renderer.
+> Not re-compared against ONLYOFFICE's renderer.
 
 `wordcraft-cli info f.docx` → pages/paragraphs; `convert f.docx f.pdf`; `run --file f.docx --save out.docx` is the open+save round trip.
 - A style-based résumé (custom styles, no tables, 2 hyperlinks) round-tripped IDENTICALLY: same style counts, 2 pages,
@@ -19,7 +19,7 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Document comparison (verified headless)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (word and character level on a one-line edit): identical changes. Not re-run: the two-résumé comparison, `showIn` variants, `review.combine`.
+> Not re-checked: the two-résumé comparison, `showIn` variants, `review.combine`.
 
 `review.compare {"path":ABS_revised.docx | "text":"revised text","level":"word|character","author":"Cmp","showIn":"original|revised|new"}`
 → `{"changes":N,"notHonoured":[]}` and the differences become tracked changes; read them with `review.changes` (kind
@@ -31,7 +31,7 @@ records incl. 52 `format` records): filter `kind` to `insert|delete` for the tex
 
 ## Templates (verified headless)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (all five built-in templates by pages/paragraphs/text; `file.saveTemplate` + `file.newFromTemplate` with a custom style, margins and header): identical. Not re-run: `tools.attachTemplate`.
+> Not re-checked: `tools.attachTemplate`.
 
 - Built-ins: `wordcraft-cli run --template resume|letter|report|sample|blank --save x.docx` (resume: 1 page of fictional "Alex
   Rivera" text; letter; report; sample: a 2-page handbook).
@@ -42,9 +42,9 @@ records incl. 52 `format` records): filter `kind` to `insert|delete` for the tex
   (reply lists `replaced:[Normal, Heading 1…]`), turning a stale custom style (green bold) into the template's (italic brown,
   indented). It changes styles only, not margins or headers.
 
-## Reformatting a real document with review comments (verified on a real 3-page .docx, 0.11.0)
+## Reformatting a real document with review comments (verified on a real 3-page .docx)
 
-> **Versions:** 0.11.0 (2026-10-25). From rebuilding a friend's plain Word document as a styled, 4-page document and a second copy carrying review comments. Original left untouched; both outputs are new files.
+> From rebuilding a friend's plain Word document as a styled, 4-page document and a second copy carrying review comments. Original left untouched; both outputs are new files.
 
 - **Plan:** read the source with `wordcraft-cli text`, rebuild it from a script (`styles.create`/`modify`, content, tables, links), render to PDF and LOOK at every page, then build a second copy that adds comments. One builder with a `--comments` flag produced both from the same content.
 - **Built-in style names already exist:** `styles.create {"name":"Caption"}` fails ("a style named `Caption` already exists"). Use `styles.modify` for built-ins (Normal, Heading 1-3, Caption, Header, Footer) and `styles.create` only for your own (Doc Title, Callout, Table Text…).

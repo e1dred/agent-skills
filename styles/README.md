@@ -96,7 +96,7 @@ python3 -I manuscript_check.py /abs/book.docx            # PASS / WARN / FAIL ag
 | `--layout=short` | Short story: the text starts on the title page below the byline (default `novel`: separate title page, every chapter on a new page). |
 | `--paper=a4` | A4 instead of US Letter. |
 
-What to know (all verified on WordCraft 0.11.0 and ONLYOFFICE 10.0.0; both apps render the same pages):
+What to know (all verified on the latest tested WordCraft and ONLYOFFICE 10.0.0; both apps render the same pages):
 - The word count is **not a field**: it is the number the builder counted. Re-run the builder (or change `--wordcount`) after editing the text.
 - Chapter openings use six empty double-spaced paragraphs to drop a third of the way down, because WordCraft's layout ignores "space before" at the top of a page. They are
   intentional (`manuscript_check.py` allows runs of up to seven).

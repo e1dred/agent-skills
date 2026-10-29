@@ -4,7 +4,7 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Headers and footers per section (verified headless; render checked per page)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (the two-section script above, per-page text): identical (page 1 'Head1 … Foot1', page 2 'Head2 … Foot2'). Not re-run: the third-section inheritance and the `inspect` ids.
+> Not re-checked: the third-section inheritance and the `inspect` ids.
 
 ```
 text.insert "Section one." ; insert.header {"text":"Head1"} ; insert.closeHeader ; insert.footer {"text":"Foot1"} ; insert.closeHeader
@@ -34,9 +34,8 @@ Result: page 1 "Head1…Foot1", page 2 "Head2…Foot2", and a THIRD section adde
 - `insert.header {"text"}` alone in section 2 REPLACES the shared header for all sections (every page showed "H2").
 - `insert.closeHeader` after each header/footer; verify with `pdftotext -f N -l N`.
 
-## Tables in depth, outline view, building blocks, pictures and shapes (verified headless, 0.11.0; renders checked)
+## Tables in depth, outline view, building blocks, pictures and shapes (verified headless; renders checked)
 
-> **Versions:** 0.11.0 only (2026-10-25); not run on 0.10.0.
 
 - **Table editing** (caret in a cell; each returns the new caret): `table.insertRowBelow|insertRowAbove|insertColumnRight|insertColumnLeft`, `table.deleteRow|deleteColumn|deleteTable`, `table.autofit {"mode":"contents|window|fixed"}`, `table.distributeColumns/distributeRows`, `table.split {"columns":2,"rows":1}`, `table.splitTable`, `table.selectColumn/selectTable`, `table.textDirection {"value":"horizontal|down|up"}`,
   `table.toText {"separator":"comma|tab|paragraph|other"}` (rows become "A1,B1,C1," paragraphs; empty cells leave bare commas), `table.look {"headerRow":true,"bandedRows":true}`. **Table styles:** `table.newStyle {"name":"Brand","basedOn":"Table Grid","headerRow":{"fill":"1F3864","bold":true,"color":"FFFFFF"},"wholeTable":{"borderColor":"1F3864"}}` → `{id}`, then `table.style {"style":"Brand"}`; also `table.modifyStyle`, `table.deleteStyle`.
@@ -53,14 +52,14 @@ Result: page 1 "Head1…Foot1", page 2 "Head2…Foot2", and a THIRD section adde
   `shape.textDirection {"dir":"horz|vert|vert270"}`, `shape.alignText {"anchor":"t|ctr|b"}`, `shape.link {"target"}` / `shape.breakLink` (flow text between text boxes), `shape.connect`.
 - Not run: ink (`draw.*`: `draw.stroke {"page","points","tool","color","width"}`, `draw.lasso`, `draw.inkToShape`, `draw.replay`), `insert.object/spreadsheet`, `edit.pasteMerge`/clipboard pane, `edit.advancedFind/findReplace`, `file.*` extras, `picture.removeBackground`, `shape.fill` gradients.
 
-## Sections: `layout.section`, section breaks and per-section orientation (verified headless, 0.11.0, 2026-10-26)
-> **Versions:** 0.11.0. Built with `wordcraft-cli run --template blank --cmd … --save sec.docx`; read back from `word/document.xml`.
+## Sections: `layout.section`, section breaks and per-section orientation (verified headless, 2026-10-26)
+> Built with `wordcraft-cli run --template blank --cmd … --save sec.docx`; read back from `word/document.xml`.
 - **`layout.break {"kind":"nextPage"|"continuous"|"evenPage"|"oddPage"|"page"|"column"|"textWrapping"}`** starts a new section for the section kinds (3 `w:sectPr` after a next-page and a continuous break); `info` reported 2 pages. `insert.pageBreak {}` is the plain page break.
 - **`layout.section {}` is a READ**: it returns the current section's properties (columns, header and footer distances, header/footer slots, gutter, margins, page size), not a break. Use it to check a section before changing it.
 - **`layout.orientation {"orientation":"landscape"}` applies to the CURRENT section only:** the first section stayed `12240×15840` portrait, the second became `15840×12240 orient="landscape"`, and a following continuous section kept landscape. Insert the break first, then change the orientation.
 
-## Table layouts for designed pages: banners, sidebars, colour blocks (verified headless, 0.11.0, 2026-10-26; rendered and compared with ONLYOFFICE)
-> **Versions:** 0.11.0 only. Built by `styles/resume_designs.py` (18 résumé layouts); every page rendered with `wordcraft-cli render` and with ONLYOFFICE's preview: the same on both.
+## Table layouts for designed pages: banners, sidebars, colour blocks (verified headless, 2026-10-26; rendered and compared with ONLYOFFICE)
+> Built by `styles/resume_designs.py` (18 résumé layouts); every page rendered with `wordcraft-cli render` and with ONLYOFFICE's preview: the same on both.
 - **Full-bleed page:** `layout.margins {"top":0,"bottom":0,"left":0,"right":0}`, one `insert.table {"rows","cols","style":"Normal Table"}`, a shaded cell (`table.selectCell` → `table.shading {"color"}` → `select.collapse`), `table.rowHeight {"height":778,"rule":"atLeast"}` made a dark sidebar that runs to the page edges. **The rule value is `"exact"` (not "exactly") for rowHeight**; the table plus the empty paragraph after it must fit: a 788 pt row spilled to page 2, 778 fit (set the empty paragraph tiny: `styles.modify {"style":"Normal","chr":{"size":1},"para":{"lineSpacing":{"rule":"exactly","value":1}}}`, then give picture paragraphs their own style, or the picture is clipped to 1 pt).
 - **`table.autofit {"mode":"fixed"}` right after `insert.table`** or narrow columns are widened and squeeze their neighbours. **A column is never narrower than 6 pt (120 twips)**, so a 1–2 pt divider column is impossible: draw hairlines as a paragraph LEFT BORDER on every paragraph of one column (`styles.modify … para {"borders":{"left":{"style":"single","width":0.75,"color":"BFBFBF","space":14}}}` plus `indentLeft`); consecutive bordered paragraphs form one continuous line, dots go in as a "●" run.
 - **`table.cellMargins` is ROW-WIDE** (the last call wins for every cell of the row; per-cell margins are not possible): call it once per row and inset columns with paragraph indents instead (`para.set {"props":{"indentLeft","indentRight","spaceBefore"}}` per paragraph; a nested table takes `table.properties {"indent":pt}`).

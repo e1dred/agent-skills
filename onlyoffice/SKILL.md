@@ -10,7 +10,7 @@ description: Use when editing documents, spreadsheets, slides, PDFs or forms in 
 Field notes from real tasks, tested on **ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux)** with the
 AI-tools server **onlyoffice-document-builder 2.0.0-native**. Re-check anything below on other versions.
 
-> **Versions:** every section was tested on ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, commit 318889a1…) with `onlyoffice-document-builder 2.0.0-native`; `check-versions.sh` showed no update available through 2026-10-25, so nothing here was re-tested on a second version. Live-editing sections were tested 2026-10-24; the tool and macro sections 2026-10-25.
+> Every section was tested on ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, commit 318889a1…) with `onlyoffice-document-builder 2.0.0-native`; `check-versions.sh` showed no update available through 2026-10-25, so nothing here was re-tested on a second version. Live-editing sections were tested 2026-10-24; the tool and macro sections 2026-10-25.
 
 ## Keep this file growing
 
@@ -392,7 +392,7 @@ or `get_api_reference {"class_name":"ApiParagraph"}` for a class's real methods.
 
 ## Tool audit: all 93 tools called on ONLYOFFICE 10.0.0 (2026-10-25, headless via `tools/ooc.py`)
 
-> **Versions:** 10.0.0 (flatpak, server 2.0.0-native). Documents were invented; every tool was CALLED, results read back. **91 of 93 passed**; the two that did not are listed first. "Documented" (`coverage.sh`) only means the name appears in this folder; this audit is the measure of what was run.
+> 10.0.0 (flatpak, server 2.0.0-native). Documents were invented; every tool was CALLED, results read back. **91 of 93 passed**; the two that did not are listed first. "Documented" (`coverage.sh`) only means the name appears in this folder; this audit is the measure of what was run.
 
 - **Not verified today:** `list_editor_documents` ("ONLYOFFICE Desktop is not reachable": it needs the desktop app that started the server; verified live in earlier sessions, see the live-editing section) and `pdf_fill_form_fields` (works on a real AcroForm PDF; a form saved from Word reopens as a Word document, so the tool answered "works on an opened PDF, but the active document is … Word"; verified earlier on a government form, not repeated).
 - **Passed as designed but return a task instead of a change (AI-task tools):** `word_check_spelling`, `word_rewrite_text`, `word_comment_text` (argument is `prompt`, not `comment`), `word_describe_image`, `word_generate_form`, `cell_explain_formula`, `cell_fill_missing_data`, `slide_rewrite_slide_text`; `cell_fix_formula` answered "No formula errors found" on a clean range. They need you to do the task and call again.

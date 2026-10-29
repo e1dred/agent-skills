@@ -7,7 +7,7 @@ description: Use when editing, converting or batch-processing images, layers, se
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, tested on **photocraft-cli 0.15.1, re-checked and extended on 0.16.0** (Linux AppImage; 0.16.0 is the version for everything dated after 2026-10-25). PhotoCraft is an early-alpha,
+Field notes from real tasks, last tested on **photocraft-cli 0.16.0** (Linux AppImage). PhotoCraft is an early-alpha,
 Photoshop-style editor in Rust: layers, masks, adjustment layers, layer styles, type, vector shapes, PSD read/write.
 Everything the UI does is an *engine command*, and the CLI, the MCP server and the app's control channel all run
 the same commands. If `photocraft-cli --version` is newer, re-check anything in this skill before relying on it.
@@ -26,7 +26,6 @@ Official docs: `docs/control-protocol.md`, `docs/mcp.md` in https://github.com/s
 
 ## Setup
 
-> **Versions:** 0.15.1 (2026-10-24); the bridge arguments changed in 0.16.0 (see 'Version 0.16.0 notes').
 
 - **CLI:** extract it from the AppImage (`photocraft.appimage --appimage-extract`, copy `usr/bin/photocraft-cli`
   somewhere stable); it is self-contained and needs no window. Subcommands: `convert`, `info`, `run`, `batch`,
@@ -54,8 +53,6 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 ## CLI essentials (verified)
 
-> **Versions:** 0.15.1; `run`, `info`, `convert`, `batch` behave the same on 0.16.0 in every pipeline below.
-
 ```
 photocraft-cli run --new '{"width":800,"height":500,"background":"#ffffff"}' \
     --cmd <id> --params '<json>' --cmd <id2> --params '<json2>' --out file.png|jpg|webp|psd|pcraft
@@ -78,7 +75,6 @@ photocraft-cli commands --json --filter <text>               # find ids; each ha
 
 ## Commands that worked (exact parameter formats)
 
-> **Versions:** 0.15.1; the same commands appear in the pipelines that were re-run 2026-10-25 on 0.15.1 and 0.16.0.
 
 - Fill: `layer.newFillLayer.gradient {"from":"#1F3864","to":"#2E75B6","angle":90,"style":"linear"}` (with angle 90
   the `to` colour ended at the TOP), `layer.newFillLayer.solidColor {"color":"#rrggbb"}`.

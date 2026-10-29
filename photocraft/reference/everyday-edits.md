@@ -2,9 +2,7 @@
 
 Part of the photocraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-## Everyday photo edits (verified headless, 0.15.1)
-
-> **Versions:** 0.15.1 (2026-10-25); re-run 2026-10-25 on 0.15.1 and 0.16.0 (crop, exposure, vibrance, levels, curves, denoise, sharpen, resize; masked adjustment + type; rotate/canvas/photo filter/place/blend/mask/shape/stroke): **pixel-identical** output and identical layer lists.
+## Everyday photo edits (verified headless)
 
 Run a whole retouch in one go: `photocraft-cli run photo.jpg --cmd ID --params JSON … --out out.jpg` (an opened JPEG is the
 background `Pixel` layer, id 2). Commands that return `null` succeeded. Parameter docs: `commands --json` (each item has
@@ -49,7 +47,6 @@ are still unverified.
 
 ## Version 0.16.0 notes (2026-10-25)
 
-> **Versions:** 0.16.0 (2026-10-25).
 
 - App 0.16.0 needs the **0.16.0 `photocraft-cli`** for the live bridge. With the old 0.15.1 CLI against the 0.16.0 app, authenticated
   bridge calls timed out after 55 s ("app was not drawing frames") and the bridge never worked; the 0.16.0 CLI (extracted from the new
@@ -72,9 +69,8 @@ are still unverified.
 - New commands in 0.16.0: `type.fillPath`, `style.presets.importAsl/exportAsl`, `help.checkForUpdates`, `updates.status` (935 → 940). Nothing removed; every recipe
   above (crop, curves, unsharp mask, resize, saves) gave the same results on both CLIs. `select.subject/object/focusArea/quick` parameter docs are unchanged.
 
-## Retouching, compositing and selections (verified headless on a portrait, 0.16.0; renders checked)
+## Retouching, compositing and selections (verified headless on a portrait; renders checked)
 
-> **Versions:** first run on 0.16.0 (2026-10-25); the heal/clone/dodge/burn/selective-colour/gradient-map/clipping pipeline and the saved-selection pipeline were also run on 0.15.1: pixel-identical.
 
 Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the final renders looked right.
 - **Heal / clone / dodge / burn** paint on the *active pixel layer* with `points:[[x,y],…]`: `paint.spotHealing {"points","size":40,"type":"contentAware","sampleAllLayers":true}` → `{damage:[x,y,w,h]}`;
@@ -94,9 +90,9 @@ Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the
 - **Quick export**: `file.export.quickExport {"path":"/abs/out.jpg"}` → `{path,format,bytes,warnings}` (format by extension; honours Export Preferences). `layer.quickExportAsPng {"layer","path"}` for one layer.
 - Remaining unverified: `paint.mixerBrush`, `filter.cameraRaw`, Actions recording/`.atn` playback via the app, `droplet`, panorama/HDR merges.
 
-## Layer management, edit and file/export commands (verified headless, 0.16.0)
+## Layer management, edit and file/export commands (verified headless)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1. Test pictures were invented.
+> Test pictures were invented.
 
 **Step-by-step on one file:** `photocraft-cli run f.pcraft --cmd id --params '{…}' --out f.pcraft --in-place` (without `--in-place`: "the result would replace the original"). **The layer SELECTION is saved in the `.pcraft`**, so a following run starts from it; the clipboard is NOT (per process), so copy and paste must share one `run`.
 - **Layers:** `layer.renameLayer {"layer","name"}`, `layer.setLabelColor {"color":"red"}` → `{changed,layers}`, `layer.arrange.bringToFront|sendToBack|sendBackward|bringForward|reverse` (`sendToBack` on the lowest layer: "layer can't move further"), `layer.translate {"layer","dx","dy"}`,
@@ -118,9 +114,9 @@ Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the
   `file.scripts.imageProcessor {"input":[files],"output":"dir","format":"jpg","quality":8,"resize":{"width":60}}` → `{files,errors}`, `file.scripts.statistics` needs `"input"` (files or a folder), not run further.
 - Not run: `file.openAs/placeLinked/closeAll`, printing, EXR parts, HDR/lens-correction automation, `file.generate.imageAssets`, `layer.copyToDocument`, `layer.new.artboardFromGroup`.
 
-## Image commands, selections, tools, actions, timeline and type styles (verified headless, 0.16.0)
+## Image commands, selections, tools, actions, timeline and type styles (verified headless)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1. Pictures were synthetic. Step-by-step form: `photocraft-cli run f.pcraft --cmd id --params json --out f.pcraft --in-place` (the layer selection and the selection are saved in the file; the clipboard and tool state are not).
+> Pictures were synthetic. Step-by-step form: `photocraft-cli run f.pcraft --cmd id --params json --out f.pcraft --in-place` (the layer selection and the selection are saved in the file; the clipboard and tool state are not).
 
 - **Image (destructive):** `image.autoTone|autoContrast|autoColor {}`, `image.adjustments.equalize|invert|posterize {"levels"}|threshold {"level"}|hdrToning {}` (all return `null`), `image.rotation.arbitrary {"angle":5,"direction":"cw"}` → the new size (`{width:425,height:334}` from 400×300: the canvas grows), `image.imageRotation.180|90ccw|flipCanvasHorizontal|flipCanvasVertical`, `image.trim {"basedOn":"transparent|topLeft|bottomRight"}` → `{x,y,width,height}`, `image.revealAll` → `{changed}`, `image.duplicate {"name":"copy","mergedOnly":true}` → `{document:1,name}` (a second document), `image.detectFaces {}` → `{faces:[{score,rect}]}` (empty on a synthetic picture).
   Modes: `image.mode.bits32|bits8` (null), `image.mode.lab` → `{profile:"Lab D50 identity (PhotoCraft)",intent,bpc}`, `image.mode.multichannel` → `{channels:["Cyan","Magenta","Yellow"]}` and back with `image.mode.rgb` → `{converted:"channels",from:"multichannel"}`; **`image.mode.duotone` "needs a Grayscale image"**: `image.mode.grayscale` first. Not run: `bitmap`, `colorTable`, `image.trap` (CMYK).
@@ -138,8 +134,8 @@ Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the
 - **Layer-style defaults and replace:** `layer.layerStyle.defaultFor {"kind":"stroke"}` → `{params,user:false}`; `makeDefault {"kind","params":{"size":5}}` then `defaultFor` → `{user:true}` **within the same run only** (a new run reported `user:false`: nothing was written to the preferences headless); `layer.layerStyle.replace {"layer":3,"effects":[{"kind":"dropShadow","params":{"distance":6}}]}` → `{effects:1}`, `layer.layerStyle.clear {"layer","effect":0}`, `contours.list` → `{count:0}` (no custom contours). **`layer.layerStyle.transferEffects` needs real layer ids ("no such layer 3")**: after a smart-object conversion the layer ids change (6, 7): read `info` first.
 - Not run: `actions.photoshopStep` (needs a `.atn` step), `image.mode.bitmap|colorTable`, `image.trap`, `image.adjustments.matchColor`, `select.magneticLasso` with `trace:false`, `edit.preferences.*` setters, `tools` live pointer tools.
 
-## Everyday layer and edit commands, full ids (verified headless, 0.16.0, 2026-10-26; render checked)
-> **Versions:** 0.16.0 only. Invented shapes on a 400×300 canvas, one `run`.
+## Everyday layer and edit commands, full ids (verified headless, 2026-10-26; render checked)
+> Invented shapes on a 400×300 canvas, one `run`.
 - **Layer order and visibility:** `layer.arrange.sendBackward {}` and `layer.arrange.bringForward {}` move the active layer one step (`null`; they undo each other), `layer.hideLayers {}` hides it, `layer.showLayers {}` shows it again (`hideLayers` toggles back when everything targeted is already hidden). Each takes an optional `{"layer":id}`.
 - **`layer.mergeDown {}`** merges the active layer into the one below: a star shape merged into an ellipse shape left ONE `Pixel` layer named after the lower layer (the shapes stop being editable); `info` showed `Ellipse 1` as Pixel.
 - **`edit.stroke {"width":6,"color":"#000000","location":"center"}`** outlines the active SELECTION on the active layer (a rectangular `select.rect` gave a black frame); `location` is `inside|center|outside`, plus `mode`, `opacity`, `preserveTransparency`. Make a pixel layer first (`layer.new.layer`).
@@ -148,8 +144,8 @@ Each ran on a copy of a 1600×1600 portrait; every command returned `ok` and the
 - **Undo/redo only work inside the run that made the change:** `history.undo {}` / `history.redo {}` (same as `edit.undo` / `edit.redo`) returned `true` after a `shape.create` in the same run, but on a reopened `.pcraft` they fail with "nothing to undo".
 - **`image.adjustments.hueSaturation {"hue":60,"saturation":30}`** (destructive; also `lightness`, `colorize`, per-range `reds…magentas`) and **`filter.sharpen.smartSharpen {"amount":120,"radius":1.2,"reduceNoise":20}`** (returns the applied filter parameters) both ran after `layer.flattenImage {}` (one Background layer, new id).
 
-## Layer arrangement, shape combining, rasterize, channels, warps, masks, data sets (verified headless, 0.16.0, 2026-10-26; contact sheet checked)
-> **Versions:** 0.16.0 only, CLI only. Base: a 600×338 real photo plus three shape layers (ids 3–5) and a type layer (id 6), Background = 2. One command per `run` on a copy (a failing command stops a run). Multi-selection recipe: `layer.select {"layer":3}` then `layer.addAboveToSelection {}` (twice) selects 3, 4, 5.
+## Layer arrangement, shape combining, rasterize, channels, warps, masks, data sets (verified headless, 2026-10-26; contact sheet checked)
+> Base: a 600×338 real photo plus three shape layers (ids 3–5) and a type layer (id 6), Background = 2. One command per `run` on a copy (a failing command stops a run). Multi-selection recipe: `layer.select {"layer":3}` then `layer.addAboveToSelection {}` (twice) selects 3, 4, 5.
 - **Align and distribute:** `layer.align.topEdges`, `bottomEdges`, `leftEdges`, `rightEdges`, `horizontalCenters`, `verticalCenters` with `{"to":"layers"}` (or `auto|selection|canvas`) → `{moved:n}` (2 for edge alignment: the anchor layer stays; 3 for centres). `layer.distribute.leftEdges`, `rightEdges`, `topEdges`, `bottomEdges`, `horizontalCenters`, `verticalCenters`, `horizontally`, `vertically` (equal gaps) take `{}` and need three or more selected layers → `{moved:1}`.
 - **Combine shapes** (select two shape layers, e.g. 3 then 4): `layer.combineShapes.subtractFrontShape`, `intersectShapeAreas`, `excludeOverlappingShapes`, `mergeShapeComponents` merge them into the TOP-MOST selected layer (it keeps that layer's name and fill; the result `kind:"path"`): subtract → `bounds` of the rectangle minus the ellipse, **intersect of two disjoint shapes → `bounds:null` (empty)**, exclude → the combined bounds `[20,20,280,140]`.
 - **Rasterize:** `layer.rasterize.type {"layer":6}`, `layer.rasterize.layer {"layer":4}` (a shape), `layer.rasterize.allLayers {}` → `{rasterized:4}`, `layer.layerStyle.dropShadow` then `layer.rasterize.layerStyle {"layer":3}` (bakes the style); `layer.rasterize.fillContent` on a shape: "the layer is not a fill layer".

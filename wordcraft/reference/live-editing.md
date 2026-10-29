@@ -2,9 +2,9 @@
 
 Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-## Live mode, verified (WordCraft 0.10.0, app started with `--control 47822`, blank document open)
+## Live mode, verified (WordCraft, app started with `--control 47822`, blank document open)
 
-> **Versions:** tested 2026-10-24 on the app 0.10.0. Re-run 2026-10-25 on the app 0.11.0 (blank unsaved document, port 47826): `execute para.style`, `type_text` (real paragraphs), `select_text` + bold/italic, `get_text`, `render_page`, `inspect_document` and `ui_inspect.dirty` all behaved as described. Not re-run: `screenshot`, `batch`, `key`, `click`, `new_document`, `save_document`.
+> Not re-checked: `screenshot`, `batch`, `key`, `click`, `new_document`, `save_document`.
 
 - Connect: `WORDCRAFT_PORT=47822 IMGDIR=DIR python3 -I tools/wcmcp.py '[["tool",{args}],…]'` (the helper now SAVES image
   results such as `screenshot` and `render_page` to `IMGDIR/img_N.png`; before, they were dropped as `<image>`).

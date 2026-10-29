@@ -2,9 +2,7 @@
 
 Part of the photocraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-## Next-tier workflows (verified headless, 0.16.0; renders checked where noted)
-
-> **Versions:** 0.16.0 (2026-10-25). Camera Raw, lens correction and tilt-shift were also run on 0.15.1 (pixel-identical). Layer-style stacking, modes/formats, Actions/droplets, contact sheet, content-aware scale and path text were run on 0.16.0 only.
+## Next-tier workflows (verified headless; renders checked where noted)
 
 **Layer styles stack with `"add":true`** (without it a new style call replaces the layer's effects). Verified on a type layer over a gradient (render checked):
 `layer.layerStyle.stroke {"size":4,"position":"outside","color":"#0b1d3a"}` → `…outerGlow {"color":"#ffd966","opacity":70,"size":24,"spread":10,"add":true}` →
@@ -29,9 +27,8 @@ Other automation: `file.automate.fitImage {"width":500,"height":500}` (keeps asp
 `type.warpText {"style":"arc|flag|wave|fish|…","bend":45}` (render checked); text on a path: create the shape layer first, then `type.attachToPath {"layer":5,"shape":4,"start":20}` (needs a shape layer id or a work path; the text then runs along the outline). `type.paragraphStyle.new/apply/list` manage reusable paragraph styles.
 `timeline.create {"duration":2,"fps":5}` + `timeline.info` work and a `.gif` is written (palette-quantized, 256 colours), but animated *frames* from layer keyframes were not tested.
 
-## Paths and channels (verified headless, 0.16.0; path render checked)
+## Paths and channels (verified headless; path render checked)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
 
 - **Paths:** `path.set {"path":{"subpaths":[{"closed":true,"knots":[[x,y],{"anchor":[x,y],"in":[x,y],"out":[x,y],"smooth":true},…]},{"closed":true,"op":"subtract","knots":[…]}]}}` makes the *work path*
   (plain `[x,y]` knots are corners; a second subpath with `"op":"subtract"` punches a hole). `path.rename {"to":"Arch"}` saves it (`path.list` → `paths:[{name,knots,subpaths}]`).
@@ -44,9 +41,8 @@ Other automation: `file.automate.fitImage {"width":500,"height":500}` (keeps asp
   **Trap:** `channel.options` made that alpha channel the *target* and hid the composite RGB channels in the live state (`compositeVisible:false`); `channel.target {"channel":"composite"}` or `channel.target.composite {}` restores it. `info.channels` shows the same data.
   Not run: `channel.newSpot/mergeSpot/split/merge/move/delete`, `channel.target.slotN`.
 
-## Brushes and paint tools (verified headless, 0.16.0; render checked)
+## Brushes and paint tools (verified headless; render checked)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
 
 All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `points:[[x,y,pressure],…]` (pressure 0..1 as the third value):
 - `paint.stroke {"points","preset":"Chalk","size":40,"color":"#333333","opacity":0.6,"flow":0.5,"seed":7,"erase":true,"mode":"multiply|…|clear","smoothing","target":"pixels|mask|quickMask|{channel:i}"}` → `{damage:[x,y,w,h]}`.
@@ -65,9 +61,8 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
   `paint.redEye {"x","y"}` errors "no red-eye pixels near the click" on anything that is not red pupils (a correct refusal, not a bug).
 - Not run: `paint.patch`, `paint.contentAwareMove`, `paint.remove`, `paint.historyBrush`, `.abr`/`importImage` brushes, real red-eye.
 
-## Filter families, layer comps, history and smart filters (verified headless, 0.16.0; contact sheets checked)
+## Filter families, layer comps, history and smart filters (verified headless; contact sheets checked)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
 
 - **Every filter ran with `{}` (defaults) without error: 65 ids** (blur 11 + blurGallery 5, sharpen 5, noise 5, pixelate 7, stylize 9, distort 8, render 6, other 7, video 2) on a flattened 260² test picture (`layer.flattenImage` first; the id is `layer.flattenImage`, not `image.flatten`). Rendered, so each does visibly what its name says:
   - *Barely visible at defaults (raise the parameters):* `blur.blur`, `blurMore`, `boxBlur`, `gaussianBlur` (radius 1), `surfaceBlur`, `smartBlur`, `noise.despeckle/median/dustAndScratches/reduceNoise`, `sharpen.*`, `pixelate.facet`, `distort.zigZag/shear`, `other.custom`, `video.*`.
@@ -85,9 +80,8 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
   `filter.convertForSmartFilters` is refused on a layer that already is a smart object.
 - Not run: the 47 `filter.gallery.*` artistic/sketch/texture filters, `filter.filterGallery`, `filter.vanishingPoint`, `filter.adaptiveWideAngle`, `filter.lastFilter`, filter masks, `layerComp.restoreLastDocumentState`, `history.deleteState`.
 
-## Filter Gallery, every layer style, all adjustment layers (verified headless, 0.16.0; contact sheets checked)
+## Filter Gallery, every layer style, all adjustment layers (verified headless; contact sheets checked)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1.
 
 - **All 47 `filter.gallery.*` filters ran with `{}`** on a flattened 260² test picture and each looked like its name (artistic: coloredPencil, cutout, dryBrush, filmGrain, fresco, neonGlow, paintDaubs, paletteKnife, plasticWrap, posterEdges, roughPastels, smudgeStick, sponge, underpainting, watercolor;
   brush strokes: accentedEdges, angledStrokes, crosshatch, darkStrokes, inkOutlines, spatter, sprayedStrokes, sumiE; distort: diffuseGlow, glass, oceanRipple; sketch: basRelief, chalkCharcoal, charcoal, chrome, conteCrayon, graphicPen, halftonePattern, notePaper, photocopy, plaster, reticulation, stamp, tornEdges, waterPaper;
@@ -103,9 +97,9 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
   blackWhite `{"reds":100,"yellows":100,"greens":0,"cyans":0,"blues":-100,…}` 46, selectiveColor `{"colors":"reds","cyan":60,"magenta":-40}` 5, photoFilter `{"filter":"cooling80","density":50}` 13, hueSaturation `{"hue":120}` 57, levels `{"inBlack":40,"gamma":1.4,"inWhite":220}` 20, curves with a `red` channel curve 21, exposure `{"exposure":1}` 38, gradientMap 26, vibrance 9, posterize `{"levels":3}` 34, threshold `{"level":90}` 124, brightnessContrast 43.
   Most also accept `"path"` (work path or saved path name) to make the adjustment's **vector mask** from a path; otherwise an active selection becomes the layer mask.
 
-## Type, transforms, swatches, smart objects, vector masks, video, view and preferences (verified headless, 0.16.0; renders checked)
+## Type, transforms, swatches, smart objects, vector masks, video, view and preferences (verified headless; renders checked)
 
-> **Versions:** 0.16.0 (2026-10-25), CLI only; not re-run on 0.15.1. Colours and texts are invented.
+> Colours and texts are invented.
 
 - **Type** (render checked): `type.create {"x","y","text","font","size","color","name","align","orientation":"vertical","box":[x,y,w,h]}` (box = paragraph text, **overflow is clipped** at the box height). Character/paragraph formatting in one command: `type.setStyle {"range":[0,6],"color","weight":700,"italic":true,"underline":true,"tracking":100,"leading":28,"baselineShift","caps":"small|all","baseline":"superscript","fauxBold","features":{"ss01":1},"variations":{"wght":650},
   paragraph keys "align":"justify","firstLineIndent":24,"startIndent","spaceBefore","spaceAfter":6,"hyphenate":true}` → full layout (`lines`, `paragraphs`, `bounds`). `type.edit {"replace":{"start":0,"end":9,"text":"Body copy"}}` (styles kept), `type.insertText {"text":" [added]","at":9}` → `{caret}`, `type.pasteLoremIpsum {}`, `type.info {}`, `type.hitTest {"x","y"}` → `{index,line,inside}`, `type.fonts {}` (installed families), `type.convertToParagraphText/PointText`.
@@ -124,8 +118,8 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
   `view.proofSetup.colorBlindnessProtanopia {}` (→ `{proof,proofColors:true}`; also deuteranopia, working plates), `view.proofColors {"on":false}`, `view.gamutWarning {"on":true,"threshold":4}` → `{fraction,outOfGamut}`, `view.layerMask {"mode":"off|gray|overlay"}`, `view.lockSlices`, `view.clearSlices`.
 - **Preferences** are readable as JSON: `edit.preferences.general {}` → `{section,title,values:{…}}` (e.g. `alwaysCreateSmartObjectsWhenPlacing:true`), `edit.preferences.export {}` → `{jpegQuality:85,quickExportFormat:"png",webpLossless:true,convertToSrgb:true…}`; 18 sections (interface, tools, fileHandling, performance, unitsAndRulers, type, …). Setting them was not tested.
 
-## Slices, preset libraries, count tool, clone source, path editing (verified headless, 0.16.0, 2026-10-26; renders checked)
-> **Versions:** 0.16.0 only, CLI only (`run`; a failed command stops the run, so read the last line). Invented shapes on 300–400 px canvases.
+## Slices, preset libraries, count tool, clone source, path editing (verified headless, 2026-10-26; renders checked)
+> A failed command stops a `run`, so read the last line. Invented shapes on 300–400 px canvases.
 - **Slices:** `slice.new {"rect":[0,0,200,150],"name":"Top","kind":"image","url":"…"}` → `{number,slice}`; `slice.divide {"number":1,"horizontal":1,"vertical":2}` → `{count,slices}` (the pieces are user slices, the rest of the canvas stays "auto" slices in `slice.list`); `slice.set {"number":2,"name","alt",…}` (an auto slice is promoted); `slice.promote {"number":3}`; `slice.delete {"number":3}` → `{deleted:1}`;
   `slice.fromGuides {}` replaces every slice with the guide grid (**errors "the document has no guides inside the canvas" without a guide**: `view.newGuide {"orientation":"vertical","position":200}` first) → `{slices:2}`.
 - **Gradient presets:** `gradient.presets.list` (group Basics…), `gradient.presets.new {"name","stops":[[0,"#ff5e62"],[1,"#ff9966"]],"transparency"?}` → `{group,name}`, `gradient.presets.apply {"preset","style":"radial","angle":0,"scale","reverse"}` → `{layer}` (a Gradient Fill layer), `gradient.presets.edit {"action":"rename","preset","name"}` (also delete/move/newGroup/renameGroup/deleteGroup), `reset`, `importGrd {"path"}`.
@@ -142,8 +136,8 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
 - **Management commands:** `brush.presets.rename {"name","newName"}` (NOT `preset`/`to`), `setCurrent {"name"}`, `update {"name","brush":{"size":30}}`, `delete {"name"}` → `{count:36}`; `view.editGuide {"orientation","index","position","color"}`, `view.deleteGuide {"orientation","index"}` (index per orientation), `view.newGuidesFromShape {}` → `{bounds}`, `view.colorSamplers.move/list/delete`; `swatches.rename/delete {"swatch":name}`; `plugin.list {}` → `{folder:null,plugins:[]}` (no plug-ins installed); `tools.firstBrush/lastBrush` → Hard Round / Dual Grain.
 - Not run: `.grd`/`.abr` imports, `count.clear`, `plugin.install/run` (needs a `.wasm`), `slice` export (`file.export.*`), `tool.presets` with a live tool switch.
 
-## Smart-object leftovers, video layers and preferences (verified headless, 0.16.0, 2026-10-26; warp/puppet renders checked)
-> **Versions:** 0.16.0 only, CLI only. Base: a star shape converted with `layer.smartObjects.convertToSmartObject` (new id 6 over Background 2), one command per run on a copy (`run w.pcraft --cmd … --out w.pcraft --in-place`) because a failing command stops a run.
+## Smart-object leftovers, video layers and preferences (verified headless, 2026-10-26; warp/puppet renders checked)
+> Base: a star shape converted with `layer.smartObjects.convertToSmartObject` (new id 6 over Background 2), one command per run on a copy (`run w.pcraft --cmd … --out w.pcraft --in-place`) because a failing command stops a run.
 - **Embedded/linked:** a fresh smart object is embedded, so `convertToEmbedded` and `updateModifiedContent` answer "not available right now: the smart object is embedded" and `revealInFinder` "the active layer is not a linked smart object". `convertToLinked {"path":"lk.png"}` writes the contents there and DID work this time (`{instances:[6],layer:6}`; the earlier failure was a "missing linked file" on a different base, so unconfirmed what differs: try an absolute path). In the same run after linking: `revealInFinder {"dryRun":true}` → `{program:"xdg-open",args:[<folder of the linked file>]}`, `updateModifiedContent {}` → `{layer}`, `convertToEmbedded {}` → `{instances,layer}`. `relinkToFile {"path":"swap.png"}` and `replaceContents {"path"}` → `{instances:[6],layer:6,warnings:[]}`.
   `updateChanged {}` / `updateAllModifiedContent {}` → `{updated:[]}` headless (the desktop app polls every 2 s; a file overwritten between two runs was not reported as changed on reopen).
 - **Copy / export / unpack:** `newSmartObjectViaCopy {}` → `{layer:7}`; `exportContents {"path":"exp.pdf"|"exp.png"}` converts by extension (`converted:true`, `fileName:"Star 1.pcraft"`, flatten warnings); `convertToLayers {}` → `{group:false,layer:3,discardedSmartFilters:0}` (the star shape came back); `rasterize {}` → `{layer,layers}`.
@@ -153,8 +147,8 @@ All on one new pixel layer (`layer.new.layer`), strokes from a sine path, `point
 - **Video layers:** `layer.videoLayers.newBlankVideoLayer {}`; on it `insertBlankFrame` → `{frames:2}`, `duplicateFrame`, `deleteFrame` → `{frames:1}`, `restoreFrame`, `restoreAllFrames`, `showAlteredVideo`, `interpretFootage {}` all return `{frames:n}`, `rasterize` → `{rasterized:true}`. From a file: `newVideoLayerFromFile {"path":"/abs/anim.gif"}` → `{frames:3,layer:9}` (a 3-frame GIF; **use an absolute path**: `reloadFrame` says "the footage … is not opened: the path is relative and the document has not been saved" otherwise), `reloadFrame {}` → `{frames:3}`, `duplicateFrame` → 4, `replaceFootage {"path":"/abs/anim2.gif"}` → `{frames:2}`. Blank layers: `reloadFrame` fails "this layer has no file source to reload"; `replaceFootage`/`newVideoLayerFromFile` need `path`. After saving `.pcraft`, `info` listed the video layer as a plain `Pixel` layer ("anim 1"). Only GIF was tried (no video codecs tested); `interpretFootage` params (fps) were accepted but their effect was not measured.
 - **Preferences are READ-ONLY here:** all 16 remaining sections return `{section,title,values}` with `{}`: cursors, enhancedControls, fileHandling (autosave on, 10 min, `lowercaseExtension`…), guidesGridAndSlices, historyLog, integrations (`allowAgentControl:true`, `controlPort`), interface (`appearanceMode`, `darkTheme`…), performance (`historyStates:50`, `effectCacheMb:768`, `gpuBackend:"auto"`…), plugIns, rawDefaults, scratchDisks, tools, transparencyAndGamut, type, unitsAndRulers, workspace. Passing values (`{"recentFonts":8}` or `{"values":{…}}`) is silently ignored (value stayed 10, `~/.config/photocraft/preferences.json` untouched), so there is no setter in this command: change preferences in the app's Preferences window.
 
-## Photomerge, HDR merge, auto-align and auto-blend on real phone photos (verified headless, 0.16.0, 2026-10-26; renders checked)
-> **Versions:** 0.16.0 only, CLI only. Inputs: HEIC phone photos (3 overlapping shots for a panorama, 3 bracketed exposures, 7 handheld shots of one room), 3024×4032 portrait, read straight from a folder under the user's Pictures (**HEIC opens natively**: a built-in decoder, no conversion needed; `info` and `convert` both work). Results went to scratch files; no photo content is recorded here.
+## Photomerge, HDR merge, auto-align and auto-blend on real phone photos (verified headless, 2026-10-26; renders checked)
+> Inputs: HEIC phone photos (3 overlapping shots for a panorama, 3 bracketed exposures, 7 handheld shots of one room), 3024×4032 portrait, read straight from a folder under the user's Pictures (**HEIC opens natively**: a built-in decoder, no conversion needed; `info` and `convert` both work). Results went to scratch files; no photo content is recorded here.
 - **Photomerge:** `file.automate.photomerge {"paths":"/abs/folder","layout":"auto"}` in a `run --new` (any tiny document) → a NEW document with one masked layer per image: `{document,layers:3,layout:"perspective",focalLength35:26,height,pairs:[[0,1,58],[1,2,65]] (matches per pair),photometric:{gains},ms}`; 3 shots took ~9 s. `--out pano.pcraft` saved a 7455×5831 canvas, 3 Pixel layers with masks (93 MB). The render was a correct stitch with slightly visible seam lines and a brightness step across the ceiling (exposure drifted between shots: gains 0.78 → 1.2): fix by hand-editing the masks or shoot with exposure lock.
   Layouts on the same shots: `auto` chose `perspective`; `cylindrical` and `spherical` gave curved, much less stretched results (4129 and 3638 px tall vs 5831: the better choice for a wide room); **`collage` and `reposition` failed with "Photomerge couldn't find enough matching detail between the images"** (they only translate/rotate, so shots taken by turning in place don't fit). `blend:false,vignetteRemoval:true,geometricCorrection:true` ran (`geometricK1` 0.0096 estimated) and shows hard exposure steps between the images. `focalLength` 0 = EXIF or estimated. **Time: 3–6 s per run.**
 - **HDR merge:** `file.automate.mergeToHdrPro {"paths":"/abs/folder","mode":"16","method":"localAdaptation"}` → a new single-layer document `{ev:[0.0,1.68,4.68] (read from EXIF),exposureSource:"exif",offsets:[[-3,0],…] (alignment),ghostBase,ghostFraction,stops:17.1}` in ~4 s; `mode` 32 gives linear, 16/8 are tone-mapped. `exposures:[0,1.7,4.7]` overrides EXIF (`exposureSource:"params"`), `align:false` skips alignment (offsets all 0).

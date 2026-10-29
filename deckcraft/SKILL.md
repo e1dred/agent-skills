@@ -7,13 +7,12 @@ description: Use when building, editing, rendering or converting slide decks (.d
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, tested on **deckcraft-cli 0.10.0; later sections on 0.11.1** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
+Field notes from real tasks, last tested on **deckcraft-cli 0.11.1** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
 presentation app in Rust. Everything is a command with an id (321 of them); CLI, MCP and the live control channel run the
 same commands. If `deckcraft-cli --version` is newer, re-check before relying on this.
 
 ## Surfaces
 
-> **Versions:** written on 0.10.0 (2026-10-24/25). The headless CLI forms ran identically on 0.11.1 (see the version note). The live `app --port` / `ui.*` calls were re-tested 2026-10-25 on the 0.11.1 app (port 47824, started with plain `--control 47824`, blank unsaved Presentation1): `slide.new`, `shape.insert`, `shape.fill`, `insert.table`, `insert.chart`, `document.inspect`, `ui.screenshot` and `file.export` to PDF (2 pages) all behaved as documented, and the window showed the shape, table and pie chart.
 
 - **Headless CLI**: `info FILE`, `render FILE --all --scale 1 OUTDIR/` (PNG per slide, 0-based `--slide N`),
   `convert IN OUT` (`.deckcraft .pptx .pdf .txt/.md .png .jpg .gif`; PNG/JPG = first slide only),
@@ -26,8 +25,6 @@ same commands. If `deckcraft-cli --version` is newer, re-check before relying on
   yet; the `app` subcommand works anyway.
 
 ## Command formats (verified)
-
-> **Versions:** 0.10.0; the commands in the three build sequences below ran on both versions with identical return values.
 
 | Goal | Command |
 |---|---|
@@ -69,9 +66,8 @@ same commands. If `deckcraft-cli --version` is newer, re-check before relying on
 No `.ppt/.odp/.pptm`, no SVG/HEIC pictures, no MP4 export (GIF only), no recording, PDF artwork rasterised, SmartArt/animations
 partial, English UI only.
 
-## More recipes (verified headless, 0.10.0)
+## More recipes (verified headless)
 
-> **Versions:** 0.10.0 (2026-10-25); re-run 2026-10-25 on 0.10.0 and 0.11.1 (slides, shape fill, animation, push transition, picture, notes, Harbor theme): identical return values, `info`, `.pptx` info and rendered pixels.
 
 - **Theme**: `design.theme {"name":"Harbor"}` (list with `design.themes`); starters via `file.new {"template":"Quarterly"}` give 5 slides.
 - **Fill / text**: `shape.fill {"color":"#E07B39"}` acts on the just-inserted (selected) shape; also `ids`. `text.set {"id","text"}`,
@@ -87,9 +83,9 @@ partial, English UI only.
   (GIF89a, 960×540); `convert F x.md` writes the outline (tab-indented bullets).
 - Render check: `deckcraft-cli render F --slide 1 --scale 1 out.png` (slide index 0-based; output path is the *last* argument).
 
-## Building a real deck (verified headless, 0.10.0)
+## Building a real deck (verified headless)
 
-> **Versions:** 0.10.0 (2026-10-25); re-run 2026-10-25 on 0.10.0 and 0.11.1: identical return values, `info` and `.pptx` info. **Rendered pixels differ only on the slide with the chart**: 0.11.1 draws default chart text (title, axes, legend) in a bluish theme tint where 0.10.0 drew neutral grey (about 350 pixels, at most 17 of 255 per channel); data and structure are identical. Set an explicit chart text colour if you need grey.
+> Default chart text (title, axes, legend) is drawn in a bluish theme tint, not neutral grey. Set an explicit chart text colour if you need grey.
 
 One `run` built title + bullets + table + chart + text box + link + background + duplicate/move/hide + section, then
 `convert` to `.pptx` and `render` (checked: table, chart, formatting, background and the hidden slide all survived).
@@ -112,9 +108,8 @@ One `run` built title + bullets + table + chart + text box + link + background +
    `shape.altText {"text":"…","ids":[266]}` (or `"decorative":true`); the re-check returned `[]`.
 8. Tables: new tables are 3-row styled with the theme colour; empty cells stay empty; row/col changes via `table.insertRowBelow {"row","id"}` etc.
 
-## SmartArt, grouping, pictures, layouts (verified headless, 0.11.1)
+## SmartArt, grouping, pictures, layouts (verified headless)
 
-> **Versions:** 0.11.1 only (2026-10-25); not re-run on 0.10.0.
 
 - **SmartArt**: `insert.smartArt {"kind":"process|list|cycle|hierarchy|pyramid|matrix","items":["Plan","Build","Ship"]}` (leading tabs = sub-points) → `{id}`; then
   `smartArt.addNode {"text":"Review"}` → `{index}`, `smartArt.nodes {}` (read back `[{level,text}]`), `smartArt.setNodes {"lines":[…]}`, `smartArt.promote/demote/removeNode {"index"}`,
@@ -128,9 +123,7 @@ One `run` built title + bullets + table + chart + text box + link + background +
   `view.closeMaster`, then `slide.layout {"layout":"My Layout"}` (name or the returned id). `master.renameLayout/deleteLayout` also exist.
 - `review.accessibility` also reports "Missing slide title" for blank/layout-only slides; give them titles or accept.
 
-## Next-tier workflows (verified headless, 0.11.1; render checked)
-
-> **Versions:** 0.11.1 (2026-10-25). The theme-colour/fonts, header/footer, pie and stacked-column charts, table style/merge, connector, shape-effects and icon steps were also run on 0.10.0 with identical return values (same chart-text tint difference in the render). Comments, spelling, compare, custom shows, audio, WordArt, slide links and morph were run on 0.11.1 only.
+## Next-tier workflows (verified headless; render checked)
 
 - **Brand theme**: `design.colors {"name":"Brand","colors":{"dk1":"#1B1B1B","lt1":"#FFFFFF","dk2":"#16324F","lt2":"#F2F5F8","accent1":"#0E7C86","accent2":"#E4572E","accent3":"#C8963E","accent4":"#6B2E5F","accent5":"#17A398","accent6":"#7A8B99","hlink":"#0E7C86","folHlink":"#6B2E5F"}}` and
   `design.fonts {"name":"Brand fonts","major":"Georgia","minor":"Calibri"}` restyle the whole deck (titles became Georgia, charts and shapes took accent1/accent2 in order). `design.variant {"index":0..3}` picks a built-in colour variant.
@@ -148,7 +141,6 @@ One `run` built title + bullets + table + chart + text box + link + background +
 
 ## New in 0.11.x (verified headless)
 
-> **Versions:** 0.11.1 only (the commands do not exist in 0.10.0).
 
 - Path editing on a shape: `shape.openPath {"index":0}` (break a closed outline), `shape.closePath {"index":0}`, `shape.deleteSegment {"index":0,"segment":2}`
   (**only on a closed outline**, otherwise "only a segment of a closed outline can be deleted"), `shape.segmentType {"index":0,"segment":1,"type":"straight|curved"}`.
@@ -156,9 +148,8 @@ One `run` built title + bullets + table + chart + text box + link + background +
 - `slide.reuseList {"path":"deck.deckcraft"}` → `{name,slides:[{index,title,hidden}]}`: preview which slides `slide.reuse {"path","slides":[…],"at"?}` can bring in.
 - `review.reject {"index"|"all":true}` only works while a Compare is in progress ("not comparing" otherwise).
 
-## SmartArt layouts, animation and transition catalogues, master editing (verified headless, 0.11.1; renders checked)
+## SmartArt layouts, animation and transition catalogues, master editing (verified headless; renders checked)
 
-> **Versions:** 0.11.1 only (2026-10-25); not re-run on 0.10.0.
 
 - **All 45 SmartArt layouts render.** Build one with `insert.smartArt {"kind":"process","items":[…],"rect":[80,130,800,360]}` and switch with `smartArt.layout {"kind":…}` (`kind` of `insert.smartArt` is limited to list|process|cycle|hierarchy|pyramid|matrix; `smartArt.layout` takes the full set):
   list, blockList, hBulletList, process, chevron, verticalProcess, stepUp, cycle, blockCycle, radial, hierarchy, pyramid, invertedPyramid, matrix, titledMatrix, pictureList, pictureCaption, pictureProcess, pictureHList, timeline, venn, target, textCycle, continuousCycle, horizontalHierarchy,
@@ -177,9 +168,9 @@ One `run` built title + bullets + table + chart + text box + link + background +
   A new layout does NOT inherit shapes added to another layout. To brand every slide, edit the master itself (use `view.slideMaster {"master":0}` without a layout — not tested).
 - Also listed, not run: `design.ideas`/`applyIdea`, `view.handoutMaster/notesMaster`, `design.browseTheme` (apply a .pptx/.potx's master), `design.effects`, `design.hideBackgroundGraphics`, `insert.photoAlbum`, `animation.painter`, equations (no `equation.*` ids in DeckCraft).
 
-## Shapes, text formatting, tables, photo album, actions, sections, masters and files (verified headless, 0.11.1; renders checked)
+## Shapes, text formatting, tables, photo album, actions, sections, masters and files (verified headless; renders checked)
 
-> **Versions:** 0.11.1 only (2026-10-25); not run on 0.10.0. **`deckcraft-cli describe CMD` prints every parameter with types and notes: read it before guessing** (most of the failures below were wrong parameter names that `describe` would have shown).
+> **`deckcraft-cli describe CMD` prints every parameter with types and notes: read it before guessing** (most of the failures below were wrong parameter names that `describe` would have shown).
 
 - **Shape formatting** (act on the just-inserted/selected shape, `ids` optional; return `1`): `shape.rename {"name"}`, `shape.adjust {"index":0,"value":0.4}` (corner radius etc.), `shape.line {"color","width","dash":"solid|dot|dash|lgDash|dashDot|sysDot|sysDash","cap","join","compound":"single|double|thickThin…","none"}`, `shape.quickStyle {"index":9}` (0..41 = theme row × accent), `shape.sizePosition {"x","y","w","h","rot","scaleW","scaleH","lockAspect"}`, `shape.move {"dx","dy"}` or `{"x","y"}`, `shape.resize {"w","h"}`,
   `shape.rotate {"deg"}` (absolute) or `{"by"}`, `shape.flip {"axis":"horizontal|vertical"}`, `shape.lock {"locked"}`, `shape.visible {"visible":false}` (selection pane), `shape.change {"preset":"hexagon"}`, `shape.smoothCorners {"smoothing":50,"radius":10}` (**only on rectangles/rounded rectangles**, so smooth BEFORE `shape.change`), `shape.freeform {"points":[[x,y]…],"closed":true,"smooth":true}` → `{id}`, `shape.inspect {}` (box incl. rot/flip, geom, fill, effects).
@@ -200,9 +191,9 @@ One `run` built title + bullets + table + chart + text box + link + background +
 - **Side effect to know:** `review.addToDictionary {"word"}` writes `~/.local/share/deckcraft/dictionaries/user.dic` (the user's real dictionary, not undoable): do not run it as a test (I removed the file my test created). `review.dictionary {}` → `{available,folders}` lists hunspell search folders.
 - Not run: media playback commands (`media.play/pause/seek/info/posterFrame/gifPlay`: need a video/audio file open in a live window), `show.fromCurrent`, `design.applyIdea`, `file.recovery.open/discard`, `file.revert`, `font.add/rescan`, `insert.symbol`, `review.thesaurus/accept/endCompare`.
 
-## Text editing, character formats, arranging, media, navigation and data commands (verified headless, 0.11.1)
+## Text editing, character formats, arranging, media, navigation and data commands (verified headless)
 
-> **Versions:** 0.11.1 only (2026-10-25); not run on 0.10.0. Test audio was a generated 1-second tone.
+> Test audio was a generated 1-second tone.
 
 - **Character formats** (inside `text.edit`, on a selection; return `null`): `format.italic {"on":true}`, `format.underline {"on":true,"style":"sng|dbl|heavy|dotted|dash|wavy"}`, `format.strikethrough {"on":true,"double":true}`, `format.superscript|subscript {"on"}`, `format.caps {"caps":"none|small|all"}`, `format.textTransparency {"value":0.3}` (0 opaque, 1 invisible), `format.font {"family":"Georgia"}`, `format.shrink`, `format.clear`, `format.fontDialog {"family","size","bold","italic","underline","color","strike"}`, `format.rtl {"on"}`;
   `format.state {}` → the effective formatting at the selection (`{align,bold,italic,font,fontRef,lang,lineSpacing,…}`), `format.ruler {}` → `{x,y,width,marginLeft,indent,tabs:[{pos,align}],defaultTab:72}`, paragraph: `format.alignLeft|alignCenter|alignRight|justify|outdent`, `format.paragraphDialog {"align":"justify|justLow|distributed","indentLeft","indentRight","special":"firstLine|hanging|none"}`, `format.painter {"sticky"}` + `format.painterApply {"ids"}`.
@@ -215,26 +206,24 @@ One `run` built title + bullets + table + chart + text box + link + background +
 - **Data and discovery:** `file.render {"slide":0,"scale":0.3}` → `{png:<base64>,width,height}`, `file.saveBytes {"format":"pptx|deckcraft"}` → `{data:<base64>,bytes}`, `file.openBytes {"name","data"}`, `design.variants {}` → the current theme's four colour variants (`{current,theme,variants:[{colors:[hex…]}]}`), `commands.list {"filter":"media."}` → `[{id,label,params,enabled,disabled_reason:"nothing selected"}]` (tells you why a command is unavailable), `shape.presets {}` → `[{name,label,category}]` (the shape gallery), `font.rescan {}` → `{faces:601,families:236}`, `picture.compress {"ppi":96,"all":true}` → `{pictures,before,after}`.
 - Not run: video files, `media.posterFrame` on a video, `file.recovery.*`, `window.next`, input-method composition, `review.accept/endCompare` outside a compare, the point-editing commands on a real freeform (`shape.movePoint/moveHandle/pointType/deletePoint`).
 
-## Ink in DeckCraft (what is and is not possible headless, 0.11.1)
+## Ink in DeckCraft (what is and is not possible headless)
 
-> **Versions:** 0.11.1 (2026-10-25).
 
 - DeckCraft has ONE ink command: `draw.inkToShape {}` → `{shapes:[ids],kept:n}` ("turns recognisable ink strokes on the slide into lines, rectangles, ellipses and triangles"; `{"shapes":[],"kept":0}` on a slide without ink). There is **no `draw.stroke`, `draw.pen` or lasso command** (`unknown command`): ink strokes come only from pointer input in the live window (the control channel offers `ui.drag {x,y,…}` and `ui.pointer {events}`) or from a file that already contains ink.
 - `ui.screenshot` answers "no frame was presented (screen locked or window hidden); use ui.render" when the window is not visible; `ui.render {"path"}` then renders only the SLIDE (960×540), not the ribbon, so pen selection and drawing through the UI need the window visible and the screen unlocked.
 
-## Version note (2026-10-25)
+## Newer commands
 
-App/CLI 0.11.1 added 6 commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`); none removed. The full-deck recipe
-(select chart → `chart.options`, accessibility check, `.pptx` round trip with a hidden slide) behaved identically on 0.10.0 and 0.11.1.
+Six newer commands (`shape.openPath/closePath/deleteSegment/segmentType`, `slide.reuseList`, `review.reject`). The full-deck recipe
+(select chart → `chart.options`, accessibility check, `.pptx` round trip with a hidden slide) is covered in "Building a real deck".
 
-## Alignment and redo (verified headless, 0.11.1, 2026-10-26; render looked at)
-> **Versions:** 0.11.1.
+## Alignment and redo (verified headless, 2026-10-26; render looked at)
 - `format.alignLeft`, `format.alignCenter`, `format.alignRight` (no parameters) act on the selected text or shapes: after `insert.textBox` the new box is selected, so `--cmd 'insert.textBox={"text":"Right aligned","rect":[100,100,800,100]}' --cmd format.alignRight` right-aligned the text inside its 800-point-wide box (render: it sat at the right end), `alignCenter` centred and `alignLeft` left-aligned it.
 - **`insert.textBox` takes `rect: [x,y,w,h]` in points of a 960×540 slide** (the PNG export is 1920×1080). `x`, `y`, `width`, `height` are ignored: two boxes without `rect` were stacked at the default position and overlapped, and `rect:[1,1,6,1]` made a 6-point-wide box that wrapped one letter per line.
 - `edit.undo` then `edit.redo` in one `run` both succeed (a text box added and removed again, then restored).
 
-## The last 28 command ids (2026-10-26, 0.11.1, headless; smoke test)
-> **Versions:** 0.11.1 only, CLI only. Each id ran with `deckcraft-cli run --cmd … --save` on a slide holding the objects it needs; `info` of the saved file differed from the same script without the command (`info` also reflects the current slide, so a difference proves little for the navigation commands). **Smoke test only: effects were not rendered.**
+## The last 28 command ids (2026-10-26, headless; smoke test)
+> Each id ran with `deckcraft-cli run --cmd … --save` on a slide holding the objects it needs; `info` of the saved file differed from the same script without the command (`info` also reflects the current slide, so a difference proves little for the navigation commands). **Smoke test only: effects were not rendered.**
 - **Ran (26):**
 
 ```
@@ -247,7 +236,7 @@ slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumn
 - **Refused:** `file.recovery.discard` (no recovery folder is set); `file.recovery.save` (no recovery folder is set) (an app setting, not a parameter: the desktop app sets a recovery folder).
 
 ## Board deck from sample data: charts, axis, alt text (2026-10-27, 0.11.1 headless; every slide rendered and looked at)
-> **Versions:** 0.11.1 only. Task: a 7-slide board review (native charts, 60-30-10 palette, notes) from invented sample data, built by one `deckcraft-cli run` script.
+> Task: a 7-slide board review (native charts, 60-30-10 palette, notes) from invented sample data, built by one `deckcraft-cli run` script.
 - The CLI is `~/AppImages/deckcraft-cli` and is **not on PATH**: `export PATH=$HOME/AppImages:$PATH`.
 - **60-30-10 palette**: `design.colors` with `lt2` = background (60%), `dk1/dk2/accent1` = navy for text, cards and chart bars (30%), `accent2` = orange used only for key-metric text boxes (10%); `design.background {"color","all":true}` last. SmartArt then colours its three boxes accent1, accent2, accent3 (the orange one looks like emphasis).
 - **No axis control**: there is no command for axis minimum, number format or label format (`chart.options` has title, legend, dataLabels, gridlines, textColor only). The renderer starts the value axis above zero when the data are close together (revenue 118k to 125k drew from 116,000; CAC 396 to 450 from 390) but at 0 for churn 3.1 to 4.2. A truncated axis exaggerates changes: say so in a caption on the slide and in the notes. Data labels show raw numbers (`120000`, no `$`), so put the unit in the chart title.

@@ -2,10 +2,10 @@
 
 Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-## Version note (0.11.0)
+## Newer commands
 
-WordCraft 0.11.0 added 5 commands (638 → 643), none removed: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
-(after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`. Of the older sections, nine headless ones were re-run on both versions and gave identical output (see the `> Versions` line under each); the rest of this file has not been re-run on 0.11.0.
+Five newer commands: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
+(after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`.
 
 ## Property names (verified via `inspect`)
 
@@ -22,7 +22,6 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 
 ## Commands (verified)
 
-> **Versions:** mostly 0.10.0 (2026-10-24). Re-verified on 0.11.0 by the style builders (2026-10-25): `layout.size/margins`, `styles.create/modify`, `list.define`, `insert.picture`, `insert.table` + `table.*`, `insert.pageNumber`, `insert.header` + `insert.pageField`, `layout.columns`, `references.footnote`, `select.text` + `insert.link`, `file.properties`. Everything else in this list has **not** been re-run on 0.11.0.
 
 - Page: `layout.margins {"top":36,"bottom":36,"left":43.2,"right":43.2}` (pt).
 - Styles: `styles.create {"name","basedOn"}`, `styles.modify {"style","chr","para"}`, `para.style {"style"}`,
@@ -149,8 +148,8 @@ Section props: `marginTop/Bottom/Left/Right`, `pageW/pageH` (pt; Letter = 612×7
 - Save/export: `file.save {"path"}`, `file.saveAs {"path"}`, `file.exportPdf {"path"}`.
 - `file.open {"path"}` / `file.close {"force"?}` exist; untested whether `file.open` replaces a dirty doc.
 
-## Sweep of every remaining command id on a blank document (2026-10-26, 0.11.0, headless; effect checked by `inspect`, partly by render)
-> **Versions:** 0.11.0 only, CLI only. **What this proves and what it does not:** each id was run with `wordcraft-cli run --script` on a blank document holding a heading, two paragraphs, a 2x2 table and a sentence ("quick brown" selected), plus the object or state its family needs (a SmartArt, chart, WordArt, canvas, equation, field, mail-merge list, picture, bookmark/link/comment, outline view, header). Parameters came from `wordcraft-cli commands --json`. Two checks per id: the command returned without an error, and the saved document's `inspect` JSON was compared with the same script WITHOUT the command (changed or not). The seven commands marked R below were also compared by rendering page 1. Effects were NOT otherwise read back or looked at, so "ran" means the command exists and takes those parameters. Scratch files only.
+## Sweep of every remaining command id on a blank document (2026-10-26, headless; effect checked by `inspect`, partly by render)
+> **What this proves and what it does not:** each id was run with `wordcraft-cli run --script` on a blank document holding a heading, two paragraphs, a 2x2 table and a sentence ("quick brown" selected), plus the object or state its family needs (a SmartArt, chart, WordArt, canvas, equation, field, mail-merge list, picture, bookmark/link/comment, outline view, header). Parameters came from `wordcraft-cli commands --json`. Two checks per id: the command returned without an error, and the saved document's `inspect` JSON was compared with the same script WITHOUT the command (changed or not). The seven commands marked R below were also compared by rendering page 1. Effects were NOT otherwise read back or looked at, so "ran" means the command exists and takes those parameters. Scratch files only.
 - **Ran and changed the document (77 ids):**
 
 ```

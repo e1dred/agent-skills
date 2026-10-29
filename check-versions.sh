@@ -10,7 +10,7 @@
 dir=${AIMG:-"$HOME/AppImages"}
 first() { sed -n '1p'; }
 num() { grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1; }
-for app in ${APPS:-photocraft gridcraft deckcraft wordcraft}; do
+for app in ${APPS:-photocraft gridcraft deckcraft wordcraft cadcraft}; do
     img="$dir/$app.appimage"
     [ -x "$img" ] || continue
     av=$(timeout 25 "$img" --version 2>/dev/null | first | num)

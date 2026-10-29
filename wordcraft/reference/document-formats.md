@@ -4,7 +4,6 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Document styles (traditional, elegant, clean, professional, academic, modern, stylish, creative; document, résumé, CV, APA/MLA paper)
 
-> **Versions:** built and rendered on 0.11.0 (2026-10-25) only.
 
 `../styles/` holds the specs (`styles.json`), a font resolver (installed fonts first, Office-portable by default) and a neutral build plan (`plan.py`);
 `python3 -I styles/build_wordcraft.py STYLE doc|resume|cv|paper /abs/out.docx [--paper=a4] [--page-numbers=…] [--columns=2] [--photo=…]
@@ -25,9 +24,9 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - `wordcraft-cli commands` lists ids only (no parameter docs, no `describe`): learn parameters from this file or by trial, and remember unknown parameter names are silently ignored.
 - **`report` kind (quarterly review), 2026-10-26, 0.11.0:** a table with per-cell fills is built in one pass: `insert.table` (`Normal Table` for borderless KPI/fact-sheet tables, `Table Grid` otherwise) → `table.autofit {"mode":"fixed"}` → shade the header row first (`table.selectRow`, `table.shading`, `table.repeatHeader`, `select.collapse`) → per cell `table.columnWidth` (row 0 only), then for a filled cell `table.selectCell` + `table.shading` + `select.collapse` BEFORE `para.style`/`text.insert`, `format.set` + `format.resetChar` around coloured text, `caret.right`. Widths and fills all rendered correctly. See `styles/plan.py` (`kind == "report"`).
 
-## Manuscript format for publishers (verified headless, 0.11.0; both apps render the same pages)
+## Manuscript format for publishers (verified headless; both apps render the same pages)
 
-> **Versions:** 0.11.0 (2026-10-25). Built by `styles/build_wordcraft.py x manuscript …`, checked with `styles/manuscript_check.py`; see `styles/README.md` for the options.
+> Built by `styles/build_wordcraft.py x manuscript …`, checked with `styles/manuscript_check.py`; see `styles/README.md` for the options.
 
 - **Header that skips page 1:** create the header text in the default slot first (`insert.header {"text":"Tilby / TITLE / "}` → `caret.end` → `insert.pageField` → `para.set {"props":{"align":"right"}}` → `insert.closeHeader`), THEN `layout.differentFirstPage`. Page 1 then shows nothing and pages 2+ show "Tilby / TITLE / 2" (render and `pdftotext` checked). The opposite order puts the text into the first-page slot only (see the per-section header notes).
 - **"Space before" is ignored at the top of a page** in WordCraft's layout, even with `pageBreakBefore`: a chapter heading with `spaceBefore:144` after a page break printed at the very top. Use six empty double-spaced paragraphs (a style with no indent) to drop a third of the page, or put the spacing before a paragraph that is not first on the page (the title block's `spaceBefore` worked on page 1).
@@ -35,9 +34,9 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - A right tab inside a one-line style (`tabs: [{pos:468, align:right}]`) puts "about 350 words" at the right margin on the same line as the author's name; `text.insert` with `\t` is a real tab.
 - Real `Heading 1` for chapters (restyled: 12 pt, bold, centred, black, double-spaced), `Normal` body with `indentFirst:36`, `lineSpacing multiple 2.0`, `spaceAfter:0`; the checker reads these back from `styles.xml`.
 
-## Screenplay format (verified headless, 0.11.0; both apps give the same pages)
+## Screenplay format (verified headless; both apps give the same pages)
 
-> **Versions:** 0.11.0 (2026-10-25). Built by `styles/build_wordcraft.py x screenplay …`, checked with `styles/screenplay_check.py`.
+> Built by `styles/build_wordcraft.py x screenplay …`, checked with `styles/screenplay_check.py`.
 
 - **Fixed line pitch:** `lineSpacing {"rule":"exactly","value":12}` on every element (`para.lineSpacing {"exactly":12}`); with Courier 12 this gives 6 lines per inch. Right indents are a paragraph property too: `indentRight` (pt), next to `indentLeft`.
 - **Title page not counted, script numbered from 1, page 1 without a number:** type the title page, `layout.break {"kind":"nextPage"}`, then in the NEW section `layout.pageNumberFormat {"format":"decimal","start":1}` → `layout.linkToPrevious` → `insert.createHeader` → `insert.pageField` → `text.insert "."` → `para.set {"props":{"align":"right"}}` → `insert.closeHeader` → `caret.docEnd` → **`layout.differentFirstPage` last**. Result per page (`pdftotext`): title page no header, script page 1 no number, then "2." "3.". Doing `differentFirstPage` BEFORE `createHeader` put the number on script page 1 only (the header went into the first-page slot).
@@ -50,7 +49,7 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - **(MORE)/(CONT'D)** cannot be set in advance (page breaks depend on the layout): the repo's `screenplay_paginate.py` builds, reads the per-page words from the PDF, splits the speech at the break (one line earlier, because the `(MORE)` line needs room) and rebuilds until stable. Identical repeated speeches fool its word matching: test with varied text.
 
 ## Policy manual with a TOC, callouts, matrix and tracked-change log (2026-10-27, 0.11.0 headless; all 4 pages rendered and looked at)
-> **Versions:** 0.11.0 only. Task: three invented draft policies merged into one manual, written as a `wordcraft-cli run --script` job. The CLI lives in `~/AppImages` (not on PATH).
+> Task: three invented draft policies merged into one manual, written as a `wordcraft-cli run --script` job. The CLI lives in `~/AppImages` (not on PATH).
 - **Order that worked:** `tools.autocorrect {"enabled":false}`, all `styles.modify/create` first (a new style applies to the caret paragraph, harmless on the blank first one), header and footer, `caret.docEnd`, then the content, the TOC last. Four custom styles (Compliance Callout, Table Text, Meta) plus the built-in Title, Subtitle, Heading 1/2, Header, Footer were enough; `styles.modify` on a built-in never failed.
 - **Every paragraph starts with `para.reset`, `para.style`, `format.resetChar`** (a helper does it); a lead-in bold run is `format.bold` → `text.insert` → `format.resetChar` → the rest. Bullets: `para.bullets {"kind":"bullet"}` on the FIRST item only, plain `text.newParagraph` + `text.insert` for the rest, then the next real paragraph gets `numbering {"level":0,"num":0}` via `para.set`; this gave exactly three bullets and a clean paragraph after them.
 - **Callout box** = style with `borders.left` (4 pt orange) and indents, plus `para.shading {"color":"FDEDE8"}` on each callout paragraph (render: tinted box with an orange bar, dark red text). `para.shading` is the only per-paragraph step.
@@ -59,8 +58,8 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 - **Real tracked changes in the middle of a document:** `file.setAuthor` once, then per entry: type the paragraph with tracking OFF, `review.trackChanges {"value":true}`, `select.text {"text":"legacy phrase"}` + `text.insert {"text":"new phrase"}`, `review.trackChanges {"value":false}`, `caret.docEnd`. Five edits gave 5 `<w:ins>` and 5 `<w:del>`, all by that author. The legacy phrase must occur ONCE in the whole document (the matrix repeats the old numbers, so each appendix phrase is worded differently from the table). The insertion is stored BEFORE the deletion.
 - **A normal PDF export shows the accepted text only.** To print the markup: `wordcraft-cli run --file x.docx --cmd 'review.showMarkup={"value":true}' --cmd 'file.printMarkup={"value":true}' --cmd 'file.exportPdf={"path":ABS}'` → `{markup:true}`; the render showed insertions underlined and deletions struck through, in a magenta author colour, with change bars in the margin.
 
-## A whole public-domain novel as a manuscript (2026-10-27, 0.11.0; opened in three apps)
-> **Versions:** 0.11.0 (WordCraft), ONLYOFFICE 10.0.0, GenOffice app. A ~75,000-word novel taken from an ebook publisher's single-page HTML.
+## A whole public-domain novel as a manuscript (2026-10-27; opened in three apps)
+> A ~75,000-word novel taken from an ebook publisher's single-page HTML.
 - **HTML to builder text:** a small `html.parser` script (not a regex over the whole page: the CSS in the page also contains tags) walked the chapter sections: `<h2>` becomes `# Chapter I`, `<p>` a paragraph, `<i>`/`<em>` `*italic*` (move edge spaces outside the asterisks), letter headers/footers and poems become `| ` verse lines, `<hr>` a `#` scene break, note-reference links and the endnotes section are dropped. Strip U+2060 and thin spaces, and replace U+2E3A/U+2E3B (two- and three-em dashes), which Times New Roman lacks, with em dashes. 812 blocks, 74,900 words.
 - **Build:** `build_wordcraft.py x manuscript OUT.docx --title=… --author=… --address=… --text=book.txt` (add `--overwrite` on a rebuild; without it the builder prints "refusing to overwrite" and writes an EMPTY job file, which then fails as "bad JSON"). 0.5 s to run the 239-page job, every `manuscript_check.py` rule passed.
 - **Same pages in three apps:** WordCraft, ONLYOFFICE (headless count 239) and the GenOffice app window all showed 239 pages with the same first word on the last page. **GenOffice's headless `render` gave 235 pages for the same file, so do not judge pagination from it.** `ui_inspect` is huge (every page rectangle and the settings): filter it, never print it.
@@ -68,8 +67,8 @@ ATS notes and options. Verified: every style in 3 kinds plus the feature samples
 
 - **Query letter and synopsis for the same book** (`build_wordcraft.py x query|synopsis OUT.docx --agent="Ms. Name|Agency|Street|City" --date=… --text=file.txt`): the letter (275 words of text) fits one page with the contact, date and agent blocks; a 600-word synopsis ran two pages with 4 lines on the second, and cutting to about 500 words (a few sentences, not the plot) gave one clean page. Check with `info` (`pages`) and `pdftotext -f 2`. **`manuscript_check.py` on a query or synopsis reports FAIL for double spacing, indent and paragraph spacing: expected, those rules are for the manuscript, not these single-spaced documents.** Write the text in present tense; keep the tense of embedded stories consistent.
 
-## A verse play from an ebook HTML (2026-10-27, 0.11.0; opened in three apps)
-> **Versions:** 0.11.0, ONLYOFFICE 10.0.0, GenOffice app. A five-act verse and prose play (about 17,000 words) from an ebook publisher's single-page HTML, built with the `stageplay` kind.
+## A verse play from an ebook HTML (2026-10-27; opened in three apps)
+> A five-act verse and prose play (about 17,000 words) from an ebook publisher's single-page HTML, built with the `stageplay` kind.
 - **The stage-play builder used to JOIN a speech's lines into one paragraph**, which would reflow verse. It now keeps lines that start with `| ` (after the cue, or as a cue-less chunk for a song) as separate `ST Verse` paragraphs (single-spaced, hanging indent 0.5 in), and treats `PROLOGUE`/`EPILOGUE` like a scene heading. Prose speeches stay joined paragraphs.
 - **HTML to text:** the source marks speeches as table rows (persona cell + text cell, verse as `<span>` lines, songs and stage directions marked by `epub:type`). A `html.parser` walk gave `NAME` + `| line` blocks, `(Enter …)` for entrances, inline `*Exit.*` in italics, `SETTING:` and a characters list. 732 chunks, 643 speeches, 80 pages with the title page.
 - **Why GenOffice's last page differed (reproduced headlessly with `genoffice convert --to pdf`):** pages 1-29 broke identically in WordCraft and GenOffice. On page 30 WordCraft (and ONLYOFFICE) fitted a cue plus its one-line speech at the very bottom (41 lines against GenOffice's 39); GenOffice pushed them to page 31, every later break moved by those two lines, and by the end the last page began about a dozen lines earlier ("Every third thought shall be my grave." instead of "I'll deliver all;"). The page count stayed 80 in all three. This is a one-page-bottom rounding difference between layout engines, not a document error. An exact 14 pt line (`line_exact`) did NOT make the three agree (GenOffice and WordCraft then matched on the last page, but ONLYOFFICE differed from WordCraft on 11 pages), so the option was not kept. Compare page counts and the start of the last page, and expect a few lines of drift in long single-spaced documents.

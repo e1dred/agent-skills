@@ -2,8 +2,8 @@
 
 Part of the photocraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-## Painting a portrait from code (2026-10-26, 0.16.0, headless; 1482 commands, 2.9 s; renders looked at after each pass)
-> **Versions:** 0.16.0 only, CLI only. Task: reproduce an example portrait (a painted head-and-shoulders picture on a 1376x768 canvas) with my own paths and strokes; points were read from the reference by eye (no tracing, no pixel copying). Helpers: `tools/paintlib.py`. The portrait itself and its coordinates are not recorded here.
+## Painting a portrait from code (2026-10-26, headless; 1482 commands, 2.9 s; renders looked at after each pass)
+> Task: reproduce an example portrait (a painted head-and-shoulders picture on a 1376x768 canvas) with my own paths and strokes; points were read from the reference by eye (no tracing, no pixel copying). Helpers: `tools/paintlib.py`. The portrait itself and its coordinates are not recorded here.
 - **One `run` can carry about 1500 commands** (`--cmd id --params json` repeated, built from Python and run with `subprocess`), and took 2.9 s; save `.png` and `.pcraft` in two runs (deterministic with seeded `random`).
 - **`path.set` knots with `"smooth":true` do NOT compute handles:** `in` and `out` came back equal to the anchor, so the shape was a polygon. Give each knot `in`/`out` yourself (Catmull-Rom: handle = (next - previous) / 6 for tension 1); `path.rename {"to":name}` fails with "a path named X already exists", so make names unique; `path.fill {"name","color","opacity"}` fills on the ACTIVE pixel layer (`layer.new.layer` first, one layer per part).
 - **Shade inside a shape:** `path.toSelection {"name","feather":2}` then `paint.stroke` calls are clipped to the selection (light and shadow strokes did not spill over the face edge); `select.deselect` afterwards. Do the shading on its own layer with `layer.setProps {"blend":"SoftLight","opacity":0.85}`: it added form (lit forehead, nose bridge, cheekbone; dark far cheek, jaw, eye sockets) without repainting the features.

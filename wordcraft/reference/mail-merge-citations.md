@@ -4,7 +4,7 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Mail merge (verified headless with `wordcraft-cli run --script`; letters)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (3-record CSV, one record filtered out, `start`, `recipients`, `filterRecipients`, `insertField`, `checkErrors`, `finish`): identical results and merged text. Not re-run: `addressBlock`/`greetingLine`, `rules`, envelopes/labels, `.xlsx` recipients.
+> Not re-checked: `addressBlock`/`greetingLine`, `rules`, envelopes/labels, `.xlsx` recipients.
 
 ```
 mailings.start {"kind":"letters"}                       # also emails|envelopes|labels|directory
@@ -29,7 +29,7 @@ mailings.finish {"path":"/abs/merged.docx","from":1,"to":2}   # one page per rec
 
 ## Citations, bibliography, cross-references (verified headless)
 
-> **Versions:** tested 2026-10-24 on 0.10.0. re-run 2026-10-25 on both the 0.10.0 and 0.11.0 CLIs (a Book and a three-author JournalArticle in APA, IEEE and MLA, the bibliography, and the `insert.crossReference` list and heading text): identical. Not re-run: the other citation styles, `references.sources`, cross-references to bookmarks, figures, tables, equations or pages.
+> Not re-checked: the other citation styles, `references.sources`, cross-references to bookmarks, figures, tables, equations or pages.
 
 ```
 references.citationStyle {"style":"APA"}     # also IEEE, MLA, Chicago, Harvard (Anglia), ISO 690, Turabian, GOST…

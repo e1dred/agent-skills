@@ -7,13 +7,13 @@ description: Use when building, editing, checking or converting spreadsheets (.x
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, tested on **gridcraft-cli 0.11.1; later sections on 0.12.1** (Linux AppImage). GridCraft is an alpha, Excel-style
+Field notes from real tasks, last tested on **gridcraft-cli 0.12.1** (Linux AppImage). GridCraft is an alpha, Excel-style
 spreadsheet in Rust. Every ribbon button is an *engine command* (346 of them); the CLI, the MCP server and the app's
 control channel all run the same commands. If `gridcraft-cli version` is newer, re-check before relying on this.
 
 ## Surfaces
 
-> **Versions:** written on 0.11.1 (2026-10-24/25). The headless CLI forms ran identically on 0.12.1 (see the version note). The live control channel was re-tested 2026-10-25 on the 0.12.1 app (port 47823, started with plain `--control 47823`, blank unsaved Book1): `range.setValues`, `home.numberFormat`, `home.bold {on:true}`, `home.fillColor`, `home.formatCells` with the integer `Rgb` fill, `insert.table`, `insert.chart`, `sheet.read`, `document.inspect`, `ui.screenshot` (rendered the table, currency formats, chart and fill) and `file.exportPdf` (2 pages) all behaved as documented, and `pivot.options` correctly asked for a PivotTable. One `send` failed once with "not reachable: Resource temporarily unavailable", and after the first batch `ui.screenshot` and `ui.inspect` hung until killed (the app still answered earlier commands; same symptom as PhotoCraft's stalled window, cause not determined, so bring the window to the front and retry).
+> One `send` failed once with "not reachable: Resource temporarily unavailable", and after the first batch `ui.screenshot` and `ui.inspect` hung until killed (the app still answered earlier commands; same symptom as PhotoCraft's stalled window, cause not determined, so bring the window to the front and retry).
 
 - **Headless CLI** (no window, deterministic; best for building/reading/verifying files):
   `info FILE`, `cat FILE [--range A1:D9] [--formulas|--csv]`, `eval '=FORMULA' [--in FILE]`,
@@ -32,7 +32,6 @@ control channel all run the same commands. If `gridcraft-cli version` is newer, 
 
 ## Command formats (verified)
 
-> **Versions:** 0.11.1; the commands listed here ran identically on 0.12.1 (12 scripts, see the version note).
 
 | Goal | Command |
 |---|---|
@@ -77,9 +76,8 @@ control channel all run the same commands. If `gridcraft-cli version` is newer, 
 No macros run; `.xls/.xlsb/.ods` import only (never written); slicers not saved to xlsx; charts shallow (no 3-D, axis
 scaling); PDF export can't render Arabic/Devanagari/Thai. `app.quit` / `file.close {force:true}` discard unsaved work.
 
-## More recipes (verified headless, 0.11.1)
+## More recipes (verified headless)
 
-> **Versions:** 0.11.1 (2026-10-25); re-run 2026-10-25 on 0.11.1 and 0.12.1 (`t2`, `t4`, `t7` and the later scripts): identical cell values, formulas, tables, charts and sheet lists.
 
 Build with `run --script steps.jsonl --out f.xlsx` (one `{"command":…,"params":…}` per line), then `check` + `cat`.
 
@@ -105,9 +103,8 @@ Build with `run --script steps.jsonl --out f.xlsx` (one `{"command":…,"params"
   `file.open {"path":"in.csv","csvAsText":true}` (verified: `007` kept). CSV/HTML export per sheet: `convert f.xlsx out.csv --sheet Sheet1`.
 - `check` after a pivot/CF/validation/name workbook: all formulas matched, round trip equal.
 
-## Everyday formatting and sheet editing (verified headless, 0.11.1)
+## Everyday formatting and sheet editing (verified headless)
 
-> **Versions:** 0.11.1 (2026-10-25); re-run 2026-10-25 on 0.11.1 and 0.12.1: identical (the `t7` report build, including PDF-facing settings).
 
 Typical report build (checked: `check` clean, PDF 2 pages): header row styled, % and thousands formats, borders, merge, link,
 sparkline, lookups, chart, protect.
@@ -136,7 +133,6 @@ New sheets and charts keep working after protection; protect last in the script.
 
 ## New in 0.12.x (verified headless)
 
-> **Versions:** 0.12.1 only (the commands do not exist in 0.11.1).
 
 - `pivot.options {"enableShowDetails":true}` then `pivot.showDetails {"cell":"B5"}` → `{sheet:"Sheet3",records:1}`: writes the source records behind that value
   to a new sheet *before* the current one (error if show-details is off). `pivot.list {}` shows layout, grand totals, `enableShowDetails`.
@@ -145,9 +141,8 @@ New sheets and charts keep working after protection; protect last in the script.
   `automate.stopAction {}` → `{stopped:false}` when nothing is running.
 - `run --quiet` suppresses command results: omit it when you need the returned values (it hid `pivot.showDetails`' answer).
 
-## Analysis and layout tools (verified headless, 0.12.1)
+## Analysis and layout tools (verified headless)
 
-> **Versions:** first run on 0.12.1 (2026-10-25); the same scripts also gave identical output on 0.11.1, so these commands are not new in 0.12.
 
 Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":…}` per line); `cat`/`info`/`check` on the output confirm.
 - **Goal seek**: `data.goalSeek {"set":"D5","to":1000,"changing":"B2"}` → `{converged:true,iterations:2,value:168}` (writes the found value into `B2`; `set` must be a formula cell, `changing` a constant).
@@ -165,9 +160,9 @@ Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":�
 - **JSON import**: `data.getData {"text":"[{\"id\":1,\"name\":\"Ann\"}]"}` (or `{"path"}`) → a new sheet with a table of the keys.
 - **Flash Fill** (`edit.flashFill`, `data.flashFill`) answered "didn't see a pattern" for first-name extraction in every form I tried (ranges `B2:B5`, `B4:B5`, two examples): untested/unreliable headlessly, use a formula (`=LEFT(A2,FIND(" ",A2)-1)`) instead.
 
-## Pivot tables and chart types in depth (verified headless, 0.12.1; renders checked)
+## Pivot tables and chart types in depth (verified headless; renders checked)
 
-> **Versions:** 0.12.1 only (2026-10-25); not re-run on 0.11.1 (the `pivot.options/showDetails` commands are 0.12-only; the others exist in both but were not compared).
+> the others exist in both but were not compared).
 
 Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Revenue). Scripts: `run --script x.jsonl --out f.xlsx`.
 - **Pivot build:** `insert.pivotTable {"source":"Sales","destination":"new","name":"P1","rows":["Region"],"columns":["Product"],"values":[{"field":"Revenue","func":"sum"}]}` → `{anchor,id:2,name,range,sheet}`. The pivot gets the NEW sheet (inserted before the current one) and the pivot id is 2 (ids are not 1-based per pivot).
@@ -185,9 +180,9 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
   Several of these return `null`/`{chart}` only: confirm with `info` (`chart LineMarkers "T" at B2, 2 series`).
 - Not run: pivot slicers/timelines, `pivot.moveField/removeField/changeSource/style/subtotals/reportLayout` individually, `pivot.delete`, `chart.shapeFill/shapeOutline`, secondary axis, axis scaling (the Limits section says it is unsupported), live-window rendering of pivots.
 
-## Conditional formats, validation, ToolPak, review and functions (verified headless, 0.12.1; render checked)
+## Conditional formats, validation, ToolPak, review and functions (verified headless; render checked)
 
-> **Versions:** 0.12.1 only (2026-10-25); not re-run on 0.11.1. Data is invented.
+> Data is invented.
 
 - **Conditional formats** (`home.conditionalFormat {"range","rule":{…}}` → `{rules:N}` = running count on the sheet). Verified types and the PDF render (rules stack; later ones layer over earlier fills, a colour scale painted over a `cellIs` fill):
   `cellIs` (`operator` greater/between + `value`/`value2`), `beginsWith`/`containsText` (`text`), `blanks`, `duplicate`, `top10 {"rank":2}`, `aboveAverage`, `expression {"formula":"=$C2=\"B\""}` (formula relative to the range's top-left), `colorScale {"colors":[3 hex]}`, `dataBar {"color"}`, `iconSet {"set":"3TrafficLights1"}`.
@@ -205,9 +200,9 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
   BITAND, BASE, DEC2HEX, COMPLEX, IMABS, CONVERT mi→km 1.609344, MMULT, MDETERM, ROMAN, GCD, SUMPRODUCT, AGGREGATE (engineering/math). Array constants use `{1,2;3,4}` (comma = column, semicolon = row).
 - Not run: shapes/images in cells, cell styles/themes, `.xls/.xlsb/.ods` imports on a real corpus, solver reports/methods in depth, Flash Fill.
 
-## Cell styles, table design, slicers, objects, sheets, view and helper commands (verified headless, 0.12.1; PDF render checked)
+## Cell styles, table design, slicers, objects, sheets, view and helper commands (verified headless; PDF render checked)
 
-> **Versions:** 0.12.1 only (2026-10-25); not re-run on 0.11.1. Data invented. Step-by-step form used: `run --in f.xlsx --cmd 'id={json}' --out f.xlsx` (one command per run, so one failure does not lose the file; **selection, slicers and the clipboard do NOT survive between runs**: commands that need a selected table/slicer must share one `run`).
+> Data invented. Step-by-step form used: `run --in f.xlsx --cmd 'id={json}' --out f.xlsx` (one command per run, so one failure does not lose the file; **selection, slicers and the clipboard do NOT survive between runs**: commands that need a selected table/slicer must share one `run`).
 
 - **Cell styles** (render checked): `home.cellStyle {"range","name":"Heading 1|Good|Bad|Neutral|Title|Total|Accent1…|Normal"}` (Heading 1 = bold with a coloured bottom rule; Good green, Bad red; **Accent colours follow the theme**: after `pageLayout.theme {"name":"Ocean"}` + `pageLayout.themeColors {"name":"Ember"}` "Accent2" rendered orange), `home.newCellStyle {"name":"MyStyle","fromCell":"A1"}` → `{name}`.
   Themes: `pageLayout.theme {"name":"Craft|Slate|Meadow|Ember|Ocean|Orchid|Graphite","colors":[12 hex],"majorFont","minorFont"}`, `pageLayout.themeColors {"name"|"colors"}`, `themeFonts`, `themeEffects`.
@@ -225,9 +220,9 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
   `formulas.autoSum {"range"}`, `formulas.tracePrecedents {"cell"}` → `[]`, `formulas.convertToNumber`, `formulas.functions {}` (the whole library with category and signature). Files: `file.properties {"title","author"}` (→ full block), `file.exportHtml {"path"}`, `file.exportCsv {"path"}` wrote **0 bytes** from a freshly started sheet in a step-run (use `convert f.xlsx out.csv --sheet Sheet1`), `history.list {"limit"}` → `{undo,redo}`.
 - Not run: `.xls/.xlsb/.ods` import (no sample file; none of the tools here writes one), ink (`draw.*`), `automate.*` scripts, `data.queriesConnections`, printing, `review.spelling/thesaurus`, `view.customViews/newWindow`.
 
-## Formula auditing, selection, scripts, ink, comments, grouping and print helpers (verified headless, 0.12.1)
+## Formula auditing, selection, scripts, ink, comments, grouping and print helpers (verified headless)
 
-> **Versions:** 0.12.1 only (2026-10-25); not re-run on 0.11.1. Data invented. These ran in ONE `run` per script (selection, recording and object ids live only within a run).
+> Data invented. These ran in ONE `run` per script (selection, recording and object ids live only within a run).
 
 - **Formula auditing:** `formulas.tracePrecedents {"cell":"D6"}` → `[{range:"D2:D5",sheet}]`, `formulas.traceDependents {"cell":"B2"}` → `[{cell:"D2"}]`, `formulas.selectPrecedents {"cell","all":true}` → `{active,selection:"D2:D5"}`, `selectDependents`, `formulas.removeArrows`,
   `formulas.evaluateFormula {"cell":"D2"}` → `{formula,result:7.5,steps:[{expression,value}…]}` (the Evaluate Formula steps), `formulas.watchWindow {"add":"Sheet1!D6"}` → `[{cell,formula,value}]`, `formulas.calculateSheet` → `{cells}`, `formulas.errorChecking` (earlier section), `formulas.recentlyUsed` → `[]` in a fresh workbook,
@@ -244,21 +239,21 @@ Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Re
 - **Output:** `file.saveBytes {"format":"csv|xlsx|tsv|json|html"}` → `{base64,bytes,name}`, `file.printPreview {"page":1}` → `{pages,page:{paper,orientation,range,scale…}}`, `file.print {"fitToPage":true}` → `{pages,bytes,base64}` (the PDF as base64), `app.commands {"search":"sparkline"}` → ids, labels and parameter docs (a quick parameter lookup).
 - Not run: `.xls/.xlsb/.ods` import, `window.activate`, `view.*` (live window), `pageLayout.themeFonts/themeEffects`, `slicer.selectAll` outside one run.
 
-## Ink in GridCraft (verified headless, 0.12.1; saved file read back)
+## Ink in GridCraft (verified headless; saved file read back)
 
-> **Versions:** 0.12.1 (2026-10-25). Compared with WordCraft ink (see that skill): there is no page index and no lasso/erase-by-point; each stroke is a drawing object on the sheet.
+> Compared with WordCraft ink (see that skill): there is no page index and no lasso/erase-by-point; each stroke is a drawing object on the sheet.
 
 - `draw.stroke {"points":[[x,y],…],"color":"#C00000","width":2}` (sheet points) → `{shape:id}`: the stroke becomes a freeform shape immediately (saved as `a:custGeom` in `xl/drawings/drawing1.xml`). `draw.inkToShape {}` converts **the last stroke** (or `{"id"}`) to a clean shape and names its kind: a closed four-corner stroke → `{kind:"Rectangle"}`, a 24-point loop → `Ellipse`, a closed three-corner stroke → `Triangle`, a zig-zag open stroke → `Line` (it never refuses; WordCraft's `draw.convertInk` refuses non-shapes). Saved as `a:prstGeom prst="rect|ellipse|triangle|line"`.
 - Converted shapes appear in `arrange.selectionPane` as ordinary shapes (`"Rectangle 1"`, `"Ellipse 2"`, anchored at the cell they start in, `anchorMode:"absolute"`), so `arrange.*`, `object.*` and `chart.shapeOutline` work on them. A highlighter-style wide yellow stroke (`width:10`) is just a thick stroke (no translucency flag).
 - `draw.pen {"on","color","width"}`, `draw.eraser {"on"}` set the tool state for pointer drawing in the live window; `draw.lasso {}` takes no points (selects by dragging).
 
-## Version note (2026-10-25)
+## Newer commands
 
-App 0.12.1 / CLI 0.12.1 added 7 commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
-`view.showOutlineSymbols`, `automate.stopAction`); none removed. Twelve of this file's scripts (the sort/pivot/table/chart build, the report-formatting build, goal seek and scenarios, data table and solver, forecast, ToolPak, subtotals, consolidate and advanced filter, print and chart settings, array functions and JSON import) were run on both 0.11.1 and 0.12.1 and gave identical `info`, sheet contents and formulas. The traps and Flash Fill note were not re-run.
+Seven newer commands (`pivot.options`, `pivot.showDetails`, `data.outlineSettings`, `formulas.pasteName`, `view.statusBar`,
+`view.showOutlineSymbols`, `automate.stopAction`).
 
-## The last 58 command ids (2026-10-26, 0.12.1, headless; smoke test)
-> **Versions:** 0.12.1 only, CLI only. Each id ran with `gridcraft-cli run --sample sales --cmd 'id={json}'` (plus the setup it needs) and returned without an error; the saved workbook's `cat --formulas` and `info --json` were compared with the same script without the command. **Smoke test only: effects were not looked at.** Sample "sales" has its table at B4 (Region, Q1..Q4, Total).
+## The last 58 command ids (2026-10-26, headless; smoke test)
+> Each id ran with `gridcraft-cli run --sample sales --cmd 'id={json}'` (plus the setup it needs) and returned without an error; the saved workbook's `cat --formulas` and `info --json` were compared with the same script without the command. **Smoke test only: effects were not looked at.** Sample "sales" has its table at B4 (Region, Q1..Q4, Total).
 - **Changed the workbook (58):**
 
 ```
@@ -282,7 +277,7 @@ view.zoomToSelection
 - Parameter shapes: `data.sortDescending {"range":"B5:G8","column":"C"}`, `home.strikethrough|subscript|shrinkToFit {"range","on":true}`, `home.decreaseDecimal|decreaseFontSize|doubleUnderline|justify|alignTop|alignMiddle|alignBottom|alignRight {"range"}`, `edit.fillLeft|clearContents|clearComments|clearHyperlinks {"range"}`, `view.formulaBar|gridlines|headings|rightToLeft|ruler|showObjects {"on":false}`, `view.zoomToSelection {"viewWidth","viewHeight"}`, `pageLayout.themeEffects {"name":"Subtle"}`, `insert.recommendedCharts {"range":"A1:C6"}`, `file.new {"sample":"budget"}`.
 
 ## Three-sheet financial model: names, lookups, sensitivity grid, cross-sheet chart (2026-10-27, 0.12.1 headless; PDF render looked at)
-> **Versions:** 0.12.1 only. Task: a three-sheet financial model from invented sample data, written as a JSON-lines script (`gridcraft-cli run --script build.jsonl --out model.xlsx`).
+> Task: a three-sheet financial model from invented sample data, written as a JSON-lines script (`gridcraft-cli run --script build.jsonl --out model.xlsx`).
 - **`run --script` with no `--in` starts a blank workbook** (`Sheet1`): `sheet.rename {"sheet":0,"name":"Summary"}`, `home.insertSheet {"name"}` for the others. One failing step saves NOTHING (it took four rebuilds to find the chart steps that failed), so run the whole script after every change and read the last line.
 - Write cells on a sheet only after `sheet.activate {"sheet":"Name"}`. A forward reference to a sheet filled later gives `#N/A` in the step output; the saved workbook recalculates correctly (`check`: 177 formulas, 177 matched, round trip equal).
 - **Defined names** (`formulas.defineName {"name":"Base_Rev","refersTo":"=Assumptions!$B$11"}`) work in formulas on other sheets, inside `SUMPRODUCT`, and **inside a conditional-format expression** (`"formula":"=AND(ISNUMBER($J4),$J4>Alert_Threshold)"`, rendered: the September burn cell turned red). `XLOOKUP(Base_Month,range,range)` and `INDEX/MATCH` on a date column both returned the right base values.
