@@ -162,7 +162,6 @@ Scripts are `run --script x.jsonl --out f.xlsx` (one `{"command":…,"params":�
 
 ## Pivot tables and chart types in depth (verified headless; renders checked)
 
-> the others exist in both but were not compared).
 
 Test data was invented: a 24-row `Sales` table (Date, Region, Product, Units, Revenue). Scripts: `run --script x.jsonl --out f.xlsx`.
 - **Pivot build:** `insert.pivotTable {"source":"Sales","destination":"new","name":"P1","rows":["Region"],"columns":["Product"],"values":[{"field":"Revenue","func":"sum"}]}` → `{anchor,id:2,name,range,sheet}`. The pivot gets the NEW sheet (inserted before the current one) and the pivot id is 2 (ids are not 1-based per pivot).
