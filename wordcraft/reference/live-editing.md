@@ -5,7 +5,7 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 ## Live mode, verified (WordCraft, app started with `--control 47822`, blank document open)
 
 > Re-checked on the current app (port 47826, a blank unsaved document): `type_text`, `execute para.style`, `select_text` + `format.bold`, `get_text`, `inspect_document`, `ui_inspect`, `render_page`, `design.scaleFontSizes` (the caret grew with the text), `file.closeDocument`. Not re-checked: `batch`, `key`, `click`, `new_document`, `save_document`.
-> Traps: `screenshot` answers "the window is minimized" when it is; through `wcmcp.py` `render_page` saves its PNG as `./img_N.png` in the **working folder of the client** (it left `img_1.png` in the repo): run it from a scratch folder. The MCP tool returns the image inline and saves nothing. The MCP bridge itself (`type_text`, `select_text`, `execute`, `get_text`, `render_page`, `screenshot`) was re-checked on port 47822.
+> Traps: `screenshot` answers "the window is minimized" when it is, and returns the window as a PNG (1520×960 for a 760×480 window, ribbon included) once the window is visible; through `wcmcp.py` `render_page` saves its PNG as `./img_N.png` in the **working folder of the client** (it left `img_1.png` in the repo): run it from a scratch folder. The MCP tool returns the image inline and saves nothing. The MCP bridge itself (`type_text`, `select_text`, `execute`, `get_text`, `render_page`, `screenshot`) was re-checked on port 47822.
 
 - Connect: `WORDCRAFT_PORT=47822 IMGDIR=DIR python3 -I tools/wcmcp.py '[["tool",{args}],…]'` (the helper now SAVES image
   results such as `screenshot` and `render_page` to `IMGDIR/img_N.png`; before, they were dropped as `<image>`).
