@@ -2,7 +2,9 @@
 
 Part of the photocraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-> Not re-checked: the live bridge, window tools and AI selection below (the headless CLI was re-run; see `everyday-edits.md`, "Newer commands and options").
+> Live bridge re-checked on the current app (window answering, screen unlocked): `session_list` (with no document it returns the UI state), `doc_new`, `command_run` (gradient fill, type, `layer.new.group` with colour/mode/opacity, `paint.stroke {"fill":true}`, `history.options`, `type.font.favorite/library`), `ui_set {"tool":"brush","brushSize":20}`, `ui_pointer` (a three-point drag painted a stroke), `ui_screenshot`, `jobs_list`, `doc_inspect`, `doc_save` to a `.pcraft` under the write root (reopened headless: same layers). A bridge CLI one release older than the app also worked; the bridge CLI from the app's own AppImage did too (`pcmcp.py`).
+> Traps: **`doc_close` is headless-only** (in the GUI the test document stays open and unsaved: close its tab yourself); `paint.stroke` is refused when the active layer is a Type layer ("active layer is a Type layer without a mask"): add `layer.new.layer` first; a font favourite set by `type.font.favorite` is a stored app preference, so turn it off again after a test.
+> Not re-checked: AI selection (`select.subject` and friends) and the clone-stamp, marquee and lasso sections below.
 
 ## Live mode and removing a background (verified on a portrait with a blurred, busy background)
 

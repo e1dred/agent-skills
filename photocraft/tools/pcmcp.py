@@ -6,7 +6,7 @@ Starts `photocraft-cli mcp --bridge 127.0.0.1:PORT --control-token-file FILE`, r
 default 600) and saves screenshots (tool results that contain an image) as /tmp/pcshot_<n>_<i>.png. Environment: PCCLI (path to photocraft-cli,
 default ~/AppImages/photocraft-cli), PHOTOCRAFT_CONTROL_TOKEN_FILE (default ~/.config/photocraft/control.token), LIM.
 The app must have been started with `--control PORT --control-token-file FILE [--automation-read-root DIR --automation-write-root DIR]`; the
-CLI must be the same version as the app (0.16.0 needs the 0.16.0 CLI). With `--bridge` the CLI refuses --automation-*-root flags: set those on the app.
+CLI should come from the same app version (a CLI two releases older timed out; one release older worked). With `--bridge` the CLI refuses --automation-*-root flags: set those on the app.
 Example calls: [["doc_open",{"path":"~/Pictures/x.png"}],["command_batch",{"steps":[{"id":"layer.duplicate","params":{"name":"Work"}}]}],["ui_screenshot",{"max_side":700}]]
 """
 import base64, json, os, subprocess, sys
