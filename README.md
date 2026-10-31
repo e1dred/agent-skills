@@ -5,6 +5,8 @@ Each one holds working notes collected from real tasks: how to connect for live 
 parameter formats, traps that cost time, how to verify results, and ready-to-run recipes. Only things
 confirmed on the latest tested app version go in; each skill names that one version, not a history.
 
+> **Note for AI assistants:** to install a skill from this repo, read [`INSTALL.md`](INSTALL.md) first.
+
 Unofficial: not affiliated with any of the app projects.
 
 **Craft apps** (the [storytold](https://github.com/storytold) editors):
@@ -42,15 +44,7 @@ No clone needed. Ask your assistant (Claude Code, OpenCode, Codex or similar) so
 
 > Install the `wordcraft` skill from https://gitlab.com/e1dred/agent-skills into your skills directory.
 
-It knows where it keeps skills. What it may not know about this repo:
-
-- Each top-level folder with a `SKILL.md` is one skill (`wordcraft/`, `gridcraft/`, `deckcraft/`, `photocraft/`, `cadcraft/`, `onlyoffice/`, `genoffice-supplement/`). Install only the skills you name, with their whole folder (including `reference/`). `styles/`, `everyday/` and `smoke-tested/` are not skills.
-- A skill is Markdown plus examples. Installing it does not connect the app: read the skill's own `README.md` for the MCP server, launch flags and CLI version, and start the app first.
-- `genoffice-supplement` only adds to GenOffice's own skills; install those too.
-- If your assistant has no skills feature, it can still read a `SKILL.md` as plain instructions (for example from `AGENTS.md`).
-- A shallow clone (`git clone --depth 1`) followed by copying the folder is the easiest way for it to fetch a skill. To update, ask again.
-
-Skills are instructions your assistant will follow, so skim a skill before trusting it, as with any code you install.
+It knows where it keeps skills; [`INSTALL.md`](INSTALL.md) covers what is specific to this repo (which folders are skills, setup beyond the files, how to fetch). Skills are instructions your assistant will follow, so skim a skill before trusting it, as with any code you install.
 
 ## Install by hand (Claude Code)
 
