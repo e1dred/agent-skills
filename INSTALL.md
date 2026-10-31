@@ -6,9 +6,8 @@ A user has asked you to add one or more skills from this repo. Put the skill fol
 ## What counts as a skill
 
 A top-level folder that contains a `SKILL.md`: `wordcraft/`, `gridcraft/`, `deckcraft/`, `photocraft/`,
-`cadcraft/`, `onlyoffice/`, `genoffice-supplement/`. Copy the **whole folder**, not just `SKILL.md`: some skills
-have a `reference/` folder (`wordcraft`, `photocraft`), a `tools/` folder with helper scripts (`cadcraft`,
-`genoffice-supplement`) or example files that `SKILL.md` points to. `styles/`, `everyday/` and `smoke-tested/` are
+`cadcraft/`, `onlyoffice/`, `genoffice-supplement/`. Copy the **whole folder** with all its subfolders, not just `SKILL.md`:
+skills keep reference pages, helper scripts, recipes and examples next to it, and `SKILL.md` points to them. `styles/`, `everyday/` and `smoke-tested/` are
 not skills; do not install them.
 
 ## How to fetch
@@ -79,6 +78,9 @@ and do not delete yours.
 - Installing a skill does **not** connect its app. Each skill's `SKILL.md` (and its `README.md`, where there is one) says
   how to connect: MCP server, launch flags, CLI version. Tell the user about any manual steps, such as starting the
   app first. Most of the skills expect the app to be installed already.
+- The skills are meant to grow: most `SKILL.md` files ask the assistant to add what it learns to the skill's own files (notes,
+  `reference/`, a log). So an installed copy collects local edits over time, which is why an update offers to merge
+  them (see "Updating" above). Mention this to the user.
 - `genoffice-supplement` only adds to GenOffice's own skills, which come with GenOffice and are not in this repo.
   It is not useful without them.
 - Tell the user to restart or reload their session if your harness needs that to pick up new skills.
