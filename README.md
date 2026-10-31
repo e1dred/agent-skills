@@ -46,19 +46,6 @@ No clone needed. Ask your assistant (Claude Code, OpenCode, Codex or similar) so
 
 It knows where it keeps skills; [`INSTALL.md`](INSTALL.md) covers what is specific to this repo (which folders are skills, setup beyond the files, how to fetch). Skills are instructions your assistant will follow, so skim a skill before trusting it, as with any code you install.
 
-## Install by hand (Claude Code)
-
-```sh
-git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
-~/agent-skills/install.sh            # or: install.sh wordcraft onlyoffice
-```
-
-`install.sh` only creates symlinks `~/.claude/skills/<skill>` → `~/agent-skills/<skill>`; it never
-overwrites an existing file or folder. Claude Code picks up skills in `~/.claude/skills/` automatically.
-Update later with `git -C ~/agent-skills pull`.
-
-Each skill's own `README.md` says how to connect its app (MCP server, launch flags).
-
 ## History
 
 `wordcraft/` and `onlyoffice/` were first published as separate repos (`e1dred/wordcraft-skill`,
