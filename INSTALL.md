@@ -22,8 +22,11 @@ git clone --depth 1 https://gitlab.com/e1dred/agent-skills.git /path/to/scratch/
 Copy the folders (`cp -r`); do not symlink them to the clone, because you delete the clone afterwards. (`install.sh` in
 the repo root symlinks into `~/.claude/skills` and is meant for people who keep a clone; do not use it here.)
 
+After copying and before deleting the clone, write the commit you copied from into `<skill>/.installed-from` (`git -C <clone> rev-parse HEAD`), so the skill
+can later tell whether the repo has moved on (each `SKILL.md` has an `Updates` note that uses it).
+
 Do not overwrite a skill that already exists in the user's skills directory without asking. To update later,
-the user asks again and you repeat this.
+the user asks again and you repeat this (a skill that finds a newer commit offers this; it never updates on its own).
 
 If your harness has no skills feature, you can still read a `SKILL.md` as plain instructions (for example by
 referencing it from `AGENTS.md`).

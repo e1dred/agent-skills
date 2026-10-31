@@ -5,6 +5,8 @@ description: Use when editing, converting or batch-processing images, layers, se
 
 # PhotoCraft
 
+> **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills HEAD` once per session. If the hash differs from the file's, tell the user a newer version exists and offer to re-install it (see the repo's INSTALL.md); never update without asking. No file, a clone or symlink, or no network: skip silently.
+
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare the app version with `<app>-cli --version` by hand). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
 Field notes from real tasks, last tested on **photocraft-cli 0.18.0** (headless sweep and a live bridge check) (Linux AppImage). PhotoCraft is an early-alpha,
