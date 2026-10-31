@@ -24,8 +24,9 @@ the repo root symlinks into `~/.claude/skills` and is meant for people who keep 
 After copying and before deleting the clone, write the commit you copied from into `<skill>/.installed-from` (`git -C <clone> rev-parse HEAD`; the file holds only that hash), so the skill
 can later tell whether the repo has moved on (each `SKILL.md` has an `Updates` note that uses it).
 
-If the skill is already in the user's skills directory, do not overwrite it: tell the user it is already installed and ask
-whether to update it; if they say yes, follow "Updating" below (which also covers a symlink into a clone). Installed skills check for a newer commit themselves and offer the
+If the skill is already in the user's skills directory, do not overwrite it. First check which case it is (a symlink into a
+clone, a copy without `.installed-from`, or a normal copy; see "Updating" below), then ask the user one question that fits
+that case. Installed skills check for a newer commit themselves and offer the
 update; they never update on their own.
 
 If your harness has no skills feature, you can still read a `SKILL.md` as plain instructions (for example by
@@ -39,9 +40,10 @@ installed folder untouched until the user has chosen what to do.
 - `OLD` is the hash in `<skill>/.installed-from` (trim whitespace).
 - `NEW` is the commit you actually clone: `git -C new rev-parse HEAD` after the clone below (the repo can move between the
   `ls-remote` check and the clone; stamp what you copied).
-- **Backup:** every path below except "keep mine" first copies the installed folder to `<skill>.bak`, next to it (a sibling),
-  never inside it. If `<skill>.bak` already exists, use `<skill>.bak-YYYYMMDD-HHMM` (current date and time) instead. Tell the
-  user where the backup is.
+- **Backup:** every path below except "keep mine" first copies the installed folder to
+  `<skills dir>/../skill-backups/<skill>-YYYYMMDD-HHMM` (current date and time), **outside** the skills directory: a copy
+  inside it still has a `SKILL.md` and would load as a second skill. Tell the user where the backup is and that they can
+  delete it once they are happy.
 
 ```sh
 git clone --depth 1 https://gitlab.com/e1dred/agent-skills.git new
@@ -54,7 +56,7 @@ git -C new fetch --depth 1 origin OLD        # the version that was installed (G
    - *Added:* a file in the installed folder that is not in `OLD`'s tree.
    - *Removed by the user:* a file in `OLD`'s tree that is missing from the installed folder; it counts as edited.
    - *Deleted upstream:* a file in `OLD`'s tree that is not in `NEW`'s.
-2. **Nothing edited:** no choices to offer. Make the backup, remove the installed folder, copy the new one in (`cp -r`), then
+2. **Nothing edited or removed:** no choices to offer. Make the backup, remove the installed folder, copy the new one in (`cp -r`), then
    put any *added* files back and tell the user which ones you kept (or that nothing was lost).
 3. **Something edited:** list the edited (and added) files and offer three choices; do not pick one yourself.
    - **Overwrite:** make the backup, remove the installed folder, copy the new one in. Say that the user's edits and added
@@ -67,7 +69,7 @@ git -C new fetch --depth 1 origin OLD        # the version that was installed (G
      - not edited by the user: take the new version (this includes files new upstream);
      - added by the user: keep;
      - deleted upstream: remove it if the user did not edit it; if they did, keep it and say so. Remove folders left empty;
-     - removed by the user: leave it out, unless upstream changed it, in which case ask.
+     - removed by the user: leave it out, unless upstream changed it; then ask whether to keep it removed or take the new version.
 
      `git merge-file` exits with the number of conflicts. Show each conflict to the user and settle it with them, then write
      the file with no markers left (`grep -c '<<<<<<<'` must be 0). When keeping both sides, put a blank line between them so
@@ -81,7 +83,8 @@ overwrite (with the backup) or keep mine, and say why. After an overwrite, write
 **A clone, not a copy:** if the installed skill is a symlink into a git clone of this repo (what `install.sh` makes) or the
 folder sits inside such a clone, it is a developer install: do not replace it. Tell the user so, and offer either `git -C <clone> pull` (only if
 `git -C <clone> status --short` is empty; otherwise say what is uncommitted and stop) or replacing the symlink with a standalone
-copy (remove only the symlink, never the clone, then install as above). Do neither without a yes.
+copy (remove only the symlink, never the clone, then install as above; no backup is needed because the clone keeps the old
+version, and the parts that need the full repo then only work from the clone). Do neither without a yes.
 
 ## Parts that need the full repo
 
