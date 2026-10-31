@@ -5,7 +5,7 @@ description: Use when editing documents, spreadsheets, slides, PDFs or forms in 
 
 # ONLYOFFICE Desktop Editors
 
-**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
+**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare the app version with `<app>-cli --version` by hand). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
 Field notes from real tasks, tested on **ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux)** with the
 AI-tools server **onlyoffice-document-builder 2.0.0-native**. Re-check anything below on other versions.

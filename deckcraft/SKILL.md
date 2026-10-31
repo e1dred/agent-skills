@@ -5,7 +5,7 @@ description: Use when building, editing, rendering or converting slide decks (.d
 
 # DeckCraft
 
-**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
+**Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare the app version with `<app>-cli --version` by hand). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
 Field notes from real tasks, last tested on **deckcraft-cli 0.13.1** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
 presentation app in Rust. Everything is a command with an id (330 of them); CLI, MCP and the live control channel run the

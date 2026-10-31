@@ -1,7 +1,7 @@
 # Installing a skill from this repo (for AI assistants)
 
-A user has asked you to add one or more skills from this repo. You know where your own harness keeps skills;
-this file covers what is specific to the repo. Install only the skills the user named.
+A user has asked you to add one or more skills from this repo. Put the skill folders in your harness's own skills directory
+(you know where that is); this file covers what is specific to the repo. Install only the skills the user named.
 
 ## What counts as a skill
 
@@ -19,11 +19,21 @@ Clone shallowly into a scratch directory, copy the folders, and delete the clone
 git clone --depth 1 https://gitlab.com/e1dred/agent-skills.git /path/to/scratch/agent-skills
 ```
 
+Copy the folders (`cp -r`); do not symlink them to the clone, because you delete the clone afterwards. (`install.sh` in
+the repo root symlinks into `~/.claude/skills` and is meant for people who keep a clone; do not use it here.)
+
 Do not overwrite a skill that already exists in the user's skills directory without asking. To update later,
 the user asks again and you repeat this.
 
 If your harness has no skills feature, you can still read a `SKILL.md` as plain instructions (for example by
 referencing it from `AGENTS.md`).
+
+## Parts that need the full repo
+
+A single skill folder stands alone for everyday use. A few things point at the repo root and only work in a full clone:
+`../check-versions.sh` and `../coverage.sh` (version and coverage checks), and the document-style builders that read
+`../styles/` (in `wordcraft`, `onlyoffice` and `genoffice-supplement`). If the user needs those, ask them to keep a clone
+and do not delete yours.
 
 ## After copying
 
