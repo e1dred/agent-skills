@@ -7,8 +7,8 @@ description: Use when building, editing, checking or converting spreadsheets (.x
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **gridcraft-cli 0.13.0** (Linux AppImage). GridCraft is an alpha, Excel-style
-spreadsheet in Rust. Every ribbon button is an *engine command* (355 of them); the CLI, the MCP server and the app's
+Field notes from real tasks, last tested on **gridcraft-cli 0.14.2** (Linux AppImage). GridCraft is an alpha, Excel-style
+spreadsheet in Rust. Every ribbon button is an *engine command* (364 of them); the CLI, the MCP server and the app's
 control channel all run the same commands. If `gridcraft-cli version` is newer, re-check before relying on this.
 
 ## Surfaces
@@ -292,6 +292,14 @@ view.zoomToSelection
 - `gridcraft-cli convert x.xlsx x.pdf` prints only the ACTIVE sheet (3 pages for a wide Summary). For every sheet: `run --in x.xlsx --cmd 'pageLayout.orientation={"orientation":"landscape"}' --cmd 'pageLayout.scaleToFit={"width":1,"height":0}' --cmd 'file.exportPdf={"path":"all.pdf","sheets":"all","fitToPage":true}'` (the run then complains `--out` is missing; the PDF is already written).
 - Modelling note for the spec: with OpEx above revenue every Q3 month, the base-case 12-month profit is -$12,278 and the grid straddles zero; only the September burn (18.6 % over the 3-month average) trips the 15 % alert. Burn is negative (a surplus) from May 2027, so the variance column is left blank when burn <= 0.
 
+## Macros and CSV values (0.14, verified headless 2026-10-31)
+- **Macros live inside the workbook**: `macro.save` in one `run` and `macro.list` after reopening the saved `.xlsx` shows it; a fresh sample has none.
+- `macro.save {"macro":{"name","description"?,"steps":[{"type":"command","id":"home.bold","params":{"range":"B4:G4"}}]}}` → `{name,steps}`; other step types in the help (`repeat`, `if`, `stop`) were not run. `macro.list`, `macro.get {"name"}` (the macro with `v`, `inputs`, `output`, `permissions`), `macro.rename {"name","to"}`, `macro.delete {"name"}`.
+- `macro.check {"name"}` is a dry run that puts everything back → `{ok, conflicts, footprint:{sheets:[{sheet,bounds,changed,…}]}}`; `macro.run {"name","inputs"?:{Input:"B2:D9"}|"B2:D9"}` runs as one undo step (`{macro,ran,inputs}`).
+- `macro.record {"name"?}` starts, `macro.record {"stop":true}` saves (`{saved,steps,dropped,skipped,inputs}`): the selection when recording started becomes the macro's `Input` (`A1` in headless), and running it applied the recorded `home.italic` relative to that input.
+- `macro.debug {"action":"start|step|continue|runTo|stop|state","name"}`: `start` pauses before step 1 (`state:"paused"`, `current`), one `step` on a one-step macro ran it (`state:"finished"`, `changed:["Sales!B4:G4"]`) and a later `stop` then answered "No macro is being debugged". While paused, `macro.run` is refused ("Finish or stop the macro first").
+- `file.exportCsv {"path","values":true}` writes raw values (full-precision numbers) instead of the displayed text; the same command without `values` is unchanged from 0.13.0.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.11.1): headless build/check/eval/info, live cell/table/chart/format/save/PDF,
@@ -311,3 +319,4 @@ view.zoomToSelection
 - 2026-10-27: three-sheet financial model (names, XLOOKUP, sensitivity formula grid, burn alert, cross-sheet chart) built and checked; chart-from-other-sheet traps recorded.
 - 2026-10-28: CLI refreshed; nine workbook builds (table, sort, pivot, charts, conditional formats and validation, names and spill, fills/freeze/page setup, filter, financial functions) made with the old and new CLI: identical `cat --formulas`, `info`, `check`, PDF text and 10 PDF pages pixel-identical (only the font `scheme` tag in styles.xml differs). Window commands verified; live app re-checked (cell.set/range.setValues, bold, sheet.read, view.newWindow, window.list/close); `ui.screenshot` timed out (window minimized).
 - 2026-10-28 (2): `ui.screenshot` re-checked with the window visible: a 2012×1464 PNG of the blank workbook (ribbon, grid, status bar). It times out ("never reported a capturable size") while the window is minimized: a minimized window cannot be drawn, so ask the user to bring it forward.
+- 2026-10-31: CLI refreshed (0.13.0 → 0.14.2); 18 workbook cases (sort, charts, conditional formats, names, number formats and fills, page setup, filter, pivot, financial functions, table total row, macros, CSV, the budget and grades samples) built with the old and new CLI: `cat --formulas`, `info`, `check`, PDF and CSV outputs identical except the new `macro.*` commands (old CLI: unknown command) and `file.exportCsv values`. Two cases (`data.validation`, freeze/rename/insert-sheet/column-width) failed identically on both because my parameters were wrong, so they count as not re-run.

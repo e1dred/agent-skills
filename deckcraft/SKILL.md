@@ -7,7 +7,7 @@ description: Use when building, editing, rendering or converting slide decks (.d
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **deckcraft-cli 0.12.0** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
+Field notes from real tasks, last tested on **deckcraft-cli 0.13.1** (Linux AppImage). DeckCraft is an alpha, PowerPoint-style
 presentation app in Rust. Everything is a command with an id (330 of them); CLI, MCP and the live control channel run the
 same commands. If `deckcraft-cli --version` is newer, re-check before relying on this.
 
@@ -251,6 +251,13 @@ slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumn
 - **`shape.altText {"text","ids"}` needs the slide that holds the shape to be current** (`slide.go {"index"}` first); otherwise "no such shape" and `run` saves nothing. Ids to use are the ones `review.accessibility` reports for the saved file. All four flags (3 charts, 1 SmartArt) cleared; `review.accessibility` → `[]`.
 - Speaker notes: `slide.notes {"text","index"}` after deleting the initial blank slide; `info` of the `.pptx` shows each slide's `notes` before its `title` (alphabetical keys), so the order is not shifted. A `.pptx` round trip kept all 7 notes, charts, table and SmartArt.
 
+## 0.13 changes (2026-10-31; only the first and last bullets were run, the rest are read from `commands`)
+- **Run:** `table.cellAlign {"anchor","align"}`: `align` (left|center|right|justify) now sets the horizontal alignment of every paragraph in the cells; the saved `.pptx` gets `<a:pPr algn="ctr"/>` in each cell.
+- **Help text only:** `slide.move {"ids":[slide id…],"to"}` takes slide ids as well as `from`; `to` counts without the moved slides. `format.numbering {"start":n}` starts a new run of numbers at `n`.
+- **Help text only:** `shape.fill {"background":true}` lets the slide background show through a shape or text box; `shape.effects {"shadowProps":{"size":…}}` takes a shadow size.
+- **Help text only:** `review.compare` now answers with `number` (the editor's slide number) and `onlyIn: "deck"|"file"`; `review.accept` takes the file's side. `insert.dateTime` fills the date placeholder of a Handout or Notes Master.
+- **Run:** rendering changed slightly: the same sample deck's PDF pages differ from 0.12.0 in anti-aliasing and in lighter chart gridlines (maximum channel difference 63 of 255, layout identical). `presentation.json` differs only in the `generator` string.
+
 ## Log
 
 - 2026-10-25: first verified run on Linux (0.10.0): headless run/save/convert/render/info, live new/slide/shape/table/chart/
@@ -270,3 +277,4 @@ slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumn
 - 2026-10-27: board deck from invented sample data (3 native charts, table, SmartArt, notes, alt text, 60-30-10 palette); chart-axis gap recorded.
 - 2026-10-28: CLI refreshed; 19 decks (the six starters with title/bullets/shape/table/chart/text box/notes/transition, a blank deck with duplicate/move/hide/section/background/variant, seven chart types, five layouts) built with the old and new CLI: identical `info`, identical parts in every `.pptx`, 64 rendered slides pixel-identical. Three new commands verified; live app re-checked (file.new, slide.new, selectRange, languageAll, document.inspect, ui.render, file.close); `ui.screenshot` refused (window hidden), `ui.render` works.
 - 2026-10-28 (2): `ui.screenshot` was still refused ("no frame was presented") after the user un-minimized the other apps: the window must be on screen and drawing, not just un-minimized; `ui.render` (slide only) works regardless.
+- 2026-10-31: CLI refreshed (0.12.0 → 0.13.1); 14 decks (the sample, blank-deck edits, five chart types, table, shape effects and gradient fill, SmartArt, theme/background/transition/animation, numbering, date and time, comments/notes/section) built with the old and new CLI: `info`, `.pptx` XML and `.pdf` page pixels compared. Only the table alignment XML and the PDF rendering above differ; a second run of background, transition and animation (`fade`, `wipe`) gave identical `info` and `.pptx` parts; `design.theme` needs a name from `design.themes` ("Office Theme" is refused) and `animation.add` rejected `fadeIn`.

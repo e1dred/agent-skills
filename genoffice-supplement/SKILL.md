@@ -7,7 +7,7 @@ description: Use when editing .docx or other Office files with GenOffice (Docs e
 
 **Scope rule (strict):** this skill holds only things GenOffice's own bundled skills do not provide. It never copies or restates
 a GenOffice-provided skill (its generated `genoffice` skill, the ~45 recommended app skills). Read those first; this adds
-what running the app showed. Tested on GenOffice 0.12.117 (Linux AppImage), CLI and MCP, headless.
+what running the app showed. Tested on GenOffice 0.12.446 (Linux AppImage), CLI and MCP, headless; the sweeps below were re-run on 0.12.446 with the same results as on 0.12.117, the live-editor checks were not.
 
 GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx), Sheets (.xlsx) and Slides (.pptx ops and the page-spec build) are covered, plus the conversions that reach the Markdown, HTML and PDF editors. The live editor (`open`, `selection`, writes to an open file) is covered too.
 
@@ -43,7 +43,7 @@ Traps found:
 - **Formulas the engine lacks are stored without a cached value:** `FILTER` was written as an array formula with no `<v>`, and `sheet read` showed `#NAME?`; Excel computes it on open. `XLOOKUP`, `TEXTJOIN`, `SUMIFS` and `VLOOKUP` were cached correctly.
 - `convert_to_values` refuses a batch that also edits the cells it converts ("earlier ops in this batch edit cells"): write the formulas in one `apply`, convert in the next.
 - `add_table` fails ("overlaps the sheet…") on a range that has the sheet's AutoFilter: `clear_filter` in a first `apply`, then `add_table`. Same split rule as the Docs ops (later ops in one batch cannot see some earlier ones): also `duplicate_sheet` then `move_sheet` on the copy, and a new sheet then `add_pivot` into it.
-- `move_sheet` `position` is 1-based (0 is rejected). `add_pivot` `sourceRange` takes plain `A1:E7` (a `base!A1:E7` prefix fails the pattern; name the sheet with `sheet`), and `filters`/`groupings` fields must also be row or column fields of the pivot.
+- `move_sheet` `position` is 1-based (0 is rejected). `add_pivot` `values[].showDataAs` (new in 0.12.446, `baseField`/`baseItem` name the comparison) takes `percentOfTotal|percentOfRow|percentOfCol|percentOfParentRow|percentOfParentCol|index|percentOf|percentOfParent|difference|percentDiff|runTotal|percentOfRunningTotal|rankAscending|rankDescending`; 0.12.117 rejects the last eight. Run on 0.12.446: `percentOfTotal` (rows by columns, 0.2857 for the first cell), `runTotal` over a region field (150, 250, 350) and `rankDescending` (1, 2, 2 with a tie) read back correctly. `add_pivot` `sourceRange` takes plain `A1:E7` (a `base!A1:E7` prefix fails the pattern; name the sheet with `sheet`), and `filters`/`groupings` fields must also be row or column fields of the pivot.
 - `add_chart` needs a numeric column in `dataRange` ("needs at least one numeric column"); `edit_chart`'s `chartPath` accepted `xl/charts/chart1.xml` and changed the title and type even though `sheet read` calls the chart `visual-1`.
 - Rendered (`genoffice render`): fills, fonts, colour scale, chart and shape appear; **data bars and sparklines did not show in the render** (their XML exists; not checked in Excel or another app). Wide content splits across pages when printed.
 - Dates from the CSV import arrive as real dates (serial numbers with a date format).

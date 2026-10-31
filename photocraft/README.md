@@ -4,7 +4,7 @@ An [Agent Skill](https://agentskills.io) for driving the [PhotoCraft](https://gi
 editor from an AI agent: the headless `photocraft-cli`, the live bridge to a running app, exact command parameter formats,
 traps and recipes, collected from real tasks. Part of [agent-skills](../README.md); install with `./install.sh photocraft`.
 
-Last tested with PhotoCraft 0.17.0 on Linux. Unofficial. Background reading for what PhotoCraft can do:
+Last tested with PhotoCraft 0.18.0 on Linux. Unofficial. Background reading for what PhotoCraft can do:
 [artcraft-skills](https://github.com/midasmatterhorn/artcraft-skills) (MIT, macOS) — referred to, not copied.
 
 ## Live editing

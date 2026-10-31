@@ -7,7 +7,7 @@ description: Use when editing, converting or batch-processing images, layers, se
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates). A CLI older than its app has caused real failures. `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **photocraft-cli 0.17.0** (headless sweep and a live bridge check) (Linux AppImage). PhotoCraft is an early-alpha,
+Field notes from real tasks, last tested on **photocraft-cli 0.18.0** (headless sweep and a live bridge check) (Linux AppImage). PhotoCraft is an early-alpha,
 Photoshop-style editor in Rust: layers, masks, adjustment layers, layer styles, type, vector shapes, PSD read/write.
 Everything the UI does is an *engine command*, and the CLI, the MCP server and the app's control channel all run
 the same commands. If `photocraft-cli --version` is newer, re-check anything in this skill before relying on it.
@@ -105,7 +105,7 @@ photocraft-cli commands --json --filter <text>               # find ids; each ha
   reused after deletes: re-read `info` before targeting a layer in a long chain.
 - Automation is fail-closed: commands that read or write arbitrary paths (`file.open`, `file.saveAs`, …) are refused
   over MCP/control; use `doc_open`/`doc_save` MCP tools or the CLI `--out`.
-- 945 commands exist; do not guess ids: `commands --json --filter <word>` and read the `params` string
+- 948 commands exist; do not guess ids: `commands --json --filter <word>` and read the `params` string
   (ranges and defaults are in it, e.g. `"radius":0.1..1000=1`).
 
 ## Verify before reporting

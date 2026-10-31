@@ -17,7 +17,7 @@ Use it **next to** GenOffice's own skills, not instead of them. If GenOffice lat
 | [`tools/`](tools/) | Scripts to re-run the sweeps and the style comparison when GenOffice updates (sample data invented): `tools/run_sweeps.sh` |
 | [`build_genoffice.py`](build_genoffice.py) | Builds a styled document in GenOffice from the same app-neutral plan as `../styles` (reads `../styles/plan.py`, changes nothing there) |
 
-Everything is tested on GenOffice 0.12.117 (Linux AppImage), headless. Each result says whether it was read back from the XML or rendered.
+Everything is tested on GenOffice 0.12.446 (Linux AppImage), headless (the live-editor checks date from 0.12.117). Each result says whether it was read back from the XML or rendered.
 Markdown, HTML and PDF are covered through conversion and reading only (the CLI has no edit ops for them). The live editor (`open`, `selection`, writes to an open file) is covered too.
 
 ## Use
