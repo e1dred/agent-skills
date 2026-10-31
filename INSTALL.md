@@ -34,7 +34,8 @@ referencing it from `AGENTS.md`).
 
 Only when the user has said yes to an update. `OLD` is the hash in `<skill>/.installed-from` (trim whitespace); `NEW` is the repo's
 current `HEAD` (`git ls-remote <url> HEAD`: take the hash on the line that ends in exactly `HEAD`, ignore any other lines). Work in a scratch directory **outside** the skills directory, and keep the installed folder untouched until the user has chosen.
-A `<skill>.bak` copy always goes next to the skill folder (a sibling), never inside it, and is made before anything is written.
+Every update that changes files (all paths below except "keep mine") first makes a `<skill>.bak` copy of the installed folder, next to the
+skill folder (a sibling), never inside it, before anything is written.
 
 ```sh
 git clone --depth 1 https://gitlab.com/e1dred/agent-skills.git new
@@ -46,17 +47,20 @@ git -C new fetch --depth 1 origin OLD        # the version that was installed (G
    `.installed-from` itself.
    Also list files the user **added** (present in the installed folder, absent from `OLD`'s tree, other than `.installed-from`);
    they count as local edits too and must survive every update path except an explicit overwrite.
-2. **No local edits and no added files:** replace the folder with the new copy (`cp -r`), and say that nothing was lost.
+2. **No local edits and no added files:** make the `.bak` copy, replace the folder with the new copy (`cp -r`), and say that nothing was lost.
    **Only added files, no edited ones:** there is nothing to merge; take the new version of every upstream file, keep the added
-   files in place, and tell the user which ones were kept. Skip the three choices.
+   files in place, and tell the user which ones were kept. Skip the three choices (the `.bak` copy is still made).
+   **Deleted upstream:** a file in `OLD`'s tree but not in `NEW`'s was removed from the repo (`cp -r` never removes files). Delete it
+   from the installed folder if the user did not edit it; if they did, keep it and tell the user.
 3. **Local edits:** list the changed files and offer three choices; do not pick one yourself.
    - **Overwrite:** move the installed folder to `<skill>.bak`, copy the new one in (say that added files are only in the `.bak`).
    - **Keep mine:** change nothing, including `.installed-from`.
    - **Merge:** for each file edited locally and also changed upstream, run
-     `git merge-file -p <mine> <base> <theirs>` (base from `OLD`, theirs from the new clone) and write the result.
+     `git merge-file -p <mine> <base> <theirs>`, where `<base>` is a file you write with `git -C new show OLD:<path> > <base>` and `<theirs>` is
+     the file in the new clone, and write the result.
      Files the user did not touch take the new version (including any upstream changed in files other than the ones you merged); files only the user touched stay; files the user added are copied across
      unchanged. If a merge reports conflicts (`git merge-file` exits with the number of conflicts), show the conflict markers and
-     settle each one with the user, then write the file with no markers left (`grep -c '<<<<<<<'` must be 0). Keep a `<skill>.bak` copy first.
+     settle each one with the user, then write the file with no markers left (`grep -c '<<<<<<<'` must be 0). When keeping both sides of a conflict, put a blank line between them so Markdown does not run them together. Keep a `<skill>.bak` copy first.
 4. **Finish:** write `NEW` into `.installed-from` only after the update (overwrite or merge) is complete; delete the clone.
 
 If `OLD` cannot be fetched (history rewritten, no network for it), you have no base: offer only overwrite (with the `.bak`
