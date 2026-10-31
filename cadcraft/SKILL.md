@@ -13,7 +13,7 @@ Field notes from one real task (a wiring schematic), last tested on **cadcraft-c
 At the end of every CadCraft task add what you verified (render and look), fix what proved wrong, keep it general (no personal data or other people's documents), add a log line.
 
 ## Setup
-- **CLI:** `~/AppImages/cadcraft.appimage --appimage-extract` (in a scratch folder), copy `squashfs-root/usr/bin/cadcraft-cli` to `~/AppImages/`. Never run `--version` on the AppImage itself (it opens the GUI); the CLI answers `--version`.
+- **CLI:** `~/AppImages/cadcraft.appimage --appimage-extract` (in a scratch folder), copy `squashfs-root/usr/bin/cadcraft-cli` to `~/AppImages/`. Never run `--version` on the AppImage itself (it opens the GUI); the CLI answers `--version`. The paths are this author's; the tools in `tools/` take `CADCRAFT_CLI` (the CLI) and `ccmcp.py` takes `CADCRAFT_HOST` (`127.0.0.1:PORT`, default port 47827).
 - **Live app:** `cadcraft.appimage --control PORT` (the user starts it). `cadcraft-cli mcp --connect HOST:PORT` is the MCP bridge; without MCP tools in the session use `tools/ccmcp.py` (stdio JSON-RPC client). Tools: `command_line, script, execute, list_commands, inspect_drawing, query_entities, render, find_text, new_drawing, open, save, cancel, screenshot, ui_inspect, ui_click`.
 - Helper for drawing: `tools/schem.py` (a `Sheet` that collects commands, then `build()` writes DXF, a white PDF and a PNG). Example: `examples/relay_lamp.py`.
 

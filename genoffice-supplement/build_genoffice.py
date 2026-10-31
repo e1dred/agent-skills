@@ -1,4 +1,4 @@
-"""Build a styled `doc` (and `report` if the plan has the same block types) with GenOffice from the app-neutral plan in ~/agent-skills/styles/plan.py.
+"""Build a styled `doc` (and `report` if the plan has the same block types) with GenOffice from the app-neutral plan in ../styles/plan.py (needs a full clone of agent-skills).
 Lives in agent-skills/genoffice-supplement; imports the app-neutral plan from ../styles/plan.py (read-only).
 
   PYTHONDONTWRITEBYTECODE=1 python3 build_genoffice.py STYLE KIND /abs/out.docx [--paper=a4] [--page-numbers=bottom-center] [--header-text=T] [--figure=sample] [--footnotes] [--merged-table]

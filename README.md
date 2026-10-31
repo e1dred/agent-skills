@@ -40,7 +40,7 @@ More skills are added as the apps get used.
 
 ## Install with your AI assistant
 
-No clone needed. Ask your assistant (Claude Code, OpenCode, Codex or similar) something like:
+You don't need to keep a clone. Ask your assistant (Claude Code, OpenCode, Codex or similar) something like:
 
 > Install the `wordcraft` skill from https://gitlab.com/e1dred/agent-skills into your skills directory.
 

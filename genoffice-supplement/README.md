@@ -22,6 +22,8 @@ Markdown, HTML and PDF are covered through conversion and reading only (the CLI 
 
 ## Use
 
+`build_genoffice.py` reads `../styles/plan.py`, so it only runs inside a full clone of agent-skills, not from an installed copy.
+
 ```sh
 ../install.sh genoffice-supplement   # only if you keep a clone; AI assistants follow INSTALL.md in the repo root instead
 PYTHONDONTWRITEBYTECODE=1 python3 build_genoffice.py modern doc /abs/report.docx --paper=a4 --page-numbers=bottom-center

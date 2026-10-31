@@ -24,8 +24,8 @@ the repo root symlinks into `~/.claude/skills` and is meant for people who keep 
 After copying and before deleting the clone, write the commit you copied from into `<skill>/.installed-from` (`git -C <clone> rev-parse HEAD`; the file holds only that hash), so the skill
 can later tell whether the repo has moved on (each `SKILL.md` has an `Updates` note that uses it).
 
-If the skill is already in the user's skills directory, do not overwrite it: treat the request as an update (see "Updating"
-below, which also covers a symlink into a clone). Installed skills check for a newer commit themselves and offer the
+If the skill is already in the user's skills directory, do not overwrite it: tell the user it is already installed and ask
+whether to update it; if they say yes, follow "Updating" below (which also covers a symlink into a clone). Installed skills check for a newer commit themselves and offer the
 update; they never update on their own.
 
 If your harness has no skills feature, you can still read a `SKILL.md` as plain instructions (for example by
@@ -37,7 +37,8 @@ Only when the user has said yes to an update. Work in a scratch directory **outs
 installed folder untouched until the user has chosen what to do.
 
 - `OLD` is the hash in `<skill>/.installed-from` (trim whitespace).
-- `NEW` is the repo's current `HEAD`: `git ls-remote <url> HEAD`, the hash on the line that ends in exactly `HEAD` (ignore other lines).
+- `NEW` is the commit you actually clone: `git -C new rev-parse HEAD` after the clone below (the repo can move between the
+  `ls-remote` check and the clone; stamp what you copied).
 - **Backup:** every path below except "keep mine" first copies the installed folder to `<skill>.bak`, next to it (a sibling),
   never inside it. If `<skill>.bak` already exists, use `<skill>.bak-YYYYMMDD-HHMM` (current date and time) instead. Tell the
   user where the backup is.
@@ -51,6 +52,7 @@ git -C new fetch --depth 1 origin OLD        # the version that was installed (G
    - *Edited:* a file in `git -C new ls-tree -r --name-only OLD -- <skill>` whose installed copy differs from
      `git -C new show OLD:<path>` (`cmp`).
    - *Added:* a file in the installed folder that is not in `OLD`'s tree.
+   - *Removed by the user:* a file in `OLD`'s tree that is missing from the installed folder; it counts as edited.
    - *Deleted upstream:* a file in `OLD`'s tree that is not in `NEW`'s.
 2. **Nothing edited:** no choices to offer. Make the backup, remove the installed folder, copy the new one in (`cp -r`), then
    put any *added* files back and tell the user which ones you kept (or that nothing was lost).
@@ -58,33 +60,35 @@ git -C new fetch --depth 1 origin OLD        # the version that was installed (G
    - **Overwrite:** make the backup, remove the installed folder, copy the new one in. Say that the user's edits and added
      files are now only in the backup.
    - **Keep mine:** change nothing, including `.installed-from`.
-   - **Merge:** make the backup, then build the result file by file:
+   - **Merge:** make the backup, build the result in the scratch directory file by file, then swap it in for the installed folder:
      - edited by the user and changed upstream: `git merge-file -p <mine> <base> <theirs>`, where `<base>` is a file you write
        with `git -C new show OLD:<path> > <base>` and `<theirs>` is the file in the new clone;
      - edited by the user only: keep the user's version;
      - not edited by the user: take the new version (this includes files new upstream);
      - added by the user: keep;
-     - deleted upstream: remove it if the user did not edit it; if they did, keep it and say so. Remove folders left empty.
+     - deleted upstream: remove it if the user did not edit it; if they did, keep it and say so. Remove folders left empty;
+     - removed by the user: leave it out, unless upstream changed it, in which case ask.
 
      `git merge-file` exits with the number of conflicts. Show each conflict to the user and settle it with them, then write
      the file with no markers left (`grep -c '<<<<<<<'` must be 0). When keeping both sides, put a blank line between them so
-     Markdown does not run them together.
+     Markdown does not run them together, and point out if the two kept lines are instructions that contradict each other.
 4. **Finish:** write `NEW` (hash only) into `.installed-from` once the update is complete; delete the clone.
 
 **No base:** if `OLD` cannot be fetched (history rewritten) or the folder has no `.installed-from` at all (copied by hand or
-before this file existed), you cannot tell the user's edits from upstream changes. Offer only overwrite (with the backup)
-or keep mine, and say why. After an overwrite, write `.installed-from` so the next update has a base.
+before this file existed), you cannot tell the user's edits from upstream changes. Show which files differ from `NEW` (`diff -rq`), offer only
+overwrite (with the backup) or keep mine, and say why. After an overwrite, write `.installed-from` so the next update has a base.
 
 **A clone, not a copy:** if the installed skill is a symlink into a git clone of this repo (what `install.sh` makes) or the
-folder sits inside such a clone, it is a developer install: do not replace it. Updating it is `git -C <clone> pull`, and
-only if the user asks.
+folder sits inside such a clone, it is a developer install: do not replace it. Tell the user so, and offer either `git -C <clone> pull` (only if
+`git -C <clone> status --short` is empty; otherwise say what is uncommitted and stop) or replacing the symlink with a standalone
+copy (remove only the symlink, never the clone, then install as above). Do neither without a yes.
 
 ## Parts that need the full repo
 
 A single skill folder stands alone for everyday use. A few things point at the repo root and only work in a full clone:
 `../check-versions.sh` and `../coverage.sh` (version and coverage checks), and the document-style builders that read
-`../styles/` (in `wordcraft`, `onlyoffice` and `genoffice-supplement`). If the user needs those, ask them to keep a clone
-and do not delete yours.
+`../styles/` (in `wordcraft`, `onlyoffice` and `genoffice-supplement`). When you install one of those skills, mention this to the
+user; if they want those parts, they keep a clone (and you do not delete yours).
 
 ## After copying
 
