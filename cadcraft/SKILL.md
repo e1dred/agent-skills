@@ -5,7 +5,7 @@ description: Use when drawing or editing 2D CAD, DXF/DWG files, wiring schematic
 
 # CadCraft
 
-> **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. If the hash differs from the file's, tell the user a newer version exists and offer to re-install it (see the repo's INSTALL.md); never update without asking. No file, a clone or symlink, or no network: skip silently.
+> **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. If the hash differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in the repo's INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network: skip silently.
 
 Field notes from one real task (a wiring schematic), last tested on **cadcraft-cli 0.15.1** (Linux AppImage). CadCraft is an AutoCAD-style 2D drafting app (446 commands, DXF/DWG in and out). The CLI, the live control channel and the MCP bridge run the same commands. VectorCraft (illustration, not CAD) was extracted too but not tested; for precise, labelled, orthogonal drawings CadCraft is the better fit.
 

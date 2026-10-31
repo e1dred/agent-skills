@@ -25,11 +25,36 @@ the repo root symlinks into `~/.claude/skills` and is meant for people who keep 
 After copying and before deleting the clone, write the commit you copied from into `<skill>/.installed-from` (`git -C <clone> rev-parse HEAD`; the file holds only that hash), so the skill
 can later tell whether the repo has moved on (each `SKILL.md` has an `Updates` note that uses it).
 
-Do not overwrite a skill that already exists in the user's skills directory without asking. To update later,
-the user asks again and you repeat this (a skill that finds a newer commit offers this; it never updates on its own).
+Do not overwrite a skill that already exists in the user's skills directory without asking. To update later, see "Updating" below (a skill that finds a newer commit offers it; it never updates on its own).
 
 If your harness has no skills feature, you can still read a `SKILL.md` as plain instructions (for example by
 referencing it from `AGENTS.md`).
+
+## Updating an installed skill
+
+Only when the user has said yes to an update. `OLD` is the hash in `<skill>/.installed-from` (trim whitespace); `NEW` is the repo's
+current `HEAD`. Work in a scratch directory and keep the installed folder untouched until the user has chosen.
+
+```sh
+git clone --depth 1 https://gitlab.com/e1dred/agent-skills.git new
+git -C new fetch --depth 1 origin OLD        # the version that was installed (GitLab allows fetching by hash)
+```
+
+1. **Find local edits.** For every file in `git -C new ls-tree -r --name-only OLD -- <skill>`, compare the installed copy with
+   `git -C new show OLD:<path>` (`cmp`). Files you cannot account for (added or changed by the user) are local edits. Ignore
+   `.installed-from` itself.
+2. **No local edits:** replace the folder with the new copy (`cp -r`), and say that nothing was lost.
+3. **Local edits:** list the changed files and offer three choices; do not pick one yourself.
+   - **Overwrite:** move the installed folder to `<skill>.bak`, copy the new one in.
+   - **Keep mine:** change nothing, including `.installed-from`.
+   - **Merge:** for each file edited locally and also changed upstream, run
+     `git merge-file -p <mine> <base> <theirs>` (base from `OLD`, theirs from the new clone) and write the result.
+     Files the user did not touch take the new version; files only the user touched stay. If a merge reports conflicts, show
+     the conflict markers and settle each one with the user before writing. Keep a `<skill>.bak` copy first.
+4. **Finish:** write `NEW` into `.installed-from` only after the update (overwrite or merge) is complete; delete the clone.
+
+If `OLD` cannot be fetched (history rewritten, no network for it), you have no base: offer only overwrite (with the `.bak`
+copy) or keep mine, and say why.
 
 ## Parts that need the full repo
 
