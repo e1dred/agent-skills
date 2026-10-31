@@ -36,7 +36,23 @@ Both change when an app updates; most commands in these apps are rarely needed, 
 
 More skills are added as the apps get used.
 
-## Install (Claude Code)
+## Install with your AI assistant
+
+No clone needed. Ask your assistant (Claude Code, OpenCode, Codex or similar) something like:
+
+> Install the `wordcraft` skill from https://gitlab.com/e1dred/agent-skills into your skills directory.
+
+It knows where it keeps skills. What it may not know about this repo:
+
+- Each top-level folder with a `SKILL.md` is one skill (`wordcraft/`, `gridcraft/`, `deckcraft/`, `photocraft/`, `cadcraft/`, `onlyoffice/`, `genoffice-supplement/`). Install only the skills you name, with their whole folder (including `reference/`). `styles/`, `everyday/` and `smoke-tested/` are not skills.
+- A skill is Markdown plus examples. Installing it does not connect the app: read the skill's own `README.md` for the MCP server, launch flags and CLI version, and start the app first.
+- `genoffice-supplement` only adds to GenOffice's own skills; install those too.
+- If your assistant has no skills feature, it can still read a `SKILL.md` as plain instructions (for example from `AGENTS.md`).
+- A shallow clone (`git clone --depth 1`) followed by copying the folder is the easiest way for it to fetch a skill. To update, ask again.
+
+Skills are instructions your assistant will follow, so skim a skill before trusting it, as with any code you install.
+
+## Install by hand (Claude Code)
 
 ```sh
 git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
