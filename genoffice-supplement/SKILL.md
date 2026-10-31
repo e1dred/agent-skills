@@ -5,7 +5,7 @@ description: Use when editing .docx or other Office files with GenOffice (Docs e
 
 # GenOffice supplement
 
-> **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills HEAD` once per session. If the hash differs from the file's, tell the user a newer version exists and offer to re-install it (see the repo's INSTALL.md); never update without asking. No file, a clone or symlink, or no network: skip silently.
+> **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. If the hash differs from the file's, tell the user a newer version exists and offer to re-install it (see the repo's INSTALL.md); never update without asking. No file, a clone or symlink, or no network: skip silently.
 
 **Scope rule (strict):** this skill holds only things GenOffice's own bundled skills do not provide. It never copies or restates
 a GenOffice-provided skill (its generated `genoffice` skill, the ~45 recommended app skills). Read those first; this adds
