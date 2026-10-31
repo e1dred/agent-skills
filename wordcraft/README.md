@@ -20,7 +20,8 @@ Last tested with WordCraft 0.13.2 on Linux (AppImage). Unofficial: not affiliate
 
 ## Install (Claude Code)
 
-This skill is part of [agent-skills](https://gitlab.com/e1dred/agent-skills):
+This skill is part of [agent-skills](https://gitlab.com/e1dred/agent-skills). AI assistants installing it for a user should follow
+[INSTALL.md](https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md) instead (copy the folder, no symlink). The steps below are for people who keep a clone:
 
 ```sh
 git clone https://gitlab.com/e1dred/agent-skills.git ~/agent-skills
