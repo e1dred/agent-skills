@@ -28,9 +28,9 @@ Unofficial: not affiliated with any of the app projects.
 
 A hard rule for GenOffice: this repo only ever holds *supplementary* skills for it, things GenOffice's bundled skills do not provide (see [`genoffice-supplement/`](genoffice-supplement/)); none of GenOffice's own skills are copied here.
 
-Each skill marks, section by section, which version it was tested on and what was re-run on a second version (`> Versions:` lines); where it says "not re-run", treat the text as tested on the older version only. What changed and when: [CHANGELOG.md](CHANGELOG.md).
+Each skill names the one app version it was last tested on. Where part of a section was not re-run on that version, a `> Not re-checked:` line says what, so treat those parts as tested on an earlier version only. What changed and when: [CHANGELOG.md](CHANGELOG.md).
 
-*Commands documented* is measured by `./coverage.sh` (as of 2026-10-26, after the CadCraft, WordCraft and gap-closing rounds): how many of the app's own command ids (MCP tools for ONLYOFFICE)
+*Commands documented* is measured by `./coverage.sh` (re-measured 2026-10-31 on the versions in the tables): how many of the app's own command ids (MCP tools for ONLYOFFICE)
 appear in the skill. It is a rough lower bound on what a skill teaches, since a workflow can be described without naming every command, and an
 upper bound on what was tested, since an id can be named without being run. *Everyday tasks covered* is measured by `./everyday.sh` from the checklists in [`everyday/`](everyday/): each Craft app has 25 to 34 ordinary tasks (format text, insert a table, sort, crop, dimension, plot…), each listing the command ids it needs; a task counts when every id exists in the installed CLI and is named in the skill. The lists are the author's choice of what ordinary users do, so the percentage depends on them; like the first column it is an upper bound on what was run and checked (naming an id is not running it). All six checklists (the five Craft apps and GenOffice) currently score 100%: every listed everyday task has a command that exists and is named in the skill, so the lists measure the basics only; intermediate and advanced skills are what the first column and the per-skill "not run" lists track. ONLYOFFICE has no checklist yet: its ~95% is still the author's estimate. GenOffice's checklist (`everyday/genoffice.txt`) lists ops from its guides and three CLI commands, and the skill is a supplement, so its figures say how much of GenOffice we have run and written down, not how much a reader needs from this skill alone.
 For ONLYOFFICE the unit is MCP tools, which are convenience wrappers rather than app operations, so that figure is not comparable to the Craft rows; each document type also has a macro tool that reaches the whole Document Builder API.
@@ -65,8 +65,8 @@ built identically in WordCraft and ONLYOFFICE from one spec, with font fallbacks
 ### How versions were compared
 
 When an app updated, the previous CLI was kept (`<app>-cli.bak`) and the skills' own example scripts were run on both CLIs; the outputs (command results, `info`, sheet and
-text contents, `.pptx` info, rendered pixels) were normalised for timestamps and paths and diffed. "Identical" in a skill's `> Versions:` line means that diff was empty. Only the
-examples named in that line were re-run: anything else in the section is still tested on the older version only. Live control channels need the app running and were re-tested only where the line says so.
+text contents, `.pptx` info, rendered pixels) were normalised for timestamps and paths and diffed. A skill's version label moves to the new version only after this re-run;
+whatever could not be re-run is listed in a `> Not re-checked:` line. Live control channels need the app running and were re-tested only where the skill says so.
 
 ## Keeping up with app updates
 
