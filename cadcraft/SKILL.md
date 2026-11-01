@@ -216,6 +216,15 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - **Help text only:** `ellipse.axis` accepts a point instead of a distance for the other half-axis; `bedit` gained `save` and `check` for switching blocks in the Block Editor.
 - **DXF change:** an MTEXT written for a dimension now has group 72 = 5 ("by style") where 0.14.0 wrote 1; nothing else in the dimension drawings changed.
 
+## Beginner wiring guide from a schematic (2026-11-01, CLI 0.16.0 headless; PDF rendered and looked at, nets checked)
+> A "where every wire goes" sheet for someone who cannot read schematics: real parts as boxes with their printed terminal labels, every wire numbered (W1…) with a matching From/To/Colour/Size table, splices drawn as bars, a colour key and a "how to read this" box.
+- **`layer.new {"color":"#7a3db8"}` takes a hex colour** and the PDF prints exactly that RGB (checked by pixel count): match a drawing's colours to other pictures of the same job.
+- **`solid {"points":[[x,y],[x,y],[x,y]]}` (three points) is a filled triangle**: a diode arrow (plus a line for the bar) without hatch handles.
+- **Show a crossing without a join as a hop:** stop the line 2 mm either side, `arc {"center","radius":2,"start":0,"end":180}`, continue. A net check that reads only LINE/LWPOLYLINE sees the hop as a break, so **include ARC endpoints** (centre ± radius at the start/end angles) when you union wire ends.
+- **Net check against named terminals:** give each terminal a point and a tolerance (pad radius; a socket circle 3.6), treat closed polylines used as splice bars as one node (any wire end on the rectangle joins), union the rest by shared endpoints, and print each net's terminal names to compare with the wire table. It confirmed all 12 nets; loose ends were only the hop and the diode body (by design).
+- **Layout lessons from the render:** wire tags sitting ON a wire make the line cut the number; put them 4–5 mm beside it. Three-character tags (W10) need a 3.4 mm circle and 1.65 mm text. Labels for a box's pins go outside the box when the box text is big ("LED DRIVER" ran into "N"). A note placed right of the last part ran past the frame: right-align it on the free side.
+- **0.16.0** adds `-array`, `-units` and `change` (from a `commands` diff; not run). The drawing above built with no errors on 0.16.0.
+
 ## Newer commands (verified headless and live)
 - `blocks.description {"name","description"}` → `{block,description}`; `description` is required (an empty string clears it; there is no read form). `block {…,"description":"…"}` sets it at creation (it is stored in the DXF). Up to 255 characters, one line.
 - `layout.saveas {"name"?,"path"}` (also `layout {"option":"saveas","name","path"}`) → `{name,path,bytes}`; a path with no extension gets `.dwt`; `.dwg` and `.dxf` are accepted. It writes wherever the path says: use a scratch folder.
