@@ -232,3 +232,4 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - Traps: a `--cmd` value starting with `-` must be written `--cmd=-vports {…}` (the CLI reads a separate `-vports` as a flag); `"{last}"` works in headless `run` but a live `execute` needs the real handle (`"100"`).
 - 2026-10-28 (2): live `screenshot` re-checked with the window visible: a 2204×1380 PNG written to a temp folder (the tool prints the path).
 - 2026-10-31: CLI refreshed (0.14.0 → 0.15.1); the relay-lamp example plus eight drawings (shapes and text, dimensions, hatch, blocks, properties, copy/move/offset/mirror) built with the old and new CLI: DXF, PNG and PDF identical except the dimension MTEXT group 72 above; `solid` and `chprop` verified (they do not exist in 0.14.0).
+- 2026-11-01: CLI refreshed to 0.16.0; beginner wiring guide (hex layer colours, solid triangles, hop crossings, net check with arcs).
