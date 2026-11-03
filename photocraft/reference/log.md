@@ -54,3 +54,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-02 (2): live bridge on 0.19.0 (doc_open, command_run, jobs_list, doc_save, ui_screenshot all fine): `paint.remove` with `closeLoops:true, newLayer:true` and one ring stroke round the pins beat Content-Aware Fill (no seam, grain kept).
 - 2026-11-02: side-by-side labeled comparison recipe (placeEmbedded + dropShadow + type.create), opened in the live app; 0.19.0.
 - 2026-11-02: light-mode variant: stroke layer style params verified, stacks with drop shadow.
+- 2026-11-02: three-panel labeled comparisons (7088x1646, centers 1208/3544/5880, labels at x 80/2416/4752). MCP doc_open into a running app worked twice in a row; ui_screenshot then timed out ("no frame was presented within 8 s"), likely because the window was minimized; the opens themselves succeeded.
