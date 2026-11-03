@@ -9,7 +9,7 @@ description: Use when writing, formatting or converting Word documents (.docx), 
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare `wordcraft-cli --version` with the app's version in its About box or on its releases page by hand; `--version` on an AppImage can open the app). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **WordCraft 0.14.0** (Linux AppImage). If `wordcraft-cli --version`
+Field notes from real tasks, last tested on **WordCraft 0.15.0** (Linux AppImage). If `wordcraft-cli --version`
 reports something newer, treat anything in this skill as "probably still true" and re-check it before relying on it.
 
 ## Keep this file growing

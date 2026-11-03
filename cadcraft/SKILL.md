@@ -7,7 +7,7 @@ description: Use when drawing or editing 2D CAD, DXF/DWG files, wiring schematic
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from one real task (a wiring schematic), last tested on **cadcraft-cli 0.16.0** (Linux AppImage). CadCraft is an AutoCAD-style 2D drafting app (449 commands, DXF/DWG in and out). The CLI, the live control channel and the MCP bridge run the same commands. VectorCraft (illustration, not CAD) was extracted too but not tested; for precise, labelled, orthogonal drawings CadCraft is the better fit.
+Field notes from one real task (a wiring schematic), last tested on **cadcraft-cli 0.17.0** (Linux AppImage). CadCraft is an AutoCAD-style 2D drafting app (449 commands, DXF/DWG in and out). The CLI, the live control channel and the MCP bridge run the same commands. VectorCraft (illustration, not CAD) was extracted too but not tested; for precise, labelled, orthogonal drawings CadCraft is the better fit.
 
 ## Keep this file growing
 At the end of every CadCraft task add what you verified (render and look), fix what proved wrong, keep it general (no personal data or other people's documents), add a log line.
@@ -226,6 +226,13 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - **Revising a finished schematic in place (same day, v2 → v3 on a copy):** `run old.dxf --cmd … --save new.dxf` with `erase {"handles"}` for a removed channel, `properties.set {"handles","layer"}` to move wires to new layers (made with `layer.new` hex colours), `textedit {"handle","text"}` (centred and right-aligned texts keep their alignment point), `move` for labels that collide, then `purge` (it also deletes layers that were already unused). Re-running the net check on the result confirmed every net; the renders showed two new collisions (a longer label running into a wire and a pin label), both fixed by shortening or moving the text.
 - **0.16.0** adds `-array`, `-units` and `change` (from a `commands` diff; not run). The drawing above built with no errors on 0.16.0.
 
+## 0.17 changes (verified headless 2026-11-02; DXF and outputs read back)
+- **`oops {}`** brings back what the last ERASE, BLOCK or -WBLOCK removed → `{restored:1}` (tested after `erase` and after `-wblock`).
+- **`-wblock {"path","handles"|"name","base"?}`** writes the objects to a new drawing and **erases them** from this one (→ `{path,bytes,entities}`); follow it with `oops {}` to keep them. Write it `--cmd=-wblock {…}` (leading dash).
+- **`plot {"device":"CADCraft PNG"|"CADCraft SVG"|"CADCraft PDF"|<a PLOTTERMANAGER plotter>|"None"}`** picks the output format: PNG gave a 3508×2480 A4-landscape page at 300 dpi, SVG a vector file. `publish` takes `device` too but always writes PDF.
+- **`saveas {"path","portableFonts":true}`** (and DXF `export`) swaps Linux fonts for their Windows equivalents in that file: a text style on "Liberation Sans" was saved as `arial.ttf`, with the original name kept in the style's extended data (group 1000 `FONT`); "DejaVu Sans" (no Windows equivalent) stayed as it was. Use it for DXFs going to AutoCAD on Windows.
+- `info` has a new `readNotes` list (empty for drawings CadCraft wrote).
+
 ## Newer commands (verified headless and live)
 - `blocks.description {"name","description"}` → `{block,description}`; `description` is required (an empty string clears it; there is no read form). `block {…,"description":"…"}` sets it at creation (it is stored in the DXF). Up to 255 characters, one line.
 - `layout.saveas {"name"?,"path"}` (also `layout {"option":"saveas","name","path"}`) → `{name,path,bytes}`; a path with no extension gets `.dwt`; `.dwg` and `.dxf` are accepted. It writes wherever the path says: use a scratch folder.
@@ -235,3 +242,4 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - 2026-10-31: CLI refreshed (0.14.0 → 0.15.1); the relay-lamp example plus eight drawings (shapes and text, dimensions, hatch, blocks, properties, copy/move/offset/mirror) built with the old and new CLI: DXF, PNG and PDF identical except the dimension MTEXT group 72 above; `solid` and `chprop` verified (they do not exist in 0.14.0).
 - 2026-11-01: CLI refreshed to 0.16.0; beginner wiring guide (hex layer colours, solid triangles, hop crossings, net check with arcs).
 - 2026-11-01 (2): full re-run, old (0.15.1) vs new (0.16.0) CLI: six drawings (shapes, text styles and justification, layers and linetypes, dimensions and hatch, blocks and inserts, copy/rotate/mirror/scale/offset) plus `examples/relay_lamp.py`: DXF entity, table and block sections, `info` and PDF pages identical. Live bridge not re-checked (the app was not running).
+- 2026-11-02: CLI refreshed (0.16.0 → 0.17.0); full re-run old vs new (six drawings plus relay-lamp): entities, tables and PDF identical; `info` adds `readNotes`, the text drawing's DXF grew 34 bytes outside the entity, table and block sections (not examined). New commands run: oops, -wblock, plot devices, portableFonts.
