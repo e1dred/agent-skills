@@ -59,8 +59,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 
 ### Changed
 - GridCraft, DeckCraft, CadCraft, ONLYOFFICE and GenOffice supplement (2026-11-02): split like WordCraft and PhotoCraft into a short `SKILL.md` front page (800–1,200 words, was 4,500–7,600) and `reference/` files grouped by task, with dated lines in `reference/log.md`. Sections moved unchanged (no line lost; coverage unchanged). Retrieval tests with fresh agents on the old and new layout: 15 of 15 answers correct on both; the routing table was then fixed where agents were sent to the wrong file. GenOffice supplement's "Not yet tested" list no longer names things that were tested.
-
-### Changed
 - Version labels (2026-10-28): each skill names only the latest tested version; per-section `> Versions:` lines and "tested on A and B" lists removed.
 - All seven skill descriptions (2026-10-27) now start with "Use when…" and give only triggering conditions (tasks, file types, CLI names), as the skill-writing guide asks, instead of listing what each skill contains; CadCraft and PhotoCraft also name the export formats and edits an agent guessed at in a pick test. Bodies are unchanged.
 - DeckCraft: the `chart.options` "nothing selected" note no longer contradicts the later one (a just-inserted chart is already selected). PhotoCraft: `run` takes `--quality`, so a crop to JPEG is one command (checked on a test image).
