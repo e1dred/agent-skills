@@ -19,7 +19,8 @@ Tested with ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux) and its A
 
 | Path | What it is |
 |---|---|
-| `SKILL.md` | The skill: how the connector works, live vs headless, macro API notes, traps, recipes |
+| `SKILL.md` | The skill's front page: how the connector works, live vs headless, traps, verification, recipes, and a table of the reference files |
+| `reference/` | The detailed sections (live editing, Word, forms and PDF, spreadsheets, presentations, macro workflows, tool audit, document styles, log) |
 | `tools/onlyoffice-ai-mcp` | Runs the app's AI-tools MCP server inside the flatpak, linked to the running editor |
 | `recipes/designed_deck_helpers.js` | Tested helper library for designed slide decks (shapes, palette, header/footer) |
 | `tools/ooc.py` | Runs tool calls against a document from a shell (attach → calls → detach) |

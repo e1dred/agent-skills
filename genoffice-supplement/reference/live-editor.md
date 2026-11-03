@@ -1,0 +1,14 @@
+# GenOffice supplement reference: live editor
+
+Part of the genoffice-supplement skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
+
+## Live editor: `open`, `selection`, writing to a file that is open (2026-10-27, GenOffice 0.12.117, checked with the user watching the window and a screenshot)
+Needs the GenOffice app running (the CLI starts it if not); `~/.config/GenOffice/open-documents.json` lists the open files and `control.json` holds the control socket and token. Each file opens in its own tab.
+- **`genoffice open FILE [target]`** opens the file and selects a spot for the user: `--block n` (docx, 0-based as in `docs read`), `--range B2:C4` / `--sheet` (xlsx), `--slide n --el e_...` (pptx, ids from `slides read`), `--page n` (pdf, 1-based). All four put the selection where asked and the tab in front.
+- **`genoffice selection FILE --json`** is the user's pointer ("this one", "here"). Verified: docx `blocks [3,3]` with the paragraph text (and after the user resized a table, `block 6`, `collapsed:true`, empty text); xlsx the range with its values (`base!B2:C4`); pptx `slide 0, elements [e_...]`; pdf `page 2` only. Read it only after the file has finished loading: asked about 3 seconds after reopening a spreadsheet it returned `S27` (the user had clicked) instead of the range just opened; 8 seconds later it returned the right range.
+- **Writing to an open file:** `docs|sheet|slides apply` refuses with `file_open_in_gui` (the message says close the tab or pass `--force`); `--out` to another path always works. With `--force` the file on disk is written, but the window does not reliably show it:
+  - xlsx: a forced `set_cell` and a gold fill did NOT appear in the open tab, even with that tab in front and after a plain `open --range` on the same file. Only after the user closed the tab and `open` reopened the file did the new cells and the fill show.
+  - docx: after a forced `setFont` (bold plus colour C00000) the user saw the paragraph change to bold but not red (the headless render and the XML show both bold and red). Not explained; treat a forced write into an open document as unreliable and have the user close the tab and reopen.
+  - The user's own unsaved resize of a table in the window was still there after the forced write, so the window seems to keep its own state; the app's message warns that the editor may overwrite your change on its next save. Do not force-write a file the user is editing.
+- **Recipe for working with the user in the app:** copy the file to a scratch folder, `open` it at the spot you mean, ask the user to select or click, read `selection`, make the change with `--out` to a new file, then `open` that file. Avoid `--force`.
+- Screenshots the user takes are the fastest way to check what the window shows (the folder path they give may contain a typo: list the folder first).
