@@ -46,5 +46,6 @@ Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections 
 - Dynamic blocks cannot be created by commands (authoring is in the block editor UI); `blocks.dynamic {"name"}` answers null for an ordinary block.
 
 ## Erase and quick save (verified headless, 2026-10-26)
+- To bring back what the last `erase` removed: `oops {}` (0.17, see `newer-commands.md`).
 - `erase {"handles":["100"]}` → `{erased:1}`; with no handles it erases the selection (`select {"handles":["101"]}` then `erase {}` → `{erased:1}`).
 - `qsave {"path":"q.dxf"}` writes the drawing (`{bytes,path}`) and `info` of the file showed the right entity count; without `path` a drawing that was never saved fails with "drawing has no file name yet; use saveas {path}", and one opened from a file saves back to it, so never call `qsave` on a user's file you only inspected.

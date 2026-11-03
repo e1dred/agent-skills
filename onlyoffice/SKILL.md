@@ -48,13 +48,13 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `live-editing.md` | Editing a document the user has open, in all four editors | Live editing of all four editors |
+| `live-editing.md` | Editing a document the user has open, in all four editors, including filling an existing PDF form (`pdf_fill_form_fields`) | Live editing of all four editors |
 | `word.md` | Word macros, Word helper tools, filling a template from data, editing real résumés safely | Word macro API notes; Résumés: editing real ones safely; Filling a Word template from data; Word helper tools |
-| `forms-and-pdf.md` | Fillable forms (every field type), PDF tools | Forms, all field types; PDF tools; Fillable forms |
+| `forms-and-pdf.md` | Building fillable forms (every field type), PDF tools (to fill an existing PDF form's fields, see `live-editing.md`) | Forms, all field types; PDF tools; Fillable forms |
 | `spreadsheets.md` | The cell_* tools: data, formulas, formats, charts, sorting | Spreadsheets; Spreadsheets, more |
 | `presentations.md` | The slide_* tools and designed decks built from shapes | Designed decks from shapes; Presentations |
 | `macro-workflows.md` | Next-tier tasks done through macros, conditional formats, filters, pivots and slide tools | Conditional formats, filter, pivot, slide tools; Next-tier workflows through macros |
-| `tool-audit.md` | Every one of the 93 tools called, with parameters and results | Every remaining tool, verified; Tool audit: all 93 tools called on ONLYOFFICE 10.0.0 |
+| `tool-audit.md` | Every one of the 93 tools called, with parameters and results, including which need the desktop app (`list_editor_documents`) | Every remaining tool, verified; Tool audit: all 93 tools called on ONLYOFFICE 10.0.0 |
 | `document-styles.md` | The eight document styles built in ONLYOFFICE (doc, résumé, CV, paper and more) | Document styles |
 | `log.md` | Dated log of what was tested when | Log |
 

@@ -38,7 +38,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 - Watermark is heavy at opacity 0.3 with a large size; use about 0.15 for body-text legibility.
 
 ## Not yet tested
-setFont null (clear), partial-selection edits, setImageProperties on a floating picture, insert_content formula render, insertField IF/PAGEREF, docs apply on a file open in the app (needs --force), `--dry-run`, `--best-effort`, live `open`/`selection`, and comparison with WordCraft/ONLYOFFICE styles.
+setFont null (clear), partial-selection edits, setImageProperties on a floating picture, insert_content formula render, insertField IF/PAGEREF, `--dry-run` and `--best-effort`. (Writing to a file open in the app, live `open`/`selection` and the style comparison with WordCraft and ONLYOFFICE are now tested: see `reference/live-editor.md` and `reference/document-styles.md`.)
 
 ## Keep this file growing
 Add what you learn to the matching file in `reference/` (see the table above), labelled with the GenOffice version and what was checked (XML, read-back or render). Do not paste text from GenOffice's own skills.

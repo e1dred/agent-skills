@@ -41,9 +41,9 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `building-decks.md` | Building whole decks: recipes, a real deck end to end, a board deck with charts, next-tier workflows | More recipes; Building a real deck; Next-tier workflows; Board deck from sample data: charts, axis, alt text |
+| `building-decks.md` | Building whole decks: recipes, exports (PDF, notes pages, handouts, GIF), a real deck end to end, a board deck with charts, next-tier workflows | More recipes; Building a real deck; Next-tier workflows; Board deck from sample data: charts, axis, alt text |
 | `smartart-animation-masters.md` | SmartArt layouts, grouping, pictures, slide layouts, animation and transition catalogues, master editing | SmartArt, grouping, pictures, layouts; SmartArt layouts, animation and transition catalogues, master editing |
-| `shapes-text-tables.md` | Shapes, text and character formatting, tables, photo album, actions, sections, media, navigation, alignment, ink | Shapes, text formatting, tables, photo album, actions, sections, masters and files; Text editing, character formats, arranging, media, navigation and data commands; Ink in DeckCraft; Alignment and redo |
+| `shapes-text-tables.md` | Shapes, text and character formatting, tables, photo album, shape actions and action buttons (listing a slide's links: `slide.actions` in `newer-commands.md`), sections, media, navigation, alignment, ink | Shapes, text formatting, tables, photo album, actions, sections, masters and files; Text editing, character formats, arranging, media, navigation and data commands; Ink in DeckCraft; Alignment and redo |
 | `newer-commands.md` | What each version added or changed (0.11 onward), with exact parameters: motion paths, slide actions, gradient kinds | New in 0.11.x; Newer commands; 0.13 changes; 0.14 changes; 0.15 changes |
 | `command-sweep.md` | The last 28 command ids, smoke-tested | The last 28 command ids |
 | `log.md` | Dated log of what was tested when | Log |

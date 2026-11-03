@@ -11,7 +11,7 @@ Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections 
 ## 0.17 changes (verified headless 2026-11-02; DXF and outputs read back)
 - **`oops {}`** brings back what the last ERASE, BLOCK or -WBLOCK removed → `{restored:1}` (tested after `erase` and after `-wblock`).
 - **`-wblock {"path","handles"|"name","base"?}`** writes the objects to a new drawing and **erases them** from this one (→ `{path,bytes,entities}`); follow it with `oops {}` to keep them. Write it `--cmd=-wblock {…}` (leading dash).
-- **`plot {"device":"CADCraft PNG"|"CADCraft SVG"|"CADCraft PDF"|<a PLOTTERMANAGER plotter>|"None"}`** picks the output format: PNG gave a 3508×2480 A4-landscape page at 300 dpi, SVG a vector file. `publish` takes `device` too but always writes PDF.
+- **`plot {"device":"CADCraft PNG"|"CADCraft SVG"|"CADCraft PDF"|<a PLOTTERMANAGER plotter>|"None"}`** picks the output format: PNG gave a 3508×2480 A4-landscape page at 300 dpi, SVG a vector file. The PNG call that ran: `plot {"path":"/abs/p.png","layout":"Model","device":"CADCraft PNG","fit":true}`. `publish` takes `device` too but always writes PDF.
 - **`saveas {"path","portableFonts":true}`** (and DXF `export`) swaps Linux fonts for their Windows equivalents in that file: a text style on "Liberation Sans" was saved as `arial.ttf`, with the original name kept in the style's extended data (group 1000 `FONT`); "DejaVu Sans" (no Windows equivalent) stayed as it was. Use it for DXFs going to AutoCAD on Windows.
 - `info` has a new `readNotes` list (empty for drawings CadCraft wrote).
 
