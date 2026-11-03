@@ -53,3 +53,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-02: lapel-pin removal on `test.png` (0.19.0): lasso + expand + `edit.contentAwareFill` with custom `samplingStrokes` and `colorAdaptation:"veryHigh"` on a new layer; auto sampling too dark, spot healing on the seam had no visible effect (recipe in `everyday-edits.md`).
 - 2026-11-02 (2): live bridge on 0.19.0 (doc_open, command_run, jobs_list, doc_save, ui_screenshot all fine): `paint.remove` with `closeLoops:true, newLayer:true` and one ring stroke round the pins beat Content-Aware Fill (no seam, grain kept).
 - 2026-11-02: side-by-side labeled comparison recipe (placeEmbedded + dropShadow + type.create), opened in the live app; 0.19.0.
+- 2026-11-02: light-mode variant: stroke layer style params verified, stacks with drop shadow.
