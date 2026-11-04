@@ -60,3 +60,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-03: plug-ins (hand-built test .wasm) and a real .grd import verified; 4 ids left.
 - 2026-11-03: last research pass (engine source): migratePresets verified, JSON format and the rgb-colour trap documented.
 - 2026-11-03: printing verified with a raw CUPS test queue (Virtual_PDF).
+- 2026-11-03: view.clearSelectedArtboardGuides verified via the .pcraft manifest; PhotoCraft smoke-tested list complete and removed.

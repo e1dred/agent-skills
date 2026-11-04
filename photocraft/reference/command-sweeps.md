@@ -243,3 +243,7 @@ session.inspect
 - **file.print.\*** (1): `file.print.printers` Windows-only list: on Linux it answers `{printers:[],supported:false}` even with a printer queue present (checked with Virtual_PDF installed); use `file.printers` here, Print itself spools with `lp`.
 - **file.\*** (1): `file.printers` with a CUPS queue present (a raw test queue "Virtual_PDF" on socket://127.0.0.1:9100): `{printers:[{name:"Virtual_PDF",default:false}],default:null,server:null}`; with no queue it was `printers:[]`. Then `file.print {"printer":"Virtual_PDF","paper":"a4"}` spooled with `lp -d Virtual_PDF …` and the job that arrived was a 1-page A4 PDF containing the document's red rectangle.
 - **Still smoke-tested (1):** `view.clearSelectedArtboardGuides` (no headless read-back for guides; needs a screenshot of the visible window).
+
+## Verified in detail, PhotoCraft artboard guides (0.20.1, 2026-11-03, headless) (1 ids)
+> **Method:** saved .pcraft before and after, guides read from `manifest.json`.
+- **view.\*** (1): `view.clearSelectedArtboardGuides` with two artboards (x 0-100 and 120-220) and the first selected, guides vertical 50 and 170 and horizontal 40: `{cleared:2}`; the saved document guides went from `{horizontal:[40],vertical:[50,170]}` to `{horizontal:[],vertical:[170]}`: guides crossing the selected board are removed (the horizontal one too, though it also crosses the other board), guides only in other boards stay. Read-back: guides are saved in the .pcraft `manifest.json` under `document.guides` (no list command exists).
