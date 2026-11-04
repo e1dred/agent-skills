@@ -51,3 +51,4 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-03: printing verified with a raw CUPS test queue (Virtual_PDF).
 - 2026-11-03: view.newWindow verified (user screenshots), font.loadSystem checked; 4 left (split, editor, borderPainter, researcher).
 - 2026-11-03: review.editor and table.borderPainter verified, view.split and references.researcher checked (source); smoke-tested list complete and removed.
+- 2026-11-03: proof.installPack/removePack verified live with the Vietnamese pack (user turned downloading on); README note removed.
