@@ -223,3 +223,7 @@ session.inspect
 ## Verified in detail, PhotoCraft background jobs (live app 0.20.1, 2026-11-03) (2 ids)
 > **Method:** run in the live window over the MCP bridge on a new blank 3000x3000 document (headless runs finish jobs synchronously).
 - **jobs.\*** (2): `jobs.cancel` `{}` while the Lens Blur ran -> `{cancelled:1}`; `jobs.list` then showed job 2 `state:"cancelled"` at progress 0.048. Content-Aware Fill with `wait:false` finished synchronously here, so pick a slow filter to test; `jobs.list` live (MCP bridge): with `filter.blur.lensBlur {"radius":100}` started as a background step (`"wait":false` -> `{job:2,pending:true}`) it listed job 2 `state:"running"`, progress 0.007, plus the finished Clouds job (`state:"done"`, elapsedMs, its result).
+
+## Verified in detail, PhotoCraft linked smart objects (0.20.1, 2026-11-03) (1 ids)
+> **Method:** state built first, isolated HOME/XDG config for commands that write app settings, live window only on a blank unsaved document with any changed setting put back; read back with ui_inspect, list commands or the saved file.
+- **layer.smartObjects.\*** (1): `layer.smartObjects.updateChanged` headless, in one run: the FIRST call only remembers each linked file (`{updated:[]}`); after the linked PNG was overwritten from a second document (`file.saveACopy … overwrite`, red -> blue) a second call returned `{updated:[6]}` and a colour sampler on the layer read rgb [255,0,0] -> [0,0,255]. Over the live channel it is refused ("uses ambient filesystem paths"); the desktop app checks by itself every 2 s.

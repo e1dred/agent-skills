@@ -28,3 +28,8 @@ slide.next slide.previous smartArt.demote smartArt.removeNode table.insertColumn
 - **table.\*** (1): `table.insertColumnRight` `{"id": 279, "col": 0}` (live) before: slide.inspect table cols = 2; after: table cols = 3.
 - **text.\*** (1): `text.commit` `{"text": "Committed text"}` (headless) before: slide text = 'Justify me now'; after: slide text = 'Committed textJustify me now'.
 - **Still smoke-tested (3):** `file.recovery.save`/`file.recovery.discard` (headless: "no recovery folder is set"; needs the app's recovery folder), `selection.showAll` (the scratch slide had no hidden objects).
+
+## Verified in detail, DeckCraft second pass (0.15.0, 2026-11-03) (3 ids)
+> **Method:** state built first, isolated HOME/XDG config for commands that write app settings, live window only on a blank unsaved document with any changed setting put back; read back with ui_inspect, list commands or the saved file.
+- **file.recovery.\*** (2): `file.recovery.discard` live: `{"uid":…}` removed that entry (`file.recovery.list` back to []); without `uid` it discards ALL recovered presentations, so pass the uid; `file.recovery.save` live (the CLI has no recovery folder): with an unsaved change in the blank presentation `{written:1}`; `file.recovery.list` went from [] to one entry {uid,title:"Presentation1",saved,path:null}.
+- **selection.\*** (1): `selection.showAll` headless: after `selection.hideAll` every shape on the slide had `hidden:true` in `slide.inspect`; showAll removed the flag from all four (title, subtitle, two inserted shapes).

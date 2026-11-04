@@ -255,3 +255,13 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 ## Verified in detail, WordCraft table of authorities update (wordcraft-cli 0.15.0, 2026-11-03, headless) (1 ids)
 > **Method:** `references.markCitation` + `references.tableOfAuthorities`, then a second marked citation, read back with `document.text`.
 - **references.\*** (1): `references.updateAuthorities` after a second `references.markCitation {"entry":"Brown v. Board"}` below an existing table of authorities, the table went from one entry (Smith v. Jones 1) to two, sorted: "Brown v. Board 1", "Smith v. Jones 1".
+
+## Verified in detail, WordCraft phase 2, fourth pass (0.15.0, 2026-11-03) (7 ids)
+> **Method:** state built first, isolated HOME/XDG config for commands that write app settings, live window only on a blank unsaved document with any changed setting put back; read back with ui_inspect, list commands or the saved file.
+- **font.\*** (2): `font.add` headless with an isolated HOME/XDG config (it writes the app's font list): `{"path":"test.ttf"}` -> `{faces:[{family:"Comic Sans MS",style:"Bold"}],families,file}`; `font.list` went from `fonts:[]` to that one entry; `font.remove` `{"family":"Comic Sans MS"}` -> `{removed:[…]}`; `font.list` back to `fonts:[]`.
+- **format.\*** (1): `format.fontDialog` live: opens the Font dialog, `ui_inspect` dialog null -> {dialog:"font", font:"Aptos", size:"12", bold:false, …} with the selection's font.
+- **para.\*** (1): `para.dialog` live: opens the Paragraph dialog, `ui_inspect` dialog -> {line:1.15, after:8, widow:true, page_break:false, …}; Escape closes it.
+- **review.\*** (1): `review.proofing` live: toggles spelling and grammar checking, `ui_inspect` ui.checkSpelling / editing.checkSpelling / view.proofing true -> false (toggled back).
+- **styles.\*** (1): `styles.pane` live: toggles the Styles pane, `ui_inspect` view.stylesPane false -> true and the canvas narrowed 1418 -> 1168 px; a second call closed it.
+- **view.\*** (1): `view.interfaceTheme` live: `{"value":"dark"}` changed `ui_inspect` ui.theme light -> dark (set back to light afterwards; without `value` it toggles).
+- **Still smoke-tested (8):** `view.split`, `view.newWindow`, `review.editor`, `table.borderPainter` (no state in `ui_inspect`; need a screenshot of the visible window or the mouse), `design.setDefault` (no effect headless; live it would rewrite the default template), `font.loadSystem` (family list unchanged headless), `file.print` (no printer), `references.researcher` (`available:false`).

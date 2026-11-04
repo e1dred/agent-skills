@@ -66,3 +66,8 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 - **vports.\*** (3): `vports.1` from 4 tiles back to 1; `vports.2` model-space tiles 1 -> 2 (`-vports list`); `vports.4` tiles -> 4.
 - **zoom.\*** (1): `zoom.out` VIEWSIZE 105 -> 210 (factor 2), centre kept.
 - **Still smoke-tested (2):** `arrayclose` (headless `arrayedit` finishes at once, so no array is ever being edited; needs the live window), `-plottermanager` (works through typed option prompts; nothing to read back headless).
+
+## Verified in detail, CadCraft second pass (0.17.0, 2026-11-03) (1 ids)
+> **Method:** state built first, isolated HOME/XDG config for commands that write app settings, live window only on a blank unsaved document with any changed setting put back; read back with ui_inspect, list commands or the saved file.
+- **arrayclose.\*** (1): `arrayclose` headless works once an array is opened for in-place editing with `arrayedit {"handle":ARRAY,"source":{}}` (it returns the source copy's handle): after scaling that copy (radius 2 -> 4), `arrayclose {"save":true}` wrote radius 4 into the array, `{"save":false}` kept 2 (saved DXF).
+- **Still smoke-tested (1):** `-plottermanager` (typed option prompts only).
