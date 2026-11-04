@@ -269,3 +269,7 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 ## Checked, no effect in this version (WordCraft 0.15.0, 2026-11-03) (1 ids)
 > **Method:** run headless with an isolated config and the engine source read (found by a second agent). Also from the source: `font.loadSystem` only queues a request for the app window (`{open:"loadSystemFonts"}`, returns `{pending:true}`), so headless it changes nothing; it stays smoke-tested until it is run in the visible app.
 - **design.\*** (1): `design.setDefault` checked, does nothing to documents or settings in 0.15.0: the handler only sets the status line to "These settings will be used for new documents." and returns the selection (crates/engine/src/cmd/design.rs); a new document after it still had the default theme fonts, and no file was written in an isolated config.
+
+## Verified in detail, WordCraft printing (0.15.0, 2026-11-03) (1 ids)
+> **Method:** live in a blank unsaved document (page closed again with Escape), with a raw CUPS test queue installed.
+- **file.\*** (1): `file.print` live: opens the Print page of the File backstage (`ui_inspect` ui.backstage false -> true, backstagePage "home" -> "print"), like Ctrl+P; the job itself is sent from that page's button. Headless it does nothing (returns the caret); to print from a script use `file.printPdf {"path"}` or convert to PDF and `lp -d PRINTER file.pdf` (a test queue received such a PDF intact).

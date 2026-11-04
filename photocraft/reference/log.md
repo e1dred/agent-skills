@@ -59,3 +59,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-03: phase 2 batch 3 on 0.20.1: 141 smoke-tested ids verified by read-backs and pixel probes (isolated config), 11 left with reasons; see command-sweeps.md.
 - 2026-11-03: plug-ins (hand-built test .wasm) and a real .grd import verified; 4 ids left.
 - 2026-11-03: last research pass (engine source): migratePresets verified, JSON format and the rgb-colour trap documented.
+- 2026-11-03: printing verified with a raw CUPS test queue (Virtual_PDF).

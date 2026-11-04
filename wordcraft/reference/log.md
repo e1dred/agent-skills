@@ -48,3 +48,4 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-02 (30): CLI refreshed (0.14.0 → 0.15.0); full re-run old vs new: 43 documents from `styles/build_wordcraft.py` (every `.docx` and the PDF text identical); PDF pixels differ only where a column separator is now drawn and where paragraph left borders moved 1.4 pt further from the text (checked by eye on seven documents). New `proof.packs` listed (empty, network off); install/remove not run.
 - 2026-11-03: phase 2 on 0.15.0: 192 smoke-tested ids verified (runs by a second agent, evidence reviewed and sampled), 39 left with reasons; see command-reference.md.
 - 2026-11-03: last research pass (engine source): one command found to do nothing in this version, recorded as checked.
+- 2026-11-03: printing verified with a raw CUPS test queue (Virtual_PDF).
