@@ -7,7 +7,6 @@ font.remove
 format.fontDialog
 para.dialog
 references.researcher
-references.updateAuthorities
 review.editor
 review.proofing
 styles.pane

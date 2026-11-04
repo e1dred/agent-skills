@@ -251,3 +251,7 @@ view.sideToSide view.split view.stylesPane view.vertical view.zoom view.zoom100 
 - **caret.\*** (1): `caret.pastCitation` with a citation (tag Doe01) at offset 6 and the caret at 0: the caret jumped to offset 9, just after the citation.
 - **equation.\*** (3): `equation.delete` while editing "x+1=2" with the math caret at 0 (`equation.edit {"pos":{"path":[],"off":0}}`): deletes the next character, linear "x+1=2" -> "+1=2" (`equation.get`); `equation.normalText` `{"value":true}` then `equation.type {"text":"ab"}`: the typed letters became normal (non-italic) text, latex `\text{ab}+1=2`; `equation.structureActions` with the math caret inside a fraction (`\frac{a}{b}`, pos path [[0,0]]): lists frac.skewed, frac.linear, frac.noBar and remove (labels "Change to Skewed Fraction" …), all level 0; outside a structure the list is empty.
 - **references.\*** (1): `references.updateFields` `{"all":true}` on a `SEQ Fig` field inserted with the stale cached result "9": document text "9" -> "1".
+
+## Verified in detail, WordCraft table of authorities update (wordcraft-cli 0.15.0, 2026-11-03, headless) (1 ids)
+> **Method:** `references.markCitation` + `references.tableOfAuthorities`, then a second marked citation, read back with `document.text`.
+- **references.\*** (1): `references.updateAuthorities` after a second `references.markCitation {"entry":"Brown v. Board"}` below an existing table of authorities, the table went from one entry (Smith v. Jones 1) to two, sorted: "Brown v. Board 1", "Smith v. Jones 1".
