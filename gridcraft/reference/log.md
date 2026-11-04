@@ -28,3 +28,4 @@ Part of the gridcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-03: phase 2 on 0.16.0: 50 smoke-tested ids verified (live + headless read-backs by a second agent, reviewed), 8 left; see command-sweep.md.
 - 2026-11-03: last research pass (engine source): one command found to do nothing in this version, recorded as checked.
 - 2026-11-03: view.showObjects verified in the saved workbook (workbookPr showObjects).
+- 2026-11-03: view.formulaBar (ui.inspect grid rect) and view.ruler (screenshots) verified live; view.arrangeAll left (Wayland).
