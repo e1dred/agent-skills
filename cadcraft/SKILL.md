@@ -28,7 +28,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `recipes.md` | End-to-end drawings: a metre-unit floor plan on A3, a parametric plate at true 1:1 | Round 5: end-to-end recipe, a metre-unit floor plan on an A3 sheet; Parametric ECO plate drawing on an A3 sheet at true 1:1 |
 | `live-window.md` | Driving the running CadCraft window through its bridge: connecting, clicks, screenshots, a real drawing open live | Live window; Round 6: live window; Round 9: a real drawing in the live window |
 | `dwg-files.md` | Opening, editing and saving real AutoCAD DWGs: dynamic blocks, layouts, save versions, constraints | Round 10: a real AutoCAD DWG from another program; Round 11: save versions and the last open items; Round 12: two more AutoCAD DWGs, 2010 format |
-| `command-sweeps.md` | Probes of every remaining command id and the last 62 smoke-tested ids | Round 13: the remaining command ids; The last 62 command ids; Verified in detail, CadCraft phase 2 |
+| `command-sweeps.md` | Probes of every remaining command id and the last 62 smoke-tested ids | Round 13: the remaining command ids; The last 62 command ids; Verified in detail, CadCraft phase 2; Verified in detail, CadCraft second pass; Verified in detail, CadCraft last id; Ten ids that were only named as ordinary words |
 | `newer-commands.md` | What each version added or changed, with exact parameters: oops, -wblock, plot devices, portable fonts, layout save-as, named viewports | 0.15 changes; 0.17 changes; Newer commands |
 | `log.md` | Dated log of what was tested when | Log |
 
@@ -52,6 +52,7 @@ cadcraft-cli commands [FILTER]                  # JSON: id, label, params string
 
 ## Traps
 - Unknown or unloaded linetype in `layer.new` fails the whole run.
+- Ids that start with `-` (`-block`, `-group`, `-plottermanager`) must be passed as `--cmd=-block {…}` (with `=`); `--cmd -block` is read as a CLI flag ("unexpected argument '-b'"). `tools/ccrun.py` does this.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
 - Not possible or not available: authoring dynamic blocks (no commands, UI only). Not tested: VectorCraft.

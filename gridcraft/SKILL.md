@@ -52,7 +52,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `analysis-pivots-charts.md` | What-if, Solver (saving, loading or resetting a Solver model in cells and the Sensitivity report: `newer-commands.md`), forecast, pivot tables, every chart type, conditional formats, validation, ToolPak, review and functions | Analysis and layout tools; Pivot tables and chart types in depth; Conditional formats, validation, ToolPak, review and functions |
 | `auditing-and-helpers.md` | Formula auditing, selection, scripts, comments, grouping, print helpers, ink | Formula auditing, selection, scripts, ink, comments, grouping and print helpers; Ink in GridCraft |
 | `newer-commands.md` | What each version added or changed (0.12 onward), with exact parameters: Python cells, Trace Error, Solver models, equations, chart data tables | New in 0.12.x; Newer commands; 0.15 changes; 0.16 changes |
-| `command-sweep.md` | The last 58 command ids, smoke-tested on a blank workbook | The last 58 command ids; Verified in detail, GridCraft phase 2 |
+| `command-sweep.md` | The last 58 command ids, smoke-tested on a blank workbook | The last 58 command ids; Verified in detail, GridCraft phase 2; Verified in detail, GridCraft second pass; Checked, no effect in this version; Verified in detail, GridCraft show objects; Verified in detail, GridCraft formula bar and ruler; Checked, no effect on Wayland |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## Command formats (verified)

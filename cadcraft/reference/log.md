@@ -25,3 +25,4 @@ Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections 
 - 2026-11-03: `-plottermanager` verified (same JSON as plottermanager); CadCraft smoke-tested list complete and removed.
 - 2026-11-03: coverage.sh now counts a CadCraft id only where it is written as a command; that showed 10 ids named only as words (join, new, base, dim, snap, polar, status, redraw, attach, grip), now documented (7 run and read back, 3 with reasons).
 - 2026-11-03: live bridge re-checked on 0.17.0 (inspect_drawing, execute line, undo); stale 0.13.0 note removed from SKILL.md.
+- 2026-11-03: retrieval test (8 questions, answers from the skill files only): 6 via SKILL.md, 2 only by grep; added SKILL.md traps for --cmd=-ID and refreshed the section index.
