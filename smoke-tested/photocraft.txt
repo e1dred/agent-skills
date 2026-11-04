@@ -3,8 +3,6 @@ edit.presets.migratePresets
 file.print.printers
 file.printers
 gradient.presets.importGrd
-jobs.cancel
-jobs.list
 layer.smartObjects.updateChanged
 plugin.reload
 plugin.remove
