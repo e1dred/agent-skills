@@ -49,6 +49,12 @@ C=[
 ("sheets",[{"op":"add_sheet","name":"Two"},{"op":"rename_sheet","sheet":"Two","name":"Second"},{"op":"duplicate_sheet","sheet":"base","name":"Copy"},{"op":"move_sheet","sheet":"Copy","position":0},{"op":"set_sheet_hidden","sheet":"Second","hidden":True}],None),
 ("delete_sheet",[{"op":"add_sheet","name":"Tmp"},{"op":"delete_sheet","sheet":"Tmp"}],None),
 ]
+# Single-batch forms of documented traps (SKILL.md) and one deliberate bad input: kept on purpose and printed as "expected";
+# "CHANGED" means a new GenOffice accepted one. Two-step forms: sweep_sheets_staged.py (ctv, table, dupmove).
+EXPECTED={"convert_to_values":"converts a formula written in the same batch, which the formula engine cannot see yet",
+          "add_table":"the range overlaps base.xlsx's auto-filter; clear_filter in an earlier call first",
+          "chart_column":"deliberate: A1:A7 is the text column, and a chart needs a numeric one",
+          "sheets":"duplicate_sheet then move_sheet in one batch: the copy is invisible to the later op"}
 only=sys.argv[1:]
 for n,ops,rng in C:
     if only and n not in only: continue
@@ -57,6 +63,7 @@ for n,ops,rng in C:
     r=g("sheet","apply",out,"--ops",f"{W}/out/{n}.json")
     d=r.get("detail") or {}
     line={"case":n,"status":r.get("status"),"summary":str(r.get("summary") or r.get("message"))[:130],"warn":str(d.get("warnings") or d.get("failures") or "")[:200]}
+    if n in EXPECTED: line["status"]="expected" if r.get("status")!="ok" else "CHANGED"; line["why"]=EXPECTED[n]
     if r.get("status") in("ok","partial"):
         a=["sheet","read",out]+(["--range",rng] if rng else [])
         rd=g(*a); dd=rd.get("detail",{})

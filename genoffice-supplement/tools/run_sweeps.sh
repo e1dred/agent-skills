@@ -13,7 +13,8 @@ genoffice create --type xlsx --from base.csv --header --out base.xlsx --force --
 genoffice create --type pptx --ops base_ops.json --out base.pptx --force --json >/dev/null
 echo "== Docs";   python3 -I sweep_docs.py   > results_docs.txt;   python3 -c "import json;[print(d['status'],d['case'],d['summary'][:70]) for d in map(json.loads,open('results_docs.txt'))]"
 python3 -I check_docs_xml.py
+echo "== Docs, two-step cases"; python3 -I sweep_docs_staged.py
 echo "== Sheets"; python3 -I sweep_sheets.py > results_sheets.txt; python3 -c "import json;[print(d['status'],d['case'],d['summary'][:70]) for d in map(json.loads,open('results_sheets.txt'))]"
-python3 -I sweep_sheets_staged.py
+echo "== Sheets, two-step cases (pivot_editor_only is expected to fail: refresh_pivot works only in the app)"; python3 -I sweep_sheets_staged.py
 echo "== Slides"; python3 -I sweep_slides.py | head -80
-echo "Done. Expected failures are the ones the notes describe (SKILL.md, Traps); compare with the previous run when GenOffice updates."
+echo "Done. \"expected\" = a documented trap failing as it should; \"CHANGED\" = a trap GenOffice now accepts (check and update the notes). Compare with the previous run when GenOffice updates."

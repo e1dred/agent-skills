@@ -54,6 +54,10 @@ cases=[
 ("content_control",[{"op":"wrap_content_control","startBlockIndex":3,"endBlockIndex":5,"tag":"sec","title":"Section","lock":"sdtLocked"}],["--range","3-5"]),
 ("unwrap_cc",[{"op":"wrap_content_control","startBlockIndex":3,"tag":"sec"},{"op":"unwrap_content_control","tag":"sec"}],["--range","3-5"]),
 ]
+# Single-batch forms of documented traps (SKILL.md): kept on purpose and printed as "expected";
+# "CHANGED" means a new GenOffice accepted one, so the trap may be gone. Two-step forms: sweep_docs_staged.py.
+EXPECTED={"setTableStyle":"a style defined in the same batch is invisible to setTableStyle (it also needs run or paragraph formatting)",
+          "unwrap_cc":"wrap then unwrap in one batch: the new control is invisible to the later op"}
 only=sys.argv[1:]
 res=[]
 for n,ops,rd in cases:
@@ -63,6 +67,7 @@ for n,ops,rd in cases:
     opsf=os.path.join(W,"out",n+".json"); json.dump(ops,open(opsf,"w"))
     r=g("docs","apply",out,"--ops",opsf)
     line={"case":n,"status":r.get("status"),"summary":str(r.get("summary") or r.get("message") or r.get("error"))[:140]}
+    if n in EXPECTED: line["status"]="expected" if r.get("status")!="ok" else "CHANGED"; line["why"]=EXPECTED[n]
     if r.get("status")=="ok" and rd:
         d=g("docs","read",out,*rd)
         line["read"]=json.dumps(d.get("detail"))[:420]
