@@ -2,8 +2,4 @@
 edit.presets.migratePresets
 file.print.printers
 file.printers
-gradient.presets.importGrd
-plugin.reload
-plugin.remove
-plugin.run
 view.clearSelectedArtboardGuides
