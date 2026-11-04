@@ -27,3 +27,4 @@ Part of the gridcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-02: CLI refreshed (0.15.0 → 0.16.0); new commands run (Python cells, traceError, Solver save/load/reset and Sensitivity report, equations, chart data table, page order) and the 13 workbook scripts plus three samples re-run old vs new: `cat --formulas`, `info`, PDF and CSV identical; `check` differs only in the output path, `pageSetup` adds `page_order`.
 - 2026-11-03: phase 2 on 0.16.0: 50 smoke-tested ids verified (live + headless read-backs by a second agent, reviewed), 8 left; see command-sweep.md.
 - 2026-11-03: last research pass (engine source): one command found to do nothing in this version, recorded as checked.
+- 2026-11-03: view.showObjects verified in the saved workbook (workbookPr showObjects).

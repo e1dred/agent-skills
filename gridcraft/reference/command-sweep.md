@@ -51,3 +51,8 @@ view.zoomToSelection
 ## Checked, no effect in this version (GridCraft 0.16.0, 2026-11-03) (1 ids)
 > **Method:** run headless and live; the saved file, a chart render and the app state compared; the engine source read (a second agent found the handler, and it was re-checked here).
 - **pageLayout.\*** (1): `pageLayout.themeEffects` checked, does nothing in 0.16.0: the engine handler is `|_, _| ok()` (crates/engine/src/cmd/extra.rs); with each of Office/Subtle/Flat/Craft the saved .xlsx was byte-identical, the exported PDF of a chart identical, and the live app's `document.inspect`/`ui.inspect` unchanged.
+
+## Verified in detail, GridCraft show objects (0.16.0, 2026-11-03, headless) (1 ids)
+> **Method:** every part of the saved .xlsx compared with and without the command.
+- **view.\*** (1): `view.showObjects` `{"on":false}` is saved in the workbook: `xl/workbook.xml` `<workbookPr/>` -> `<workbookPr showObjects="none"/>` (Excel's "hide all objects"); nothing else in the file changed. `view.formulaBar`, `view.ruler` (also in Page Layout view) and `view.arrangeAll` leave no trace in the saved file.
+- **Still smoke-tested (3):** `view.formulaBar`, `view.ruler`, `view.arrangeAll` (window-only state, nothing saved; need a screenshot of the visible window).

@@ -2,4 +2,3 @@
 view.arrangeAll
 view.formulaBar
 view.ruler
-view.showObjects
