@@ -50,3 +50,4 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-03: last research pass (engine source): one command found to do nothing in this version, recorded as checked.
 - 2026-11-03: printing verified with a raw CUPS test queue (Virtual_PDF).
 - 2026-11-03: view.newWindow verified (user screenshots), font.loadSystem checked; 4 left (split, editor, borderPainter, researcher).
+- 2026-11-03: review.editor and table.borderPainter verified, view.split and references.researcher checked (source); smoke-tested list complete and removed.
