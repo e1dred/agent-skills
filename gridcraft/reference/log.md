@@ -29,3 +29,4 @@ Part of the gridcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-03: last research pass (engine source): one command found to do nothing in this version, recorded as checked.
 - 2026-11-03: view.showObjects verified in the saved workbook (workbookPr showObjects).
 - 2026-11-03: view.formulaBar (ui.inspect grid rect) and view.ruler (screenshots) verified live; view.arrangeAll left (Wayland).
+- 2026-11-03: view.formulaBar/ruler done earlier; view.arrangeAll checked (no effect on Wayland, user screenshot); smoke-tested list complete and removed.
