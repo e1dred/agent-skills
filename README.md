@@ -13,7 +13,7 @@ Unofficial: not affiliated with any of the app projects.
 
 | Skill | App | Last tested on | Commands documented (measured) | Everyday tasks covered (checklist) |
 |---|---|---|---|---|
-| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.15.0, Linux AppImage | 651 of 651 | 25 of 25 (100%) |
+| [`wordcraft/`](wordcraft/) | [WordCraft](https://github.com/storytold/wordcraft) word processor: live and headless editing, tables, lists, headers/footers per section, mail merge, citations, templates, comparison, accessibility | 0.15.1, Linux AppImage | 651 of 651 | 25 of 25 (100%) |
 | [`gridcraft/`](gridcraft/) | [GridCraft](https://github.com/storytold/gridcraft) spreadsheet: headless CLI, live control channel, formulas, pivots, formatting, charts, .xlsx build/check/export | 0.16.0, Linux AppImage | 372 of 372 | 26 of 26 (100%) |
 | [`deckcraft/`](deckcraft/) | [DeckCraft](https://github.com/storytold/deckcraft) presentations: headless CLI, live control channel, SmartArt, animations, layouts, .deckcraft/.pptx/PDF export | 0.15.0, Linux AppImage | 331 of 331 | 30 of 30 (100%) |
 | [`photocraft/`](photocraft/) | [PhotoCraft](https://github.com/storytold/photocraft) image editor: headless CLI, live bridge, adjustments, retouching, layers, masks, selections, batch | 0.20.1, Linux AppImage | 954 of 954 | 34 of 34 (100%) |

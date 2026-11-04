@@ -53,3 +53,4 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-03: review.editor and table.borderPainter verified, view.split and references.researcher checked (source); smoke-tested list complete and removed.
 - 2026-11-03: proof.installPack/removePack verified live with the Vietnamese pack (user turned downloading on); README note removed.
 - 2026-11-03: live screenshot failures explained (Wayland: no frames for hidden windows; stale "minimized" after restore, fixed by restarting).
+- 2026-11-03 (late): 0.15.1: CLI refreshed (old kept as wordcraft-cli.0.15.0); commands +review.language.preferred, proof.packs gains languages; 39 style documents identical old vs new; caret.pageUp/Down now work in Draft/Web/Outline. Runs by a second agent, spot-checked.

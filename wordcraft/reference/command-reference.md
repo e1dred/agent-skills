@@ -4,6 +4,8 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Newer commands
 
+**0.15.1 (2026-11-03):** `review.language.preferred {"lang":"de-DE"}` sets the saved default proofing language for new blank documents (`{preferred}`; `lang` is required, there is no read form: read it from `proof.packs`, whose result now has a `languages` list `[{tags,pack,installed,size,proofing,default}]`, default went `["en-US"]` → `["de-DE"]`). `caret.pageUp|pageDown` now move by a page in Draft, Web and Outline views too (0.15.0 did nothing there). Re-run on update: 39 style documents built with the 0.15.0 and 0.15.1 CLIs were identical (XML parts and PDF text per page).
+
 Five newer commands: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`
 (after `mailings.start`, `mailings.recipients`, `mailings.insertField` and `mailings.preview {"on":true}`), and `view.readPageColor {"color":"none|sepia|inverse"}`.
 
