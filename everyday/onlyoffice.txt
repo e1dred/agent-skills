@@ -1,0 +1,34 @@
+Open a document and read its text | open_document get_document_info word_get_document_text
+Read the structure or one paragraph | word_get_document_structure word_get_paragraph_text
+Create a new document and save it | create_document save_document
+Type, insert or rewrite text | word_insert word_insert_paragraphs word_rewrite_text
+Find and replace words | word_search_document word_search_replace
+Bold, italic and text size | word_change_text_style
+Headings, paragraph style and spacing | word_change_paragraph_style word_set_paragraph_props word_for_all_paragraphs
+Insert a table and edit its cells | word_add_table word_table_edit
+Add or describe a picture in a document | word_add_image word_describe_image
+Comment on text | word_comment_text
+Page size, margins, page breaks | word_page_setup word_insert_page
+Check spelling | word_check_spelling
+Read or fill specific ranges of text | word_for_range word_get_document_text
+Open a workbook and read cells | open_document cell_get_range_data cell_get_cell_details
+Set cell values or formulas | cell_set_cell_data cell_set_values cell_set_formula
+Fix or explain a formula | cell_fix_formula cell_explain_formula
+Sort and filter rows | cell_set_sort cell_set_multi_sort cell_set_auto_filter
+Insert a chart | cell_add_chart
+Conditional formatting (colour scales, data bars, icons, top 10) | cell_add_color_scale cell_add_data_bars cell_add_icon_set cell_add_top10_condition cell_add_cell_value_condition
+Create a pivot table | cell_insert_pivot_table
+Format and lay out cells | cell_layout
+Search a workbook and read the sheet context | cell_search_data cell_read_context cell_sheet
+Open a deck and read its slides | open_document slide_get_presentation_context
+Edit slide text and replace words | slide_set_text slide_rewrite_slide_text slide_search_replace
+Add a chart or picture to a slide | slide_add_chart_to_slide slide_add_image_by_description slide_replace_image
+Change a slide's background | slide_change_slide_background
+Rearrange or delete slides | slide_arrange slide_delete
+Generate speaker notes | slide_generate_notes
+Search and inspect PDF pages | pdf_search_document pdf_get_page_info
+Highlight or mark up PDF text | pdf_markup_text pdf_get_text_quads
+Merge or split PDFs | pdf_merge pdf_split
+Read a PDF's pages and form summary | pdf_get_document_info pdf_get_all_pages_info
+Fill a fillable PDF form | pdf_fill_form_fields
+Build or fill a form in a document | form_add_field form_fill form_set_data form_get_fields

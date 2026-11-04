@@ -37,3 +37,21 @@ if command -v genoffice >/dev/null 2>&1 && [ -f "$f" ]; then
     done < "$f"
     printf '%-11s %2s / %-2s everyday tasks covered (%s%%)\n' genoffice "$ok" "$n" "$((100 * ok / n))"
 fi
+
+# ONLYOFFICE everyday tasks: the tool set is the skill's tool-names.txt (the MCP server's tools),
+# and a tool counts as named when it appears somewhere in the onlyoffice/ skill folder.
+f="$repo/everyday/onlyoffice.txt"
+if [ -f "$f" ]; then
+    LC_ALL=C sort -u "$repo/onlyoffice/tool-names.txt" > "$tmp/oo.all"
+    grep -rIhoE --exclude='tool-names.txt' --exclude-dir='__pycache__' '[A-Za-z0-9_][A-Za-z0-9_.]*' "$repo/onlyoffice" | LC_ALL=C sort -u > "$tmp/oo.tok"
+    n=0; ok=0
+    while IFS='|' read -r task ids; do
+        [ -n "$ids" ] || continue; n=$((n+1)); miss=""
+        for id in $ids; do
+            grep -qxF "$id" "$tmp/oo.all" || miss="$miss $id(not in tool-names)"
+            grep -qxF "$id" "$tmp/oo.tok" || miss="$miss $id(not in skill)"
+        done
+        if [ -z "$miss" ]; then ok=$((ok+1)); else [ -n "$VERBOSE" ] && echo "  gap: $task:$miss"; fi
+    done < "$f"
+    printf '%-11s %2s / %-2s everyday tasks covered (%s%%)\n' onlyoffice "$ok" "$n" "$((100 * ok / n))"
+fi

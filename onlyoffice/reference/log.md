@@ -18,3 +18,4 @@ Part of the onlyoffice skill. The short front page is `../SKILL.md`; the section
 - 2026-10-25 (3): tracked revisions, comments, watermark, password-encrypted save, defined names, protected ranges, hyperlinks, chart formatting, slide transitions/animations/theme colours verified via macros.
 - 2026-10-25 (4): version labels added; nothing re-tested on a second version (no update available).
 - 2026-10-25 (6): audit: all 93 tools called on 10.0.0 headless; 91 passed, 2 not verified today (live-only / real PDF form); pdf_merge verified; argument corrections recorded.
+- 2026-11-03: pdf_fill_form_fields (IRS W-9 copy) and list_editor_documents re-run on 10.0.0: all 93 tools verified; everyday checklist everyday/onlyoffice.txt (34 tasks, 100%) added.

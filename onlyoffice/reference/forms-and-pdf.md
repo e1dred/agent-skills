@@ -39,3 +39,5 @@ Part of the onlyoffice skill. The short front page is `../SKILL.md`; the section
   `fields` must be a LIST of `{key,value}`; a `{key: value}` object fails with `field not found`. Checkbox values:
   "true"/"1"/"yes"/"on"/"checked"/"x". Read `form_get_fields` back (`filled:true`, checkbox `☑`).
 - `word_generate_form {"description"}` is a two-call AI task that returns `{FIELD:…}` template syntax (untested).
+
+- **Saving a filled PDF form (10.0.0, 2026-11-03):** after `pdf_fill_form_fields`, save with format `pdf` to keep the fillable fields (AcroForm). Format `form` drops them: the file reopens as an editable document, not a form.
