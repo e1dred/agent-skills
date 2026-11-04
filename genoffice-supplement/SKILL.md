@@ -9,7 +9,7 @@ description: Use when editing .docx or other Office files with GenOffice (Docs e
 
 **Scope rule (strict):** this skill holds only things GenOffice's own bundled skills do not provide. It never copies or restates
 a GenOffice-provided skill (its generated `genoffice` skill, the ~45 recommended app skills). Read those first; this adds
-what running the app showed. Tested on GenOffice 0.12.446 (Linux AppImage), CLI and MCP, headless; the sweeps in `reference/` were re-run on 0.12.446 with the same results as on 0.12.117, the live-editor checks were not.
+what running the app showed. Tested on GenOffice 0.12.600 (Linux AppImage), CLI and MCP, headless; the sweeps in `reference/` were re-run on 0.12.446 and 0.12.600 with the same results as on 0.12.117, the live-editor checks were not.
 
 GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx), Sheets (.xlsx) and Slides (.pptx ops and the page-spec build) are covered, plus the conversions that reach the Markdown, HTML and PDF editors. The live editor (`open`, `selection`, writes to an open file) is covered too.
 
@@ -19,7 +19,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `docs-ops.md` | Word ops (`docs apply`): the sweep results, gaps closed, and the index of every op | Word-op sweep, 2026-10-27, GenOffice 0.12.117; Docs gaps closed; Op index |
+| `docs-ops.md` | Word ops (`docs apply`): the sweep results, gaps closed, and the index of every op | Word-op sweep, 2026-10-27, GenOffice 0.12.117; Docs gaps closed; Op index; New in 0.12.600: `remove_parts` (strip customXml / webExtensions metadata before filing) |
 | `sheets.md` | Spreadsheet ops (`sheet apply`) | Sheets sweep |
 | `slides.md` | Presentation ops (`slides apply`) | Slides sweep |
 | `markdown-html-pdf.md` | Converting and creating Markdown, HTML and PDF with the CLI | Markdown, HTML and PDF through the CLI |
