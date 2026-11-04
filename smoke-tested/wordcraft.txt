@@ -1,5 +1,4 @@
 # Command ids that were only SMOKE-TESTED: run without checking the effect (a render, a read-back or a comparison was not made, or only a changed/unchanged check). Goal: shrink this list by verifying each id properly and moving it out.
-caret.pageUp
 caret.pastCitation
 design.setDefault
 equation.delete
@@ -10,23 +9,7 @@ font.add
 font.loadSystem
 font.remove
 format.fontDialog
-hf.next
-hf.previous
-outline.showAll
-outline.showLevel1
-outline.showLevel2
-outline.showLevel3
-outline.showLevel4
-outline.showLevel5
-outline.showLevel6
-outline.showLevel7
-outline.showLevel8
-outline.showLevel9
 para.dialog
-readAloud.next
-readAloud.previous
-readAloud.skipCitations
-readAloud.stop
 references.researcher
 references.updateAuthorities
 references.updateFields
@@ -34,7 +17,6 @@ review.editor
 review.proofing
 styles.pane
 table.borderPainter
-tools.detachTemplate
 view.interfaceTheme
 view.newWindow
 view.split
