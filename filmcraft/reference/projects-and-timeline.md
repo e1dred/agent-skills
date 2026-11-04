@@ -61,14 +61,44 @@ A JSONL script keeps one session; `--project` on later CLI calls reopens the sav
 - `markers.add {"target":"program","name":"Review here","comment":"checked"}` → `{marker:14}`; one marker then
   appears in `sequence.inspect.markers`. `markers.addRange`, `markers.addChapter`, `markers.edit` exist (not run).
 - `file.save {}` after edits keeps the project at its current path; `file.saveAs` picks a new one.
+- Second round: `markers.markClip`, `markers.goToIn {"target":"program"}` and `markers.clearInOut` returned null and
+  changed nothing readable — they need a selected clip, and In/Out must be set first.
+
+## Transitions (second round, verified 0.17.0, 2026-11-04)
+
+- `sequence.applyVideoTransition {"clip":6,"effect":"cross_dissolve","frames":10,"edge":"in","align":"center"}` →
+  `{transition:8}`; `sequence.inspect` shows V1's transitions gain it.
+- `sequence.applyAudioTransition {"clip":7,"effect":"constant_power","frames":10,"edge":"in"}` → `{transition:9}`.
+- `effects.setDefaultTransition {"effect":"constant_gain"}` → `{audio:'constant_gain', video:'cross_dissolve'}` —
+  the pair used when a transition is added without naming one.
+
+## Video effects and keyframes (second round, verified)
+
+- `effects.list {"kind":"Video"}` → `{count:131}`; the other kinds are VideoTransition (112), Audio (58) and
+  AudioTransition (3).
+- `effects.setParam {"clip":6,"effect":"opacity","param":"opacity","value":60}` → `Float(100.0)` → `Float(60.0)`
+  in `sequence.inspect`; `effects.resetParam {"clip":6,"effect":"opacity","param":"opacity"}` back to 100.0.
+- `effects.toggleAnimation {"clip":6,"effect":"opacity","param":"opacity"}` → keyframes 0 → 1 (one at the playhead).
+- **Keyframes do not accept an arbitrary time:** `effects.addKeyframe {"clip":6,"effect":"opacity","param":"opacity",
+  "mediaTime":254016000000,"value":40}` returned `{added:false, mediaTime:0}` and setInterpolation/moveKeyframe/
+  deleteKeyframe/setKeyframe then refused "no keyframe at that time". Move the playhead and use
+  `effects.toggleAnimation` (or `graphics.set {…,"keyframe":true}` for title properties).
+- `effects.select` and `effects.reset {"clip":6,"index":1}` return null and change nothing you can read back.
+
+## Frame holds, selection and project notes (second round, verified)
+
+- `clip.frameHold {"clips":[6],"time":254016000000}` → `{clips:[14]}`; V1 goes
+  `[(6, 0–25)]` → `[(6, 0–25), (14, 25–75)]` — a still inserted at the time.
+- `timeline.select {"clips":[7],"linked":false}` → `{selection:[7]}`.
+- `project.notes {}` → `{text:''}`; `project.setNotes {"text":"…"}` sets it; `project.view.get` → the project panel's
+  available columns (`Name, Label, Media Type, …`).
 
 ## Other editing tools (named; not run here)
 
-`timeline.place` / `timeline.delete` / `timeline.select` / `timeline.move` / `timeline.roll` / `timeline.slip` /
+`timeline.place` / `timeline.delete` / `timeline.move` / `timeline.roll` / `timeline.slip` /
 `timeline.slide` / `timeline.rateStretch`, `playhead.step` / `playhead.start` / `playhead.end`, `markers.markIn` /
-`markers.markOut`, `effects.apply` / `effects.remove` / `effects.setParam` / `effects.addKeyframe`,
-`captions.newTrack` / `captions.add` / `captions.split` / `captions.setText`, `source.open` / `source.insert`,
+`markers.markOut`, `effects.apply` / `effects.remove`, `captions.split`, `source.open` / `source.insert`,
 `edit.undo` / `edit.redo` / `edit.cut` / `edit.copy` / `edit.paste`, `file.open`,
-`file.newProjectFromTemplate`, `file.importImageSequence`, `file.exportFrame`, `file.exportFcpxml`,
-`export.presets.list`, `sequence.settings`. Parameter docs come from `filmcraft-cli describe`; none was exercised
+`file.newProjectFromTemplate`, `file.importImageSequence`, `file.exportFrame`, `export.presets.list`,
+`sequence.settings`. Parameter docs come from `filmcraft-cli describe`; none was exercised
 in the first round.

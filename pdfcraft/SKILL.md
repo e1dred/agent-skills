@@ -31,8 +31,8 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `pages-and-documents.md` | Opening/saving in scripts, info fields, page insert/move/delete/rotate, extract, split, combine, metadata, batch, check, audit | Scripted documents; Pages; Metadata, batch and checks; Other document tools |
-| `text-comments-forms.md` | Extracting and searching text, word counts, comments and bookmarks, form authoring and filling, accessibility | Text and search; Comments and bookmarks; Forms; Accessibility |
+| `pages-and-documents.md` | Opening/saving in scripts, info fields, page insert/move/delete/rotate, extract, split, combine, metadata, batch, check, audit; page labels/boxes/transitions, watermark/header/footer, compare, flatten, reduce, protection, redaction, links, attachments, measurement, Bates, JavaScript, export | Scripted documents; Pages; Pages, labels and presentation; Documents: compare, flatten, reduce, hidden info, export; Security, redaction and signing; Links, attachments, measurement, JavaScript; Metadata, batch and checks; Other document tools |
+| `text-comments-forms.md` | Extracting and searching text, word counts, comments and bookmarks, form authoring and filling, accessibility | Text and search; Comments and bookmarks; Form authoring in depth; Accessibility |
 | `export-and-pdfa.md` | Page rendering, optimize, PDF/A convert and verify, output choices | Rendering; Optimize; PDF/A; Checks before handing a file over |
 | `newer-commands.md` | What each version added or changed | 0.18.1 |
 | `log.md` | Dated log of what was tested when | Log |
@@ -70,9 +70,18 @@ pdfcraft-cli run --script steps.json --root DIR --report
   readable root or use the CLI.
 - **OCR is not bundled here:** `ocr_status` → `available:false` (no model files in its search dirs).
 - `info` has no page-rotation field; prove a rotation by the rendered size (A4 at 50 dpi: 414×586 → 586×414).
+- **The redaction audit misses a faux redaction:** a black image over text (`page_add_image`) left it extractable
+  while `audit` still returned `{count:0}`. Only `redact_mark` + `redact_apply` removes text — check `text --page` after.
+- **Bookmarks are addressed by an integer `path`** (`[1]` = first top-level entry) and comment tools by `page` plus
+  the 1-based `index` from `comment_list`. Bookmark colour is `[r,g,b]` 0..1; `page_transition_set` style names are
+  capitalised ("Dissolve", not "fade").
+- **`doc_close` refuses a document with unsaved changes** — save, or pass `"discard_changes":true`.
+- **`form_detect_fields` finds blanks on printed forms, not AcroForm fields** — use `form_fields` for those.
+  `doc_protect`'s `printing` is `none|low|high`, and a permissions password blocks `doc_unprotect`.
 
 ## Verify before reporting
 
 `info` for page count/fields/pdfa, `text --page` for content, and `render` a page to look at. `check` round-trips
-through the engine; `audit` reports faux redactions. For form work, read the field values back with `form_fields`
+through the engine; `audit` scans for faux redactions but did not catch an image laid over text, so check the page
+text after redacting. For form work, read the field values back with `form_fields`
 (or qpdf's AcroForm JSON), never only the fill result.

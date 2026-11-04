@@ -31,9 +31,11 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `projects-and-timeline.md` | Projects, importing media, sequences, playhead, razor and trim, markers, saving | Projects and media; Sequences; Cutting and trimming; Markers and saving; Other editing tools |
-| `titles-and-graphics.md` | Text and shape layers, size/fit on small frames, reading layers back | Titles; Sizing and fitting; Layer properties |
-| `export.md` | Export presets, MP4/GIF export, frame stills, probing media | Presets; Exporting; Stills; Probing |
+| `projects-and-timeline.md` | Projects, importing media, sequences, playhead, razor and trim, markers, saving, transitions, video effects and keyframes, frame holds, project notes | Projects and media; Sequences; Cutting and trimming; Markers and saving; Transitions; Video effects and keyframes; Frame holds, selection and project notes; Other editing tools |
+| `titles-and-graphics.md` | Text and shape layers, size/fit on small frames, reading layers back, vertical text and imported images | Titles; Sizing and fitting; Layer properties; Other layer tools |
+| `audio-mixer.md` | Mixer strips, values, submixes, inserts and sends; clip gain and Essential Sound | Mixer; Clip audio |
+| `captions.md` | Subtitle tracks, adding/editing/moving captions, SRT import and export | Caption tracks and SRT |
+| `export.md` | Export presets and formats, the export queue, MP4/GIF export, frame stills, interchange exports, probing | Presets; Exporting; Presets and the export queue; Stills; Probing |
 | `newer-commands.md` | What each version added or changed | 0.17.0 |
 | `log.md` | Dated log of what was tested when | Log |
 
@@ -66,6 +68,15 @@ filmcraft-cli probe clip.mp4                     # kind, duration (ticks), video
   break sync: V2 is sync-locked and has a clip in the way" when a title sat on V2. Lock/unlock the other track first
   or trim without ripple.
 - `probe --image-sequence` only accepts numbered stills; on a movie it errors.
+- **`effects.addKeyframe` at an arbitrary `mediaTime` did nothing** (`{added:false, mediaTime:0}`), and
+  setInterpolation/moveKeyframe/deleteKeyframe then refused "no keyframe at that time": move the playhead and use
+  `effects.toggleAnimation`, or `graphics.set {…,"keyframe":true}` for title properties.
+- **`mixer.addInsert` needs a real audio effect id** (`hard_limiter`, from `effects.list {"kind":"Audio"}`), not a
+  label such as `volume`; `mixer.addSend` needs the submix `ref` from `mixer.addSubmix` in the same run.
+- **`graphics.alignFrame.*` and `graphics.deleteLayer` need a graphic layer open and selected** in the monitor —
+  headless runs answer "no graphic clip".
+- **FCPXML export can drop a title:** `file.exportInterchange {"format":"fcpxml"}` reported the graphic clip
+  "not supported" while still writing the file; read the report before trusting an interchange export.
 - `--demo` opens the built-in demo project: it inspects and renders (a 1920×1080 frame at 1 s), exported fine only
   as far as tested; missing media exports as placeholder frames unless `--allow-offline` accepts them.
 - `file.exportMedia` waits for its file unless `"wait":false`; the CLI `export` always waits.

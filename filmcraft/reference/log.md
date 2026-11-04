@@ -10,3 +10,9 @@ Part of the filmcraft skill. The short front page is `../SKILL.md`; the sections
   clip.audioGain, essentialSound.setType/set, graphics.newText, graphics.set (size fit), boxed text, graphics.list,
   markers.add, file.save/saveAs, project/sequence.inspect, probe, export mp4/gif, render stills. Control channel and
   MCP documented from the repo, not exercised.
+- 2026-11-04 (second round, FilmCraft 0.17.0): 60 command ids run headless, each with the same field read before and
+  after — 37 verified, 7 read-ok, 9 no-effect, 4 refused, 3 blocked. Video and audio transitions, default transition,
+  effect parameters and animation toggles, frame hold, timeline selection, project notes, the full mixer (values,
+  strips, submixes, inserts, sends), captions (add/edit/times/move/duplicate/delete, SRT in and out), export presets,
+  resolve, the export queue, and FCPXML/OTIO/FCP7 XML/ALE/OMF interchange. Keyframes at an arbitrary mediaTime and
+  graphic-layer alignment did not work headless.

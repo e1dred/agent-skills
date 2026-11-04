@@ -35,3 +35,13 @@ not wrap, boxed paragraph text does.
 box, quad, anchor, effectIndex, enabled}]}`; `graphics.selectLayer`, `graphics.moveLayers {"layers":[0],"delta":[dx,dy]}`,
 `graphics.arrangeLayer {"to":"front|back|forward|backward"}` reorder them. `graphics.set` changes what a later
 `graphics.list` shows — use that, and `render --seconds S`, to verify a title instead of trusting the create result.
+
+## Other layer tools (second round, verified 0.17.0, 2026-11-04)
+
+- `graphics.newVerticalText {"text":"V","size":20}` → a new graphic clip whose layer is vertical text (shown as such
+  in `graphics.list`).
+- `graphics.newFromFile {"path":"stamp.png"}` → `{clip:12, item:11}` — imports the image into the project and places
+  it as a graphic layer.
+- `graphics.alignFrame.hcenter {"layers":[0]}` answered "no graphic clip / select a graphic layer" and
+  `graphics.deleteLayer {"clip":12,"layer":0}` answered "no graphic clip" in headless runs: both need a graphic layer
+  open and selected in the monitor, which a CLI run cannot set up.
