@@ -28,7 +28,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `recipes.md` | End-to-end drawings: a metre-unit floor plan on A3, a parametric plate at true 1:1 | Round 5: end-to-end recipe, a metre-unit floor plan on an A3 sheet; Parametric ECO plate drawing on an A3 sheet at true 1:1 |
 | `live-window.md` | Driving the running CadCraft window through its bridge: connecting, clicks, screenshots, a real drawing open live | Live window; Round 6: live window; Round 9: a real drawing in the live window |
 | `dwg-files.md` | Opening, editing and saving real AutoCAD DWGs: dynamic blocks, layouts, save versions, constraints | Round 10: a real AutoCAD DWG from another program; Round 11: save versions and the last open items; Round 12: two more AutoCAD DWGs, 2010 format |
-| `command-sweeps.md` | Probes of every remaining command id and the last 62 smoke-tested ids | Round 13: the remaining command ids; The last 62 command ids |
+| `command-sweeps.md` | Probes of every remaining command id and the last 62 smoke-tested ids | Round 13: the remaining command ids; The last 62 command ids; Verified in detail, CadCraft phase 2 |
 | `newer-commands.md` | What each version added or changed, with exact parameters: oops, -wblock, plot devices, portable fonts, layout save-as, named viewports | 0.15 changes; 0.17 changes; Newer commands |
 | `log.md` | Dated log of what was tested when | Log |
 

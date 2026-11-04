@@ -16,7 +16,7 @@ CLI = os.environ.get("CADCRAFT_CLI", os.path.expanduser("~/AppImages/cadcraft-cl
 def run(cmds, metric=True, save=None, export=None, file=None, cwd=None):
     args = [CLI, "run"] + ([file] if file else (["--metric"] if metric else []))
     for name, params in cmds:
-        args += ["--cmd", f"{name} {json.dumps(params)}" if params is not None else name]
+        args.append("--cmd=" + (f"{name} {json.dumps(params)}" if params is not None else name))  # "=" so ids like -block are not read as flags
     if save: args += ["--save", save]
     if export: args += ["--export", export]
     p = subprocess.run(args, capture_output=True, text=True, cwd=cwd)

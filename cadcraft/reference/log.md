@@ -21,3 +21,4 @@ Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections 
 - 2026-10-26: label-clearance touch-up of a finished schematic (text-box vs segment check, `move` deltas, render comparison).
 - 2026-10-27: parametric ECO plate (Config_Params.txt), block files with attributes, true 1:1 A3 PDF (fit:false), radius text override.
 - 2026-10-28: CLI refreshed; five drawings (shapes and text, dimensions and hatch, blocks, copy/offset/mirror/array, the relay-lamp example) built with the old and new CLI: identical DXF (handles aside), `info`, SVG and PDF pixels. Three new commands verified (below); live window re-checked on a scratch drawing (`new_drawing`, `execute`, `inspect_drawing`, `render`, `close`).
+- 2026-11-03: phase 2 on 0.17.0: 60 smoke-tested ids verified by read-backs (list/getvar/DXF), 2 left; ccrun.py now passes --cmd=… so dash ids work.
