@@ -75,3 +75,14 @@ texttofront.dimensions texttofront.leaders texttofront.text vports.1 vports.2 vp
 ## Verified in detail, CadCraft last id (0.17.0, 2026-11-03, headless) (1 ids)
 > **Method:** `--cmd=-plottermanager {…}` with an isolated HOME/XDG config, read back with its own list/get actions.
 - **-plottermanager.\*** (1): `-plottermanager` takes the same JSON as `plottermanager` (the "typed option prompts" note is about the command line only): `{}` lists the 3 built-in devices (CADCraft PDF, PNG, SVG); `{"action":"new","name":"T1","output":"pdf"}` made a user device (25 papers); `{"action":"set","name":"T1","paper":{"name":"Square","width":200,"height":200}}` added a paper (26, margins 0); `get` read it back; `{"action":"delete","name":"T1"}` -> `{deleted:"T1"}` and the list was back to the 3 built-ins (run with an isolated HOME/XDG config).
+
+## Ten ids that were only named as ordinary words (0.17.0, 2026-11-03, headless)
+> Found when `coverage.sh` was made stricter for CadCraft: these ids appeared in the skill only as English words ("join the working set", "a new drawing"), so the old count credited them without documenting them. Run with `--cmd=ID {…}` and read back.
+- `join {"handles":[…]}` joins touching lines and arcs into one LWPOLYLINE: three lines (0,0)-(10,0), (10,0)-(20,0), (20,0)-(20,10) became one 4-vertex polyline (handle 103); two COLLINEAR lines also give a 3-vertex polyline, not one longer LINE. `join {"handles":[arc],"close":true}` turned a 90° arc into a CIRCLE.
+- `new {"metric":true}` opens another drawing ("Drawing2", index 1) and makes it current: MEASUREMENT 1, INSUNITS 4 (mm); the first drawing stays open.
+- `base {"at":[5,7]}` sets the drawing's insertion base point: INSBASE (0,0,0) -> (5,7,0) (`getvar`).
+- `dim {"p1","p2","at"}` draws a linear DIMENSION (`list` shows kind linear, measurement 20 for p1 (0,0), p2 (20,0)).
+- `snap {"on":true}`: SNAPMODE 0 -> 1, message "<Snap on>".
+- `polar {"on":false}` / `{"on":true}`: AUTOSNAP 61 -> 53 -> 61 (bit 8 = polar tracking; it is on by default).
+- `status {}` returns a text report: object count, model-space limits and extents, current layer, colour and linetype.
+- Not verifiable here, with the reason: `redraw {}` (screen repaint only, returns nothing), `attach` ("not available yet: raster images and PDF/DWF/DGN underlays can't be shown yet"), `grip` (interactive only; JSON callers use `grip.stretch|move|rotate|scale|mirror`, verified above).

@@ -1,7 +1,8 @@
 #!/bin/sh
 # Print the "commands documented" figure for each skill, measured against the installed CLIs. Read-only.
 # Usage: ./coverage.sh            (CLIs in $AIMG, default ~/AppImages)
-# A command counts as documented when its id (a leading "-" counts, as in cadcraft `-block`) appears anywhere in the skill's text. That is a lower bound on
+# A command counts as documented when its id (a leading "-" counts, as in cadcraft `-block`) appears anywhere in the skill's text
+# (CadCraft: only where it is written as a command, see cadtokens below). That is a lower bound on
 # what the skill teaches (a workflow can be described without naming every command) and an upper bound on
 # what was tested (an id can be named without being run). Unit: engine commands for the Craft apps,
 # MCP tools for ONLYOFFICE (names listed in onlyoffice/tool-names.txt).
@@ -10,6 +11,28 @@ repo=$(cd "$(dirname "$0")" && pwd)
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
 tokens() { grep -rIhoE --exclude='tool-names.txt' --exclude-dir='__pycache__' -e '-?[A-Za-z0-9_][A-Za-z0-9_.]*' "$1" | LC_ALL=C sort -u; }
+
+# CadCraft ids are often plain words (line, copy, join), so for CadCraft an id counts only where it is written as a
+# command: any word in a fenced code block, the leading id (or `a|b|c` group of ids) of an inline code span, or a
+# quoted string in a tools/*.py file. "join the working set" in prose no longer counts as documenting `join`.
+cadtokens() {
+    python3 -I - "$1" <<'EOF' | LC_ALL=C sort -u
+import pathlib, re, sys
+ID = r"-?[A-Za-z0-9_][A-Za-z0-9_.]*"
+out = set()
+for f in pathlib.Path(sys.argv[1]).rglob("*"):
+    if not f.is_file() or "__pycache__" in f.parts: continue
+    t = f.read_text(errors="ignore")
+    if f.suffix == ".py":
+        out |= set(re.findall(r"""["'](%s)["']""" % ID, t))
+    elif f.suffix == ".md":
+        for block in re.findall(r"```.*?\n(.*?)```", t, re.S): out |= set(re.findall(ID, block))
+        for span in re.findall(r"`([^`\n]+)`", re.sub(r"```.*?```", "", t, flags=re.S)):
+            m = re.match(r"\s*(?:--cmd[= ]'?)?(%s(?:\|%s)*)" % (ID, ID), span)
+            if m: out |= set(m.group(1).split("|"))
+print("\n".join(out))
+EOF
+}
 
 for app in wordcraft gridcraft deckcraft photocraft cadcraft; do
     cli="$dir/$app-cli"; [ -x "$cli" ] || { echo "$app: no CLI at $cli" >&2; continue; }
@@ -20,7 +43,7 @@ for app in wordcraft gridcraft deckcraft photocraft cadcraft; do
     else
         "$cli" commands 2>/dev/null | grep -oE '^[a-z][A-Za-z0-9]*\.[A-Za-z0-9.]+'
     fi | LC_ALL=C sort -u > "$tmp/$app.all"
-    tokens "$repo/$app" > "$tmp/$app.tok"
+    if [ "$app" = cadcraft ]; then cadtokens "$repo/$app"; else tokens "$repo/$app"; fi > "$tmp/$app.tok"
     total=$(wc -l < "$tmp/$app.all"); have=$(LC_ALL=C comm -12 "$tmp/$app.all" "$tmp/$app.tok" | wc -l)
     printf '%-11s %-7s %4s / %-4s commands documented (%s%%)\n' "$app" "$ver" "$have" "$total" "$((100 * have / total))"
 done
