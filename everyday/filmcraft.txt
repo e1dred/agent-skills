@@ -1,0 +1,30 @@
+Create or open a project | file.newProject file.open file.openDemoProject
+Import video, audio or images | file.import file.importImageSequence
+Make a sequence from a clip | file.newSequenceFromClip
+Create an empty sequence | file.newSequence sequence.settings
+Read the project or sequence | project.inspect sequence.inspect
+Move the playhead | playhead.set playhead.step playhead.start playhead.end
+Cut a clip at the playhead | timeline.razor
+Trim a clip's edge | timeline.trim trim.selectEditPoint
+Nudge the selected edit by frames | trim.forward trim.backward
+Add a default transition | trim.applyDefaultTransition
+Move or delete a clip on the timeline | timeline.move timeline.delete
+Ripple, roll, slip or slide an edit | timeline.roll timeline.slip timeline.slide
+Change a clip's speed | timeline.rateStretch
+Open a clip in the Source monitor | source.open
+Insert or overwrite from the Source monitor | source.insert
+Undo or redo an edit | edit.undo edit.redo
+Copy, cut and paste clips | edit.cut edit.copy edit.paste
+Add a title | graphics.newText
+Change a title's text or size | graphics.setText graphics.set graphics.setTextType
+Read the layers of a title | graphics.list
+Add a shape | graphics.newShape
+Add a marker | markers.add markers.markIn markers.markOut
+Set a clip's audio level | clip.audioGain
+Tag and mix a clip's audio | essentialSound.setType essentialSound.set
+Apply an effect or keyframe | effects.apply effects.setParam effects.addKeyframe
+Add captions | captions.newTrack captions.add captions.setText
+Save the project | file.save file.saveAs
+Export the sequence | file.exportMedia
+Export a still frame | file.exportFrame
+List or choose export presets | export.presets.list

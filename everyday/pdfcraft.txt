@@ -1,0 +1,30 @@
+Open a PDF and read its summary | doc_open doc_info
+Extract the text of a PDF | text_extract
+Find words or phrases in a PDF | text_find
+Count words per page | text_word_count
+Render a page as a picture | page_render
+Rotate pages | page_rotate
+Delete pages | page_delete
+Insert a blank page | page_insert_blank
+Move pages | page_move
+Extract or split pages | page_extract doc_split
+Combine PDFs or add pages from another | doc_combine page_insert_file
+Set the title/author metadata | doc_set_info
+Save the edited PDF | doc_save
+Optimize a PDF | doc_optimize
+Convert to PDF/A | pdfa_convert pdfa_verify
+Run the file checks | doc_batch doc_audit_redactions
+Redact sensitive text | redact_mark redact_apply
+Protect or unprotect a PDF | doc_protect doc_unprotect
+Print a PDF | doc_print
+Add a hyperlink | link_add link_list
+Attach a file to a PDF | attachment_add
+Highlight and comment on text | comment_add comment_list
+Add bookmarks | bookmark_add bookmark_list
+Fill a form in a PDF | form_fill form_fields
+Create a form field | form_add_field form_reset
+Check accessibility | accessibility_check
+Measure a distance on a plan | measure_distance measure_export
+OCR a scanned PDF | ocr_recognize ocr_status
+Export text or page images | doc_export_text doc_export_images
+Add text or an image to a page | page_add_text page_add_image
