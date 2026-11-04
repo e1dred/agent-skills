@@ -1,9 +1,5 @@
 # Command ids that were only SMOKE-TESTED: run without checking the effect (a render, a read-back or a comparison was not made, or only a changed/unchanged check). Goal: shrink this list by verifying each id properly and moving it out.
-caret.pastCitation
 design.setDefault
-equation.delete
-equation.normalText
-equation.structureActions
 file.print
 font.add
 font.loadSystem
@@ -12,7 +8,6 @@ format.fontDialog
 para.dialog
 references.researcher
 references.updateAuthorities
-references.updateFields
 review.editor
 review.proofing
 styles.pane
