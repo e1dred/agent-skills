@@ -47,3 +47,7 @@ view.zoomToSelection
 - **home.\*** (1): `home.addIns` informational only by design: always `{addIns:[],hint:"Use gridcraft-cli mcp or Automate > scripts"}` (GridCraft extends through MCP and scripts).
 - **view.\*** (1): `view.macros` headless: `[]` at first; after `automate.recordActions {}` … `{"stop":true,"name":"S1"}` it listed `[{name:"S1",steps:1,trusted:true}]`. Macros made with `macro.record` are listed by `macro.list`, not here.
 - **Still smoke-tested (5):** `pageLayout.themeEffects` (no part of the saved file changes), `view.formulaBar`, `view.ruler`, `view.showObjects`, `view.arrangeAll` (no readable state; need a screenshot of the visible window).
+
+## Checked, no effect in this version (GridCraft 0.16.0, 2026-11-03) (1 ids)
+> **Method:** run headless and live; the saved file, a chart render and the app state compared; the engine source read (a second agent found the handler, and it was re-checked here).
+- **pageLayout.\*** (1): `pageLayout.themeEffects` checked, does nothing in 0.16.0: the engine handler is `|_, _| ok()` (crates/engine/src/cmd/extra.rs); with each of Office/Subtle/Flat/Craft the saved .xlsx was byte-identical, the exported PDF of a chart identical, and the live app's `document.inspect`/`ui.inspect` unchanged.

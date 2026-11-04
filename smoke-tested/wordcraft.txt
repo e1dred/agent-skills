@@ -1,5 +1,4 @@
 # Command ids that were only SMOKE-TESTED: run without checking the effect (a render, a read-back or a comparison was not made, or only a changed/unchanged check). Goal: shrink this list by verifying each id properly and moving it out.
-design.setDefault
 file.print
 font.loadSystem
 references.researcher
