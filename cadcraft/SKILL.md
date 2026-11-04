@@ -54,4 +54,4 @@ cadcraft-cli commands [FILTER]                  # JSON: id, label, params string
 - Unknown or unloaded linetype in `layer.new` fails the whole run.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
-- Not possible or not available: authoring dynamic blocks (no commands, UI only), a second CadCraft version (0.13.0 is the latest release). Not tested: VectorCraft.
+- Not possible or not available: authoring dynamic blocks (no commands, UI only). Not tested: VectorCraft.
