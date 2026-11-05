@@ -1,0 +1,34 @@
+Draw shapes | shape.rectangle shape.ellipse shape.polygon shape.star shape.line
+Draw arcs, spirals, flares and grids | shape.arc shape.spiral shape.flare shape.rectangularGrid shape.polarGrid
+Build and edit paths | path.create path.freehand path.moveAnchor path.setHandle
+Close, join or cut paths | path.close path.join path.lineCut path.split
+Simplify or smooth a path | object.path.simplify object.path.smooth object.path.cleanUp
+Offset or outline strokes | object.path.offsetPath object.path.outlineStroke
+Combine shapes with Pathfinder | object.pathfinder.unite object.pathfinder.minusFront object.pathfinder.intersect
+Divide, trim or crop shapes | object.pathfinder.divide object.pathfinder.trim object.pathfinder.crop
+Merge regions with Shape Builder | shapeBuilder.merge shapeBuilder.regions
+Make and paint a Live Paint group | livePaint.make livePaint.fill livePaint.expand
+Apply or create a brush | brush.list brush.apply brush.new
+Warp or distort art | object.envelope.makeWithWarp object.liquify object.puppetWarp
+Clip, group and compound art | object.clippingMask.make object.group object.ungroup object.compoundPath.make
+Arrange, lock, hide and isolate | object.arrange.bringToFront object.arrange.sendToBack object.lock object.isolate
+Move, rotate, scale or reflect | object.move object.rotate object.scale object.reflect
+Set an exact position and size | object.setBounds object.setProps
+Align and distribute | object.align object.distribute select.key
+Type point text | text.create text.setText text.getRange
+Type in a frame or on a path | text.areaOptions text.createInPath text.fitHeadline
+Thread text through frames | text.thread.create text.thread.add text.thread.info
+Style characters and paragraphs | text.setRangeStyle charStyle.new charStyle.apply paraStyle.new paraStyle.apply
+Outline type or change case | type.createOutlines type.changeCase type.step
+Check fonts and replace missing ones | text.fonts text.fontList text.missingFonts text.replaceFont
+Fill with colour, gradient or pattern | paint.setFill paint.setStroke paint.editGradient object.pattern.make
+Manage swatches and libraries | swatch.new swatch.edit swatch.delete swatch.library.add
+Add live effects and bake them | effect.apply effect.setParams effect.expandAppearance
+Set opacity, blend modes and masks | transparency.set transparency.info transparency.makeOpacityMask transparency.editOpacityMask
+Save a look as a graphic style | graphicStyle.new graphicStyle.apply graphicStyle.library
+Create and manage layers | layer.new layer.newSublayer layer.setProps layer.move
+Create and arrange artboards | artboard.new artboard.move artboard.rearrange
+Make and use symbols | symbol.new symbol.place symbol.spray symbol.selectInstances
+Open, place and link files | document.open file.place links.relink links.update
+Save, template, export and package | document.save file.saveAsTemplate document.export file.package
+Read the document model back | document.inspect document.json document.node document.find

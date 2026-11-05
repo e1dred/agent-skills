@@ -8,8 +8,7 @@ happen in the editor.
 It holds working notes collected from real tasks: how to enable and connect the server from outside the
 app, live vs headless behaviour, Word macro API details that work, traps, verification, and recipes.
 
-Tested with ONLYOFFICE Desktop Editors 10.0.0 (Flathub flatpak, Linux) and its AI-tools server
-2.0.0-native. Unofficial: not affiliated with Ascensio System SIA / ONLYOFFICE.
+The version it was last tested on is at the top of `SKILL.md`. Unofficial: not affiliated with Ascensio System SIA / ONLYOFFICE.
 
 ## Helper scripts
 

@@ -55,4 +55,4 @@ cadcraft-cli commands [FILTER]                  # JSON: id, label, params string
 - Ids that start with `-` (`-block`, `-group`, `-plottermanager`) must be passed as `--cmd=-block {…}` (with `=`); `--cmd -block` is read as a CLI flag ("unexpected argument '-b'"). `tools/ccrun.py` does this.
 - PNG export is dark and thin: not for documents.
 - Handles are strings; commands that need entities (`block`, `trim`, `hatch`) need the handles from earlier results (use `{last}` or collect them).
-- Not possible or not available: authoring dynamic blocks (no commands, UI only). Not tested: VectorCraft.
+- Not possible or not available: authoring dynamic blocks (no commands, UI only). For vector illustration (not CAD) use the vectorcraft skill.

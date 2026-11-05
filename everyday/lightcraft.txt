@@ -1,0 +1,36 @@
+Open a library and read its summary | library.info catalog.stats
+Import photos from a folder | library.import library.importPreview
+Watch a folder and import new photos | library.autoImport library.autoImportScan
+Find photos that went missing | library.findMissing library.missing
+Filter the grid by rating, flag or text | library.filter library.clearFilter
+Sort the grid | library.sort library.shuffle
+Show Picks, Recently Added or an album | library.source
+Select photos by rating, flag or label | library.selectBy library.select library.selectAll
+Cull a shoot with ratings and flags | photo.rate photo.pick photo.reject photo.flag
+Colour-label photos | photo.label photo.clearLabel
+Change exposure, contrast and colour | develop.set develop.adjust develop.controls
+Apply automatic settings | develop.auto develop.autoBwMix
+Copy a look from one photo to others | develop.copy develop.paste develop.sync
+Reset one slider or a whole section | develop.resetControl develop.resetSection develop.reset
+Set white balance | develop.wb develop.wbPick
+Shape a tone curve | develop.curve curve.applyPreset curve.savePreset
+Apply or save a develop preset | preset.apply preset.create preset.export
+Crop, straighten and lock an aspect ratio | crop.set crop.straighten crop.aspect crop.rotateAspect
+Fix perspective and level lines | geometry.upright geometry.guides
+Mask the sky or subject and adjust it | mask.add mask.adjust mask.brushStroke
+Save a mask look as a reusable effect | mask.saveEffect mask.applyEffect
+Remove dust, spots and blemishes | spot.add spot.findDust spot.delete
+Fix red eye | redeye.add redeye.delete
+Add keywords to photos | keyword.create keyword.toggleShortcut keyword.suggest
+Use keyword sets nine at a time | keyword.saveSet keyword.useSet keyword.toggleFromSet
+Group photos into albums and smart albums | album.create album.addPhotos album.createSmart
+Stack a burst | stack.auto stack.group stack.toggle
+Keep a version before trying a look | version.create version.restore version.delete
+Undo or redo an edit, step through history | edit.undo edit.redo history.previous history.next
+Export JPEGs, TIFFs or PSDs | app.export export.savePreset export.checkTarget
+Make a contact sheet PDF | export.contactSheet
+Lay out prints and write a print PDF | print.set print.cell.add print.exportPdf print.template.save
+Make a slideshow PDF or video | slideshow.playback slideshow.export slideshow.templates.save
+Merge a panorama or an HDR set | merge.panorama merge.hdr merge.hdrBatch
+Set title, copyright, GPS and capture time | photo.setMeta photo.setCaptureTime
+Rename files from a token template | photo.rename photo.renameTokens
