@@ -1,0 +1,15 @@
+Start a document with size, margins, bleed and facing pages | file.new document.inspect
+Put a running footer and page number on a parent page | frame.create layout.pages.applyParent
+Make and apply paragraph and character styles | style.paragraph.create style.paragraph.apply style.character.create style.character.apply
+Thread text between frames | frame.create text.select story.get
+Build a table from tab-separated text | table.convertFromText table.options table.get
+Merge cells and style a table | table.merge table.setCell style.cell.create style.cell.apply style.table.create
+Set row heights and column widths | table.setRowHeight table.setColumnWidth
+Create CMYK and spot swatches | swatch.create swatch.options
+Fill and stroke frames | object.fill object.stroke
+Place an image or PDF | place.load place.drop file.place
+Export a print PDF (PDF/X-4, bleed, crop marks) | file.exportPdf
+Export IDML, EPUB, PPTX or HTML | file.exportIdml file.exportEpub file.exportPptx file.exportHtml
+Merge data from a CSV | data.source.select data.placeholder.add data.merge
+Make a table of contents | toc.generate
+Save the document | file.saveAs file.save
