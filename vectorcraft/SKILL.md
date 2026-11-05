@@ -5,11 +5,11 @@ description: Use when drawing, editing, tracing or converting vector artwork —
 
 # VectorCraft
 
-Field notes from the first full headless round, last tested on **VectorCraft 0.21.0**
+Field notes from the first full headless round, last tested on **VectorCraft 0.21.1**
 (Linux binary `vectorcraft-cli`). VectorCraft is a vector illustration app written in Rust; the
 CLI, the MCP server and the app's control channel run the same engine commands. If
 `vectorcraft-cli --version` reports a newer build, re-check the ids and params here before relying
-on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 has 911; see
+on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918; see
 `reference/newer-commands.md`).
 
 ## Setup
@@ -46,8 +46,8 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 has 911; see
 | `layers-artboards-symbols.md` | Layers/sublayers, artboards, symbols and instances, datasets/variables, guides |
 | `transform-align.md` | move/rotate/scale/reflect/shear/transform, setBounds, align, distribute, pathfinder-style stacking |
 | `import-export.md` | open, save, export and convert in every readable/writable format, place, PDF, print, package |
-| `command-catalogue.md` | Every id (911), grouped by family, with this round's status and the field that changed |
-| `newer-commands.md` | What 0.17.0 → 0.21.0 added and changed |
+| `command-catalogue.md` | Every id (918), grouped by family, with this round's status and the field that changed |
+| `newer-commands.md` | What 0.17.0 → 0.21.0 → 0.21.1 added and changed |
 | `log.md` | Dated log of what was tested when, and what is still unverified |
 
 ## The document model (verified)
@@ -67,7 +67,7 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 has 911; see
 ## CLI essentials (verified)
 
 ```
-vectorcraft-cli commands                     # the whole catalogue as JSON (911 entries)
+vectorcraft-cli commands                     # the whole catalogue as JSON (918 entries)
 vectorcraft-cli info drawing.svg             # warnings, artboards, object counts, fonts
 vectorcraft-cli convert in.svg out.pdf --artboard 0
 # a script of steps, one JSON object per line:
@@ -104,6 +104,8 @@ vectorcraft-cli convert in.svg out.pdf --artboard 0
 - **Effects are live.** `effect.apply {effect:"stylize.dropShadow"}` records an appearance effect;
   `effect.expandAppearance` bakes it, and refuses when the appearance is basic.
 - **Exporting `.txt` writes the type only** (one line per type object), not a dump of the art.
+- **Colours are `#rrggbb`** (or `[r,g,b]`, `{c,m,y,k}`, `{gray}`, `{l,a,b}`). Since 0.21.1
+  `#rrggbbaa` / `#rgba` are refused (`bad color`); set opacity separately.
 - **Hidden layers**: exports keep hidden layers, as SVG `data-*` attributes; `convert` has
   `--hidden-objects layer|omit|visible` for `.ai` output.
 
@@ -116,3 +118,6 @@ its exact error. Refusals cluster in features that need preconditions this harne
 (clip groups, envelopes, Live Paint groups, datasets/variables, model-less presets) and in two
 headless-absent features: Data Recovery (needs Preferences folders) and PDF/DXF inspection of
 synthetic fixtures. See `reference/log.md` for the per-family picture.
+
+0.21.1 (2026-11-05): old-vs-new regression clean; the 7 new ids run and checked (6 verified,
+1 read-ok), glyph alternates checked by render.

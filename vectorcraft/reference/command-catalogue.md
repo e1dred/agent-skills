@@ -1,6 +1,6 @@
-# VectorCraft command catalogue (0.21.0) — 911 ids
+# VectorCraft command catalogue (0.21.1) — 918 ids
 
-Generated from `vectorcraft-cli commands` and this round's evidence. Status per id:
+Generated from `vectorcraft-cli commands` and this round's evidence (0.21.0, 2026-11-04); the seven ids new in 0.21.1 were run on 2026-11-05. Status per id:
 **verified** = the same field read before/after (inspect + document model); **read-ok** = a read/list returned real data;
 **ran** = accepted, effect not a readable field; **refused** = the exact error is quoted in `results.jsonl`.
 The params column is the first part of the command's own parameter doc; run `vectorcraft-cli commands` for the full text.
@@ -161,7 +161,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `object.slice.select` | verified | {slices?: [id…] (user slice ids or ids of objects with an object slice; none: deselect the slices), toggle?: bool (Shift: add the unselected… | `inspect.selection[0]`: 2 → <removed> |
 | `object.vectorHalftone` | verified | {shape?: "circle"\|"ellipse"\|"square"\|"diamond"\|"line" (circle), frequency?: lines per inch 1–300 (20), angle?: deg (45; CMYK: the black … | `inspect.layers{id=1}.bounds.width`: 400.0 → 399.82185051202197 |
 
-## addon (59)
+## addon (62)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -224,8 +224,11 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `addon.pen.reshape` | verified | {id, subpath?: index (0), segment: index, t?: 0..1 (where it was grabbed, 0.5; held to 0.05..0.95), dx, dy: pt, mode?: "free" (both handles … | `inspect.layers{id=1}.children{id=2}.bounds.width`: 200.0 → 200.63777722999333 |
 | `addon.pen.nextSegment` | ran | {curved: bool} whether a click with the Smart Pen Tool adds a curved segment or a straight one (the tool's `next` option, kept with the pref… | no change in inspect/json; result={"next": "straight"} |
 | `addon.pen.closeJoin` | refused | {} with exactly two open path ends direct-selected, join them as path.join does; else close the selected open paths keeping their ends' hand… | vectorcraft-cli: step 9 (addon.pen.closeJoin): invalid parameters for `addon.pathtools.close`: selec |
+| `addon.document.batchTraceFolder` | verified | {folder, destinationFolder, preset?, expand?, format?: vectorcraft\|svg\|pdf\|ai\|eps, includeSubdirs?} trace every image in a folder and save each… | 2 PNGs → `traced` 2, `failed` []; a .txt in the folder is skipped silently; a second run wrote `box-2.svg` (no replace); Default preset traces black-and-white |
+| `addon.select.byArtboards` | verified | {artboards: [index…], relation?: overlap\|inside\|outside} | 3 rectangles, artboard 1: overlap → count 2, inside → 1, outside → 1 |
+| `addon.type.textTweaker` | verified | {attribute?: size\|baselineShift\|rotation\|hScale\|vScale\|tracking\|leading\|strokeWidth, from?, to?, shape?: straight\|ease\|bow\|spike\|random, seed?, skipSpaces?, id?, start?, end?, ids?} | "Ramp up" size 12→36: runs 12, 16.8, 21.6, 26.4, (space 12), 31.2, 36 → `{count:5}` |
 
-## select (53)
+## select (55)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -282,6 +285,8 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `select.editSaved` | refused | {name, newName?: rename, delete?: bool} \| {edits: [{name, newName?, delete?}…]} rename or delete saved selections, all in one undo step; na… | vectorcraft-cli: step 9 (select.editSaved): command `select.editSaved` is not available right now: n |
 | `select.savedList` | ran | {} → [name…] for the active document | no change in inspect/json; result=[] |
 | `select.object.slices` | verified | {} select every user and object slice → {count} | `inspect.selection[0]`: 2 → <removed> |
+| `select.globalEditExclude` | verified | {id} while Global Edit is on, leave that object out | Global Edit on 3 rects (ids 2,3,4); exclude 4 → `{active:true,count:2}`; exclude 3 → `{active:false,count:0}` (ends below two) |
+| `select.same.textFillAndStrokeColor` | verified | {} | three texts, two red: select the first → `{count:2}` |
 
 ## document (35)
 
@@ -362,7 +367,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `path.lineCut` | refused | {from: [x,y], to: [x,y]} split the selected paths and compound paths along the line through both points, extended across the art: filled sha… | vectorcraft-cli: step 9 (path.lineCut): invalid parameters for `path.lineCut`: missing point `from`  |
 | `path.rectCut` | ran | {rect: [x, y, width, height]} or {from: [x,y], to: [x,y]} (opposite corners) crop the selected paths and compound paths to the rectangle as … | no change in inspect/json; result={"ids": [], "removed": 0} |
 
-## text (33)
+## text (35)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -399,6 +404,8 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `text.tabs.clear` | ran | {ids?\|id?, start?: byte, end?: byte} | no change in inspect/json; result={"stops": 0} |
 | `text.setFormat` | refused | {ids?\|id?, kerning?: 1/1000 em\|"auto"\|"optical", baselineShift?: pt, hScale?: %, vScale?: %, rotation?: deg, underline?, strikethrough?, … | vectorcraft-cli: step 9 (text.setFormat): invalid parameters for `text.setFormat`: nothing to change |
 | `text.convertListToText` | ran | {ids?\|id?, start?: byte, end?: byte} (Type › Bullets and Numbering › Convert to Text: the paragraphs of the selected type, or of `ids`, or … | no change in inspect/json; result={"converted": 0, "ids": [], "inserted": []} |
+| `text.glyphAlternates` | read-ok | {id, start: byte} → {char, font, style, default, chosen, alternates:[{gid, feature}]} | Source Sans 3 "g" → aalt 769, 1504; "a" → 710, 739, 1498; "1" → 4 alternates |
+| `text.setGlyphAlternate` | verified | {id, start: byte, gid: glyph id\|null} | g→769, a→710, 1→1378: `chosen` 34 → 769; render shows single-storey g and a; gid 999 refused: `glyph 999 is not an alternate of g in Source Sans 3 Regular` |
 
 ## edit (30)
 

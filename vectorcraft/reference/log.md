@@ -1,5 +1,13 @@
 # Log — VectorCraft first full round
 
+## 2026-11-05 — `vectorcraft-cli` 0.21.1
+
+Old-vs-new regression (`~/.local/share/craft-regression/vectorcraft.sh`: shapes, pathfinder,
+text, appearance, symbols cases + svg/pdf/ai/eps/dxf conversions) clean on both CLIs; differences
+only `document.json` version 1→2, 1e-6 rounding in DXF, `.ai` with Illustrator editing data.
+The 7 new ids were run individually; results in `command-catalogue.md`. Not re-run: the other
+911 ids beyond the regression cases.
+
 ## 2026-11-04 — `vectorcraft-cli` 0.21.0, headless, isolated HOME
 
 Method: one fresh process per id (new document, small object model: two overlapping rectangles,

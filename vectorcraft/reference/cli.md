@@ -1,13 +1,13 @@
 # CLI and headless modes
 
-Tested on `vectorcraft-cli` 0.21.0 (Linux). `vectorcraft-cli` with no arguments prints usage;
+Tested on `vectorcraft-cli` 0.21.0 (Linux), re-checked on 0.21.1. `vectorcraft-cli` with no arguments prints usage;
 every subcommand below was exercised headless on 2026-11-04.
 
 ## Subcommands
 
 | Command | What it does | Verified |
 |---|---|---|
-| `vectorcraft-cli commands` | prints the command catalogue as JSON: `{id,label,menu,params,shortcut,enabled,disabled_reason}` | yes (911 entries) |
+| `vectorcraft-cli commands` | prints the command catalogue as JSON: `{id,label,menu,params,shortcut,enabled,disabled_reason}` | yes (918 entries in 0.21.1) |
 | `vectorcraft-cli run [--in FILE] [--cmd ID [--params JSON]]… [--commands FILE\|-] [--export FILE]… [--scale N]` | batch: open or create a document, run steps in order, export at the end | yes |
 | `vectorcraft-cli convert IN OUT …` | open IN, export OUT in the format the extension picks | yes (18 formats) |
 | `vectorcraft-cli info FILE` | JSON summary: warnings, title, colour mode, units, artboards, object counts, fonts | yes |

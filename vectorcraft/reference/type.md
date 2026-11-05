@@ -37,6 +37,13 @@ case, outlines, scale/step, ruby, smart punctuation). Character and paragraph st
   trigger), `text.convertListToText {ids}`.
 - `text.discardEmpty {id?} → {removed}`, `text.touchType {id, start, dx?, dy?, …}` (one character),
   `text.insertInline` (only while editing text).
+- Glyph alternates (0.21.1, verified by render): `text.glyphAlternates {id, start} → {default,
+  chosen, alternates:[{gid, feature}]}`, then `text.setGlyphAlternate {id, start, gid}` (`null`
+  restores the default). Source Sans 3 (the default font) has single-storey g (769) and a (710).
+  A gid not listed is refused; the choice is lost if the font or version changes.
+- Letter-by-letter ramps (0.21.1): `addon.type.textTweaker {id, attribute: size|baselineShift|
+  rotation|hScale|vScale|tracking|leading|strokeWidth, from, to, shape?: straight|ease|bow|spike|
+  random}` — "Ramp up" 12→36 gave 12, 16.8, 21.6, 26.4, 31.2, 36 (space skipped). Text stays live.
 
 ## Fonts
 
