@@ -16,3 +16,8 @@ Part of the filmcraft skill. The short front page is `../SKILL.md`; the sections
   strips, submixes, inserts, sends), captions (add/edit/times/move/duplicate/delete, SRT in and out), export presets,
   resolve, the export queue, and FCPXML/OTIO/FCP7 XML/ALE/OMF interchange. Keyframes at an arbitrary mediaTime and
   graphic-layer alignment did not work headless.
+- 2026-11-04 (third round, FilmCraft 0.17.1): CLI refreshed; the 589 remaining ids run headless and, where a panel
+  was needed, live over the bridge on a hidden display. After review (top-level "something changed" evidence was
+  re-run for exact JSON paths; setup-contaminated title rows re-run with the baseline after setup): 81 verified,
+  129 returned a result, 106 ran without a change to read back, 273 refused or blocked in the test project (reason kept).
+  Recorded in `command-catalogue.md` and `live-app.md`.

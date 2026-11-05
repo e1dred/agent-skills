@@ -7,7 +7,7 @@ description: Use when cutting or trimming video, adding titles and graphics, gra
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from first headless tasks, last tested on **FilmCraft 0.17.0** (Linux AppImage). FilmCraft is an
+Field notes from first headless tasks, last tested on **FilmCraft 0.17.1** (Linux AppImage). FilmCraft is an
 early-alpha, Premiere-style video editor in Rust. Every menu item and button is an engine *command*; the CLI, the
 MCP server and the app's control channel run the same commands. If `filmcraft-cli --version` is newer, re-check
 anything here before relying on it.
@@ -36,7 +36,9 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `audio-mixer.md` | Mixer strips, values, submixes, inserts and sends; clip gain and Essential Sound | Mixer; Clip audio |
 | `captions.md` | Subtitle tracks, adding/editing/moving captions, SRT import and export | Caption tracks and SRT |
 | `export.md` | Export presets and formats, the export queue, MP4/GIF export, frame stills, interchange exports, probing | Presets; Exporting; Presets and the export queue; Stills; Probing |
-| `newer-commands.md` | What each version added or changed | 0.17.0 |
+| `command-catalogue.md` | Every other command id by family (clip, timeline, sequence, trim, graphics, edit, file, project, multicam, source, prefs, shortcuts, …), each marked verified (JSON path old → new), returned a result, ran, or refused with the reason; the setup that unlocks selection-dependent commands | One section per family |
+| `live-app.md` | Driving the running app over `--bridge`: the ui_* tools, what works only live, running it on a hidden display | Connecting; What the live app adds |
+| `newer-commands.md` | What each version added or changed | 0.17.0; 0.17.1 |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
@@ -68,13 +70,17 @@ filmcraft-cli probe clip.mp4                     # kind, duration (ticks), video
   break sync: V2 is sync-locked and has a clip in the way" when a title sat on V2. Lock/unlock the other track first
   or trim without ripple.
 - `probe --image-sequence` only accepts numbered stills; on a movie it errors.
-- **`effects.addKeyframe` at an arbitrary `mediaTime` did nothing** (`{added:false, mediaTime:0}`), and
-  setInterpolation/moveKeyframe/deleteKeyframe then refused "no keyframe at that time": move the playhead and use
-  `effects.toggleAnimation`, or `graphics.set {…,"keyframe":true}` for title properties.
+- **`effects.addKeyframe` headless with a raw `mediaTime` did nothing** (`{added:false, mediaTime:0}`; 0.17.0), but in
+  the **live app** `{clip, effect:"opacity", param:"opacity", seconds:1.5, value:40}` added one (keyframes 5 → 6; the time
+  snaps to a frame: 624699432000). Headless, move the playhead and use `effects.toggleAnimation`, or
+  `graphics.set {…,"keyframe":true}` for title properties.
 - **`mixer.addInsert` needs a real audio effect id** (`hard_limiter`, from `effects.list {"kind":"Audio"}`), not a
   label such as `volume`; `mixer.addSend` needs the submix `ref` from `mixer.addSubmix` in the same run.
-- **`graphics.alignFrame.*` and `graphics.deleteLayer` need a graphic layer open and selected** in the monitor —
-  headless runs answer "no graphic clip".
+- **`graphics.*` commands need a title in the same session:** run `graphics.newText` first in the same script, then
+  `graphics.alignFrame.*`, `nudge*`, `fontSize*`, `leading*` work headless (read `graphics.list {clip}` → `layers[0]`).
+  Without one they answer "no graphic clip". `graphics.deleteLayer` was only accepted live (no read-back).
+- **Selection does not survive a save/reopen:** put `project.select {items:[id]}` / `timeline.select` in the same
+  script as the command that needs it ("select an item in the Project panel", "no clips selected").
 - **FCPXML export can drop a title:** `file.exportInterchange {"format":"fcpxml"}` reported the graphic clip
   "not supported" while still writing the file; read the report before trusting an interchange export.
 - `--demo` opens the built-in demo project: it inspects and renders (a 1920×1080 frame at 1 s), exported fine only
