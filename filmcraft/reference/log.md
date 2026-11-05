@@ -20,4 +20,9 @@ Part of the filmcraft skill. The short front page is `../SKILL.md`; the sections
   was needed, live over the bridge on a hidden display. After review (top-level "something changed" evidence was
   re-run for exact JSON paths; setup-contaminated title rows re-run with the baseline after setup): 81 verified,
   129 returned a result, 106 ran without a change to read back, 273 refused or blocked in the test project (reason kept).
+  Later the same night: six retry passes on the 273 (real multicam angles, captions, presets, accumulated parameters,
+  error-driven) → final for the 589: **90 verified**, 141 returned a result, 192 ran without a read-back, 166 refused,
+  each with its last error and a category (needs a live panel, speech-to-text not in this build, microphone, file
+  chooser). Rows whose only change was the saved copy's name were downgraded. Live retries stopped after file
+  choosers reached the user's screen.
   Recorded in `command-catalogue.md` and `live-app.md`.
