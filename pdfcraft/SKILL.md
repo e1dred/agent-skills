@@ -21,7 +21,8 @@ is an engine *tool*; the CLI, the MCP server and the app's control channel run t
 - **Subcommands:** `info`, `text`, `render`, `edit`, `combine`, `extract`, `split`, `check`, `audit`, `batch`, `tools`.
 - **Live app:** `pdfcraft --control ~/.pdfcraft-control.json` writes a random token to that file and listens on
   loopback only; drive it with `pdfcraft-cli ui --control FILE inspect|click|key|command|drag|screenshot|quit …`.
-  Keep the control file in a private folder (never /tmp).
+  Keep the control file in a private folder (never /tmp). Verified live: methods, the 213 UI command ids, the
+  no-active-document trap and the commands that pop a native file chooser on the user's screen are in `live-app.md`.
 - **MCP:** opt-in, stdio only: `pdfcraft-cli mcp --root DIR` (`--compact` for a short list), with optional
   `--automation-read-root` / `--automation-write-root`.
 
@@ -35,6 +36,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `text-comments-forms.md` | Extracting and searching text, word counts, comments and bookmarks, form authoring and filling, accessibility | Text and search; Comments and bookmarks; Form authoring in depth; Accessibility |
 | `export-and-pdfa.md` | Page rendering, optimize, PDF/A convert and verify, output choices | Rendering; Optimize; PDF/A; Checks before handing a file over |
 | `editing-signing-tools.md` | Added content (copy/update/delete), page objects, image crop/export, stamps, editing original text and fonts, revisions and undo, bookmark copy/export/import, actions, the UI command registry headless, measurement, printers (list only), digital IDs and signing, accessibility tag editing and review files; tools that could not be run | Documents and revisions; Added content, page objects, images; Editing original text; Bookmarks, links, actions, commands; Measurement, printing; Signing; Accessibility tags and review; View and preview; Not exercised |
+| `live-app.md` | Driving the running app: control methods (state, inspect, command, open, set, key, click, drag, screenshot), the UI command ids and what each opens, commands that open a native file chooser, running the app on a hidden display | Connecting; Running the app where the user cannot see it; UI commands verified |
 | `newer-commands.md` | What each version added or changed | 0.18.1; 0.18.2 |
 | `log.md` | Dated log of what was tested when | Log |
 
