@@ -7,7 +7,7 @@ description: Use when reading, editing, combining, splitting, annotating or secu
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from first headless tasks, last tested on **PdfCraft 0.18.1** (Linux AppImage). PdfCraft is an
+Field notes from first headless tasks, last tested on **PdfCraft 0.18.2** (Linux AppImage). PdfCraft is an
 early-alpha PDF editor in Rust: viewing, page organizing, comments, forms, redaction, PDF/A. Every ribbon action
 is an engine *tool*; the CLI, the MCP server and the app's control channel run the same tools. If
 `pdfcraft-cli --version` is newer, re-check anything here before relying on it.
@@ -34,7 +34,8 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `pages-and-documents.md` | Opening/saving in scripts, info fields, page insert/move/delete/rotate, extract, split, combine, metadata, batch, check, audit; page labels/boxes/transitions, watermark/header/footer, compare, flatten, reduce, protection, redaction, links, attachments, measurement, Bates, JavaScript, export | Scripted documents; Pages; Pages, labels and presentation; Documents: compare, flatten, reduce, hidden info, export; Security, redaction and signing; Links, attachments, measurement, JavaScript; Metadata, batch and checks; Other document tools |
 | `text-comments-forms.md` | Extracting and searching text, word counts, comments and bookmarks, form authoring and filling, accessibility | Text and search; Comments and bookmarks; Form authoring in depth; Accessibility |
 | `export-and-pdfa.md` | Page rendering, optimize, PDF/A convert and verify, output choices | Rendering; Optimize; PDF/A; Checks before handing a file over |
-| `newer-commands.md` | What each version added or changed | 0.18.1 |
+| `editing-signing-tools.md` | Added content (copy/update/delete), page objects, image crop/export, stamps, editing original text and fonts, revisions and undo, bookmark copy/export/import, actions, the UI command registry headless, measurement, printers (list only), digital IDs and signing, accessibility tag editing and review files; tools that could not be run | Documents and revisions; Added content, page objects, images; Editing original text; Bookmarks, links, actions, commands; Measurement, printing; Signing; Accessibility tags and review; View and preview; Not exercised |
+| `newer-commands.md` | What each version added or changed | 0.18.1; 0.18.2 |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
@@ -60,7 +61,7 @@ pdfcraft-cli run --script steps.json --root DIR --report
 
 ## Traps
 
-- **Tools are not command ids:** `pdfcraft-cli tools` prints JSON (184 tools with `input_schema`); `run` takes
+- **Tools are not command ids:** `pdfcraft-cli tools` prints JSON (189 tools in 0.18.2 with `input_schema`); `run` takes
   `name=value` pairs. An unknown argument is refused by name.
 - **`doc_set_info` keys are case-sensitive:** `{"key":"Title"}` sets the title; `"title"` is silently ignored.
 - **`doc_save` has no `format` argument and overwrites without asking** (verified: it rewrote an existing
@@ -75,6 +76,10 @@ pdfcraft-cli run --script steps.json --root DIR --report
 - **Bookmarks are addressed by an integer `path`** (`[1]` = first top-level entry) and comment tools by `page` plus
   the 1-based `index` from `comment_list`. Bookmark colour is `[r,g,b]` 0..1; `page_transition_set` style names are
   capitalised ("Dissolve", not "fade").
+- **Document ids keep counting within one run:** after `doc_close`, the next `doc_open` is not doc 1 ("no open
+  document with id 1"). Read the id from each `doc_open` result, or build in one run and reopen in the next.
+- **`content_*` tools only see items PdfCraft added** (`page_add_text`/`page_add_image`); original page text is edited
+  with `text_edit`/`text_script`. Font files for `text_font_files` must be inside `--root`.
 - **`doc_close` refuses a document with unsaved changes** — save, or pass `"discard_changes":true`.
 - **`form_detect_fields` finds blanks on printed forms, not AcroForm fields** — use `form_fields` for those.
   `doc_protect`'s `printing` is `none|low|high`, and a permissions password blocks `doc_unprotect`.

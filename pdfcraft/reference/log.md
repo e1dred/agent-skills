@@ -17,3 +17,7 @@ Part of the pdfcraft skill. The short front page is `../SKILL.md`; the sections 
   fields, accessibility tags/autotag/fix/report, compare/report/mark, flatten, reduce, hidden info, initial view,
   Office and image export, measurements, links, attachments, Acrobat JavaScript, Fill & Sign text. The redaction
   audit was checked against a faux redaction (image over text): count 0 while the text stayed extractable.
+- 2026-11-04 (third round, PdfCraft 0.18.2): CLI refreshed; the 80 tools not yet named run headless with before/after
+  reads — 47 verified, 25 read-ok, 3 no-effect (view-only or other-OS tools), 2 refused for want of a sample (layers,
+  XFA), 1 no GoToR link possible, 3 blocked (OCR models, 3D models). `content_copy` re-checked by hand after a weak first
+  result. Recorded in `editing-signing-tools.md`.
