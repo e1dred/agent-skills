@@ -34,4 +34,6 @@ the app on a private headless display (the same mutter + Xwayland setup as in th
   screen even when the app runs on a hidden display: seen with `graphics.template.install` ("A file dialog is already
   open") and `file.exportSelectionProject` (`{dialog:"open"}`). Before running any id whose name or label suggests
   import/open/relink/replace/export/save/attach or ends in "…", read `filmcraft-cli describe <id>` and pass the path
-  parameter; with none, do not run it unattended. Check `ui_inspect` → `dialog` after each command.
+  parameter; with none, do not run it unattended. Check `ui_inspect` → `dialog` after each command. Starting the hidden app
+  with the private compositor's `DBUS_SESSION_BUS_ADDRESS` (see the pdfcraft skill's `live-app.md`) stops the dialog from
+  reaching the user's screen (verified: `graphics.template.install` → `{dialog:"open"}`, nothing appeared).

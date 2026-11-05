@@ -34,11 +34,15 @@ the app on its X display (the Wayland socket alone does not draw frames, so scre
 ```
 setsid -f env -u DISPLAY dbus-run-session -- mutter --headless --wayland --wayland-display=wayland-private --virtual-monitor 1920x1080 >mutter.log 2>&1 </dev/null
 # mutter.log: "Using public X11 display :N"; the Xauthority file is the newest /run/user/$UID/.mutter-Xwaylandauth.*
-env -u WAYLAND_DISPLAY DISPLAY=:N XAUTHORITY=<file> HOME=<test home> XDG_CONFIG_HOME=… XDG_DATA_HOME=… XDG_CACHE_HOME=… pdfcraft --control <file> test.pdf
+# give the app the private compositor's own session bus, so file dialogs cannot reach the user's desktop portal:
+BUS=$(tr '\0' '\n' < /proc/<mutter pid>/environ | sed -n 's/^DBUS_SESSION_BUS_ADDRESS=//p')
+env -u WAYLAND_DISPLAY DISPLAY=:N XAUTHORITY=<file> DBUS_SESSION_BUS_ADDRESS=$BUS HOME=<test home> XDG_CONFIG_HOME=… XDG_DATA_HOME=… XDG_CACHE_HOME=… pdfcraft --control <file> test.pdf
 ```
 
-`screenshot` and every other method work there. Native file choosers still open on the user's desktop (they come from
-the session's portal), hence the warning above.
+`screenshot` and every other method work there. **Use the private bus:** with the user's session bus, any native file
+chooser the app requests opens on the user's real screen (it comes from the desktop portal) even though the window is
+hidden. On the private bus (verified with FilmCraft's `graphics.template.install`, which answers `{dialog:"open"}`)
+nothing appeared on the user's screen and no picker showed on the hidden display either. Keep the chooser rule above anyway.
 
 ## UI commands verified (state, dialog or pixel change read back; dialogs closed with Escape)
 
