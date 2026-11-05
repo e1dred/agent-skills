@@ -2,7 +2,7 @@
 """Call FilmCraft MCP tools against the live app (bridge) in one session.
 Usage: python3 -I fcmcp.py '[["ui_inspect",{}],["ui_screenshot",{}]]' [--port 47828] [--img-dir DIR]
 Needs FILMCRAFT_CONTROL_TOKEN in the environment, or FILMCRAFT_CONTROL_TOKEN_FILE naming a file that holds it.
-FCCLI: path to filmcraft-cli (default: filmcraft-cli on PATH).
+FCCLI: path to filmcraft-cli (default: filmcraft-cli on PATH). LIM: characters printed per result line (default 4000; 0 = all).
 Images in results are written to IMG-DIR/<n>_<tool>.png and replaced by their path."""
 import base64, json, os, subprocess, sys
 
@@ -34,5 +34,7 @@ for n, (tool, a) in enumerate(calls, 1):
         if c.get("type") == "image":
             f = os.path.join(img_dir, "%d_%s.png" % (n, tool)); open(f, "wb").write(base64.b64decode(c["data"])); out.append({"image": f})
         else: out.append(c.get("text"))
-    print(json.dumps({"tool": tool, "args": a, "error": m.get("error") or (m.get("result") or {}).get("isError"), "out": out})[:4000])
+    line = json.dumps({"tool": tool, "args": a, "error": m.get("error") or (m.get("result") or {}).get("isError"), "out": out})
+    lim = int(os.environ.get("LIM", "4000"))
+    print(line[:lim] if lim else line)
 p.stdin.close(); p.wait(timeout=10)
