@@ -30,3 +30,8 @@ the app on a private headless display (the same mutter + Xwayland setup as in th
   is downloaded; `tts.voices` lists the built-in voices.
 - **Diff `ui_inspect` with care:** `fps`, `playback.shown`, the element count and a moving `playhead` change on every
   call; leave them out of before/after comparisons or everything looks changed.
+- **Some commands open the desktop's native file chooser when no path is given**, and it appears on the user's real
+  screen even when the app runs on a hidden display: seen with `graphics.template.install` ("A file dialog is already
+  open") and `file.exportSelectionProject` (`{dialog:"open"}`). Before running any id whose name or label suggests
+  import/open/relink/replace/export/save/attach or ends in "…", read `filmcraft-cli describe <id>` and pass the path
+  parameter; with none, do not run it unattended. Check `ui_inspect` → `dialog` after each command.
