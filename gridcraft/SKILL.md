@@ -9,7 +9,7 @@ description: Use when building, editing, checking or converting spreadsheets (.x
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare `gridcraft-cli --version` with the app's version in its About box or on its releases page by hand; `--version` on an AppImage can open the app). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **gridcraft-cli 0.16.0** (Linux AppImage). GridCraft is an alpha, Excel-style
+Field notes from real tasks, last tested on **gridcraft-cli 0.16.1** (Linux AppImage). GridCraft is an alpha, Excel-style
 spreadsheet in Rust. Every ribbon button is an *engine command* (372 of them); the CLI, the MCP server and the app's
 control channel all run the same commands. If `gridcraft-cli version` is newer, re-check before relying on this.
 

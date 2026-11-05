@@ -35,3 +35,6 @@ Three newer commands (headless, checked in the saved file):
 ## 0.15 changes (verified headless 2026-11-02; `.pptx` XML checked, slide rendered and looked at)
 - **More gradient kinds:** `shape.fill {"gradient":{"stops":[[0,"#1F3864"],[1,"#FFFFFF"]],"kind":"radial|rectangular|path","focus":[l,t,r,b],"rotateWithShape":true}}`. `focus` (fractions) is where the first stop sits: `[0.5,0.5,0.5,0.5]` is the centre, `[0,0,1,1]` the top-left corner. Saved as `<a:path path="circle|rect|shape">` with `<a:fillToRect>` (×100000) and `rotWithShape="1"`. Rendered: radial is a centred glow, rectangular from `[0,0,1,1]` fades out of the top-left corner, `path` on an ellipse follows its outline. Linear keeps `angle`.
 - No ids added or removed; the 23-deck re-run (188 outputs) was identical between 0.14.1 and 0.15.0.
+
+## 0.15.1 changes (verified headless 2026-11-04; renders looked at)
+- No new commands. `shape.fill` gradient docs now explain `rotateWithShape`: on a shape rotated 30°, a **linear** gradient renders differently with and without the flag, while a **rectangular** (and path) gradient always turns with the shape. Regression: 188 of 188 harness files identical to 0.15.0.

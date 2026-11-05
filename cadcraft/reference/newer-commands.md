@@ -8,6 +8,14 @@ Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections 
 - **Help text only:** `ellipse.axis` accepts a point instead of a distance for the other half-axis; `bedit` gained `save` and `check` for switching blocks in the Block Editor.
 - **DXF change:** an MTEXT written for a dimension now has group 72 = 5 ("by style") where 0.14.0 wrote 1; nothing else in the dimension drawings changed.
 
+## 0.17.1 changes (verified headless 2026-11-04; DXF read back)
+- **Raster images:** `imageattach {"path":"/abs/pic.png","width":100}` (alias `image`, and `attach {path}`, which was "not available yet" before) attaches a PNG; the image list shows pixels, size and status `Loaded`. A **bare relative name is refused** ("file not found"): pass an absolute path or a `data:` URI.
+- **`minsert {block, rows:2, columns:3, rowSpacing:20, columnSpacing:20}`** writes a real MINSERT (DXF 70=3, 71=2, 44/45=20).
+- **`xclip`** clips block/xref references only (an image answers "select block or xref references"); a query before any clip returns `boundary:null, enabled:false`. `{"option":"new","rectangle":…}` set a 4-point boundary. **`xclipframe`** 2 → 1 read back.
+- **`dview {"twist":30}`** and **`view.set {"twist":15}`** rotate the view (`view.get` twist 0 → 15 → 30).
+- **`find` takes `types:["MTEXT"]` and `handles:["100"]`** and returns `matches`.
+- Regression: PDFs and DXF entities identical to 0.17.0; saved DXF gains DIMSTYLE group 51 = 0.0 (+10 bytes).
+
 ## 0.17 changes (verified headless 2026-11-02; DXF and outputs read back)
 - **`oops {}`** brings back what the last ERASE, BLOCK or -WBLOCK removed → `{restored:1}` (tested after `erase` and after `-wblock`).
 - **`-wblock {"path","handles"|"name","base"?}`** writes the objects to a new drawing and **erases them** from this one (→ `{path,bytes,entities}`); follow it with `oops {}` to keep them. Write it `--cmd=-wblock {…}` (leading dash).

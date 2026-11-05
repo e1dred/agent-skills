@@ -35,3 +35,10 @@ Newer window commands (headless `run` has one window; the live app can have seve
 - **Equations:** `insert.equation {"latex":"x^2+y^2=r^2","cell":"A8","size":14}` → `{equation:1}`; `equation.edit {"id":1,"latex":"a^2+b^2=c^2"}` replaced it. Saved as Office Math in the drawing (`a14:m`, `oMath`). `info` does not list equations. The object commands (move, delete, align, order) now take `kind:"slicer"|"equation"` too.
 - **Chart data table:** `chart.addElement {"element":"dataTable","on":true,"dataTableKeys":true}` (or `chart.set {"dataTable":true,…}`) → `<c:dTable>` with keys and all borders on (column/bar/line/area charts).
 - **`pageLayout.pageSetup {"pageOrder":"overThenDown"|"downThenOver"}`**; the result has a new `page_order` field (the only difference in the 0.15 → 0.16 re-run besides the file path in `check`). Paste Special's shortcut is now Ctrl+Alt+V.
+
+## 0.16.1 changes (verified headless 2026-11-04)
+- **`range.move {"to":"F2","overwrite":true}`** moves the selected range (B2:C5 → F2:G5, source emptied).
+- **`selection.nextCorner`** moves the active cell to the next corner of the selection, keeping it (B2 → D2 → D5 → B5 → B2).
+- **`view.showHorizontalScrollBar`, `view.showVerticalScrollBar`, `view.showSheetTabs`** take `on` (or toggle without it) and return the new state.
+- **`edit.find` / `edit.replace` take `within:"selection"`** (replace changed 1 cell inside, 0 outside). Find matches the **displayed** text: a currency cell is found with "1,850", not "1850".
+- Regression: all cell data identical to 0.16.0; saved `.xlsx` page margins are now written exactly (`0.7` instead of `0.699999988079071`), so a byte diff flags every sheet: compare values, not bytes.

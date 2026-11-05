@@ -9,7 +9,7 @@ description: Use when editing, converting or batch-processing images, layers, se
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare `photocraft-cli --version` with the app's version in its About box or on its releases page by hand; `--version` on an AppImage can open the app). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **photocraft-cli 0.20.1** (headless sweep) (Linux AppImage). PhotoCraft is an early-alpha,
+Field notes from real tasks, last tested on **photocraft-cli 0.20.2** (headless sweep) (Linux AppImage). PhotoCraft is an early-alpha,
 Photoshop-style editor in Rust: layers, masks, adjustment layers, layer styles, type, vector shapes, PSD read/write.
 Everything the UI does is an *engine command*, and the CLI, the MCP server and the app's control channel all run
 the same commands. If `photocraft-cli --version` is newer, re-check anything in this skill before relying on it.
