@@ -32,8 +32,14 @@ lines and blank lines are skipped and are **not steps**.
   Miscounting gives `` `$5.story`: no `story` in null `` — then every later reference fails too. Generate long
   scripts with a small program that records each step's index instead of counting by hand.
 - Text parameters: `\n` new paragraph, `\u2028` forced line break, `\t` tab, `\ue000` automatic page number.
-- **Unknown parameter names are silently ignored** by most commands: check names with `describe`, verify the
-  effect with a read-back.
+- **Read-backs `document.inspect` lacks:** effects (drop shadow, glow, bevel, satin, feather…), opacity, blend
+  and fitting are only in the saved file. `file.serialize` (or `--save F`), then
+  `unzip -p F document.json | jq '.spreads[].items[] | {effects, opacity, blend, fit: .content.autoFit}'`.
+  IDML shows the same (`<DropShadowSetting Mode="Drop" …>`, `<FrameFittingOption …>` in `Spreads/*.xml`).
+  For a visual-only change, render before/after and count changed pixels.
+- **Unknown parameter names are refused** at the top level ("unknown parameter `x`; the command takes: …") and
+  inside `chars`/`para` ("unknown attribute"), but **ignored inside other nested objects** (`stroke`, `border`,
+  `margins`, …): check names with `describe` and verify the effect with a read-back.
 - Output: `{"completed": n, "results": [...]}`; without `--keep-going` the first failure stops the run and
   reports `failedIndex` / `failedCommand` / `error`; with it, failures become `{"error": …}` and the exit code
   is non-zero.

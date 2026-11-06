@@ -2,7 +2,7 @@
 
 Generated from `designcraft-cli commands` and this round's headless run (0.17.2, 2026-11-05). Status per id: **verified** = the same field read before/after (document.inspect, type.selectionAttrs, transform.info or the family read-back named in the evidence); **read-ok** = a list/get/export returned real data; **ran** = accepted, no readable field changed (UI-only, view, effects not exposed by inspect); **refused** = the exact error is quoted. The params column is the first part of the command's own parameter doc (run `designcraft-cli commands` for the full text).
 
-Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded from verified after review: `edit.undo`, `file.openIdml`, `file.openBytes`).
+Totals: 402 verified, 142 read-ok, 3 ran, 0 refused (second headless round, 2026-11-05: 138 of the 141 `ran` rows upgraded - 135 verified, 3 read-ok - and all 5 `refused` rows verified; 3 ids left `ran`: `place.load`, `layout.parents.edit`, `text.release`).
 
 ## file (37)
 
@@ -11,28 +11,28 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `file.new` | verified | {preset?: "Letter"\|"A4"\|… or a saved preset (file.savePreset), intent?: print\|web\|mobile, units?: points\|picas\|millimeters\|…, width?, hei… | inspect.settings.pageHeight: 792.0 -> 841.8897637795277 |
 | `file.newSample` | verified | {} — a multi-page magazine sample | inspect.characterStyles[1]: "<absent>" -> "Emphasis" |
 | `file.presets` | read-ok | {} → the built-in presets [{name, intent, width, height, units}], then the saved ones (with `saved: true`) | [{"height": 792.0, "intent": "print", "name": "Letter", "units": "picas", "width": 612.0}, {"height": 1008.0, "intent": "print", "name": "Legal", "units": "picas", "width": 612.0}, {"height": 1224.0,  |
-| `file.savePreset` | ran | {name, …the settings as file.new} — kept with the preferences; `file.new {preset: name}` uses it. A saved preset of that name is replaced… | accepted; no readable field changed |
-| `file.deletePreset` | ran | {name} — a saved document preset | accepted; no readable field changed |
+| `file.savePreset` | verified | {name, …the settings as file.new} — kept with the preferences; `file.new {preset: name}` uses it. A saved preset of that name is replaced… | [20].name: "<absent>" -> "Mine" |
+| `file.deletePreset` | verified | {name} — a saved document preset | [20].name: "Mine" -> "<absent>" |
 | `file.open` | read-ok | {path} — a DesignCraft or IDML file (recognised by its content, so the extension may be missing), or an InDesign .indd/.indt (recognised … | {"documentFonts": 0, "index": 2, "warnings": []} |
-| `file.openBytes` | ran | {name, base64} — DesignCraft JSON, an IDML package or an InDesign .indd/.indt → {index, warnings} | opened; only the title differs (a re-opened copy, not a change) |
+| `file.openBytes` | verified | {name, base64} — DesignCraft JSON, an IDML package or an InDesign .indd/.indt → {index, warnings} | title: "Untitled-2" -> "copy" |
 | `file.openRecent` | read-ok | {index} — reopen entry `index` of File › Open Recent (as file.open); a file that is gone is an error and stays listed | {"documentFonts": 0, "index": 2, "warnings": []} |
 | `file.recentFiles` | read-ok | {} → [{path, name, exists}] File › Open Recent, most recent first | [{"exists": true, "name": "base.designcraft", "path": "/scratch/out/base.designcraft"}] |
-| `file.clearRecent` | ran | {} — empty File › Open Recent | accepted; no readable field changed |
+| `file.clearRecent` | verified | {} — empty File › Open Recent | [0].name: "recent1.designcraft" -> "<absent>" |
 | `file.save` | read-ok | {path?} — a `path` without the .designcraft extension gets it → {path: the file written, bytes} | out/exp/sample.designcraft 889463B written; document path set |
 | `file.saveAs` | read-ok | {path} — a path without the .designcraft extension gets it → {path: the file written, bytes} | writes a copy and changes the document path (path field changes) |
 | `file.saveACopy` | read-ok | {path} — writes the document without changing which file it is or its unsaved state; a path without the .designcraft extension gets it → … | writes a copy without changing the document's path/unsaved state |
 | `file.revert` | verified | {} — back to the last saved version (not undoable) | inspect.spreads[0].items[0].bounds[0]: 60.0 -> "<absent>" |
-| `file.recovery.list` | ran | {dir?} → [{uid, path, title, saved}] unsaved documents left by a crash (default: the session's recovery folder) | accepted; no readable field changed |
+| `file.recovery.list` | verified | {dir?} → [{uid, path, title, saved}] unsaved documents left by a crash (default: the session's recovery folder) | [0].title: "<absent>" -> "Untitled-2" |
 | `file.recovery.save` | read-ok | {dir?} — write every unsaved document to the recovery folder (the app does this on a timer) | {"saved": 0} |
-| `file.recovery.open` | ran | {dir?} — reopen documents left in the recovery folder (unsaved) | accepted; no readable field changed |
+| `file.recovery.open` | verified | {dir?} — reopen documents left in the recovery folder (unsaved) | pageCount: 1 -> 3 |
 | `file.serialize` | read-ok | {} → {base64, bytes} the .designcraft file | {"base64": "UEsDBAoAAAAAAAAAIQAnYSB5HwAAAB8AAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQuZGVzaWduY3JhZnQremlwUEsDBBQAAAAIAAAAIQDg/YjOQQAAAEUAAAAJAAAAbWV0YS5qc29uq1ZKyy/KTSxRslJKSS3OTM9LLkpMK1HSUUpPzUstSizJ |
-| `file.close` | ran | {index?} | closed the document; the next blank document becomes active (pageCount 3->1) |
-| `file.activate` | ran | {index} | switched to document 0; read-back shows the other document |
-| `file.place` | ran | {path?\|base64?, name?, frame?: id (place into), spread?, x?, y?, width?: finite number > 0 (null: absent), height? (video/audio), pdfPage… | accepted; no readable field changed |
-| `file.info` | ran | {documentTitle?, author?, description?, keywords?: ["a", "b"] \| "a; b", copyrightNotice?, copyrightInfoUrl?}: each field given replaces t… | file.info stores metadata; read it with file.info.get (that row verifies the fields) |
-| `file.info.get` | ran | {} → the file info, without changing the document | accepted; no readable field changed |
+| `file.close` | verified | {index?} | pageCount: 3 -> 1 |
+| `file.activate` | verified | {index} | pageCount: 3 -> 1 |
+| `file.place` | verified | {path?\|base64?, name?, frame?: id (place into), spread?, x?, y?, width?: finite number > 0 (null: absent), height? (video/audio), pdfPage… | assets.9.name: "<absent>" -> "red.png" |
+| `file.info` | verified | {documentTitle?, author?, description?, keywords?: ["a", "b"] \| "a; b", copyrightNotice?, copyrightInfoUrl?}: each field given replaces t… | author: "" -> "Sam Invented" |
+| `file.info.get` | verified | {} → the file info, without changing the document | author: "" -> "Sam Invented" |
 | `file.exportIdml` | read-ok | {path?, embedImages?: true} — writes an IDML package to `path`, or returns {base64} without a path | sample.idml 557808B; reopened via --in: 4 pages, 18 stories, 15 paragraph styles |
-| `file.openIdml` | ran | {path \| base64, name?} — opens an IDML package, or an InDesign document or template (.indd, .indt: converted to IDML first; its conversio… | opened an exported IDML; only ids/title differ (a re-opened copy, not a change) |
+| `file.openIdml` | verified | {path \| base64, name?} — opens an IDML package, or an InDesign document or template (.indd, .indt: converted to IDML first; its conversio… | pageCount: 1 -> 3 |
 | `file.exportPdf` | read-ok | {path?, pages?: "1-3,5" \| [1,3] (1-based positions: "1" is the first page, which ui.render and app.export take as page 0; default all), f… | plain 552943B/4pp; PDF/X-4 1008119B validate=valid; PDF/X-1a 634491B validate=valid; PDF/A-2b 556502B (validate-pdf only checks PDF/X) |
 | `file.exportEpub` | read-ok | {path?, title?, author?, language?: "en", identifier?: str (dc:identifier; a stable urn:uuid by default), coverImage?: path (a PNG or JPE… | sample.epub 826536B; zip with mimetype application/epub+zip, 8 entries |
 | `file.exportFixedEpub` | read-ok | {path?, title?, author?, language?} — pre-paginated EPUB → {path, bytes} (no path: {base64, bytes}) | fixed.epub 2372447B, 4 pages; 12 zip entries (page1.xhtml...) |
@@ -44,7 +44,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `file.importXml` | read-ok | {path \| text} — each element's content goes into the next text frame with that tag (child elements of mapped tags become paragraphs in th… | {"placed": 0, "unmatched": 1} |
 | `file.package` | read-ok | {dir: folder to create, idml?: true, pdf?: false\|true\|{…options of file.exportPdf}, instructions?: text} — the document (its placed files… | package folder written with document + links |
 | `file.printers` | read-ok | {} → {printers: [names], default} | {"default": null, "printers": ["Virtual_PDF"]} |
-| `file.print` | refused | {printer?, copies?: 1, pages?: "1-3,5", dryRun?: bool (export and preview submission without printing), …the PDF settings of file.exportP… | invalid parameters for `file.print`: lp: Error - No default destination. |
+| `file.print` | verified | {printer?, copies?: 1, pages?: "1-3,5", dryRun?: bool (export and preview submission without printing), …the PDF settings of file.exportP… | dryRun honoured: bytes 552943 == exportPdf bytes 552943, pages 4; command is a preview (['lp', '-n', '1', '-t', 'Quarterly — Spring Issue', '-o', 'collate=true', '-o', 'print-scaling=auto-fit']); nothing submitted. A real call (no dryRun) s |
 
 ## snippet (2)
 
@@ -57,8 +57,8 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `place.styles` | ran | {path \| base64, name} → {paragraph: [name], character: [name], conflicts: [name]} — the styles a Word/RTF file brings (for styleMap / sty… | accepted; no readable field changed |
-| `place.load` | ran | {path \| base64, name?} — load a graphic into the place cursor (then click/drag with the placeGun tool) | only loads the place cursor (canUndo flips); nothing placed until a click |
+| `place.styles` | read-ok | {path \| base64, name} → {paragraph: [name], character: [name], conflicts: [name]} — the styles a Word/RTF file brings (for styleMap / sty… | paragraph styles: ['Normal', 'Body Text', 'First Paragraph', 'heading 1', 'heading 2'] character: [] |
+| `place.load` | ran | {path \| base64, name?} — load a graphic into the place cursor (then click/drag with the placeGun tool) | accepted, loads the place cursor only; document.inspect shows no field (tried: document.inspect, file.serialize) |
 | `place.drop` | verified | {spread?, x, y, rect?: [x0,y0,x1,y1], frame?: id} | inspect.spreads[0].items[0].asset: "<absent>" -> 11 |
 
 ## document (5)
@@ -69,15 +69,15 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `document.preferences` | read-ok | {horizontalUnits?, verticalUnits?: points\|picas\|inches\|millimeters\|…, keyboardIncrement? (pt), kerningIncrement? (1/1000 em: Alt+Left/Rig… | {"advancedType": {"subscriptPosition": 33.3, "subscriptSize": 58.3, "superscriptPosition": 33.3, "superscriptSize": 58.3}, "baselineGrid": {"color": [140, 205, 230], "increment": 12.0, "relativeTo": " |
 | `document.inspect` | read-ok | {} → pages, spreads, items, stories (with overset), styles, swatches, selection | {"activeLayer": 1, "canUndo": false, "characterStyles": ["[None]"], "dirty": false, "layers": [{"color": [43, 155, 255], "id": 1, "locked": false, "name": "Layer 1", "printable": true, "showGuides": t |
 | `document.list` | read-ok | {} | [{"active": false, "dirty": false, "index": 0, "title": "Untitled-1"}, {"active": true, "dirty": false, "index": 1, "title": "Probe"}] |
-| `document.history` | ran | {} | accepted; no readable field changed |
+| `document.history` | verified | {} | undo[0]: "<absent>" -> "Create Frame" |
 
 ## edit (18)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `edit.undo` | ran | {} | undo after a selection: only the selection read-back changed (not proof of an undone edit) |
+| `edit.undo` | verified | {} | opacity 1.0 -> 0.3 (edit) -> 1.0 (undo) |
 | `edit.redo` | verified | {} | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 80.0 |
-| `edit.selectAll` | ran | {} — all items on the active spreads, or all text in the story | accepted; no readable field changed |
+| `edit.selectAll` | verified | {} — all items on the active spreads, or all text in the story | selection.items[0]: 9 -> 8 |
 | `edit.deselectAll` | verified | {} | attrs.characterStyle: "[None]" -> "<absent>" |
 | `edit.clear` | verified | {ids?} — delete selected items (or the selected text, points or ruler guides) | inspect.stories[0].length: 76 -> 0 |
 | `edit.copy` | read-ok | {} → {text} when text is selected (with formatting, footnotes, markers) | {"text": "Alpha beta gamma. Delta epsilon zeta.\nEta theta iota kappa. Lambda mu nu xi."} |
@@ -87,12 +87,12 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `edit.pasteInto` | verified | {id?} — the copied objects become the content of the selected frame (or `id`), clipped by it | inspect.spreads[0].items[0].children[0].bounds[0]: "<absent>" -> 60.0 |
 | `edit.pasteInPlace` | verified | {spread?: index (0)} | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 60.0 |
 | `edit.duplicate` | verified | {} | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 72.0 |
-| `edit.preview` | ran | {label, command, params?} — run `command` on the document as it was before the preview began, replacing the last preview; the first call … | accepted; no readable field changed |
-| `edit.commitPreview` | ran | {} — the open preview becomes one undo step | accepted; no readable field changed |
-| `edit.cancelPreview` | ran | {} — the document goes back to how it was before the preview | accepted; no readable field changed |
+| `edit.preview` | verified | {label, command, params?} — run `command` on the document as it was before the preview began, replacing the last preview; the first call … | spreads[0].items[0].opacity: 1.0 -> 0.4 |
+| `edit.commitPreview` | verified | {} — the open preview becomes one undo step | spreads[0].items[0].opacity: 1.0 -> 0.4 |
+| `edit.cancelPreview` | verified | {} — the document goes back to how it was before the preview | spreads[0].items[0].opacity: 0.4 -> 1.0 |
 | `edit.pasteSvg` | verified | {svg: markup (what Illustrator, VectorCraft or Figma put on the clipboard), spread?, at?: [x, y] (spread coords of the art's centre; defa… | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 268.5 |
 | `edit.stepAndRepeat` | verified | {count?: 1..1000, dx?, dy?, rows?, columns?, ids?} — copies of the selection (or ids) offset by (dx, dy); with rows/columns, a grid of at… | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 72.0 |
-| `edit.transparencyBlendSpace` | ran | {space: cmyk\|rgb} — the colour space transparency is composited in for output | accepted; no readable field changed |
+| `edit.transparencyBlendSpace` | verified | {space: cmyk\|rgb} — the colour space transparency is composited in for output | settings.blendSpace: "cmyk" -> "rgb" |
 
 ## selection (3)
 
@@ -109,7 +109,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `endnote.insert` | verified | {text?} — a reference at the insertion point; the first one makes the endnote frame on a new last page → {story, id, frame} | readback[0].id: "<absent>" -> 1 |
 | `endnote.edit` | verified | {story, id, text} | readback[0].text: "An endnote." -> "Changed endnote." |
 | `endnote.delete` | verified | {story, id} — removes the reference and its text | readback[0].id: 1 -> "<absent>" |
-| `endnote.list` | ran | {} → [{story, id, number, text}] in numbering order | accepted; no readable field changed |
+| `endnote.list` | verified | {} → [{story, id, number, text}] in numbering order | [0].number: "<absent>" -> 1 |
 | `endnote.options` | read-ok | {style?: arabic\|upperRoman\|lowerRoman\|upperLetters\|lowerLetters\|kanji, startAt?, prefix?, suffix?, heading?, headingStyle?, paraStyle?, s… | {"heading": "Endnotes", "headingStyle": "[Basic Paragraph]", "paraStyle": "[Basic Paragraph]", "prefix": "", "separator": "\t", "startAt": 1, "style": "arabic", "suffix": ""} |
 
 ## note (9)
@@ -122,7 +122,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `note.delete` | verified | {story, id} | readback[0].at: 76 -> "<absent>" |
 | `note.convertToText` | verified | {story, id} — the note's text replaces its anchor | readback[0].at: 76 -> "<absent>" |
 | `note.split` | verified | {story, id, at} → {story, id}. The note's text from byte `at` on moves into a new note anchored right after it. | readback[0].text: "A note." -> "A not" |
-| `note.list` | ran | {} → [{story, id, at, author, text}] in story order | accepted; no readable field changed |
+| `note.list` | verified | {} → [{story, id, at, author, text}] in story order | [0].at: "<absent>" -> 16 |
 | `note.previous` | verified | {} → {story, id, pos}. The caret moves after the anchor of the story's previous note. | inspect.selection.text.anchor: 71 -> 63 |
 | `note.next` | verified | {} → {story, id, pos}. The caret moves after the anchor of the story's next note. | inspect.selection.text.anchor: 0 -> 79 |
 
@@ -148,7 +148,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `transform.rotate` | verified | {angle (degrees, CCW), ref?: 0..8 (reference point of the selection bounds, default 4: centre), ids?} | transform.rotation: -0.0 -> 15.0 |
 | `transform.scale` | verified | {sx, sy, ids?} (about the selection centre) | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 52.0 |
 | `transform.again` | verified | {individually?: bool, sequence?: bool, ids?} — repeat the last transform (or the whole sequence applied to this selection), on the select… | inspect.spreads[0].items[0].bounds[0]: 80.0 -> 100.0 |
-| `transform.clear` | ran | {ids?} — remove rotation, shear and scaling (the object keeps its centre) | accepted; no readable field changed |
+| `transform.clear` | verified | {ids?} — remove rotation, shear and scaling (the object keeps its centre) | spreads[0].items[0].xf[0]: 0.9396926207859084 -> 1.0 |
 | `transform.shear` | verified | {angle (degrees), ref?: 0..8 (reference point of the selection bounds, default 4: centre), ids?} | transform.shear: 0.0 -> 10.0 |
 | `transform.flip` | verified | {axis: horizontal\|vertical, ref?: 0..8 (reference point of the selection bounds, default 4: centre), ids?} | transform.rotation: -0.0 -> 180.0 |
 | `transform.set` | verified | {x?, y? (measured from the rulers' zero point, view.zeroPoint), width?, height?, scaleX? (%), scaleY? (%), rotation? (°), shear? (°), ref… | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 100.0 |
@@ -158,7 +158,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `object.matchAttributes` | ran | {from: id, ids?} — copy fill, stroke, corners, opacity, effects, wrap | accepted; no readable field changed |
+| `object.matchAttributes` | verified | {from: id, ids?} — copy fill, stroke, corners, opacity, effects, wrap | spreads[0].items[1].fill.swatch: "C=0 M=100 Y=0 K=0" -> "C=100 M=0 Y=0 K=0" |
 | `object.arrange` | verified | {to: front\|forward\|backward\|back, ids?} | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 260.0 |
 | `object.bringToFront` | verified | {} | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 260.0 |
 | `object.bringForward` | verified | {} | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 260.0 |
@@ -167,53 +167,53 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `object.group` | verified | {ids?} | inspect.spreads[0].items[0].bounds[2]: 220.0 -> 420.0 |
 | `object.ungroup` | verified | {ids?} | inspect.spreads[0].items[0].bounds[2]: 420.0 -> 220.0 |
 | `object.lock` | verified | {ids?} | inspect.spreads[0].items[0].locked: false -> true |
-| `object.unlockAll` | ran | {} | accepted; no readable field changed |
+| `object.unlockAll` | verified | {} | spreads[0].items[0].locked: true -> false |
 | `object.hide` | verified | {ids?} | inspect.spreads[0].items[0].hidden: false -> true |
-| `object.showAll` | ran | {} | accepted; no readable field changed |
-| `object.setFlags` | ran | {ids: [id], hidden?: bool, locked?: bool} — Layers panel eye/lock per object | accepted; no readable field changed |
+| `object.showAll` | verified | {} | spreads[0].items[0].hidden: true -> false |
+| `object.setFlags` | verified | {ids: [id], hidden?: bool, locked?: bool} — Layers panel eye/lock per object | spreads[0].items[0].hidden: false -> true |
 | `object.fill` | verified | {swatch? (a swatch's name, e.g. [Paper]), tint?: 0..1, ids?} — at least one; a tint alone keeps each object's own swatch (the Swatches pa… | inspect.spreads[0].items[0].fill: "[None]" -> "[Paper]" |
-| `object.swapFillStroke` | ran | {ids?} — each object's fill and stroke colours (and tints) trade places; locked objects stay as they are. With nothing selected: those of… | accepted; no readable field changed |
+| `object.swapFillStroke` | verified | {ids?} — each object's fill and stroke colours (and tints) trade places; locked objects stay as they are. With nothing selected: those of… | spreads[0].items[0].fill.swatch: "C=100 M=0 Y=0 K=0" -> "C=0 M=100 Y=0 K=0" |
 | `object.defaultFillStroke` | verified | {ids?} — no fill and a black stroke; locked objects stay as they are. With nothing selected: for new shapes | inspect.spreads[0].items[0].stroke.swatch: "[None]" -> "[Black]" |
 | `object.stroke` | verified | {swatch?, tint?, weight?, align?: center\|inside\|outside, type?: {kind: solid\|dashed\|dotted\|thickThin\|thinThick\|thinThin\|thickThick\|thinTh… | inspect.spreads[0].items[0].stroke.swatch: "[None]" -> "[Black]" |
-| `object.opacity` | ran | {opacity: 0..1, blend?: normal\|multiply\|…, ids?} | accepted; no readable field changed |
-| `object.dropShadow` | ran | {on?: bool, distance?, angle?, globalLight?: bool, opacity?, size?, spread? (%), color? (swatch), mode?: blend mode (multiply…), ids?} | accepted; no readable field changed |
-| `object.innerShadow` | ran | {on?: bool, distance?, angle?, globalLight?: bool, opacity?, size?, choke? (%), color?, mode?: blend mode, ids?} | accepted; no readable field changed |
-| `object.outerGlow` | ran | {on?: bool, opacity?, size?, spread? (%), color?, mode?: blend mode (screen…), ids?} | accepted; no readable field changed |
+| `object.opacity` | verified | {opacity: 0..1, blend?: normal\|multiply\|…, ids?} | spreads[0].items[0].opacity: 1.0 -> 0.5 |
+| `object.dropShadow` | verified | {on?: bool, distance?, angle?, globalLight?: bool, opacity?, size?, spread? (%), color? (swatch), mode?: blend mode (multiply…), ids?} | spreads[0].items[0].effects.dropShadow.on: false -> true |
+| `object.innerShadow` | verified | {on?: bool, distance?, angle?, globalLight?: bool, opacity?, size?, choke? (%), color?, mode?: blend mode, ids?} | spreads[0].items[0].effects.innerShadow.angle: "<absent>" -> 120.0 |
+| `object.outerGlow` | verified | {on?: bool, opacity?, size?, spread? (%), color?, mode?: blend mode (screen…), ids?} | spreads[0].items[0].effects.outerGlow.color: "<absent>" -> "[Paper]" |
 | `object.exportOptions` | read-ok | {ids?, artifact?: bool (tagged PDF decoration), rasterize?: bool (EPUB/HTML image), align?: left\|center\|right\|"", pageBreakBefore?: bool,… | {"objects": 1} |
-| `object.innerGlow` | ran | {on?: bool, opacity?, size?, choke? (%), center?: bool (glow from the centre), color?, ids?} | accepted; no readable field changed |
-| `object.bevel` | ran | {on?: bool, size?, depth? (%), angle?, globalLight?: bool, highlight?, highlightOpacity?, shadow?, shadowOpacity?, ids?} | accepted; no readable field changed |
-| `object.satin` | ran | {on?: bool, opacity?, angle?, distance?, size?, invert?: bool, color?, ids?} | accepted; no readable field changed |
-| `object.directionalFeather` | ran | {on?: bool, widths?: [top, left, bottom, right] \| number, ids?} | accepted; no readable field changed |
-| `object.effects` | ran | {effects?: {dropShadow?: {on?, color?, opacity?, angle?, globalLight?, distance?, size?, spread?}, innerShadow?, outerGlow?, innerGlow? {… | accepted; no readable field changed |
-| `object.feather` | ran | {width (0 = off), ids?} | accepted; no readable field changed |
+| `object.innerGlow` | verified | {on?: bool, opacity?, size?, choke? (%), center?: bool (glow from the centre), color?, ids?} | spreads[0].items[0].effects.innerGlow.center: "<absent>" -> false |
+| `object.bevel` | verified | {on?: bool, size?, depth? (%), angle?, globalLight?: bool, highlight?, highlightOpacity?, shadow?, shadowOpacity?, ids?} | spreads[0].items[0].effects.bevel.angle: "<absent>" -> 120.0 |
+| `object.satin` | verified | {on?: bool, opacity?, angle?, distance?, size?, invert?: bool, color?, ids?} | spreads[0].items[0].effects.satin.angle: "<absent>" -> 120.0 |
+| `object.directionalFeather` | verified | {on?: bool, widths?: [top, left, bottom, right] \| number, ids?} | spreads[0].items[0].effects.directionalFeather.on: "<absent>" -> true |
+| `object.effects` | verified | {effects?: {dropShadow?: {on?, color?, opacity?, angle?, globalLight?, distance?, size?, spread?}, innerShadow?, outerGlow?, innerGlow? {… | spreads[0].items[0].effects.dropShadow.distance: 7.0 -> 9.0 |
+| `object.feather` | verified | {width (0 = off), ids?} | spreads[0].items[0].effects.feather: 0.0 -> 6.0 |
 | `object.content` | verified | {type: graphic\|text\|unassigned, ids?} | attrs.characterStyle: "<absent>" -> "[None]" |
-| `object.textFrameOptions` | ran | {columns?, gutter?, inset?: number\|[t,l,b,r] (null keeps that side), verticalJustification?: top\|center\|bottom\|justify, paragraphSpacingL… | accepted; no readable field changed |
-| `object.cornerOptions` | ran | {shape: none\|rounded\|inverseRounded\|inset\|bevel\|fancy, size, corners?: [{shape, size} \| null] (4 entries in path order: top-left, top-rig… | accepted; no readable field changed |
-| `object.textWrap` | ran | {mode?: none\|boundingBox\|contour\|jumpObject\|jumpToNextColumn (boundingBox when absent, unless side or contour is given; null or those: ea… | accepted; no readable field changed |
-| `object.fit` | ran | {mode: fillProportionally (preserves aspect ratio, covers frame, clips overflow)\|fitProportionally (preserves aspect ratio, shows whole i… | accepted; no readable field changed |
-| `object.fittingOptions` | ran | {autoFit?: bool, fitting?: none\|fillProportionally\|fitProportionally\|fitContentToFrame\|centerContent, align?: 0..8 (reference point, 4 = … | accepted; no readable field changed |
-| `object.clearFittingOptions` | ran | {ids?} — the frames' fitting options back to the defaults: no auto-fit, no crop amounts, the centre reference point; the content stays wh… | accepted; no readable field changed |
+| `object.textFrameOptions` | verified | {columns?, gutter?, inset?: number\|[t,l,b,r] (null keeps that side), verticalJustification?: top\|center\|bottom\|justify, paragraphSpacingL… | spreads[0].items[0].content.options.columns: 1 -> 2 |
+| `object.cornerOptions` | verified | {shape: none\|rounded\|inverseRounded\|inset\|bevel\|fancy, size, corners?: [{shape, size} \| null] (4 entries in path order: top-left, top-rig… | spreads[0].items[0].corners.corners[0].shape: "none" -> "rounded" |
+| `object.textWrap` | verified | {mode?: none\|boundingBox\|contour\|jumpObject\|jumpToNextColumn (boundingBox when absent, unless side or contour is given; null or those: ea… | spreads[0].items[0].wrap.mode: "none" -> "boundingBox" |
+| `object.fit` | verified | {mode: fillProportionally (preserves aspect ratio, covers frame, clips overflow)\|fitProportionally (preserves aspect ratio, shows whole i… | spreads[0].items[0].content.xf[0]: 0.9375 -> 0.8333333333333334 |
+| `object.fittingOptions` | verified | {autoFit?: bool, fitting?: none\|fillProportionally\|fitProportionally\|fitContentToFrame\|centerContent, align?: 0..8 (reference point, 4 = … | spreads[0].items[0].content.autoFit: "none" -> "fillProportionally" |
+| `object.clearFittingOptions` | verified | {ids?} — the frames' fitting options back to the defaults: no auto-fit, no crop amounts, the centre reference point; the content stays wh… | spreads[0].items[0].content.autoFit: "fillProportionally" -> "none" |
 | `object.rename` | verified | {id \| ids?, name} | inspect.spreads[0].items[0].name: "" -> "ProbeObject" |
 | `object.align` | verified | {edge: left\|hcenter\|right\|top\|vcenter\|bottom, to?: selection\|keyObject\|margins\|page\|spread (default: keyObject while a key object is set)… | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 0.0 |
-| `object.distribute` | ran | {axis: horizontal\|vertical, by?: centers\|spacing, spacing?: points, ids?} | accepted; no readable field changed |
+| `object.distribute` | verified | {axis: horizontal\|vertical, by?: centers\|spacing, spacing?: points, ids?} | spreads[0].items[1].xf[4]: 0.0 -> -59.5 |
 | `object.clippingPath` | verified | {type?: alpha\|edges (default alpha), threshold?: 0–255 (alpha: opaque above; edges: darker than 255 − threshold counts; default 25), tole… | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 35.0 |
 | `object.clippingPathOptions` | read-ok | {type?: none, invert?: bool, includeInsideEdges?: bool, ids?} — without type, invert or includeInsideEdges, reports each selected graphic… | {"items": [{"id": 11, "type": "none"}]} |
 | `object.primaryTextFrame` | read-ok | {on?: bool (default: toggle), ids?} — the selected text frame's story becomes the primary story (Smart Text Reflow adds and removes pages… | {"primary": true, "story": 12} |
-| `object.attributes` | ran | {overprintFill?, overprintStroke?, overprintGap?, nonprinting?: bool, ids?} — Attributes panel | accepted; no readable field changed |
-| `object.globalLight` | ran | {angle} — the light angle shared by shadows that use Global Light | accepted; no readable field changed |
-| `object.label` | ran | {label, ids?} — free text scripts and agents can find objects by | accepted; no readable field changed |
-| `object.altText` | ran | {text, ids?} — alternative text for tagged PDF and EPUB | accepted; no readable field changed |
-| `object.transparencyGroup` | ran | {isolate?: bool, knockout?: bool, ids?} — Effects panel: Isolate Blending, Knockout Group | accepted; no readable field changed |
+| `object.attributes` | verified | {overprintFill?, overprintStroke?, overprintGap?, nonprinting?: bool, ids?} — Attributes panel | spreads[0].items[0].fill.overprint: false -> true |
+| `object.globalLight` | verified | {angle} — the light angle shared by shadows that use Global Light | settings.globalLight: 120.0 -> 35.0 |
+| `object.label` | verified | {label, ids?} — free text scripts and agents can find objects by | spreads[0].items[0].label: "<absent>" -> "Tag A" |
+| `object.altText` | verified | {text, ids?} — alternative text for tagged PDF and EPUB | spreads[0].items[0].altText: "<absent>" -> "Alt text" |
+| `object.transparencyGroup` | verified | {isolate?: bool, knockout?: bool, ids?} — Effects panel: Isolate Blending, Knockout Group | spreads[0].items[0].isolate: "<absent>" -> true |
 | `object.findByLabel` | read-ok | {label} → ids of objects whose label is `label` | {"ids": [11]} |
-| `object.setLayer` | ran | {layer, ids?} — a group member moves its whole top-level group | accepted; no readable field changed |
+| `object.setLayer` | verified | {layer, ids?} — a group member moves its whole top-level group | spreads[0].items[0].layer: 1 -> 10 |
 | `object.reorder` | verified | {ids?, above?: id \| below?: id \| index?: n (0 = top of the layer), layer?} — moves the objects (siblings on one spread) in the stacking o… | inspect.spreads[0].items[0].bounds[0]: 60.0 -> 260.0 |
 | `object.makeCompoundPath` | verified | {ids?} — one path from the selected paths (the backmost object's look); paths inside others become holes → {id} | inspect.spreads[0].items[0].bounds[2]: 180.0 -> 340.0 |
 | `object.releaseCompoundPath` | read-ok | {ids?} — each subpath becomes its own object → {ids} | {"ids": [11]} |
 | `object.pathfinder` | verified | {op: add\|subtract\|intersect\|exclude\|minusBack, ids?} — combine the selected shapes into one, which keeps the frontmost object's look and … | inspect.spreads[0].items[0].bounds[2]: 220.0 -> 420.0 |
-| `object.gradientFeather` | ran | {on?: true, radial?, angle?, start?: opacity 0–100 (100), end?: (0), from?: [x,y], to?: [x,y] (spread coords: the Gradient Feather tool's… | accepted; no readable field changed |
+| `object.gradientFeather` | verified | {on?: true, radial?, angle?, start?: opacity 0–100 (100), end?: (0), from?: [x,y], to?: [x,y] (spread coords: the Gradient Feather tool's… | spreads[0].items[0].effects.gradientFeather.angle: "<absent>" -> 0.0 |
 | `object.caption` | verified | {text?: template (default "{name}"; variables {name} {path} {altText} {label} {ppi} {dimensions} {format}), position?: below\|above\|left\|r… | attrs.characterStyle: "<absent>" -> "[None]" |
-| `object.pdfLayers` | ran | {id?} → [{name, visible, default}] — the layers of the selected placed PDF | accepted; no readable field changed |
-| `object.layerOptions` | ran | {ids?, hidden: [layer name], useDefaults?: bool} — hide layers; useDefaults:false makes [] explicitly all on; legacy [] restores file def… | accepted; no readable field changed |
+| `object.pdfLayers` | read-ok | {id?} → [{name, visible, default}] — the layers of the selected placed PDF | placed layered PDF, returned [{"default": true, "name": "Red Box", "overridden": false, "visible": true}] |
+| `object.layerOptions` | verified | {ids?, hidden: [layer name], useDefaults?: bool} — hide layers; useDefaults:false makes [] explicitly all on; legacy [] restores file def… | spreads[0].items[0].pdfHiddenLayers[0]: "<absent>" -> "Red Box" |
 | `object.qrCode` | verified | {type?: url\|text\|sms\|email\|vcard (default url), content (url/text), number?, message?, to?, subject?, body?, name?, phone?, email?, org?,… | inspect.spreads[0].items[0].children[0].bounds[0]: "<absent>" -> 88.27586206896552 |
 | `object.convertShape` | verified | {to: rectangle\|roundedRectangle\|beveledRectangle\|inverseRoundedRectangle\|ellipse\|triangle\|polygon\|line\|orthogonalLine\|openPath\|closedPath… | inspect.spreads[0].items[0].kind: "<rectangle>" -> "<ellipse>" |
 | `object.gradient` | verified | {kind?: linear\|radial, stops?: [{location: 0–100, color: "#rrggbb"\|{c,m,y,k}(0..100)\|[r,g,b](0..255)\|{model: rgb\|cmyk\|gray, …}(0..1) \| sw… | inspect.spreads[0].items[0].fill: "[None]" -> "Gradient" |
@@ -227,8 +227,8 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `path.appendAnchor` | verified | {id, anchor: {p, in?, out?} (spread coords), subpath?: index (default the last), at?: end\|start (default end)} — after the subpath's last… | inspect.spreads[0].items[0].bounds[2]: 200.0 -> 300.0 |
 | `path.setAnchor` | verified | {id, subpath?: index (default the last), anchor: index\|"first"\|"last", p?, in?, out? (spread coords)} — moves an anchor or its direction … | inspect.spreads[0].items[0].bounds[0]: 100.0 -> 110.0 |
 | `path.reverse` | read-ok | {ids?, subpath?: index (only that subpath of the first target)} — the anchors run the other way (the end point becomes the start) | {"reversed": 1} |
-| `path.close` | ran | {id, subpath?: index (default every subpath)} | accepted; no readable field changed |
-| `path.moveAnchors` | ran | {id, anchors: [[subpath, index]], dx, dy, handle?: in\|out} \| {points: [[id, subpath, index, dx?, dy?]], dx?, dy?} (anchors of several pat… | accepted; no readable field changed |
+| `path.close` | verified | {id, subpath?: index (default every subpath)} | spreads[0].items[0].path.subpaths[0].closed: false -> true |
+| `path.moveAnchors` | verified | {id, anchors: [[subpath, index]], dx, dy, handle?: in\|out} \| {points: [[id, subpath, index, dx?, dy?]], dx?, dy?} (anchors of several pat… | spreads[0].items[0].path.subpaths[0].anchors[0].p[0]: 100.0 -> 110.0 |
 | `path.addAnchor` | read-ok | {id, at: [x,y] (spread coords; the nearest point on the path), tolerance?: pt (default 4)} → {subpath, anchor} | {"anchor": 1, "subpath": 0} |
 | `path.deleteAnchor` | verified | {id, subpath, anchor} — removes the point (and the object when no path is left) | inspect.spreads[0].items[0].bounds[2]: 200.0 -> 150.0 |
 | `path.convertAnchor` | read-ok | {id, subpath, anchor, to?: [x,y] (spread coords: drag out symmetric handles to there), corner?: bool} — without `to`, a smooth point beco… | {"kind": "smooth"} |
@@ -261,7 +261,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `article.new` | verified | {name?, ids? (default: the selection)} → {name} | readback[0].export: "<absent>" -> true |
 | `article.add` | verified | {name, ids? (default: the selection)} — appended in order | readback[0].items[0]: "<absent>" -> 11 |
 | `article.remove` | verified | {name, ids} | readback[0].items[0]: 11 -> "<absent>" |
-| `article.options` | ran | {name, to?: new name, export?: bool, order?: [ids] (reorder)} | accepted; no readable field changed |
+| `article.options` | verified | {name, to?: new name, export?: bool, order?: [ids] (reorder)} | [0].name: "Article1" -> "Story Main" |
 | `article.delete` | verified | {name} | readback[0].export: true -> "<absent>" |
 
 ## type (43)
@@ -277,7 +277,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `type.kernPair` | verified | {kerning: {kind: metrics\|optical\|none}\|{kind: manual, value: 1/1000 em}\|null} — at a caret in text, the pair at the caret (the character … | attrs.chars.kerning.kind: "metrics" -> "manual" |
 | `type.para` | verified | {attrs: {align?, leftIndent?, firstLineIndent?, spaceBefore?, spaceAfter?, dropCapLines?, dropCapChars?, dropCapStyle?, dropCapAlignLeft?… | attrs.para.spaceBefore: 0.0 -> 6.0 |
 | `type.align` | verified | {align: left\|center\|right\|leftJustified\|…} | attrs.para.align: "left" -> "center" |
-| `type.alignLeft` | ran | {} | accepted; no readable field changed |
+| `type.alignLeft` | verified | {} | para.align: "left" -> "center" |
 | `type.alignCenter` | verified | {} | attrs.para.align: "left" -> "center" |
 | `type.alignRight` | verified | {} | attrs.para.align: "left" -> "right" |
 | `type.justify` | verified | {} | attrs.para.align: "left" -> "leftJustified" |
@@ -303,13 +303,13 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `type.openType` | read-ok | {feature?: dlig\|frac\|ordn\|swsh\|titl\|calt\|zero\|ssNN\|any tag, on?: bool (default: toggle), figures?: tabularLining\|proportionalOldstyle\|pro… | {"features": [], "figures": "default"} |
 | `type.selectionAttrs` | read-ok | {mixed?: bool} → resolved character/paragraph attributes at the text selection; `ownChars`: what the text has of its own over its paragra… | {"charOverrides": 0, "characterStyle": "[None]", "characterStyleOverrides": 0, "chars": {"allowKashidas": true, "baselineShift": 0.0, "capitalization": "normal", "change": "none", "characterAlignment" |
 | `type.openTypeFeatures` | read-ok | {} → the OpenType features and stylistic sets the selected text's fonts offer, each with its applied and available state (none, some or a… | {"features": [{"applied": "none", "available": "all", "tag": "aalt"}, {"applied": "none", "available": "all", "tag": "c2sc"}, {"applied": "none", "available": "all", "tag": "case"}, {"applied": "none" |
-| `type.feature` | ran | {features: {tag: true\|false, …}} — turns OpenType features on or off across the selected text, keeping each run's other features | accepted; no readable field changed |
+| `type.feature` | verified | {features: {tag: true\|false, …}} — turns OpenType features on or off across the selected text, keeping each run's other features | charOverrides: 0 -> 1 |
 | `type.tabs.get` | read-ok | {style?} → {tabs, leftIndent, firstLineIndent, rightIndent, width, frame?, column?: [x0,y0,x1,y1] (frame inner space)} — the first select… | {"column": [36.0, 36.0, 320.0, 240.0], "firstLineIndent": 0.0, "frame": 11, "leftIndent": 0.0, "rightIndent": 0.0, "tabs": [], "width": 284.0} |
 | `type.tabs.add` | verified | {position (pt from the column's left edge), align?: left\|center\|right\|char, leader? (≤ 8 characters), alignOn? (one character), style?} →… | attrs.para.tabs[0].align: "<absent>" -> "left" |
 | `type.tabs.move` | verified | {index, position, style?} → {index, tabs} | attrs.para.tabs[0].position: 120.0 -> 150.0 |
 | `type.tabs.change` | verified | {index, align?: left\|center\|right\|char, leader?, alignOn?, style?} → {index, tabs} | attrs.para.tabs[0].align: "left" -> "center" |
 | `type.tabs.remove` | verified | {index, style?} → {tabs} | attrs.para.tabs[0].align: "left" -> "<absent>" |
-| `type.tabs.clear` | ran | {style?} → {tabs} | accepted; no readable field changed |
+| `type.tabs.clear` | verified | {style?} → {tabs} | tabs[0].align: "left" -> "<absent>" |
 | `type.tabs.repeat` | verified | {index, width?, style?} → {index, tabs} — repeats the distance from the previous stop (or the left indent) to this one up to the column w… | attrs.para.tabs[1].align: "<absent>" -> "left" |
 
 ## flex (5)
@@ -319,7 +319,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `flex.add` | verified | {ids?} — the selected objects (top level, one spread) in a new Flex Layout container where they are; aligned objects get that direction, … | inspect.spreads[0].items[0].children[0].bounds[0]: "<absent>" -> 60.0 |
 | `flex.convert` | read-ok | {ids?} — a group (its objects) or a rectangle frame (with what is pasted into it) becomes a Flex Layout container → {id} | {"id": 11} |
 | `flex.remove` | read-ok | {ids?} — the container goes; its objects stay where they are, grouped when there are several (a container with its own fill or stroke sta… | {"ids": [11]} |
-| `flex.set` | ran | {ids?, direction?: row\|rowReverse\|column\|columnReverse, wrap?: bool, justify?: flexStart\|center\|flexEnd\|spaceBetween\|spaceAround\|spaceEve… | accepted; no readable field changed |
+| `flex.set` | verified | {ids?, direction?: row\|rowReverse\|column\|columnReverse, wrap?: bool, justify?: flexStart\|center\|flexEnd\|spaceBetween\|spaceAround\|spaceEve… | spreads[0].items[0].content.items[1].xf[4]: 0.0 -> -228.0 |
 | `flex.reorder` | read-ok | {id (an object in a container), to?: index \| by?: ±n} — its place in the container's order → {index} | {"index": 1} |
 
 ## book (10)
@@ -331,7 +331,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `book.close` | verified | {} | readback.command: "<absent>" -> "book.list" |
 | `book.add` | verified | {path, at?: index} | readback.documents[1].firstPage: "<absent>" -> 4 |
 | `book.remove` | verified | {index} | readback.documents[0].firstPage: 1 -> "<absent>" |
-| `book.styleSource` | ran | {index} | accepted; no readable field changed |
+| `book.styleSource` | verified | {index} | styleSource: 0 -> 1 |
 | `book.list` | read-ok | {} → {path, styleSource, documents: [{path, pages, firstPage}]} | {"documents": [{"firstPage": 1, "pages": 3, "path": "/scratch/out/base.designcraft"}], "path": "/scratch/… |
 | `book.paginate` | read-ok | {} — each document starts numbering where the previous one ended, and takes its chapter number (automatic: one more than the previous doc… | {"chapters": [], "pages": 0} |
 | `book.syncStyles` | read-ok | {} — paragraph and character styles and swatches of the style source go into every document (by name) | {"synced": 0} |
@@ -343,22 +343,22 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 |---|---|---|---|
 | `button.set` | read-ok | {ids?, action: page\|firstPage\|lastPage\|nextPage\|previousPage\|url\|none, page?, url?} — the selected objects act on release in interactive PDF | {"buttons": 1} |
 | `button.clear` | read-ok | {ids?} | {"buttons": 1} |
-| `button.list` | ran | {} → [{id, name, action}] | accepted; no readable field changed |
+| `button.list` | verified | {} → [{id, name, action}] | [0].name: "<absent>" -> "" |
 
 ## form (3)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `form.set` | read-ok | {ids?, kind: textField\|checkBox\|comboBox\|listBox\|signature, name?, value?, options?: [string], multiline?, required?, fontSize?} — intera… | {"fields": 1} |
-| `form.clear` | ran | {ids?} — no longer a form field | accepted; no readable field changed |
-| `form.list` | ran | {} → [{id, kind, name, value, options}] | accepted; no readable field changed |
+| `form.clear` | verified | {ids?} — no longer a form field | [0].name: "Field1" -> "<absent>" |
+| `form.list` | verified | {} → [{id, kind, name, value, options}] | [0].name: "<absent>" -> "Field1" |
 
 ## color (5)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `color.settings` | read-ok | {rgb?: working RGB profile, cmyk?: working CMYK profile, intent?: perceptual\|relative\|saturation\|absolute, bpc?: bool} → {rgb, cmyk, inte… | {"bpc": true, "cmyk": "Coated FOGRA39 (fitted, craft-cms)", "intent": "relative", "profiles": [{"builtin": true, "kind": "rgb", "name": "sRGB IEC61966-2.1"}, {"builtin": true, "kind": "rgb", "name": " |
-| `color.loadProfile` | refused | {path} — an ICC profile (.icc/.icm) to use as a working space or proof target | invalid parameters for `color.loadProfile`: invalid ICC profile: not an ICC profile (missing 'acsp' signature) |
+| `color.loadProfile` | verified | {path} — an ICC profile (.icc/.icm) to use as a working space or proof target | profiles[7].name: "<absent>" -> "Rec. 709" |
 | `color.convert` | read-ok | {color: {model: rgb, r, g, b} \| {model: cmyk, c, m, y, k} \| {model: gray, k}, to: rgb\|cmyk\|gray\|lab} — through the working spaces | {"c": 0.8424807786941528, "k": 0.012222002260386944, "m": 0.5661570429801941, "model": "cmyk", "y": 0.2000114470720291} |
 | `color.extractTheme` | read-ok | {id?: selected image frame} → {from, colors: [up to five RGB hex colours]} — samples the source raster, ignoring transparent pixels; at m… | {"colors": ["#3e3e80", "#3ebd80", "#9e3e80", "#bebd80", "#de3e80"], "from": 11} |
 | `color.sample` | verified | {at: [x,y] (spread coords), spread?, target?: fill\|stroke, ids?, matchFrom?: id} → {color: "#rrggbb", swatch, from: image id} — the Eyedr… | inspect.spreads[0].items[0].fill: "[None]" -> "R=69 G=63 B=128" |
@@ -373,19 +373,19 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `swatch.load` | read-ok | {path?\|base64?, replace?: bool} — colour swatches from a swatch exchange (.ase) file; a name the file repeats gets a number ("Red 2") and… | {"added": 0, "replaced": 0} |
 | `swatch.save` | read-ok | {path?, names?: [swatch names] (default: all colour swatches)} → {base64} or writes `path` (.ase) | {"base64": "QVNFRgABAAAAAAAGAAEAAAA8ABIAQwA9ADEAMAAwACAATQA9ADAAIABZAD0AMAAgAEsAPQAwAABDTVlLP4AAAAAAAAAAAAAAAAAAAAACAAEAAAA8ABIAQwA9ADAAIABNAD0AMQAwADAAIABZAD0AMAAgAEsAPQAwAABDTVlLAAAAAD+AAAAAAAAAAAAA |
 | `swatch.addToSwatches` | read-ok | {swatch?: name (default: the selection's fill), target?: fill\|stroke, name?: new name} — makes an unnamed colour a swatch | {"name": "R=51 G=102 B=153"} |
-| `swatch.options` | ran | {name, to?: new name, nameWithValue?: bool, color?: "#rrggbb"\|{c,m,y,k}(0..100)\|[r,g,b]\|{gray}(0..100), spot?: bool, tint?: 0–1 (tint swa… | accepted; no readable field changed |
+| `swatch.options` | verified | {name, to?: new name, nameWithValue?: bool, color?: "#rrggbb"\|{c,m,y,k}(0..100)\|[r,g,b]\|{gray}(0..100), spot?: bool, tint?: 0–1 (tint swa… | swatches[10].name: "Brand" -> "Brand Blue" |
 | `swatch.addUnnamed` | read-ok | {} — every unnamed colour used becomes a swatch | {"added": 0} |
 | `swatch.delete` | verified | {name} | inspect.swatches[10]: "ProbeSwatch" -> "<absent>" |
-| `swatch.newColorGroup` | ran | {name?, swatches?: [names]} — a Swatches panel folder (the swatches move into it) → {name} | accepted; no readable field changed |
-| `swatch.moveToGroup` | ran | {swatches: [names], group: name \| null (top level)} | accepted; no readable field changed |
-| `swatch.ungroupColorGroup` | ran | {name} — its swatches go back to the top level | accepted; no readable field changed |
-| `swatch.renameColorGroup` | ran | {name, to} | accepted; no readable field changed |
+| `swatch.newColorGroup` | verified | {name?, swatches?: [names]} — a Swatches panel folder (the swatches move into it) → {name} | colorGroups[0].name: "<absent>" -> "G" |
+| `swatch.moveToGroup` | verified | {swatches: [names], group: name \| null (top level)} | colorGroups[0].swatches[0]: "Brand" -> "<absent>" |
+| `swatch.ungroupColorGroup` | verified | {name} — its swatches go back to the top level | colorGroups[0].name: "G" -> "<absent>" |
+| `swatch.renameColorGroup` | verified | {name, to} | colorGroups[0].name: "G" -> "H" |
 
 ## changes (6)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `changes.track` | ran | {on?: bool (default: toggle)} | accepted; no readable field changed |
+| `changes.track` | verified | {on?: bool (default: toggle)} | settings.trackChanges: false -> true |
 | `changes.list` | read-ok | {} → [{story, start, end, kind: inserted\|deleted, text}] | [{"end": 5, "kind": "deleted", "start": 0, "story": 12, "text": "Alpha"}, {"end": 13, "kind": "inserted", "start": 5, "story": 12, "text": "Changed "}] |
 | `changes.accept` | verified | {story, start} — the change at that position | readback[0].end: 5 -> 8 |
 | `changes.reject` | verified | {story, start} — the change at that position | readback[0].end: 5 -> 13 |
@@ -396,7 +396,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `condition.list` | ran | {} → [{name, color, visible}] | accepted; no readable field changed |
+| `condition.list` | verified | {} → [{name, color, visible}] | [0].name: "<absent>" -> "C1" |
 | `condition.new` | verified | {name, color?: [r, g, b], visible?} → {name} | readback[0].color[0]: "<absent>" -> 79 |
 | `condition.options` | verified | {name, to?: new name, color?: [r, g, b], visible?: bool} | readback[0].visible: true -> false |
 | `condition.delete` | verified | {name} — the text it was applied to stays (shown) | readback[0].color[0]: 79 -> "<absent>" |
@@ -406,14 +406,14 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `library.new` | ran | {path?} — an empty Object Library (saved to `path` when given) | accepted; no readable field changed |
+| `library.new` | verified | {path?} — an empty Object Library (saved to `path` when given) | library.list before: error `no library open`; after: [] (library open, 0 items) |
 | `library.open` | read-ok | {path \| json} → {items} | {"items": 0} |
 | `library.list` | read-ok | {} → [{index, name, description}] | [{"description": "", "index": 0, "name": "rectangle"}] |
 | `library.json` | read-ok | {} → the library as JSON text (to save where there's no file system) | {"json": "{\"items\":[{\"name\":\"rectangle\",\"description\":\"\",\"snippet\":\"UEsDBAoAAAAAAAAAIQAnYSB5HwAAAB8AAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQuZGVzaWduY3JhZnQremlwUEsDBBQAAAAIAAAAIQDg/YjOQQA |
-| `library.add` | ran | {name?, description?} — the selection → {index} | accepted; no readable field changed |
+| `library.add` | verified | {name?, description?} — the selection → {index} | [0].name: "<absent>" -> "Item1" |
 | `library.place` | verified | {index, spread?, x?, y?} — at its original position unless x/y (top-left) are given | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 60.0 |
-| `library.remove` | ran | {index} | accepted; no readable field changed |
-| `library.close` | ran | {} | accepted; no readable field changed |
+| `library.remove` | verified | {index} | [0].name: "Item1" -> "<absent>" |
+| `library.close` | verified | {} | library.list before: [] (open); after: error `no library open` |
 
 ## conveyor (4)
 
@@ -421,8 +421,8 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 |---|---|---|---|
 | `conveyor.collect` | read-ok | {ids? (default: the selection)} — each object onto the Content Collector conveyor → {count} | {"count": 2} |
 | `conveyor.place` | verified | {index? (0), spread?, x?, y?, keep?: bool (stay on the conveyor)} — the Content Placer: the collected object at x/y (top-left) | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 60.0 |
-| `conveyor.list` | ran | {} → [name] | accepted; no readable field changed |
-| `conveyor.clear` | ran | {} | accepted; no readable field changed |
+| `conveyor.list` | verified | {} → [name] | [0]: "<absent>" -> "rectangle" |
+| `conveyor.clear` | verified | {} | [0]: "rectangle" -> "<absent>" |
 
 ## list (4)
 
@@ -431,17 +431,17 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `list.bullets` | verified | {on?: bool (default: off when every selected paragraph has bullets, else on)} — the Bulleted List button: paragraphs with no indents get … | attrs.para.firstLineIndent: 0.0 -> -18.0 |
 | `list.numbers` | verified | {on?: bool (default: off when every selected paragraph is numbered, else on)} — the Numbered List button, as list.bullets | attrs.para.firstLineIndent: 0.0 -> -18.0 |
 | `list.define` | read-ok | {name, continueAcrossStories?: true, rename?} — paragraphs join it with type.para {listType: numbers, listName} | {"lists": [{"continueAcrossStories": true, "name": "ProbeList2"}]} |
-| `list.delete` | ran | {name} | accepted; no readable field changed |
+| `list.delete` | verified | {name} | settings.lists[0].name: "L1" -> "<absent>" |
 
 ## story (9)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `story.placeAndLink` | verified | {story (parent), rect, spread?} — a new frame whose story copies the parent and stays linked → {id, story} | inspect.spreads[0].items[1].bounds[0]: "<absent>" -> 400.0 |
-| `story.links` | ran | {} → [{story, parent, outOfDate}] | accepted; no readable field changed |
+| `story.links` | verified | {} → [{story, parent, outOfDate}] | [0].outOfDate: "<absent>" -> false |
 | `story.updateLink` | read-ok | {story? (default: every out-of-date linked story)} — the child takes the parent's current content (its own edits are replaced) | {"updated": 0} |
-| `story.unlink` | ran | {story} | accepted; no readable field changed |
-| `story.setDirection` | ran | {story?, frame?: a text frame of the story, direction: leftToRight\|rightToLeft} — column progression, independent of paragraph direction | accepted; no readable field changed |
+| `story.unlink` | verified | {story} | [0].outOfDate: false -> "<absent>" |
+| `story.setDirection` | verified | {story?, frame?: a text frame of the story, direction: leftToRight\|rightToLeft} — column progression, independent of paragraph direction | stories.9.direction: "leftToRight" -> "rightToLeft" |
 | `story.options` | verified | {story?, frame?: a text frame of the story (default: the stories of the text selection or the selected frames), opticalMargin?: bool — Op… | attrs.storyOptions.opticalMargin: false -> true |
 | `story.setText` | verified | {story, text} — replace a story's whole text | inspect.stories[0].length: 76 -> 20 |
 | `story.replaceRange` | verified | {story, start, end, text} — replace a byte range keeping surrounding formatting | inspect.stories[0].length: 76 -> 78 |
@@ -458,7 +458,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `media.options` | ran | {ids?, playOnPageLoad?, loop?, controls?, poster?: {path \| base64+name} \| null (placeholder)} — for placed video and sound | accepted; no readable field changed |
+| `media.options` | verified | {ids?, playOnPageLoad?, loop?, controls?, poster?: {path \| base64+name} \| null (placeholder)} — for placed video and sound | loop: false -> true |
 | `media.get` | read-ok | {id?} → {kind, name, playOnPageLoad, loop, controls, poster} | {"controls": true, "kind": "audio", "loop": false, "name": "test.wav", "playOnPageLoad": false, "poster": null} |
 
 ## liquid (2)
@@ -472,7 +472,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `guide.liquid` | ran | {spread?, page, index, on?: bool (default true)} | accepted; no readable field changed |
+| `guide.liquid` | verified | {spread?, page, index, on?: bool (default true)} | spreads[0].pages[0].guides[0].liquid: "<absent>" -> true |
 | `guide.add` | verified | {orientation: horizontal\|vertical, position (spread coordinate, at most 1000000 pt either way), spread?, page? (index in the spread; defa… | inspect.selection.guides[0].index: 0 -> 1 |
 | `guide.move` | verified | {spread?, page, index, position (at most 1000000 pt either way)} | readback[0].position: 300.0 -> 120.0 |
 | `guide.moveBy` | read-ok | {dx?, dy?, guides?: [{spread?, page, index}] (default: the selected guides)} — vertical guides move by dx, horizontal ones by dy, as one … | {"moved": 1} |
@@ -491,27 +491,27 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `layout.pages.insert` | verified | {count?: 1 (1 to 9999), after?: 0-based page index (default: the last page; past it: at the end), before?: 0-based page index (instead of… | inspect.spreads[2].index: "<absent>" -> 2 |
 | `layout.rotateSpreadView` | read-ok | {spread?: index (0), angle: 90 (clockwise) \| -90 \| 180 \| 0 (clear)} — turn one spread on screen (output is unaffected) | {"rotation": 90} |
 | `layout.pages.delete` | verified | {pages: [index]} | inspect.spreads[1].pages[1].bounds[0]: 612.0 -> "<absent>" |
-| `layout.pages.move` | ran | {from, to} | accepted; no readable field changed |
+| `layout.pages.move` | verified | {from, to} | spreads[0].pages[0].id: 4 -> 5 (page 2 moved into the first spread; the spreads now hold [5] and [4]) |
 | `layout.pages.duplicateSpread` | verified | {spread, atEnd?: bool (Duplicate Spread at End of Document; the Pages panel's New Page button takes a dropped page there), to?: page inde… | inspect.spreads[2].index: "<absent>" -> 2 |
-| `layout.pages.applyParent` | ran | {pages: [index], parent: id\|"A-Parent"\|"A"\|null (null or "[None]" clears)} | accepted; no readable field changed |
+| `layout.pages.applyParent` | verified | {pages: [index], parent: id\|"A-Parent"\|"A"\|null (null or "[None]" clears)} | spreads[1].pages[0].parent: 3 -> 14 |
 | `layout.parents.new` | verified | {prefix?, name?: "Parent"} | inspect.parents[1].basedOn: "<absent>" -> null |
 | `layout.parents.delete` | verified | {id: parent spread id} — unapply the parent and keep local overrides as ordinary items | inspect.parents[1].basedOn: null -> "<absent>" |
-| `layout.parents.edit` | ran | {on?: bool, parent?: id\|"A-Parent"\|"A"} — show parent spreads on the canvas; `parent` shows that parent (and implies on). Turning on with… | accepted; no readable field changed |
-| `layout.parents.options` | ran | {parent: id\|"B-Parent"\|"B", basedOn: id\|"A-Parent"\|"A"\|null (= [None])} — the parent shows its base's items under its own, and so do the … | accepted; no readable field changed |
+| `layout.parents.edit` | ran | {on?: bool, parent?: id\|"A-Parent"\|"A"} — show parent spreads on the canvas; `parent` shows that parent (and implies on). Turning on with… | no change |
+| `layout.parents.options` | verified | {parent: id\|"B-Parent"\|"B", basedOn: id\|"A-Parent"\|"A"\|null (= [None])} — the parent shows its base's items under its own, and so do the … | parents[1].parent.basedOn: "<absent>" -> 3 |
 | `layout.marginsAndColumns` | verified | {pages?: [index] (default all), margins?: number\|{top,bottom,inside,outside}, columns?, gutter?, adjustLayout?: bool (objects follow the … | inspect.spreads[1].pages[0].columnRects[0][0]: 36.0 -> 40.0 |
 | `layout.moveColumnGuide` | verified | {spread?, parent? (a parent's prefix, label or index: its spread instead of `spread`), page (index in the spread), gutter (0 = between th… | inspect.spreads[0].pages[0].columnRects[0][2]: 300.0 -> 100.0 |
 | `layout.documentSetup` | verified | {width?, height?, pages?: count, startPage?: n, facingPages?, binding?: leftToRight\|rightToLeft, intent?: print\|web\|mobile, margins?: n \|… | inspect.settings.facingPages: true -> false |
 | `layout.pages.toSpread` | verified | {page (1-based), spread (0-based)} — the page joins that spread (up to 10 pages; the spread stops shuffling) | inspect.spreads[0].pages[0].bounds[0]: 0.0 -> 612.0 |
-| `layout.spreadShuffle` | ran | {spread (0-based), allow: bool} — off keeps the spread's pages together when pages are added or removed | accepted; no readable field changed |
+| `layout.spreadShuffle` | verified | {spread (0-based), allow: bool} — off keeps the spread's pages together when pages are added or removed | spreads[0].allowShuffle: true -> false |
 | `layout.pageSize` | verified | {pages: [1-based page numbers], width?, height?, preset?: "A4"\|"Letter"\|…, anchor?: 0–8 (reference point that stays put, row-major from t… | inspect.spreads[0].pages[0].bounds[2]: 612.0 -> 500.0 |
-| `layout.parentPageSize` | refused | {parent: spread id, page: 0-based parent page index, width?, height?, anchor?: 0–8} — resize only this parent page, keeping document page… | invalid parameters for `layout.parentPageSize`: no such parent page |
-| `layout.selectParentPage` | refused | {parent: spread id\|null, page?: 0-based parent page index} — select a parent page with the Page tool; null clears the selection | invalid parameters for `layout.selectParentPage`: no such parent page |
-| `layout.pageOptions` | ran | {pages: [1-based], showParentOverlay?: bool} — Page tool options (Show Parent Page Overlay: the parent page's size drawn over the page) | accepted; no readable field changed |
+| `layout.parentPageSize` | verified | {parent: spread id, page: 0-based parent page index, width?, height?, anchor?: 0–8} — resize only this parent page, keeping document page… | parents[0].pages[0].width: 612.0 -> 700.0 |
+| `layout.selectParentPage` | verified | {parent: spread id\|null, page?: 0-based parent page index} — select a parent page with the Page tool; null clears the selection | selection.parentPage[0]: "<absent>" -> 4 |
+| `layout.pageOptions` | verified | {pages: [1-based], showParentOverlay?: bool} — Page tool options (Show Parent Page Overlay: the parent page's size drawn over the page) | spreads[0].pages[0].showParentOverlay: "<absent>" -> true |
 | `layout.selectPage` | verified | {page: 1-based \| null, ids?: [item ids] (objects selected with it: the Page tool on an object-based page)} — the page the Page tool selec… | inspect.selection.page: "<absent>" -> 0 |
 | `layout.section` | verified | {page (1-based; starts a section there), startNumber?: n (1–99999)\|null (continue), style?: arabic\|upperRoman\|lowerRoman\|upperLetters\|low… | inspect.spreads[0].pages[0].name: "1" -> "i" |
 | `layout.chapterNumbering` | read-ok | {style?: arabic\|upperRoman\|lowerRoman\|upperLetters\|lowerLetters\|arabicLeadingZero\|arabicThreeDigits\|arabicFourDigits, start?: n (Start Ch… | {"book": null, "chapterNumber": 1, "label": "1", "source": "userDefined", "style": "arabic"} |
 | `layout.numberingOptions` | verified | {page, …the settings as layout.section, chapter?: {…the settings as layout.chapterNumbering}} — the section and the document's chapter nu… | inspect.spreads[0].pages[0].name: "1" -> "i" |
-| `layout.overrideParentItems` | ran | {page (0-based), ids?: parent items (default: all on the page's parent page)} → {ids} the page's editable copies | accepted; no readable field changed |
+| `layout.overrideParentItems` | verified | {page (0-based), ids?: parent items (default: all on the page's parent page)} → {ids} the page's editable copies | spreads[1].items: 0 -> 1 (a copy of the parent item appears on the page; returned {"ids":[16]}) |
 | `layout.removeOverrides` | read-ok | {page (0-based)} — deletes the page's overridden copies; the parent items show again | {"removed": 0} |
 | `layout.detachAll` | read-ok | {page (0-based)} — the page's overridden copies become ordinary items | {"detached": 0} |
 | `layout.createGuides` | read-ok | {rows?: 0..1000, columns?: 0..1000, rowGutter?: 12, columnGutter?: 12, fitTo?: margins\|page, removeExisting?: false, spread?, page? (inde… | {"guides": 4} |
@@ -535,7 +535,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `strokeStyle.list` | ran | {} → [{name, kind}] | accepted; no readable field changed |
+| `strokeStyle.list` | verified | {} → [{name, kind}] | [0].name: "<absent>" -> "Dash1" |
 | `strokeStyle.new` | verified | {name, type: stripes\|dash\|dot, bands?: [[start, width] (fractions of the weight)], pattern?: [dash, gap, …] (pt)} — apply with object.str… | readback[0].kind.kind: "<absent>" -> "dashed" |
 | `strokeStyle.delete` | verified | {name} — strokes using it become solid | readback[0].kind.kind: "dashed" -> "<absent>" |
 
@@ -560,7 +560,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `page.transition` | read-ok | {pages?: [1-based] \| spread? \| all?: bool, kind: blinds\|box\|comb\|cover\|dissolve\|fade\|push\|split\|uncover\|wipe\|zoomIn\|zoomOut\|none, duratio… | {"spreads": 2} |
-| `page.transitions` | ran | {} → [{spread, kind, duration, horizontal}] | accepted; no readable field changed |
+| `page.transitions` | verified | {} → [{spread, kind, duration, horizontal}] | [0].duration: "<absent>" -> 1.0 |
 
 ## select (8)
 
@@ -570,10 +570,10 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `select.nextAbove` | verified | {} | inspect.selection.items[0]: 11 -> 12 |
 | `select.nextBelow` | verified | {} | inspect.selection.items[1]: 12 -> "<absent>" |
 | `select.lastBelow` | verified | {} — the backmost object on the spread | inspect.selection.items[1]: 12 -> "<absent>" |
-| `select.container` | ran | {} — the group or frame holding the selection | accepted; no readable field changed |
-| `select.content` | ran | {} — the graphic in a frame, or the first object in a group | accepted; no readable field changed |
-| `select.nextInGroup` | ran | {} | accepted; no readable field changed |
-| `select.previousInGroup` | ran | {} | accepted; no readable field changed |
+| `select.container` | verified | {} — the group or frame holding the selection | selection.items[0]: 8 -> 10 |
+| `select.content` | verified | {} — the graphic in a frame, or the first object in a group | selection.items[0]: 10 -> 8 |
+| `select.nextInGroup` | verified | {} | selection.items[0]: 8 -> 9 |
+| `select.previousInGroup` | verified | {} | selection.items[0]: 9 -> 8 |
 
 ## links (7)
 
@@ -592,7 +592,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `text.placeCaret` | verified | {frame, point: [x,y] (spread coords)} — converts empty frames to text frames | inspect.selection.text.anchor: 76 -> 6 |
-| `text.release` | ran | {frame, point, moved: bool, copy?: bool} — ends a press in text: a drag that started in the selected text moves (copy: duplicates) it to … | accepted; no readable field changed |
+| `text.release` | ran | {frame, point, moved: bool, copy?: bool} — ends a press in text: a drag that started in the selected text moves (copy: duplicates) it to … | accepted (returned null); text and selection unchanged - a press-drag needs UI input. Tried: document.json diff, inspect.selection |
 | `text.extendTo` | verified | {frame, point, unit?: word\|line\|paragraph\|story} — moves the selection's focus to the point; with `unit`, after a text.selectAt, the sele… | inspect.selection.text.focus: 76 -> 19 |
 | `text.selectWord` | verified | {frame, point} — the word (or run of spaces) under the point | inspect.selection.text.anchor: 76 -> 5 |
 | `text.selectAt` | verified | {frame, point, unit: word\|line\|paragraph\|story} — what a double, triple, quadruple or quintuple click selects: the word (or run of spaces… | inspect.selection.text.anchor: 76 -> 5 |
@@ -614,13 +614,13 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `style.breakLink` | verified | {kind: paragraph\|character} — the selected text keeps its look as local formatting, with [No Paragraph Style] / [None] | attrs.paragraphStyle: "[Basic Paragraph]" -> "[No Paragraph Style]" |
-| `style.compositeFont.list` | ran | {} → composite font definitions | accepted; no readable field changed |
-| `style.compositeFont.set` | ran | {name, entries: [{name?, characters?, family, style?, relativeSize?, horizontalScale?, verticalScale?, baselineShift?, scaleOption?}]} — … | accepted; no readable field changed |
+| `style.compositeFont.list` | verified | {} → composite font definitions | [0].entries[0].name: "<absent>" -> "" |
+| `style.compositeFont.set` | verified | {name, entries: [{name?, characters?, family, style?, relativeSize?, horizontalScale?, verticalScale?, baselineShift?, scaleOption?}]} — … | [0].entries[0].name: "<absent>" -> "" |
 | `style.exportTag` | read-ok | {style, character?: bool, tag?: p\|h1…h6\|blockquote\|pre\|li\|… (span\|em\|strong\|code\|sup\|sub… for characters; "" = automatic), class?, split?… | {"class": "", "tag": "p"} |
 | `style.paragraph.apply` | verified | {name, clearOverrides?: bool} | attrs.paragraphStyle: "[Basic Paragraph]" -> "ProbePara" |
 | `style.character.apply` | verified | {name} | attrs.characterStyle: "[None]" -> "ProbeChar" |
-| `style.paragraph.redefine` | ran | {name?} — incorporate the first selected paragraph/character's local formatting into its paragraph style; retain character styles; one un… | accepted; no readable field changed |
-| `style.character.redefine` | ran | {name?} — incorporate the first selected character's local formatting into its character style without capturing paragraph attributes; on… | accepted; no readable field changed |
+| `style.paragraph.redefine` | verified | {name?} — incorporate the first selected paragraph/character's local formatting into its paragraph style; retain character styles; one un… | styles.paragraph[1].chars.size: "<absent>" -> 24.0 |
+| `style.character.redefine` | verified | {name?} — incorporate the first selected character's local formatting into its character style without capturing paragraph attributes; on… | stories.9.chars[0].over.size: 20.0 -> "<absent>" |
 | `style.paragraph.create` | verified | {name, basedOn?, nextStyle?, para?: {paragraph attributes, as type.para names them: align, leftIndent, firstLineIndent, spaceBefore, spac… | inspect.paragraphStyles[3]: "<absent>" -> "ProbeParaNew" |
 | `style.paragraph.edit` | verified | {name, rename?, basedOn?, nextStyle?: style \| null ([Same style]), resetToBase?: bool (Reset To Base: the style sets nothing of its own; … | inspect.paragraphStyles[2]: "ProbePara" -> "ProbePara2" |
 | `style.paragraph.delete` | verified | {name, replaceWith?} | inspect.paragraphStyles[2]: "ProbePara" -> "<absent>" |
@@ -628,26 +628,26 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `style.character.edit` | verified | {name, rename?, basedOn?: style \| "[None]" \| null, chars?: {character attribute (as type.char names them: fontFamily, fontStyle, size, …)… | inspect.characterStyles[1]: "ProbeChar" -> "ProbeChar2" |
 | `style.character.delete` | verified | {name, replaceWith?} | inspect.characterStyles[1]: "ProbeChar" -> "<absent>" |
 | `style.list` | read-ok | {} → paragraph and character style names | {"cell": ["[None]"], "character": ["[None]", "ProbeChar"], "object": ["[None]", "[Basic Graphics Frame]", "[Basic Text Frame]", "ProbeObj"], "paragraph": ["[No Paragraph Style]", "[Basic Paragraph]",  |
-| `style.object.apply` | ran | {name, ids?} — sets the style's fill, stroke, effects and text frame options on the items | accepted; no readable field changed |
+| `style.object.apply` | verified | {name, ids?} — sets the style's fill, stroke, effects and text frame options on the items | spreads[0].items[0].fill.swatch: "[None]" -> "C=100 M=0 Y=0 K=0" |
 | `style.object.create` | verified | {name, fromSelection?: true (fill, stroke, effects and text frame options of the first selected item), fill?, paragraphStyle?, effects?: … | readback.object[4]: "<absent>" -> "ProbeObjNew" |
 | `style.object.edit` | read-ok | {name, effects?: {…} \| null (the style no longer sets effects), dropShadow?, feather?, innerShadow?, outerGlow?, innerGlow?, bevel?, sati… | {"name": "ProbeObj", "updated": 0} |
 | `style.object.clearOverrides` | verified | {ids?} — each item takes its object style's fill, stroke, effects and text frame options again → {changed} | inspect.spreads[0].items[0].stroke.swatch: "[None]" -> "[Black]" |
-| `style.group` | ran | {kind: paragraph\|character, names: [style names], group: "Heads" \| "Heads/Display" \| "" (out of any group)} — styles are named Group/Name… | accepted; no readable field changed |
+| `style.group` | verified | {kind: paragraph\|character, names: [style names], group: "Heads" \| "Heads/Display" \| "" (out of any group)} — styles are named Group/Name… | paragraphStyles[2]: "Custom1" -> "Heads/Custom1" |
 | `style.load` | read-ok | {path \| base64, name?: the file's name (`.idml` reads IDML), paragraph?: [name], character?: [name], conflicts?: redefine\|useExisting\|aut… | {"character": {"added": [], "renamed": {}, "replaced": []}, "paragraph": {"added": [], "renamed": {}, "replaced": ["[Basic Paragraph]"]}, "swatches": []} |
 | `style.load.list` | read-ok | {path \| base64, name?} → {paragraph: [{name, conflict}], character: [{name, conflict}]} — the styles `style.load` would bring; `conflict`… | {"character": [], "paragraph": [{"conflict": true, "name": "[Basic Paragraph]"}]} |
 | `style.cell.create` | verified | {name, fromSelection?: bool (the target cell's look), fill?, tint?, insets?: n\|[t,l,b,r], vj?: top\|center\|bottom\|justify, firstBaseline?:… | readback.cell[1]: "<absent>" -> "ProbeCellNew" |
 | `style.cell.apply` | read-ok | {name, story?, table?, rows?: [a,b] \| row?, cols?: [a,b] \| col?} — the target cells (the whole table when the cursor is in it) | {"cells": 1} |
-| `style.cell.edit` | ran | {name, …same as style.cell.create} — cells using the style follow | accepted; no readable field changed |
+| `style.cell.edit` | verified | {name, …same as style.cell.create} — cells using the style follow | stories.9.tables.10.cells[0].fill: "C=0 M=100 Y=0 K=0" -> "C=100 M=0 Y=0 K=0" |
 | `style.table.create` | verified | {name, basedOn?: table style name, header?, body?, footer?, leftColumn?, rightColumn?: cell style names, border?: {weight?, color?, tint?… | readback.table[1]: "<absent>" -> "ProbeTableNew" |
-| `style.table.apply` | ran | {name, story?, table?, rows?: [a,b] \| row?, cols?: [a,b] \| col?} | accepted; no readable field changed |
-| `style.table.edit` | ran | {name, …same as style.table.create} — tables using the style follow | accepted; no readable field changed |
+| `style.table.apply` | verified | {name, story?, table?, rows?: [a,b] \| row?, cols?: [a,b] \| col?} | stories.9.tables.10.cells[0].fill: "[None]" -> "C=0 M=100 Y=0 K=0" |
+| `style.table.edit` | verified | {name, …same as style.table.create} — tables using the style follow | stories.9.tables.10.cells[0].style: "CS2" -> "CS3" |
 
 ## ink (3)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `ink.list` | read-ok | {} → {allToProcess, inks: [{name, process: bool (printed as process), alias?}]} — the spot inks | {"allToProcess": false, "inks": []} |
-| `ink.options` | ran | {allToProcess?: bool, ink?: spot swatch, toProcess?: bool, alias?: spot swatch \| null} — output: spots to process, ink aliases | accepted; no readable field changed |
+| `ink.options` | verified | {allToProcess?: bool, ink?: spot swatch, toProcess?: bool, alias?: spot swatch \| null} — output: spots to process, ink aliases | inks.allToProcess: "<absent>" -> false |
 | `ink.separations` | read-ok | {page?: 1-based page position (default 1; its spread is separated), dpi?: 9–300 (default 72), inkLimit?: percent, standard?: none\|x4\|a2b,… | {"conversion": "Coated FOGRA39 (fitted, craft-cms)", "dpi": 72.0, "height": 792, "inks": [{"area": 0.0, "max": 0.0, "mean": 0.0, "name": "Cyan", "spot": false}, {"area": 0.0, "max": 0.0, "mean": 0.0,  |
 
 ## table (41)
@@ -669,9 +669,9 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `table.merge` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} — merge the target cell range | readback.cells[0].colSpan: 1 -> 2 |
 | `table.dropCells` | verified | {frame, from: [x, y], to: [x, y]} — selected whole rows (or columns) dragged from `from` move to the row (column) at `to`; otherwise a te… | readback.anchor: 77 -> "<absent>" |
 | `table.placeGraphic` | read-ok | {path? \| base64?, name?: with base64, fit?: proportional\|fill (default proportional), story?, table?, rows?: [a, b] \| row?, cols?: [a, b]… | {"asset": 14, "col": 0, "row": 0} |
-| `table.textCell` | ran | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} — drop the target cells' graphics | accepted; no readable field changed |
-| `table.moveRow` | ran | {from?, to, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} (0-based; from default… | accepted; no readable field changed |
-| `table.moveColumn` | ran | {from?, to, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} (0-based; from default… | accepted; no readable field changed |
+| `table.textCell` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} — drop the target cells' graphics | assets.11.name: "red.png" -> "<absent>" |
+| `table.moveRow` | verified | {from?, to, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} (0-based; from default… | stories.9.tables.10.cells[0].text.text: "A1" -> "A2" |
+| `table.moveColumn` | verified | {from?, to, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} (0-based; from default… | stories.9.tables.10.cells[0].text.text: "A1" -> "B1" |
 | `table.sortRows` | read-ok | {column?: 0-based (default: the target cell's), descending?: bool, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target… | {"sorted": 4} |
 | `table.unmerge` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | readback.cells[0].colSpan: 2 -> 1 |
 | `table.splitHorizontally` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} — each target cell becomes two, o… | readback.cells[10].col: 1 -> 2 |
@@ -681,7 +681,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `table.setRowHeight` | verified | {height, mode?: atLeast\|exactly, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | readback.rows[0].height: 3.0 -> 24.0 |
 | `table.setColumnWidth` | verified | {width, story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | readback.columns[0].width: 94.66666666666667 -> 70.0 |
 | `table.resizeBorder` | verified | {story?, table?, frame?, axis: column\|row, index, delta? \| size?, keepTableSize?: bool} — moves the border after column/row `index` by `d… | readback.columns[0].width: 94.66666666666667 -> 104.66666666666667 |
-| `table.distributeColumns` | ran | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | accepted; no readable field changed |
+| `table.distributeColumns` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | stories.9.tables.10.columns[0].width: 60.0 -> 112.0 |
 | `table.distributeRows` | verified | {story?, table?, rows?: [a,b] \| row?, cols?: [a,b] \| col?} — equal fixed heights preserving the selected rows' composed total height; may… | readback.rows[0].height: 3.0 -> 20.451999999999998 |
 | `table.options` | verified | {direction?: leftToRight\|rightToLeft, border?: {weight?, color?, tint?, type?, gapColor?, gapTint?}, spaceBefore?, spaceAfter?, headerRow… | readback.options.direction: "leftToRight" -> "rightToLeft" |
 | `table.convertRowsToHeader` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} — the target rows, at the top of … | readback.headerRows: 0 -> 1 |
@@ -692,7 +692,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `table.selectRow` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | inspect.selection.cells.range.c0: "<absent>" -> 0 |
 | `table.selectColumn` | verified | {story?, table?, rows?: [a, b] \| row?, cols?: [a, b] \| col? (the target cells; default: the selection)} | inspect.selection.cells.range.c0: "<absent>" -> 0 |
 | `table.nextCell` | verified | {} | readback.range.c0: 0 -> 1 |
-| `table.prevCell` | ran | {} | accepted; no readable field changed |
+| `table.prevCell` | verified | {} | selection.text.cell.col: 1 -> 0 |
 | `table.toggleSelection` | read-ok | {} — Esc in a table, as InDesign: the insertion point or text in a cell selects that cell; selected cells select the text of the first one | {"cells": true} |
 | `table.get` | read-ok | {story?, table?, rows?: [a,b] \| row?, cols?: [a,b] \| col?} → rows, columns, cells (text, spans, fill), options | {"anchor": 77, "cells": [{"col": 0, "colSpan": 1, "fill": "[None]", "firstBaseline": "ascent", "firstBaselineMin": 0.0, "insets": [4.0, 4.0, 4.0, 4.0], "rotation": 0.0, "row": 0, "rowSpan": 1, "style" |
 
@@ -700,15 +700,15 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `layer.move` | ran | {id, to: index (0 = top/frontmost)} | accepted; no readable field changed |
+| `layer.move` | verified | {id, to: index (0 = top/frontmost)} | layers[0].name: "Top" -> "Layer 1" |
 | `layer.selectItems` | verified | {id} | inspect.selection.items[0]: 12 -> 11 |
 | `layer.new` | verified | {name?} | inspect.activeLayer: 1 -> 13 |
 | `layer.set` | verified | {id, name?, color?: [r,g,b] \| layer colour name ("Light Blue", "Red", …), visible?, locked?, printable?, showGuides?, suppressWrapWhenHid… | inspect.layers[0].name: "Layer 1" -> "Layer One" |
 | `layer.delete` | verified | {id} | inspect.activeLayer: 12 -> 1 |
 | `layer.merge` | verified | {ids: [layer ids], into?: layer id (default: the first)} — their objects move to `into`, the other layers are deleted | inspect.activeLayer: 12 -> 1 |
 | `layer.deleteUnused` | read-ok | {} — layers without objects (one layer always stays) | {"deleted": 0} |
-| `layer.others` | ran | {id, hide?: bool, lock?: bool, show?: true (Show All Layers), unlock?: true (Unlock All Layers)} — Hide Others / Lock Others act on every… | accepted; no readable field changed |
-| `layer.activate` | ran | {id} | accepted; no readable field changed |
+| `layer.others` | verified | {id, hide?: bool, lock?: bool, show?: true (Show All Layers), unlock?: true (Unlock All Layers)} — Hide Others / Lock Others act on every… | layers[0].visible: true -> false |
+| `layer.activate` | verified | {id} | activeLayer: 8 -> 1 |
 
 ## prefs (1)
 
@@ -726,11 +726,11 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `find.objects` | ran | {fill?, stroke?: swatch, strokeWeight?, opacity? (0–1), kind?: text\|graphic\|shape\|line\|group, layer?, label?, select?: bool (default true… | accepted; no readable field changed |
-| `find.changeObjects` | ran | {…the criteria of find.objects, change: {fill?, stroke?, strokeWeight?, opacity?}} → {changed} | accepted; no readable field changed |
+| `find.objects` | verified | {fill?, stroke?: swatch, strokeWeight?, opacity? (0–1), kind?: text\|graphic\|shape\|line\|group, layer?, label?, select?: bool (default true… | ids[0]: "<absent>" -> 8 |
+| `find.changeObjects` | verified | {…the criteria of find.objects, change: {fill?, stroke?, strokeWeight?, opacity?}} → {changed} | spreads[0].items[0].fill.swatch: "[Black]" -> "C=0 M=100 Y=0 K=0" |
 | `find.find` | read-ok | {find, grep?: bool, caseSensitive?: bool, wholeWord?: bool, scope?: document\|story\|selection, story?, findFormat?: {charStyle?, paraStyle… | [{"end": 5, "start": 0, "story": 12, "text": "Alpha"}] |
 | `find.change` | verified | {find, change, grep?, caseSensitive?, wholeWord?, scope?, story?, findFormat?: {charStyle?, paraStyle?, chars?: resolved character attrib… | inspect.stories[0].preview: "Alpha beta gamma. Delta epsilon zeta.\nEta theta iota kappa. Lambda mu nu xi." -> "Omega beta gamma. Delta epsilon zeta.\nEta theta iota kappa. Lambda mu nu xi." |
-| `find.next` | ran | {find, grep?, caseSensitive?, wholeWord?, scope?: document\|story\|selection, story?, findFormat?: {charStyle?, paraStyle?, chars?: resolve… | accepted; no readable field changed |
+| `find.next` | verified | {find, grep?, caseSensitive?, wholeWord?, scope?: document\|story\|selection, story?, findFormat?: {charStyle?, paraStyle?, chars?: resolve… | match start 0 -> 12 (2nd match); find.find returned 2 matches |
 
 ## variables (6)
 
@@ -741,7 +741,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | `variables.delete` | verified | {name} — instances become plain text of their current value | readback[7].index: 7 -> "<absent>" |
 | `variables.insert` | verified | {name} — at the text insertion point | inspect.stories[0].length: 76 -> 3 |
 | `variables.convertToText` | verified | {} — the variable instances in the selected text become plain text of the value each shows on its page; the variables stay defined | inspect.stories[0].length: 20 -> 22 |
-| `variables.convertAllToText` | ran | {name} — every instance of the variable in the document becomes plain text of the value it shows on its page (Text Variables › Convert to… | accepted; no readable field changed |
+| `variables.convertAllToText` | verified | {name} — every instance of the variable in the document becomes plain text of the value it shows on its page (Text Variables › Convert to… | stories.9.chars[0].len: 4 -> 15 |
 
 ## toc (3)
 
@@ -767,9 +767,9 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `xref.insert` | verified | {anchor? \| paragraph?: text to find (first paragraph containing it) \| story?: with para? \| para?: 0-based paragraph of `story`, format?: … | inspect.stories[0].length: 82 -> 85 |
-| `xref.list` | ran | {} → [{story, pos, target, format, text}] | accepted; no readable field changed |
+| `xref.list` | verified | {} → [{story, pos, target, format, text}] | [0].format: "<absent>" -> "Full Paragraph & Page Number" |
 | `xref.formats` | read-ok | {} → [{name, definition}] | [{"definition": "\"<fullPara />\" on page <pageNum />", "name": "Full Paragraph & Page Number"}, {"definition": "\"<fullPara />\"", "name": "Full Paragraph"}, {"definition": "\"<paraText />\" on page  |
-| `xref.defineFormat` | ran | {name, definition} — building blocks: <fullPara />, <paraText />, <paraNum />, <pageNum />, <txtAnchrName />, <chapNum />, <fileName />, … | accepted; no readable field changed |
+| `xref.defineFormat` | verified | {name, definition} — building blocks: <fullPara />, <paraText />, <paraNum />, <pageNum />, <txtAnchrName />, <chapNum />, <fileName />, … | [11].name: "<absent>" -> "MyFormat" |
 | `xref.setFormat` | verified | {story, index, format} | inspect.stories[0].lines: 3 -> 2 |
 
 ## anchor (2)
@@ -777,7 +777,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `anchor.create` | verified | {name} — a text anchor at the insertion point; the name is the document's, so it must not be one another anchor already has | inspect.stories[0].length: 76 -> 79 |
-| `anchor.list` | ran | {} → [{id, name, story, pos, page}] | accepted; no readable field changed |
+| `anchor.list` | verified | {} → [{id, name, story, pos, page}] | [0].name: "<absent>" -> "A1" |
 
 ## index (4)
 
@@ -793,7 +793,7 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `anchored.insert` | verified | {ids, story?, pos? (default: the text insertion point), position?: inline\|aboveLine\|custom, yOffset?, align?: left\|center\|right, spaceBef… | readback[0].index: "<absent>" -> 0 |
-| `anchored.options` | ran | {story?, index? (default: the object at the insertion point), position?: inline\|aboveLine\|custom, yOffset?, align?: left\|center\|right, sp… | accepted; no readable field changed |
+| `anchored.options` | verified | {story?, index? (default: the object at the insertion point), position?: inline\|aboveLine\|custom, yOffset?, align?: left\|center\|right, sp… | stories.9.objects[0].position.align: "<absent>" -> "left" |
 | `anchored.release` | verified | {story?, index? (default: the object at the insertion point)} — puts the object back on the page where it is now and removes it from the … | readback[0].index: 0 -> "<absent>" |
 | `anchored.list` | read-ok | {story?} → [{story, index, pos, position, size}] | [{"index": 0, "pos": 0, "position": {"kind": "inline", "y_offset": 0.0}, "size": [190.0, 160.0], "story": 12}] |
 
@@ -810,26 +810,26 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `font.list` | read-ok | {} → [{family, style, characters, missing, styleMissing, source: bundled\|installed\|document\|added (null when missing), matchStatus: exact… | [{"bitmapOnly": false, "characters": 75, "editable": false, "family": "Source Serif 4", "fsType": 0, "matchStatus": "exact", "missing": false, "noSubsetting": false, "previewPrint": false, "replacemen |
-| `font.replace` | refused | {family, style?, toFamily, toStyle?, redefineStyles?: true} — replaces the font in text and (by default) in paragraph and character styles | invalid parameters for `font.replace`: Choose an available replacement font family |
+| `font.replace` | verified | {family, style?, toFamily, toStyle?, redefineStyles?: true} — replaces the font in text and (by default) in paragraph and character styles | [0].family: "Inter" -> "Source Sans 3" |
 | `font.reload` | read-ok | {} — scans the font folders again and reads again the installed font files changed or removed since they were read, then recomposes the o… | {"cataloged": 315, "changed": []} |
 
 ## spelling (5)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `spelling.check` | ran | {story?, suggestions?: true} → [{story, start, end, word, suggestions}] | accepted; no readable field changed |
-| `spelling.setWords` | ran | {words: [word]} — replace the document's user dictionary | accepted; no readable field changed |
-| `spelling.words` | ran | {} → [word] | accepted; no readable field changed |
-| `spelling.addWord` | ran | {word} | accepted; no readable field changed |
+| `spelling.check` | read-ok | {story?, suggestions?: true} → [{story, start, end, word, suggestions}] | returned 2 findings, first: {"end": 9, "start": 4, "story": 9, "suggestions": ["quick"], "word": "quikc"} |
+| `spelling.setWords` | verified | {words: [word]} — replace the document's user dictionary | [0]: "<absent>" -> "alpha" |
+| `spelling.words` | verified | {} → [word] | [0]: "<absent>" -> "designcrafttest" |
+| `spelling.addWord` | verified | {word} | [0]: "<absent>" -> "designcrafttest" |
 | `spelling.change` | verified | {story, start, end, to} | inspect.stories[0].length: 76 -> 75 |
 
 ## hyphenation (3)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `hyphenation.addException` | ran | {word: "ex~am~ple" (breaks only at ~) or a word with no ~ (never hyphenated)} | accepted; no readable field changed |
-| `hyphenation.removeException` | ran | {word} (with or without ~) | accepted; no readable field changed |
-| `hyphenation.list` | ran | {} → [word] | accepted; no readable field changed |
+| `hyphenation.addException` | verified | {word: "ex~am~ple" (breaks only at ~) or a word with no ~ (never hyphenated)} | [0]: "<absent>" -> "ex~am~ple" |
+| `hyphenation.removeException` | verified | {word} (with or without ~) | [0]: "ex~am~ple" -> "<absent>" |
+| `hyphenation.list` | verified | {} → [word] | [0]: "<absent>" -> "ex~am~ple" |
 
 ## data (10)
 
@@ -837,13 +837,13 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 |---|---|---|---|
 | `data.source.select` | verified | {path \| bytes\|base64, name, delimiter?: comma\|tab\|semicolon, sheet?} → {fields, records, warnings} | readback[0].kind: "<absent>" -> "text" |
 | `data.source.update` | read-ok | {} → re-read the linked file | {"fields": [{"kind": "text", "name": "name"}, {"kind": "text", "name": "city"}], "records": 2, "warnings": []} |
-| `data.source.remove` | ran | {} → drop the source; placeholders stay | accepted; no readable field changed |
-| `data.fields` | ran | {csv? \| rows? \| path? \| bytes? \| base64?, name?, delimiter?, sheet?} → [{name, kind, uses}]; no params reads the linked source and does n… | accepted; no readable field changed |
+| `data.source.remove` | verified | {} → drop the source; placeholders stay | [0].name: "Name" -> "<absent>" |
+| `data.fields` | verified | {csv? \| rows? \| path? \| bytes? \| base64?, name?, delimiter?, sheet?} → [{name, kind, uses}]; no params reads the linked source and does n… | [0].name: "<absent>" -> "Name" |
 | `data.placeholder.add` | verified | {field, role?: text\|image\|qr\|hyperlink, story?, at?, end?, item?} → {id} | readback[0].uses: 0 -> 1 |
 | `data.placeholder.remove` | verified | {id} | readback[0].uses: 1 -> 0 |
 | `data.options` | read-ok | {records?, one?, range?, perPage?, arrange?, insets?, columnSpacing?, rowSpacing?, fitting?, center?, linkImages?, limit?} | {"arrange": "rows", "center": false, "columnSpacing": 0.0, "fitting": "fitProportionally", "insets": [36.0, 36.0, 36.0, 36.0], "linkImages": true, "one": 1, "perPage": "single", "range": "", "records" |
 | `data.preview` | read-ok | {record?: n} → fill the template with that record (session only) | {"record": 1} |
-| `data.preview.stop` | ran | {} → restore the unfilled template | accepted; no readable field changed |
+| `data.preview.stop` | verified | {} → restore the unfilled template | preview changed 464 px (bbox [110, 75, 180, 84]); after stop 0 px differ from the template |
 | `data.merge` | verified | {csv? \| rows? \| path? \| bytes? \| base64?, name?, delimiter?, sheet?, records?, one?, range?, perPage?, arrange?, insets?, columnSpacing?,… | attrs.characterStyle: "[None]" -> "<absent>" |
 
 ## hyperlink (5)
@@ -852,18 +852,18 @@ Totals: 262 verified, 139 read-ok, 141 ran, 5 refused (three rows downgraded fro
 |---|---|---|---|
 | `hyperlink.create` | verified | {url? \| email? \| page? (1-based), name?, ids?} — from the selected text, or the selected frames | readback[0].dest.kind: "<absent>" -> "url" |
 | `hyperlink.delete` | verified | {id} | readback[0].dest.kind: "url" -> "<absent>" |
-| `hyperlink.list` | ran | {} | accepted; no readable field changed |
+| `hyperlink.list` | verified | {} | [0].name: "<absent>" -> "Link1" |
 | `hyperlink.edit` | verified | {id, name?, url? \| email? \| page? (1-based)} | readback[0].dest.value: "https://example.com" -> "https://example.org" |
-| `hyperlink.goToSource` | ran | {id} — selects the hyperlink's text or frame | accepted; no readable field changed |
+| `hyperlink.goToSource` | verified | {id} — selects the hyperlink's text or frame | selection.text.frame: "<absent>" -> 8 |
 
 ## bookmark (4)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `bookmark.rename` | ran | {index, name} | accepted; no readable field changed |
-| `bookmark.add` | ran | {name?, page? (1-based; default: current selection's page or 1)} | accepted; no readable field changed |
-| `bookmark.delete` | ran | {index} | accepted; no readable field changed |
-| `bookmark.list` | ran | {} | accepted; no readable field changed |
+| `bookmark.rename` | verified | {index, name} | [0].name: "B1" -> "B2" |
+| `bookmark.add` | verified | {name?, page? (1-based; default: current selection's page or 1)} | [0].name: "<absent>" -> "B1" |
+| `bookmark.delete` | verified | {index} | [0].name: "B1" -> "<absent>" |
+| `bookmark.list` | verified | {} | [0].name: "<absent>" -> "B1" |
 
 ## preflight (1)
 

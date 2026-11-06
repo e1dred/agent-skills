@@ -40,6 +40,10 @@ Read-back: every page `parent:"A-Parent"`, sides 1 right / 2 left / 3 right / 4 
 5. `focus: 9999` past the end is accepted and selects the whole story (no need to know byte length).
 6. `frame.create` rect is **spread coordinates** on the parent spread: left page x 0–396,
    right page x 396–792 (facing parent is two pages side by side, height 612).
+7. **A different page size on a parent page**: `layout.parentPageSize {"parent":4,"page":0,"width":700,
+   "height":700}`. `parent` is the **numeric** spread id from `document.inspect .parents[].id` (a name such as
+   "A-Parent" or "A" is refused), `page` is 0-based inside that parent spread. Read back
+   `document.json .parents[0].pages[0].width` (612 → 700). `layout.selectParentPage` takes the same pair.
 
 ## Paragraph and character styles, baseline grid, threaded frames, text wrap
 

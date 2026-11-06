@@ -55,4 +55,4 @@ Each script line is `command.id {json}`; `"$N.field"` passes a value from an ear
 
 - DesignCraft is pre-alpha; some commands refuse or have no read-back (listed in `SKILL.md`).
 - Most commands act on the selection; the reference lists the setup each error asks for.
-- Unknown parameter names are ignored silently, so results must be read back, not assumed.
+- Wrong keys inside nested parameter objects are ignored silently, so results must be read back, not assumed.

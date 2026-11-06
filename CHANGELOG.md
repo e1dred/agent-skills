@@ -6,6 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) (Added, Changed, 
 
 ## Unreleased
 
+### Changed
+- `designcraft/` (DesignCraft 0.17.2, 2026-11-05, second round): 138 of the 141 `ran` rows and all 5 refusals now have read-backs (402 verified, 142 read-ok, 3 ran, 0 refused), mostly from the saved `document.json` and IDML, since `document.inspect` shows no effects, opacity or fitting. Parent page sizes work with the numeric spread id. Live control: every `ui.*` input method, dialogs (`ui.dialog.*`), selection commands and `app.open`/`app.quit` tested on a private display; the live app has 187 more commands than the CLI. Live `file.close` and `app.quit` discard unsaved changes without asking.
+
+### Fixed
+- `designcraft/`: the "unknown parameters are silently ignored" trap was wrong. Unknown top-level keys and `chars`/`para` keys are refused with the list of valid names; only keys inside other nested objects (`stroke`, `border`, `margins`) are ignored.
+
 ### Added
 - New skill `designcraft/` (DesignCraft 0.17.2, 2026-11-05): every one of the 547 command ids run headless in an isolated HOME with before/after read-backs (262 verified, 139 read-ok, 141 ran, 5 refused; three rows downgraded on review), an error → setup list for ~45 errors, workflow recipes (parent pages and page numbers, styles and threads, a table form, CMYK/spot swatches, the export matrix with a valid PDF/X-4, IDML round trip, data merge, TOC/index/book), live control on a hidden display and in a user-opened window, and a worked form (a half-letter training log) whose PDF/X-4 only validated after switching RGB swatches to CMYK. Everyday checklist (15 tasks, 100%); added to `check-versions.sh`, `coverage.sh`, `everyday.sh` and the README. Command sweep and recipes by DeepSeek sessions, reviewed here (15-row spot check, renders looked at, one recipe claim about table header rows corrected).
 - VectorCraft 0.21.1 (2026-11-05): CLI refreshed (`vectorcraft-cli.0.21.0` kept); 911 → 918 ids, none removed, 67 parameter docs changed. Old-vs-new regression (5 scripted cases, 5 conversions) identical apart from `document.json` version 2, DXF rounding and `.ai` exports now carrying Illustrator editing data. The 7 new ids run and read back: batch trace of a folder, select by artboards, letter-by-letter text ramps, Global Edit exclude, select same text fill and stroke, and OpenType glyph alternates (checked by render). New trap: `#rrggbbaa` / `#rgba` colours are refused.

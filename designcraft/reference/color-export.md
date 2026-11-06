@@ -28,7 +28,10 @@ document.inspect {}
    ("only tint swatches have a tint"; source `cmd/style/swatches.rs`). `swatch.create` accepts
    only a colour or a gradient. Apply a tint numerically instead: `object.fill {swatch, tint}`,
    `type.char {attrs:{fill, fillTint}}`, `table.setCell {fill, tint}`, stroke `tint`.
-   (A tint swatch can still be *edited* if the document already has one, e.g. imported.)
+   (A tint swatch can still be *edited* if the document already has one, e.g. imported. To make one anyway:
+   unzip the `.designcraft`, add `{"name":"Brand 50%","value":{"kind":"tint","base":"Brand","tint":0.5},
+   "locked":false,"named":true}` to `document.json` `swatches`, re-zip with `mimetype` stored first, open it with
+   `--in`; then `swatch.options {"name":"Brand 50%","tint":0.25}` read back `.value.tint` 0.5 → 0.25.)
 2. **Spot must be declared at creation**: `spot:true` in `swatch.create`. Changing it later works
    through `swatch.options {spot:true}`, but the value must then be a plain colour swatch.
 3. **Text tint is a character attribute**: `fill` + `fillTint` (0–1) inside `type.char attrs`;

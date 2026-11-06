@@ -27,8 +27,11 @@ the ids and params here before relying on them (see `reference/newer-commands.md
 
 ## Traps (each cost a failed run)
 
-- **Unknown parameter names are silently ignored.** Verify the effect (`document.inspect`, `type.selectionAttrs`,
-  `table.get`, a render), never the exit code.
+- **A wrong key inside a nested object is silently ignored.** Top-level keys and `chars`/`para` keys are checked
+  (the error lists the valid ones), but keys inside `stroke`, `border`, `margins` and similar objects are not.
+  Verify the effect (`document.inspect`, `type.selectionAttrs`, `table.get`, a render), never the exit code.
+- **Effects, fitting and opacity are not in `document.inspect`.** Read them from the saved file:
+  `unzip -p F.designcraft document.json | jq '.spreads[].items[].effects'` (`.content.autoFit` for fitting).
 - **Most commands act on the selection.** "nothing selected" → `selection.set {ids:["$N.id"]}`; text formatting
   needs `text.select {story, anchor:0, focus:99999}` or `text.selectStory {frame}`. Full error → setup list in
   `reference/cli.md`.
@@ -40,12 +43,13 @@ the ids and params here before relying on them (see `reference/newer-commands.md
   apply it with `style.cell.apply {story, table, name, rows:[0,0], cols:[0,last]}`. Merging concatenates text.
 - **Page numbers** are the special character `` in a text frame on the parent spread
   (`frame.create {spread:{kind:"parent", index:0}, …}`); there is no "Page Number" variable.
-- **Tints** cannot be made as tint swatches: pass `tint` (0–1) on `object.fill`, `table.setCell`, `altRows`,
+- **Tints** cannot be made as tint swatches by a command: pass `tint` (0–1) on `object.fill`, `table.setCell`, `altRows`,
   `type.char {fillTint}`.
 - **`facingPages` defaults to true**: a 4-page document is spreads 1 | 2-3 | 4. Pass `facingPages:false` when you
   address `spread:N` per page.
 - **Small text-in-ellipse frames draw no text.** Use a graphic ellipse plus a separate centred text frame.
 - **Dialogs and file choosers** open on the user's screen: always pass explicit paths (save/export/place/open).
+- **Live `file.close` and `app.quit` discard unsaved changes without asking.** Save first.
 
 ## Verify before reporting
 
@@ -60,14 +64,15 @@ it has no PDF/A check), read `file.exportPdf`'s `warnings`, and `pdfinfo -box` /
 | `layout-tables.md` | new document, parent pages + page numbers (``), paragraph/character styles, baseline grid (`gridAlign`), threaded frames, text wrap, tables (`table.convertFromText`, `table.merge`, `table.setCell`, `style.cell.*`, `style.table.*`, `altRows`), a worked form layout, bundled fonts |
 | `color-export.md` | swatches (CMYK, spot, tints), `file.exportPdf` (PDF/X-4, X-1a, PDF/A-2b, bleed, marks), `validate-pdf`, IDML / EPUB / fixed EPUB / PPTX / HTML / PNG / JPG export, 2-up sheets with `place.load` + `place.drop` |
 | `data-toc-book.md` | data merge (`data.source.select`, `data.placeholder.add`, `data.merge`), `toc.generate`, `index.*`, books (`book.new`, `book.add`, `book.paginate`, `book.exportPdf`) |
-| `live-app.md` | `--control`, `app --method`, `script --connect`, `ui.*` methods, MCP tools and roots, hidden-display recipe, building a page in a window the user opened |
+| `live-app.md` | `--control`, `app --method`, `script --connect`, `ui.*` methods (pointer, keys, typing, drag, menus), **dialogs** (`ui.dialog.*`), the 187 live-only commands, MCP tools and roots, hidden-display recipe, building a page in a window the user opened |
 | `command-catalogue.md` | all 547 ids with status (verified / read-ok / ran / refused), params doc and evidence |
 | `newer-commands.md` | what changed between versions |
 | `log.md` | dated learning log |
 
 ## Known gaps (0.17.2)
 
-`layout.parentPageSize` / `layout.selectParentPage` refuse every parent id form; `font.replace` and
-`color.loadProfile` need real fonts/ICC files; `file.print` needs a printer; object effects (drop shadow, bevel,
-satin) and fitting options have no read-back; no PDF/X-3 or joboptions; fixed EPUB is page images; tables do not
-draw anchored objects in cells. Check the repo's `docs/gaps.md` for the current list.
+No command makes a tint swatch (hand-built recipe in `color-export.md`); `font.replace` only swaps to a family
+already in the document's font scope; `file.print` needs a printer (`dryRun:true` only previews); `place.load`,
+`layout.parents.edit`, `text.release` have no headless read-back; the 187 live-only `app.*`/`window.*`/`view.*`
+commands are listed but untested; no PDF/X-3 or joboptions; fixed EPUB is page images; tables do not draw
+anchored objects in cells. Check the repo's `docs/gaps.md` for the current list.
