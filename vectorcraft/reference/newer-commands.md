@@ -91,7 +91,7 @@ text or paint change.
 - `object.blend.spine.moveAnchor` gained `with: [index…]`: moving anchor 0 of a blend with `with:[1]` created the spine (`subpaths[0].anchors [[100,60],[400,60]]`, `keyAnchors:[0,1]`).
 - `text.tabs.set` requires string `align`/`leader`/`alignOn` and refuses an empty `alignOn` ("`alignOn` cannot be empty"); two stops (decimal/"." at 100, centered leader at 200) read back from `text.tabs.get`.
 - `path.joinScrub` joins two open paths near each other, or trims two crossing ones and joins at the crossing. **Select the paths first**: without a selection it answers `{id:null}` and changes nothing; with them it returned `{id:2}` and one 3-anchor path.
-- `addon.cleanup.removeBreaks` removes the real U+2028: "Line one line two" became "Line one line two" (`{removed:1}`).
+- `addon.cleanup.removeBreaks` removes the real U+2028: "Line one<U+2028>line two" became "Line one line two" (`{removed:1}`).
 - `variable.loadLibrary {path|xml|dataBase64}` replaced an empty document's variables with the saved library's (`variables:["Title"]`).
 - `addon.document.batchTraceFolder` traced a folder of one PNG into `.vectorcraft`, `failed: []`.
 - `links.findFiles {folder}` answers at once with the search state (`state:"searching"` on a first call); a headless run ends before the thread finishes, so found files were not observed headless.
