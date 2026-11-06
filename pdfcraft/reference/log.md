@@ -21,3 +21,4 @@ Part of the pdfcraft skill. The short front page is `../SKILL.md`; the sections 
   reads — 47 verified, 25 read-ok, 3 no-effect (view-only or other-OS tools), 2 refused for want of a sample (layers,
   XFA), 1 no GoToR link possible, 3 blocked (OCR models, 3D models). `content_copy` re-checked by hand after a weak first
   result. Recorded in `editing-signing-tools.md`.
+- 2026-11-06: 0.19.0 checked headless against 0.18.2 (195 tools, +6 OCR/comment tools); scripted round identical apart from random file ids; new ids, the OCR engine trap and the process notes recorded in `newer-commands.md`.

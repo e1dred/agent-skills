@@ -7,7 +7,7 @@ description: Use when cutting or trimming video, adding titles and graphics, gra
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from first headless tasks, last tested on **FilmCraft 0.17.1** (Linux AppImage). FilmCraft is an
+Field notes from first headless tasks, last tested on **FilmCraft 0.18.0** (Linux AppImage). FilmCraft is an
 early-alpha, Premiere-style video editor in Rust. Every menu item and button is an engine *command*; the CLI, the
 MCP server and the app's control channel run the same commands. If `filmcraft-cli --version` is newer, re-check
 anything here before relying on it.
@@ -38,13 +38,13 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `export.md` | Export presets and formats, the export queue, MP4/GIF export, frame stills, interchange exports, probing | Presets; Exporting; Presets and the export queue; Stills; Probing |
 | `command-catalogue.md` | Every other command id by family (clip, timeline, sequence, trim, graphics, edit, file, project, multicam, source, prefs, shortcuts, …), each marked verified (JSON path old → new), returned a result, ran, or refused with the reason; the setup that unlocks selection-dependent commands | One section per family |
 | `live-app.md` | Driving the running app over `--bridge`: the ui_* tools, what works only live, running it on a hidden display | Connecting; What the live app adds |
-| `newer-commands.md` | What each version added or changed | 0.17.0; 0.17.1 |
+| `newer-commands.md` | What each version added or changed | 0.17.0; 0.17.1; 0.18.0 |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
 
 ```
-filmcraft-cli commands --json                    # 716 commands: id, label, menu, params, enabled
+filmcraft-cli commands --json                    # 717 commands: id, label, menu, params, enabled
 filmcraft-cli describe file.import               # parameter docs for one command
 filmcraft-cli --project p.fcproj inspect         # {project:{…}, sequence:{…}} as JSON
 filmcraft-cli import clip.mp4 --project p.fcproj

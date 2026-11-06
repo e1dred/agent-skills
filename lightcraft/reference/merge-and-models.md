@@ -31,7 +31,7 @@
 - Commands that work with nothing installed (verified): `denoise.settings {auto,cacheGb,threads,runOn:auto|gpu|cpu}`,
   `denoise.status`, `denoise.models.list` (`{auto,cacheGb,dir,…}`), `denoise.models.downloads`
   (`{downloads:[],running:false}`), `denoise.models.downloadCancel {id}` (`{discarded:false}`),
-  `denoise.models.select {id:null}`, `denoise.pump {pace:pause|light|normal|full}`, `denoise.cancel {id|all}`,
+  `denoise.models.select {id:null}` (null selects the built-in denoiser; it does not switch denoise off), `denoise.pump {pace:pause|light|normal|full}`, `denoise.cancel {id|all}`,
   `denoise.clear`.
 - `denoise.toggle {id,enabled?}` applies to **raw photos** only (*"AI Denoise applies to raw photos developed
   from their sensor data"*).

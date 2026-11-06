@@ -26,3 +26,4 @@ Part of the filmcraft skill. The short front page is `../SKILL.md`; the sections
   chooser). Rows whose only change was the saved copy's name were downgraded. Live retries stopped after file
   choosers reached the user's screen.
   Recorded in `command-catalogue.md` and `live-app.md`.
+- 2026-11-06 (fourth round, 0.17.1 -> 0.18.0): 717 ids (+`presets.scan`); demo-project round identical apart from the new `maintainPitch` field; `clip.speedDuration` maintainPitch and `file.exportMedia` H.264 High 10 / Intra verified.

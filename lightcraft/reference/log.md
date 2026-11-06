@@ -16,3 +16,4 @@
 - Renders (480×360) used as pixel proof: exposure +1 changed 172,800 px, vignette −50 changed 103,946 px.
 - Weak rows after self-review: 11 downgraded (`downgraded.txt`).
 - Not tested: UI/control channel, MCP transport, raw files, AI models, Apple Photos export (macOS only).
+- 2026-11-06: 0.19.0 checked headless against 0.18.1 (389 ids, +6 control/prefs/recipe/profile ids); demo + library + render round ok on both, renders differ slightly with process 6; new ids and the built-in-denoise change recorded in `newer-commands.md` and `command-catalogue.md`.

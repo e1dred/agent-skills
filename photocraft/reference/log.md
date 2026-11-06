@@ -62,3 +62,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-03: printing verified with a raw CUPS test queue (Virtual_PDF).
 - 2026-11-03: view.clearSelectedArtboardGuides verified via the .pcraft manifest; PhotoCraft smoke-tested list complete and removed.
 - 2026-11-03: retrieval test: isolated-config tip for library commands moved into SKILL.md Traps; section index refreshed.
+- 2026-11-06: 0.21.0 checked headless against 0.20.2 (993 ids, +28 frames/stylistic sets/embed-all-linked); 70-output harness identical but for sub-pixel ellipse AA; new ids and changed parameters recorded in `workflows-and-tools.md`.

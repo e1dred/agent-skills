@@ -1,7 +1,8 @@
 # FilmCraft reference: command catalogue (third round)
 
 Part of the filmcraft skill. The short front page is `../SKILL.md`. **filmcraft-cli 0.17.1**, 2026-11-04: the 589
-command ids not covered by the earlier reference files, run headless on a test project (two 4 s clips with tone, a
+command ids not covered by the earlier reference files (re-checked on 0.18.0, 2026-11-06, with `presets.scan` added),
+run headless on a test project (two 4 s clips with tone, a
 still, a WAV) and, where a panel was needed, in the live app over `--bridge`. Levels:
 **verified** = the same field read before and after (JSON path, old → new); **returned a result** = a read/list command returned real data, or an action answered without a before/after comparison; **ran** = accepted but no change could be read back (often nothing to act on in the test project);
 **refused** = the command's own last message after up to six tries (it names the state or parameter still missing), tagged *needs a live panel*, *not in this build* (speech-to-text), *needs a microphone* or *file chooser* (skipped: without a path it opens the desktop's file dialog).
@@ -31,11 +32,13 @@ Refused in the test project: `captions.previous` (no more captions)
 
 ## clip
 
+Verified: `clip.speedDuration {"clips":[5],"speed":200,"maintainPitch":true}` — speed 1.0 → 2.0, maintainPitch false → true, durationFrames 150 → 75 (0.18.0).
+
 Verified: `clip.automateToSequence` project.root.children[4].duration 1016064000000 → 2032128000000; sequence.duration 1016064000000 → 2032128000000; `clip.breakoutToMono` project.root.children[5].customLabelColor "<absent>" → null; project.root.children[5].duration "<absent>" → 1016064000000; `clip.createMulticam` project.root.children[5].customLabelColor "<absent>" → null; project.root.children[5].duration "<absent>" → 1016064000000; `clip.extractAudio` project.root.children[5].customLabelColor "<absent>" → null; project.root.children[5].duration "<absent>" → 1016064000000; `clip.insertFrameHoldSegment` project.root.children[4].duration 1016064000000 → 1270080000000; sequence.duration 1016064000000 → 1270080000000; `clip.makeSubclip` project.root.children[5].customLabelColor "<absent>" → null; project.root.children[5].duration "<absent>" → 1016064000000; `clip.nest` project.root.children[5].customLabelColor "<absent>" → null; project.root.children[5].duration "<absent>" → 1016064000000
 
 Returned a result (read tools, or actions whose result was not compared before/after): `clip.audioPeak`, `clip.clearPosterFrame`, `clip.fieldOptions`, `clip.fillFrame`, `clip.fitToFrame`, `clip.frameHoldOptions`, `clip.generateAudioWaveform`, `clip.link`, `clip.revealInProject`, `clip.sceneEditDetection`, `clip.setPosterFrame`, `clip.sourceSettings`, `clip.timeInterpolation.frameBlending`, `clip.timeInterpolation.frameSampling`, `clip.timeInterpolation.opticalFlow`, `clip.updateMetadata`
 
-Ran, no change read back: `clip.editOffline`, `clip.editSubclip`, `clip.enable`, `clip.group`, `clip.interpretFootage`, `clip.mergeClips`, `clip.modifyTimecode`, `clip.nudgeVolumeDown1`, `clip.nudgeVolumeDown3`, `clip.nudgeVolumeUp1`, `clip.nudgeVolumeUp3`, `clip.remix.enable`, `clip.remix.properties`, `clip.rename`, `clip.scaleToFrameSize`, `clip.speedDuration`, `clip.synchronize`, `clip.ungroup`, `clip.volumeDown`, `clip.volumeDownMany`, `clip.volumeUp`, `clip.volumeUpMany`
+Ran, no change read back: `clip.editOffline`, `clip.editSubclip`, `clip.enable`, `clip.group`, `clip.interpretFootage`, `clip.mergeClips`, `clip.modifyTimecode`, `clip.nudgeVolumeDown1`, `clip.nudgeVolumeDown3`, `clip.nudgeVolumeUp1`, `clip.nudgeVolumeUp3`, `clip.remix.enable`, `clip.remix.properties`, `clip.rename`, `clip.scaleToFrameSize`, `clip.synchronize`, `clip.ungroup`, `clip.volumeDown`, `clip.volumeDownMany`, `clip.volumeUp`, `clip.volumeUpMany`
 
 Refused in the test project: `clip.multicamEnable` (command `clip.multicamEnable` is not available right now: no clips selected); `clip.multicamFlatten` (command `clip.multicamFlatten` is not available right now: no clips selected); `clip.remix` (invalid parameters for `clip.remix`: select an audio clip or pass `clip`); `clip.remix.revert` (command `clip.remix.revert` is not available right now: select an audio clip); `clip.replaceFromBin` (*file chooser*: may open a native file chooser: not run); `clip.replaceFromSource` (*file chooser*: may open a native file chooser: not run); `clip.replaceFromSourceMatchFrame` (*file chooser*: may open a native file chooser: not run); `clip.restoreCaptionsFromSource` (command `clip.restoreCaptionsFromSource` is not available right now: the clip's media has); `clip.setTimeInterpolation` (command `clip.setTimeInterpolation` is not available right now: no clips selected)
 
@@ -227,7 +230,7 @@ Ran, no change read back: `prefs.set`
 
 ## presets
 
-Ran, no change read back: `presets.list`
+Ran, no change read back: `presets.list`; `presets.scan {}` → `{changed:false, files:0, imported:0, removed:0, skipped:0, warnings:0, errors:[]}` on a folder with no `.prfpset` files (0.18.0)
 
 Refused in the test project: `presets.apply` (invalid parameters for `presets.apply`: need `preset`); `presets.delete` (invalid parameters for `presets.delete`: need `name`); `presets.export` (*file chooser*: may open a native file chooser: not run); `presets.import` (*file chooser*: may open a native file chooser: not run); `presets.rename` (invalid parameters for `presets.rename`: need `name`); `presets.save` (*file chooser*: may open a native file chooser: not run)
 

@@ -1,6 +1,6 @@
-# LightCraft command catalogue (0.18.1)
+# LightCraft command catalogue (0.19.0)
 
-Every id from `lightcraft-cli commands` (383; ids.txt lists 376 and leaves out the 5 beforeAfter.* and 2 pointColor.* ids, tested here). Status is the evidence in results.jsonl: **V** verified (same field read before/after), **R** read-ok, **r** ran (accepted, no read-back field), **x** refused (error in REPORT.md), **s** skipped. Parameters live in `commands` / commands.json.
+Every id from `lightcraft-cli commands` (389 in 0.19.0; the 0.18.1 sweep covered 376 here and left out the 5 beforeAfter.* and 2 pointColor.* ids; the 6 ids new in 0.19.0 are added below with their 0.19.0 evidence). Status is the evidence in results.jsonl: **V** verified (same field read before/after), **R** read-ok, **r** ran (accepted, no read-back field), **x** refused (error in REPORT.md), **s** skipped. Parameters live in `commands` / commands.json.
 
 ## activity (2)
 
@@ -35,12 +35,13 @@ Every id from `lightcraft-cli commands` (383; ids.txt lists 376 and leaves out t
 |---|---|---|
 | `albums.list` | r | no change in albums.list; result=[{"children": [{"children": [], "count": 5, "cover": 1, " |
 
-## app (3)
+## app (4)
 
 | id | status | note |
 |---|---|---|
 | `app.export` | V | file:<scratch> None → {'bytes': 71886, 'mean': [156.8, 142.6, 140.5], 'size': [800, 533]} |
 | `app.gpu` | V | available True → False |
+| `app.hotPixelLimit` | V | percent 0.2 (default 0.2) → 0.5, a no-param call read 0.5 back (0.19.0) |
 | `app.memoryBudget` | V | budget 1610612736 → 536870912 |
 
 ## catalog (2)
@@ -428,7 +429,7 @@ Every id from `lightcraft-cli commands` (383; ids.txt lists 376 and leaves out t
 | `photo.unflag` | V | flag pick → none |
 | `photo.virtualCopy` | r | no change in photo.inspect; result={"ids": [25]} |
 
-## preset (9)
+## preset (10)
 
 | id | status | note |
 |---|---|---|
@@ -441,12 +442,20 @@ Every id from `lightcraft-cli commands` (383; ids.txt lists 376 and leaves out t
 | `preset.move` | x | invalid parameters for `preset.move`: unknown preset `user.41.libp1` |
 | `preset.rename` | x | invalid parameters for `preset.rename`: unknown preset `user.41.libp1` |
 | `preset.update` | x | invalid parameters for `preset.update`: unknown preset `user.41.libp1` |
+| `preset.saveRecipe` | V | {"name":"Mini Recipe","recipe":[{"id":"light.exposure","value":0.3},{"id":"light.contrast","value":12}]} → {id: "user.import-recipes-mini-recipe", name: "Mini Recipe"} (0.19.0) |
 
 ## presets (1)
 
 | id | status | note |
 |---|---|---|
 | `presets.list` | r | no change in presets.list; result=[{"builtin": true, "favorite": false, "group": "Color",  |
+
+## prefs (2)
+
+| id | status | note |
+|---|---|---|
+| `prefs.backgroundPrep` | R | app {culling {ahead 5, eyeAhead 8, previews true, scope all}, develop {ahead 2, scope all}, library {…}}; with a library open `own` true and `library.culling.scope` "marked" (0.19.0) |
+| `prefs.setBackgroundPrep` | V | library culling scope all → marked, own false → true; refuses "no library is open" in `--demo` mode (0.19.0) |
 
 ## print (20)
 
@@ -473,19 +482,21 @@ Every id from `lightcraft-cli commands` (383; ids.txt lists 376 and leaves out t
 | `print.template.list` | r | no change in print.template.list; result={"templates": []} |
 | `print.template.save` | V | templates.length 0 → 1 |
 
-## profile (3)
+## profile (4)
 
 | id | status | note |
 |---|---|---|
 | `profile.deleteImported` | r | .length 23 → 22 |
 | `profile.favorite` | r | no change in profiles.list; result={"favorite": true} |
 | `profile.import` | r | .length 22 → 23 |
+| `profile.deleteCamera` | x | invalid parameters for `profile.deleteCamera`: no imported camera profile `dcp:none` — no .dcp on the test machine (0.19.0) |
 
-## profiles (2)
+## profiles (3)
 
 | id | status | note |
 |---|---|---|
 | `profiles.list` | R | [{"favorite": false, "group": "Basic", "id": "lc.color", "name": "Color"}, {"favorite": fa |
+| `profiles.camera` | R | {"profiles": []} (no .dcp imported) (0.19.0) |
 | `profiles.menu` | R | {"favorites": [], "groups": [{"name": "Basic", "profiles": [{"favorite": false, "group": " |
 
 ## redeye (3)

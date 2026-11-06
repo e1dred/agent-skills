@@ -7,7 +7,7 @@ description: Use when reading, editing, combining, splitting, annotating or secu
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from first headless tasks, last tested on **PdfCraft 0.18.2** (Linux AppImage). PdfCraft is an
+Field notes from first headless tasks, last tested on **PdfCraft 0.19.0** (Linux AppImage). PdfCraft is an
 early-alpha PDF editor in Rust: viewing, page organizing, comments, forms, redaction, PDF/A. Every ribbon action
 is an engine *tool*; the CLI, the MCP server and the app's control channel run the same tools. If
 `pdfcraft-cli --version` is newer, re-check anything here before relying on it.
@@ -37,7 +37,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `export-and-pdfa.md` | Page rendering, optimize, PDF/A convert and verify, output choices | Rendering; Optimize; PDF/A; Checks before handing a file over |
 | `editing-signing-tools.md` | Added content (copy/update/delete), page objects, image crop/export, stamps, editing original text and fonts, revisions and undo, bookmark copy/export/import, actions, the UI command registry headless, measurement, printers (list only), digital IDs and signing, accessibility tag editing and review files; tools that could not be run | Documents and revisions; Added content, page objects, images; Editing original text; Bookmarks, links, actions, commands; Measurement, printing; Signing; Accessibility tags and review; View and preview; Not exercised |
 | `live-app.md` | Driving the running app: control methods (state, inspect, command, open, set, key, click, drag, screenshot), the UI command ids and what each opens, commands that open a native file chooser, running the app on a hidden display | Connecting; Running the app where the user cannot see it; UI commands verified |
-| `newer-commands.md` | What each version added or changed | 0.18.1; 0.18.2 |
+| `newer-commands.md` | What each version added or changed | 0.18.1; 0.18.2; 0.19.0 |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
@@ -63,7 +63,7 @@ pdfcraft-cli run --script steps.json --root DIR --report
 
 ## Traps
 
-- **Tools are not command ids:** `pdfcraft-cli tools` prints JSON (189 tools in 0.18.2 with `input_schema`); `run` takes
+- **Tools are not command ids:** `pdfcraft-cli tools` prints JSON (195 tools in 0.19.0 with `input_schema`); `run` takes
   `name=value` pairs. An unknown argument is refused by name.
 - **`doc_set_info` keys are case-sensitive:** `{"key":"Title"}` sets the title; `"title"` is silently ignored.
 - **`doc_save` has no `format` argument and overwrites without asking** (verified: it rewrote an existing
@@ -71,7 +71,7 @@ pdfcraft-cli run --script steps.json --root DIR --report
   annotations — it did not strip form fields in the 1-field test.
 - **The MCP server cannot read /tmp paths** (`OpenFile failed (code 80)`); the CLI can. Keep test files under a
   readable root or use the CLI.
-- **OCR is not bundled here:** `ocr_status` → `available:false` (no model files in its search dirs).
+- **OCR needs the right engine:** `ocr_status` reports one entry per engine. The bundled **ocrs** models are absent from a hand-extracted CLI, and the default `engine:"auto"` then picks ocrs and returns 0 words with a `skipped` reason instead of an error. Pass `engine:"tesseract"` (a system tesseract on PATH); check `ocr_status` before trusting a result.
 - `info` has no page-rotation field; prove a rotation by the rendered size (A4 at 50 dpi: 414×586 → 586×414).
 - **The redaction audit misses a faux redaction:** a black image over text (`page_add_image`) left it extractable
   while `audit` still returned `{count:0}`. Only `redact_mark` + `redact_apply` removes text — check `text --page` after.

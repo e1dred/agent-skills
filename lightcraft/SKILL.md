@@ -5,7 +5,7 @@ description: Use when managing a photo library or developing raw/JPEG photos: im
 
 # LightCraft
 
-Field notes from a first full headless round, last tested on **LightCraft 0.18.1** (Linux AppImage
+Field notes from a first full headless round, last tested on **LightCraft 0.19.0** (Linux AppImage
 `lightcraft-cli`). LightCraft is a non-destructive photo library and raw developer in Rust; the CLI, the MCP
 server and the app's control channel run the same engine commands. If `lightcraft-cli --version` is newer,
 re-check anything here before relying on it.
@@ -37,15 +37,15 @@ re-check anything here before relying on it.
 | `metadata-keywords-labels.md` | Ratings/flags/labels, titles/captions/copyright/GPS, keywords and keyword sets, metadata presets, filter presets, find similar | Per-photo metadata; Keywords; Labels; Metadata presets; Filter presets |
 | `export-print-slideshow.md` | Export formats and options, export presets, contact sheets, print layouts/templates/PDF, slideshows and their export | Export; Export presets; Print; Slideshow |
 | `merge-and-models.md` | HDR/panorama merges, denoise, faces, segmentation, lens database, GPU/memory, background tasks | Merge; Denoise; Faces; Segmentation; Profiles; App |
-| `command-catalogue.md` | Every id (383), grouped by family, with the evidence status and the field that changed | — |
-| `newer-commands.md` | What each version added or changed | 0.18.1 |
+| `command-catalogue.md` | Every id (389), grouped by family, with the evidence status and the field that changed | — |
+| `newer-commands.md` | What each version added or changed | 0.18.1; 0.19.0 |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
 
 ```
-lightcraft-cli --version                          # 0.18.1
-lightcraft-cli commands --json                    # every id + params (383 ids)
+lightcraft-cli --version                          # 0.19.0
+lightcraft-cli commands --json                    # every id + params (389 ids)
 lightcraft-cli controls --json                    # every develop control with min/max/default (122)
 lightcraft-cli run --demo catalog.query limit=3   # {"command":"catalog.query","ok":true,"result":{"photos":[…]}}
 lightcraft-cli run --library ~/lc-lib --import ~/Pictures --keep-going library.info

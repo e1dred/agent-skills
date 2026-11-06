@@ -9,7 +9,7 @@
 | `render IN -o OUT [--set ctl=v]… [--settings FILE] [--preset ID] [--size N] [--quality Q] [--opt k=v]…` | develop one file and write .jpg/.png/.tif/.webp/.avif/.jxl/.psd/.dng |
 | `merge hdr\|panorama\|hdr-panorama\|hdr-batch FILES…` | writes `<first>-HDR.dng` / `-Pano.dng` next to the first file; options `--deghost`, `--projection`, `--auto-crop`, `--preview OUT.png` |
 | `synth-merge hdr\|panorama -o DIR` | writes synthetic inputs: `bracket-0..2.dng` (verified 3 files) / `view-0..4.png` (verified 5 files) |
-| `commands [--json]`, `controls [--json]` | 383 command ids with params; 122 develop controls with min/max/default |
+| `commands [--json]`, `controls [--json]` | 389 command ids (0.19.0) with params; 122 develop controls with min/max/default |
 | `snapshot [--demo\|--library DIR] -o OUT.png --script FILE` | full app UI rasterised offscreen through the control protocol (NOT exercised here: it drives the UI, not the engine) |
 | `mcp [--demo\|--library DIR] [--compact]` | MCP server over stdio, same commands as tools |
 | `calibrate`, `denoise-serve` | camera profiles from raws; remote denoise tiles (not exercised) |

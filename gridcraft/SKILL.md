@@ -9,8 +9,8 @@ description: Use when building, editing, checking or converting spreadsheets (.x
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare `gridcraft-cli --version` with the app's version in its About box or on its releases page by hand; `--version` on an AppImage can open the app). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **gridcraft-cli 0.16.1** (Linux AppImage). GridCraft is an alpha, Excel-style
-spreadsheet in Rust. Every ribbon button is an *engine command* (372 of them); the CLI, the MCP server and the app's
+Field notes from real tasks, last tested on **gridcraft-cli 0.17.0** (Linux AppImage). GridCraft is an alpha, Excel-style
+spreadsheet in Rust. Every ribbon button is an *engine command* (385 of them); the CLI, the MCP server and the app's
 control channel all run the same commands. If `gridcraft-cli version` is newer, re-check before relying on this.
 
 ## Keep this file growing
@@ -51,7 +51,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `formatting-and-sheets.md` | Number formats, fills, borders, cell styles, tables, slicers, objects, sheet management, view | Everyday formatting and sheet editing; Cell styles, table design, slicers, objects, sheets, view and helper commands |
 | `analysis-pivots-charts.md` | What-if, Solver (saving, loading or resetting a Solver model in cells and the Sensitivity report: `newer-commands.md`), forecast, pivot tables, every chart type, conditional formats, validation, ToolPak, review and functions | Analysis and layout tools; Pivot tables and chart types in depth; Conditional formats, validation, ToolPak, review and functions |
 | `auditing-and-helpers.md` | Formula auditing, selection, scripts, comments, grouping, print helpers, ink | Formula auditing, selection, scripts, ink, comments, grouping and print helpers; Ink in GridCraft |
-| `newer-commands.md` | What each version added or changed (0.12 onward), with exact parameters: Python cells, Trace Error, Solver models, equations, chart data tables | New in 0.12.x; Newer commands; 0.15 changes; 0.16 changes |
+| `newer-commands.md` | What each version added or changed (0.12 onward), with exact parameters: Python cells, Trace Error, Solver models, equations, chart data tables | New in 0.12.x; Newer commands; 0.15 changes; 0.16 changes; 0.17.0 changes |
 | `command-sweep.md` | The last 58 command ids, smoke-tested on a blank workbook | The last 58 command ids; Verified in detail, GridCraft phase 2; Verified in detail, GridCraft second pass; Checked, no effect in this version; Verified in detail, GridCraft show objects; Verified in detail, GridCraft formula bar and ruler; Checked, no effect on Wayland |
 | `log.md` | Dated log of what was tested when | Log |
 
@@ -87,6 +87,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
   sheet exported to 2 PDF pages (chart spills).
 - `run --sample` layouts differ from a blank sheet (sample "sales" has a table at B4); `--print A1:H6` shows what you actually wrote.
 - Writes to a file path need real paths; programmatic `file.open`/`file.save` without `path` fail ("never opens dialogs").
+- `chart.set` prints nothing on success (no JSON line at all); check the chart with `info` or the saved chart XML rather than treating the silence as a failure.
 
 ## Verify
 
