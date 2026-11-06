@@ -5,9 +5,9 @@ description: Use when laying out pages for print or screen — magazines, books,
 
 # DesignCraft
 
-Field notes from the first full round, last tested on **DesignCraft 0.17.2** (Linux binary `designcraft-cli`).
+Field notes from the first full round, last tested on **DesignCraft 0.18.0** (Linux binary `designcraft-cli`).
 DesignCraft is a pre-alpha, InDesign-like page layout app written in Rust; the CLI, the MCP server and the app's
-control channel run the same 547 engine commands. If `designcraft-cli --version` reports a newer build, re-check
+control channel run the same 555 engine commands. If `designcraft-cli --version` reports a newer build, re-check
 the ids and params here before relying on them (see `reference/newer-commands.md`).
 
 ## Setup
@@ -65,7 +65,7 @@ it has no PDF/A check), read `file.exportPdf`'s `warnings`, and `pdfinfo -box` /
 | `color-export.md` | swatches (CMYK, spot, tints), `file.exportPdf` (PDF/X-4, X-1a, PDF/A-2b, bleed, marks), `validate-pdf`, IDML / EPUB / fixed EPUB / PPTX / HTML / PNG / JPG export, 2-up sheets with `place.load` + `place.drop` |
 | `data-toc-book.md` | data merge (`data.source.select`, `data.placeholder.add`, `data.merge`), `toc.generate`, `index.*`, books (`book.new`, `book.add`, `book.paginate`, `book.exportPdf`) |
 | `live-app.md` | `--control`, `app --method`, `script --connect`, `ui.*` methods (pointer, keys, typing, drag, menus), **dialogs** (`ui.dialog.*`), the 187 live-only commands, MCP tools and roots, hidden-display recipe, building a page in a window the user opened |
-| `command-catalogue.md` | all 547 ids with status (verified / read-ok / ran / refused), params doc and evidence |
+| `command-catalogue.md` | all 555 ids with status (verified / read-ok / ran / refused), params doc and evidence |
 | `newer-commands.md` | what changed between versions |
 | `log.md` | dated learning log |
 

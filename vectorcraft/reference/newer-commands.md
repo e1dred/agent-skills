@@ -65,3 +65,38 @@ Packaged multi-step commands, first seen in 0.21.0:
 Largest: object 31, path 9, text 9, document 8, symbol 8, appearance 7. These are additions to
 existing parameters rather than renames; re-read the `params` string of a command before passing
 new options. Full list: `../out/ids-changed.txt`.
+
+## 0.22.0 (tested 2026-11-06)
+
+Catalogue: **933 ids** (+15, 0 removed, 16 `params` doc strings changed). Regression (9 scripted
+cases, 36 outputs, old vs new CLI): 29 identical. The 7 differences are the document model's
+`"version"` 2 → 3 (appearance, shapes, symbols, text, pathfinder), a creation timestamp that moved
+by 1 s, PDF sizes +1 byte, `.ai` +280 bytes (Illustrator PieceInfo) and `.eps` +6 bytes; no geometry,
+text or paint change.
+
+### New ids (all run headless; see `command-catalogue.md`)
+- `addon.shapes.rectangle|ellipse|polygon|star|spiral|box3d` — the scriptable shape tools: `{x,y,width,height,radius,radii,startAngle,endAngle,arcMode,rotation}` for the box shapes, `{cx,cy,radius,sides|points,radius1,radius2,turns,divergence,innerRadius}` for the round ones → `{id}`. Rectangle, ellipse and polygon stay live shapes (`kind.live.shape`, editable with `addon.shapes.configure`); star, spiral and box3d arrive as paths (10, 13 and 12 anchors for the default settings), with the requested extents (a 200×120 rectangle at 100,100 spans x 100-300, y 100-220).
+- `addon.shapes.configure {ids, radius|radii, sides, isStar, spokeRatio, turns, divergence, innerRadius, angleX/Y/Z, parallelX/Y/Z, arcMode, reset}` → `{updated}`: `radius:40` gave `radii:[40,40,40,40]`, `sides:8` took a hexagon to 8 anchors, `reset:true` returned the radii to 0.
+- `addon.color.fillToStroke` / `addon.color.strokeToFill {ids?|id?, skipNone?}` (Swap Fill and Stroke): each takes the other's paint, leaving width, stroke and other objects alone.
+- `addon.contour.set {offset, corners, miterLimit}`: adds a copy above the selection carrying a **live** `path.offsetPath` effect (`{offset:8.0, joins:"round", miterLimit:4.0}`, nothing baked). It takes **no id parameters** - select the paths first.
+- `addon.select.byLinkStatus {status, ids?, add?, zoom?}` → `{count, selected, skipped}`: `"linked"` found the placed PNG (id 2), `"embedded"` nothing.
+- `addon.type.releasePath {mode?: both|path|text, keepOriginal?, ids?}` → `{ids, paths, texts}`: type on a path became point type (id kept) plus the path (new id).
+- `document.move {from?, to}` → `{index}`: moves a document tab; with documents DocA, DocB, moving index 1 to 0 made index 0 read back as DocB.
+- `stroke.weightUp` / `stroke.weightDown {ids?|id?}`: step one stroke weight per call (1 → 2 → 3 pt, then back to 2), a quarter unit below 1 pt.
+
+### Changed ids (run headless)
+- `addon.pathtools.cornerSet` gained `every: all|odd|even` (and per-item `items`): `every:"odd"` on a hexagon rounded 3 of its 6 corners (`{corners:3}`, 6 → 9 anchors).
+- `document.export` and `document.exportSelection` document `ppi` as raster pixels per inch, winning over `scale` (exportSelection gains it): a 612×792 document exported at 1224×1584 at `ppi:144`; a 201×101 selection at 402×202.
+- `library.add` adds a plain solid colour with `color`, and keeps a spot swatch with `color` + `swatch` + `tint`: the entry came back as `{name:"SpotTint", hex:"#00aa00", spot:"SpotGreen", tint:0.5}`. `library.get` colours now carry `spot` and `tint`; `library.use {kind:"fillColor", item:"LibGreen", ids}` painted the selection.
+- `object.blend.spine.moveAnchor` gained `with: [index…]`: moving anchor 0 of a blend with `with:[1]` created the spine (`subpaths[0].anchors [[100,60],[400,60]]`, `keyAnchors:[0,1]`).
+- `text.tabs.set` requires string `align`/`leader`/`alignOn` and refuses an empty `alignOn` ("`alignOn` cannot be empty"); two stops (decimal/"." at 100, centered leader at 200) read back from `text.tabs.get`.
+- `path.joinScrub` joins two open paths near each other, or trims two crossing ones and joins at the crossing. **Select the paths first**: without a selection it answers `{id:null}` and changes nothing; with them it returned `{id:2}` and one 3-anchor path.
+- `addon.cleanup.removeBreaks` removes the real U+2028: "Line one line two" became "Line one line two" (`{removed:1}`).
+- `variable.loadLibrary {path|xml|dataBase64}` replaced an empty document's variables with the saved library's (`variables:["Title"]`).
+- `addon.document.batchTraceFolder` traced a folder of one PNG into `.vectorcraft`, `failed: []`.
+- `links.findFiles {folder}` answers at once with the search state (`state:"searching"` on a first call); a headless run ends before the thread finishes, so found files were not observed headless.
+- `text.convertListToText` answered `{converted:0}` on plain paragraphs; no headless command makes a list paragraph yet, so its effect on a real list was not observed.
+- `attributes.set` wrote `url` and `imageMap`, read back by `attributes.info` (URL also joins `recentUrls`); `path.freehand` accepts pressure/tilt points and smooths them (three points → a 2-anchor path).
+
+### Behaviour notes for CLI/MCP
+- The saved document model is `"version":3`; 0.21.1 reads 2.

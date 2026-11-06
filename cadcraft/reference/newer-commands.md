@@ -2,9 +2,18 @@
 
 Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
+## 0.18.0 changes (verified headless 2026-11-06; geometry read back with `list`)
+- Catalogue: 457 ids, added 0, removed 0, parameters changed 5 (`break`, `breakatpoint`, `chprop`, `properties.set`, `trim`).
+- Regression: seven drawings built with the 0.17.1 and 0.18.0 CLIs (28 outputs); every DXF, PNG and PDF identical. The `info` JSON differs only in the default `view.height` (exactly 0.9375× the old value in all five drawings, a new default window aspect), and the log files differ only in the output path.
+- **`break` keeps the object's handle:** `break {"handle":"100","p1":[30,0],"p2":[70,0]}` on a 0-100 line answered `{handles:["100","101"]}`: handle 100 is now 0-30 and the new handle 101 is 70-100 (AutoCAD's behaviour; 0.17.1 renumbered both).
+- **`trim` keeps its handle:** `trim {"handle":"100","pick":[80,0],"edges":["101"]}` answered `{handles:["100"]}` and line 100 went from 0-100 to 0-50.
+- **`breakatpoint`:** `{"handle":"100","at":[40,0]}` answered `{handles:["100","101"]}`: 0-40 and 40-100 (two lines, as before; the handles are named in the result now).
+- **`properties.set` and `chprop` return `{changed,locked,message?}`:** on a line on a locked layer, `properties.set {"handles":["100"],"color":"green"}` answered `{changed:0, locked:1, message:"1 object was on a locked layer. Nothing was changed."}` and `properties {"handles":["100"]}` still reported `color:"ByLayer"`. During REFEDIT, objects outside the working set are skipped the same way.
+- Other behaviour: MINSERT (block reference repeated in rows and columns), XCLIP/XCLIPFRAME, DVIEW view twist on model views and layout viewports, SHX/big fonts and linetype shapes, raster images in screen and PNG output, FIND as a window, TEXTEDIT on the shortcut menu, plot format from the path extension, `fix(mcp)` render takes `background` and `plotStyle`.
+- `cadcraft-cli roundtrip FILE` opens, saves and reopens a drawing and reports what changed (open → save → reopen loss report).
 ## 0.15 changes (2026-10-31; `solid`, `chprop` and the DXF change were run, the rest is read from `commands`)
 - `solid {"points":[[x,y],…]}` draws a 2D solid: three or four points for the first, two more for each next one chained on its last two corners → `{"handles":[…]}` (a SOLID entity in the DXF).
-- `chprop {"handles":[…],"layer"?,"color"?,"linetype"?,…}` is `properties.set` that leaves out objects on locked layers → `{changed,locked}`; moving one circle to layer L2 with colour 3 was read back from the DXF (`8 L2`, `62 3`).
+- `chprop {"handles":[…],"layer"?,"color"?,"linetype"?,…}` is `properties.set` that leaves out objects on locked layers → `{changed,locked}` (0.18.0 adds `message`, see below); moving one circle to layer L2 with colour 3 was read back from the DXF (`8 L2`, `62 3`).
 - **Help text only:** `ellipse.axis` accepts a point instead of a distance for the other half-axis; `bedit` gained `save` and `check` for switching blocks in the Block Editor.
 - **DXF change:** an MTEXT written for a dimension now has group 72 = 5 ("by style") where 0.14.0 wrote 1; nothing else in the dimension drawings changed.
 

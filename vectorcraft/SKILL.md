@@ -5,11 +5,11 @@ description: Use when drawing, editing, tracing or converting vector artwork —
 
 # VectorCraft
 
-Field notes from the first full headless round, last tested on **VectorCraft 0.21.1**
+Field notes from the first full headless round, last tested on **VectorCraft 0.22.0**
 (Linux binary `vectorcraft-cli`). VectorCraft is a vector illustration app written in Rust; the
 CLI, the MCP server and the app's control channel run the same engine commands. If
 `vectorcraft-cli --version` reports a newer build, re-check the ids and params here before relying
-on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918; see
+on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918, 0.22.0 933; see
 `reference/newer-commands.md`).
 
 ## Setup
@@ -46,7 +46,7 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918
 | `layers-artboards-symbols.md` | Layers/sublayers, artboards, symbols and instances, datasets/variables, guides |
 | `transform-align.md` | move/rotate/scale/reflect/shear/transform, setBounds, align, distribute, pathfinder-style stacking |
 | `import-export.md` | open, save, export and convert in every readable/writable format, place, PDF, print, package |
-| `command-catalogue.md` | Every id (918), grouped by family, with this round's status and the field that changed |
+| `command-catalogue.md` | Every id (933), grouped by family, with this round's status and the field that changed |
 | `newer-commands.md` | What 0.17.0 → 0.21.0 → 0.21.1 added and changed |
 | `log.md` | Dated log of what was tested when, and what is still unverified |
 
@@ -67,7 +67,7 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918
 ## CLI essentials (verified)
 
 ```
-vectorcraft-cli commands                     # the whole catalogue as JSON (918 entries)
+vectorcraft-cli commands                     # the whole catalogue as JSON (933 entries)
 vectorcraft-cli info drawing.svg             # warnings, artboards, object counts, fonts
 vectorcraft-cli convert in.svg out.pdf --artboard 0
 # a script of steps, one JSON object per line:

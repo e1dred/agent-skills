@@ -4,6 +4,14 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 
 ## Newer commands
 
+**0.16.0 (2026-11-06):** catalogue 655 → 656 ids (one added). Regression: 43 style documents built with the 0.15.2 and 0.16.0 CLIs, 130 outputs; 86 identical, 43 differences are the output path echoed in each `*.log.txt`, and one is real: in a two-column document one word of a paragraph wraps to the next line earlier than in 0.15.2 (`doc-extras.pdf` page 1, a band about 113 × 7 px).
+- **`select.member {"index":0}`** selects a member of a selected drawing canvas (Shape Format › Drawing Canvas) and returns it: `{index, width, height, x, y, object:{kind, fill, h, w, stroke, …}}` (a 200×80 canvas holding one rectangle answered `kind:"rectangle", fill:[21,96,130]`). The command itself selects, so a following shape command hits the member: with it, `shape.fill {"color":"FF0000"}` changed `blocks[0].objects[0].children[0].obj.fill` from `[21,96,130]` to `[255,0,0]`; without it the same `shape.fill` filled the canvas and left the member alone. It pairs with `canvas.member {"index","x","y"}`.
+- **ODT is fully readable now:** ODT opens, edits and saves, and re-saving an unedited ODT is lossless.
+- **Print:** N-up sheets and folded booklets; `file.print` reports `noPrinters` when CUPS discovery finds no destinations; the Print button returns to the document, as Word's does.
+- **Date fields use local time** rather than UTC. SEQ, STYLEREF and REF results are refreshed in PDF export and printing; REF keeps paragraph numbers.
+- **Control channel:** a command that would discard unsaved work is refused, not carried out. `convert` refuses malformed conversion format options.
+- **DOCX:** section settings, paragraph grid indent, text frame anchor locks, paragraph text alignment and compound border lines survive a save; nil shading paints no fill; picture brightness, contrast and transparency are read (VML washout, `a:lum`, `a:alphaModFix`).
+- Clipboard copy and paste keeps RTF; SmartArt takes custom colours per item from the Text Pane; document fonts that are not installed are flagged.
 **0.15.1 (2026-11-03):** `review.language.preferred {"lang":"de-DE"}` sets the saved default proofing language for new blank documents (`{preferred}`; `lang` is required, there is no read form: read it from `proof.packs`, whose result now has a `languages` list `[{tags,pack,installed,size,proofing,default}]`, default went `["en-US"]` → `["de-DE"]`). `caret.pageUp|pageDown` now move by a page in Draft, Web and Outline views too (0.15.0 did nothing there). Re-run on update: 39 style documents built with the 0.15.0 and 0.15.1 CLIs were identical (XML parts and PDF text per page).
 
 Five newer commands: `mailings.first`, `mailings.last`, `mailings.goToRecord {"record":2}` (1-based; the parameter is `record`, not `index`) → `{of:3,record:2}`, `mailings.printDocuments` → `{records:3}`

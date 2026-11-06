@@ -38,3 +38,12 @@ Three newer commands (headless, checked in the saved file):
 
 ## 0.15.1 changes (verified headless 2026-11-04; renders looked at)
 - No new commands. `shape.fill` gradient docs now explain `rotateWithShape`: on a shape rotated 30°, a **linear** gradient renders differently with and without the flag, while a **rectangular** (and path) gradient always turns with the shape. Regression: 188 of 188 harness files identical to 0.15.0.
+
+## 0.16.0 changes (verified headless 2026-11-06)
+- Catalogue: 331 ids, added 0, removed 0, parameters changed 0.
+- Regression: 23-deck harness run old and new (0.15.1 vs 0.16.0), 188 outputs; 187 identical. The one difference is the outline export (`.md`): it no longer prints the footer and slide-number placeholders (the "Sample" and `‹#›` lines are gone), as released.
+- `file.export` refuses unsupported handout `perPage` values instead of accepting them. `view.slideMaster` refuses an invalid master or layout index. Table cell commands refuse a malformed `cells` list instead of dropping entries.
+- `flip` on a SmartArt graphic is refused (0.15.1 turned it into a plain group).
+- `shape.connect` glues to a shape inside a group, and the connector follows it.
+- The PDF text layer shows evaluated field values (the slide number), not the field code; outlines leave footer, date and slide-number placeholders out.
+- PPTX round trip keeps table cell anchoring, text overflow settings, line spacing, normalized character height, alternate run language, reflection transforms and RTL table direction; reused slides fit the destination size.

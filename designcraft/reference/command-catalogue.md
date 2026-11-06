@@ -1,10 +1,10 @@
-# DesignCraft command catalogue (0.17.2) — 547 ids
+# DesignCraft command catalogue (0.18.0) — 555 ids
 
-Generated from `designcraft-cli commands` and this round's headless run (0.17.2, 2026-11-05). Status per id: **verified** = the same field read before/after (document.inspect, type.selectionAttrs, transform.info or the family read-back named in the evidence); **read-ok** = a list/get/export returned real data; **ran** = accepted, no readable field changed (UI-only, view, effects not exposed by inspect); **refused** = the exact error is quoted. The params column is the first part of the command's own parameter doc (run `designcraft-cli commands` for the full text).
+Generated from `designcraft-cli commands` and this round's headless run (0.18.0, 2026-11-06). Status per id: **verified** = the same field read before/after (document.inspect, type.selectionAttrs, transform.info or the family read-back named in the evidence); **read-ok** = a list/get/export returned real data; **ran** = accepted, no readable field changed (UI-only, view, effects not exposed by inspect); **refused** = the exact error is quoted. The params column is the first part of the command's own parameter doc (run `designcraft-cli commands` for the full text).
 
 Totals: 402 verified, 142 read-ok, 3 ran, 0 refused (second headless round, 2026-11-05: 138 of the 141 `ran` rows upgraded - 135 verified, 3 read-ok - and all 5 `refused` rows verified; 3 ids left `ran`: `place.load`, `layout.parents.edit`, `text.release`).
 
-## file (37)
+## file (41)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -44,8 +44,12 @@ Totals: 402 verified, 142 read-ok, 3 ran, 0 refused (second headless round, 2026
 | `file.importXml` | read-ok | {path \| text} — each element's content goes into the next text frame with that tag (child elements of mapped tags become paragraphs in th… | {"placed": 0, "unmatched": 1} |
 | `file.package` | read-ok | {dir: folder to create, idml?: true, pdf?: false\|true\|{…options of file.exportPdf}, instructions?: text} — the document (its placed files… | package folder written with document + links |
 | `file.printers` | read-ok | {} → {printers: [names], default} | {"default": null, "printers": ["Virtual_PDF"]} |
-| `file.print` | verified | {printer?, copies?: 1, pages?: "1-3,5", dryRun?: bool (export and preview submission without printing), …the PDF settings of file.exportP… | dryRun honoured: bytes 552943 == exportPdf bytes 552943, pages 4; command is a preview (['lp', '-n', '1', '-t', 'Quarterly — Spring Issue', '-o', 'collate=true', '-o', 'print-scaling=auto-fit']); nothing submitted. A real call (no dryRun) s |
+| `file.print` | verified | {printer?, copies?: 1, pages?: "1-3,5", layouts?: [layout names] (their pages; instead of `pages`), separateJobs?: bool (a print job per layout, titled after it), dryRun?: bool (export an… | dryRun pages: 6 -> 4 with layouts; jobs: ["Mini"] -> ["Mini - Layout 1","Mini - Web"] with separateJobs |
 
+| `file.exportPresets` | read-ok | {} → {presets: [{name, job, builtIn}], versions: [the ready-made versions]} | presets (4 built-ins) + versions (5) listed |
+| `file.saveExportPreset` | verified | {name, job} — kept with the preferences; a saved preset of that name is replaced, built-in names are refused | presets 4 -> 5 names incl. MiniTest; deleted -> 4 |
+| `file.deleteExportPreset` | verified | {name} — a saved export preset | presets 5 -> 4 (MiniTest gone) |
+| `file.exportBatch` | verified | {job?: {layouts?: [layout names] (default all), combine?: bool (PDF: all the layouts in one file), fileName?: "{document} - {layout}" (also {version}, {date}), versions: [{name, format: p… | files[] written: Png/Mini-Layout 1 - 1.png 6468B, ... - 2.png |
 ## snippet (2)
 
 | id | status | params doc (short) | evidence |
@@ -483,21 +487,21 @@ Totals: 402 verified, 142 read-ok, 3 ran, 0 refused (second headless round, 2026
 | `guide.selectAll` | read-ok | {spread?} — every guide on the spread that is not locked or on a locked or hidden layer → {selected: n} | {"selected": 1} |
 | `guide.deselect` | verified | {} | inspect.selection.guides[0].index: 0 -> "<absent>" |
 
-## layout (28)
+## layout (32)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `layout.createAlternate` | verified | {name, width, height, rule?: page rule for the copies (default: keep each page's)} — every page copied after the last at the new size (a … | inspect.spreads[2].index: "<absent>" -> 2 |
+| `layout.createAlternate` | verified | {name, width, height, from?: source layout name\|index (default: the first), fromName?: names the source layout, rule?: page rule for the copies (default: keep each page's)} → {layout, fi… | inspect bounds: 396x612 only -> + [0,0,900,700] (from/fromName) |
 | `layout.pages.insert` | verified | {count?: 1 (1 to 9999), after?: 0-based page index (default: the last page; past it: at the end), before?: 0-based page index (instead of… | inspect.spreads[2].index: "<absent>" -> 2 |
 | `layout.rotateSpreadView` | read-ok | {spread?: index (0), angle: 90 (clockwise) \| -90 \| 180 \| 0 (clear)} — turn one spread on screen (output is unaffected) | {"rotation": 90} |
 | `layout.pages.delete` | verified | {pages: [index]} | inspect.spreads[1].pages[1].bounds[0]: 612.0 -> "<absent>" |
 | `layout.pages.move` | verified | {from, to} | spreads[0].pages[0].id: 4 -> 5 (page 2 moved into the first spread; the spreads now hold [5] and [4]) |
 | `layout.pages.duplicateSpread` | verified | {spread, atEnd?: bool (Duplicate Spread at End of Document; the Pages panel's New Page button takes a dropped page there), to?: page inde… | inspect.spreads[2].index: "<absent>" -> 2 |
 | `layout.pages.applyParent` | verified | {pages: [index], parent: id\|"A-Parent"\|"A"\|null (null or "[None]" clears)} | spreads[1].pages[0].parent: 3 -> 14 |
-| `layout.parents.new` | verified | {prefix?, name?: "Parent"} | inspect.parents[1].basedOn: "<absent>" -> null |
+| `layout.parents.new` | verified | {prefix?: 1–4 characters without `-` (default: the next free letter), name?: "Parent", basedOn?: id\|"A-Parent"\|"A"\|null} → {id, prefix} | parents: + C-Parent (basedOn A-Parent), {id:39,prefix:"C"} |
 | `layout.parents.delete` | verified | {id: parent spread id} — unapply the parent and keep local overrides as ordinary items | inspect.parents[1].basedOn: null -> "<absent>" |
 | `layout.parents.edit` | ran | {on?: bool, parent?: id\|"A-Parent"\|"A"} — show parent spreads on the canvas; `parent` shows that parent (and implies on). Turning on with… | no change |
-| `layout.parents.options` | verified | {parent: id\|"B-Parent"\|"B", basedOn: id\|"A-Parent"\|"A"\|null (= [None])} — the parent shows its base's items under its own, and so do the … | parents[1].parent.basedOn: "<absent>" -> 3 |
+| `layout.parents.options` | verified | {parent: id\|"B-Parent"\|"B", prefix?: 1–4 characters without `-`, name?, basedOn?: id\|"A-Parent"\|"A"\|null (= [None])} — rename the parent; with a base it shows the base's items under … | parents[].label: C-Parent -> D-Renamed Parent (prefix "D") |
 | `layout.marginsAndColumns` | verified | {pages?: [index] (default all), margins?: number\|{top,bottom,inside,outside}, columns?, gutter?, adjustLayout?: bool (objects follow the … | inspect.spreads[1].pages[0].columnRects[0][0]: 36.0 -> 40.0 |
 | `layout.moveColumnGuide` | verified | {spread?, parent? (a parent's prefix, label or index: its spread instead of `spread`), page (index in the spread), gutter (0 = between th… | inspect.spreads[0].pages[0].columnRects[0][2]: 300.0 -> 100.0 |
 | `layout.documentSetup` | verified | {width?, height?, pages?: count, startPage?: n, facingPages?, binding?: leftToRight\|rightToLeft, intent?: print\|web\|mobile, margins?: n \|… | inspect.settings.facingPages: true -> false |
@@ -516,6 +520,10 @@ Totals: 402 verified, 142 read-ok, 3 ran, 0 refused (second headless round, 2026
 | `layout.detachAll` | read-ok | {page (0-based)} — the page's overridden copies become ordinary items | {"detached": 0} |
 | `layout.createGuides` | read-ok | {rows?: 0..1000, columns?: 0..1000, rowGutter?: 12, columnGutter?: 12, fitTo?: margins\|page, removeExisting?: false, spread?, page? (inde… | {"guides": 4} |
 
+| `layout.alternate.delete` | verified | {layout: name\|index} — delete the layout's pages and their objects; the last layout cannot be deleted | inspect.pageCount: 6 -> 4; {layout, pages:2} |
+| `layout.alternate.duplicate` | verified | {layout: name\|index, name?: (default "<layout> copy")} → {layout, firstPage, pages} — the layout's pages and objects copied at the same size | inspect.pageCount: 4 -> 6; {layout:"Web 2", firstPage:5, pages:2} |
+| `layout.alternate.options` | verified | {layout: name\|index, name?, width?, height?} → {layout} — rename the layout, or resize its pages (objects follow the liquid rules) | page bounds width: 800.0 -> 820.0 |
+| `layout.parents.duplicate` | verified | {parent: id\|"A-Parent"\|"A"} — a copy with the next free prefix, its pages and items → {id, prefix} | inspect.parents: A-Parent -> + B-Parent {id:20, prefix:"B"} |
 ## xml (10)
 
 | id | status | params doc (short) | evidence |
@@ -850,10 +858,10 @@ Totals: 402 verified, 142 read-ok, 3 ran, 0 refused (second headless round, 2026
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
-| `hyperlink.create` | verified | {url? \| email? \| page? (1-based), name?, ids?} — from the selected text, or the selected frames | readback[0].dest.kind: "<absent>" -> "url" |
+| `hyperlink.create` | verified | {url? \| email? \| page? (1-based) \| anchor? (a text anchor's id or name; the link follows it as the text reflows), name?, ids?} — from the selected text, or the selected frames | readback[0].dest: "<absent>" -> {kind:"anchor", value:150994945} |
 | `hyperlink.delete` | verified | {id} | readback[0].dest.kind: "url" -> "<absent>" |
 | `hyperlink.list` | verified | {} | [0].name: "<absent>" -> "Link1" |
-| `hyperlink.edit` | verified | {id, name?, url? \| email? \| page? (1-based)} | readback[0].dest.value: "https://example.com" -> "https://example.org" |
+| `hyperlink.edit` | verified | {id, name?, url? \| email? \| page? (1-based) \| anchor?} | dest.value: 150994945 -> 150994946 |
 | `hyperlink.goToSource` | verified | {id} — selects the hyperlink's text or frame | selection.text.frame: "<absent>" -> 8 |
 
 ## bookmark (4)

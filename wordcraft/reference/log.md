@@ -54,3 +54,4 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-03: proof.installPack/removePack verified live with the Vietnamese pack (user turned downloading on); README note removed.
 - 2026-11-03: live screenshot failures explained (Wayland: no frames for hidden windows; stale "minimized" after restore, fixed by restarting).
 - 2026-11-03 (late): 0.15.1: CLI refreshed (old kept as wordcraft-cli.0.15.0); commands +review.language.preferred, proof.packs gains languages; 39 style documents identical old vs new; caret.pageUp/Down now work in Draft/Web/Outline. Runs by a second agent, spot-checked.
+- 2026-11-06: CLI refreshed (0.15.2 → 0.16.0); full re-run old vs new: 43 style documents (docx + pdf), 130 outputs; 43 log files differ only in the output path, one PDF page differs by a word wrapping a line earlier; new `select.member` verified headless. Live channel not re-checked.

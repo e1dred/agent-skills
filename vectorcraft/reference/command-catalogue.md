@@ -1,6 +1,6 @@
-# VectorCraft command catalogue (0.21.1) — 918 ids
+# VectorCraft command catalogue (0.22.0) — 933 ids
 
-Generated from `vectorcraft-cli commands` and this round's evidence (0.21.0, 2026-11-04); the seven ids new in 0.21.1 were run on 2026-11-05. Status per id:
+Generated from `vectorcraft-cli commands` and this round's evidence (0.21.0, 2026-11-04); the fifteen ids new in 0.22.0 and the sixteen whose parameter docs changed were run on 2026-11-06. Status per id:
 **verified** = the same field read before/after (inspect + document model); **read-ok** = a read/list returned real data;
 **ran** = accepted, effect not a readable field; **refused** = the exact error is quoted in `results.jsonl`.
 The params column is the first part of the command's own parameter doc; run `vectorcraft-cli commands` for the full text.
@@ -89,7 +89,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `object.blend.replaceSpine` | refused | {} use the selected path as the spine of the selected blend (the path is consumed) | vectorcraft-cli: step 11 (object.blend.replaceSpine): Replace Spine: select a blend and a path |
 | `object.blend.reverseSpine` | verified | {} reverse the order of the key objects along the spine | `inspect.layers{id=1}.bounds.height`: 507.82399999999996 → 527.824 |
 | `object.blend.info` | read-ok | {} the options of the first selected blend, else those new blends start with → {target: blend\|defaults, id?, spacing: smooth\|steps\|distan… | no change in inspect/json; result={"distance": 10.0, "orientation": "page", "spacing": "smooth", "st |
-| `object.blend.spine.moveAnchor` | verified | {id? (default: the selected blend), anchor: index, x, y, handle?: in\|out, independent?: bool} move a point of the blend's spine (its handle… | `inspect.layers{id=1}.bounds.height`: 507.82399999999996 → 567.824 |
+| `object.blend.spine.moveAnchor` | verified | {id? (default: the selected blend), anchor: index, x, y, with?: [index…], handle?: in\|out, independent?: bool} move a point of the blend's spine (its handles along), … | layers[0].children[0].kind.spec.spine: spec spine subpaths anchors [[100,60],[400,60]], keyAnchors [0,1] |
 | `object.blend.spine.convertAnchor` | verified | {id? (default: the selected blend), anchor: index, to: smooth\|corner, x?, y?} convert a blend spine point: dragging a corner creates symmet… | `doc.layers{id=1}.kind.children{id=7}.kind.spec.keyAnchors[0]`: <absent> → 0 |
 | `object.blend.spine.reshapeSegment` | verified | {id? (default: the selected blend), segment: index, t: 0..1, dx, dy, perpendicular?: bool} bend a segment of the blend's spine so its point … | `doc.layers{id=1}.kind.children{id=7}.kind.spec.keyAnchors[0]`: <absent> → 0 |
 | `object.blend.spine.addAnchor` | verified | {id? (default: the selected blend), x, y} add a point to the blend's spine where it passes nearest (x, y) → {anchor} | `doc.layers{id=1}.kind.children{id=7}.kind.spec.keyAnchors[0]`: <absent> → 0 |
@@ -161,7 +161,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `object.slice.select` | verified | {slices?: [id…] (user slice ids or ids of objects with an object slice; none: deselect the slices), toggle?: bool (Shift: add the unselected… | `inspect.selection[0]`: 2 → <removed> |
 | `object.vectorHalftone` | verified | {shape?: "circle"\|"ellipse"\|"square"\|"diamond"\|"line" (circle), frequency?: lines per inch 1–300 (20), angle?: deg (45; CMYK: the black … | `inspect.layers{id=1}.bounds.width`: 400.0 → 399.82185051202197 |
 
-## addon (62)
+## addon (74)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -181,7 +181,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `addon.cleanup.breakText` | refused | {by?: "lines"\|"paragraphs"\|"words"\|"glyphs" (lines), ids?: [id…] (default: the selection)} each horizontal point or area type object beco… | vectorcraft-cli: step 9 (addon.cleanup.breakText): Select horizontal point or area type whose text f |
 | `addon.cleanup.combineText` | refused | {ids?: [id…] (default: the selection)} merge one-line horizontal point type into as few objects as it can, every glyph staying where it was:… | vectorcraft-cli: step 9 (addon.cleanup.combineText): Select two or more one-line point type objects  |
 | `addon.cleanup.joinText` | refused | {ids?: [id…] (default: the selection)} join one-line horizontal point type into one point type object, as one undo step: pieces turned and s… | vectorcraft-cli: step 9 (addon.cleanup.joinText): Select two or more one-line point type objects to  |
-| `addon.cleanup.removeBreaks` | refused | {kind: "line"\|"paragraph", ids?: [id…]} remove the forced line breaks (line) or paragraph returns (paragraph) in the characters selected wi… | vectorcraft-cli: step 9 (addon.cleanup.removeBreaks): No line breaks to remove |
+| `addon.cleanup.removeBreaks` | verified | {kind: "line"\|"paragraph", ids?: [id…]} remove the forced line breaks (line) or paragraph returns (paragraph) in the characters selected with a Type tool (after Selec… | text run text: result {ids:[2], removed:1}; text 'Line one line two' |
 | `addon.cleanup.splitText` | refused | {} while a Type tool edits horizontal point or area type: the text before the selected characters, they and the text after become point type… | vectorcraft-cli: step 9 (addon.cleanup.splitText): command `addon.cleanup.splitText` is not availabl |
 | `addon.cleanup.alignInPlace` | refused | {align: "left"\|"center"\|"right", ids?: [id…] (default: the selection)} align every paragraph of each horizontal point type object so, movi… | vectorcraft-cli: step 9 (addon.cleanup.alignInPlace): Select point type |
 | `addon.cleanup.resetTextTransform` | refused | {scale?: bool (false: the horizontal scale stays; true: it goes too, the object's and every character's), ids?: [id…] (default: the selectio… | vectorcraft-cli: step 9 (addon.cleanup.resetTextTransform): Select point type |
@@ -212,7 +212,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `addon.pathtools.shape.create` | verified | {center: [x, y], kind?: "rectangle"\|"ellipse"\|"polygon" (default)\|"star"\|"ring"\|"arrow"\|"cross"\|"heart"\|"gear"\|"bubble" (a speech b… | `inspect.objects`: 6 → 7 |
 | `addon.pathtools.shape.set` | refused | {id, kind?, center?, width?, height?, rotation?, count?, a?, b?, radius?} change a parametric shape's numbers (as addon.pathtools.shape.crea… | vectorcraft-cli: step 9 (addon.pathtools.shape.set): invalid parameters for `addon.pathtools.shape.s |
 | `addon.pathtools.shape.convert` | verified | {ids?: [id…] (default: the selection)} make each plain closed path that is a rectangle, an ellipse or a polygon with equal sides and corners… | `inspect.layers{id=1}.children{id=3}.kind`: Ellipse → Path |
-| `addon.pathtools.cornerSet` | refused | {ids?: [id…] (the selection), anchors?: [index…] (of each path's outline with no corners cut; else its direct-selected anchors, or all of th… | vectorcraft-cli: step 9 (addon.pathtools.cornerSet): invalid parameters for `addon.pathtools.cornerS |
+| `addon.pathtools.cornerSet` | verified | {ids?: [id…] (the selection), anchors?: [index…] (of each path's outline with no corners cut; else its direct-selected anchors, or all of them), items?: [{id, anchors?… | layers[0].children[0].kind.path.subpaths[0].anchors: result {corners:3, ids:[2]}; 9 anchors |
 | `addon.pathtools.cornerRemove` | ran | {ids?: [id…] (the selection), anchors?: [index…] (of each path's outline with no corners cut; else its direct-selected anchors, or all of th… | no change in inspect/json; result={"corners": 4, "ids": [2]} |
 | `addon.pathtools.mergeEdge` | refused | {a, b: two path ids (they needn't be selected), at: [x, y] (where), diameter?: pt 0.25..200 (20; how near `at` the edge is looked for), tole… | vectorcraft-cli: step 9 (addon.pathtools.mergeEdge): invalid parameters for `addon.pathtools.mergeEd |
 | `addon.pathtools.movePointsTogether` | ran | {enabled?: bool (default: the opposite of now)} Keep Shared Points Together: whether anchors coincident (within the Shared Edge Merge Tool's… | no change in inspect/json; result={"enabled": true} |
@@ -224,10 +224,22 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `addon.pen.reshape` | verified | {id, subpath?: index (0), segment: index, t?: 0..1 (where it was grabbed, 0.5; held to 0.05..0.95), dx, dy: pt, mode?: "free" (both handles … | `inspect.layers{id=1}.children{id=2}.bounds.width`: 200.0 → 200.63777722999333 |
 | `addon.pen.nextSegment` | ran | {curved: bool} whether a click with the Smart Pen Tool adds a curved segment or a straight one (the tool's `next` option, kept with the pref… | no change in inspect/json; result={"next": "straight"} |
 | `addon.pen.closeJoin` | refused | {} with exactly two open path ends direct-selected, join them as path.join does; else close the selected open paths keeping their ends' hand… | vectorcraft-cli: step 9 (addon.pen.closeJoin): invalid parameters for `addon.pathtools.close`: selec |
-| `addon.document.batchTraceFolder` | verified | {folder, destinationFolder, preset?, expand?, format?: vectorcraft\|svg\|pdf\|ai\|eps, includeSubdirs?} trace every image in a folder and save each… | 2 PNGs → `traced` 2, `failed` []; a .txt in the folder is skipped silently; a second run wrote `box-2.svg` (no replace); Default preset traces black-and-white |
+| `addon.document.batchTraceFolder` | verified | {folder, destinationFolder, preset?: name (imageTrace.presets; default: Default), expand?: false (true: trace and expand, as Make and Expand), format?: vectorcraft (de… | result.traced: traced [{path:.../swatch.png, output:.../swatch.vectorcraft}], failed []; out/swatch.vectorcraft 26069 bytes |
 | `addon.select.byArtboards` | verified | {artboards: [index…], relation?: overlap\|inside\|outside} | 3 rectangles, artboard 1: overlap → count 2, inside → 1, outside → 1 |
 | `addon.type.textTweaker` | verified | {attribute?: size\|baselineShift\|rotation\|hScale\|vScale\|tracking\|leading\|strokeWidth, from?, to?, shape?: straight\|ease\|bow\|spike\|random, seed?, skipSpaces?, id?, start?, end?, ids?} | "Ramp up" size 12→36: runs 12, 16.8, 21.6, 26.4, (space 12), 31.2, 36 → `{count:5}` |
 
+| `addon.color.fillToStroke` | verified | {ids?\|id?, skipNone?: bool} each target's top stroke takes its own top fill, as it is (a colour in its model, a global or spot colour linked at its tint, a gradient o… | appearance.items[stroke].paint.color: stroke paint rgb(0.8,0.133,0.133) red (width unchanged) |
+| `addon.color.strokeToFill` | verified | {ids?\|id?, skipNone?: bool} each target's top fill takes its own top stroke's paint, as addon.color.fillToStroke does the other way; the stroke itself is unchanged. T… | appearance.items[fill].paint.color: fill rgb(0.133,0.333,0.8) (blue); stroke unchanged |
+| `addon.contour.set` | verified | {offset: pt (negative insets), corners?: "sharp"\|"round"\|"square" (default sharp; square cuts each corner off flat), miterLimit?: 1..500 (4; sharp corners only)} mak… | layers[0].children[1].appearance.effects[0]: created id 3 above: effects [path.offsetPath {offset:8.0, joins:'round', miterLimit:4}] |
+| `addon.select.byLinkStatus` | verified | {status: "linked" (its file found unchanged) \| "embedded" \| "missing" \| "modified" (its file changed since it was read) \| [several of them] (at least one), ids?: [… | document.inspect.selection: selected [2] (count 1); status 'embedded' -> selected [] |
+| `addon.shapes.box3d` | verified | {x, y, width, height, angleX=30, angleY=30, angleZ=0, parallelX=false, parallelY=true, parallelZ=false} → {id} | layers[0].children[5].kind.path.subpaths[].anchors: {id:7}; 12 anchors, x 350..470, y 450..550 |
+| `addon.shapes.configure` | verified | {ids?, radius?, radii?: [tl,tr,br,bl], startAngle?, endAngle?, arcMode?: whole\|pie\|chord\|arc, sides?, isStar?, spokeRatio?, rounded?, randomized?, turns?, divergenc… | layers[0].children[0].kind.live.radii: radii [40,40,40,40] ({updated:1}); polygon ids[3] sides 6->8 gave 8 anchors |
+| `addon.shapes.ellipse` | verified | {x, y, width, height, startAngle?, endAngle?, arcMode?: whole\|pie\|chord\|arc, rotation?: deg} → {id} | layers[0].children[1].kind.path.subpaths[].anchors: {id:3}; 4 anchors, x 350..500, y 100..200 |
+| `addon.shapes.polygon` | verified | {cx, cy, radius, sides=6, rounded=0, randomized=0, startAngle?, endAngle?, arcMode?: whole\|pie\|chord\|arc, rotation?: deg} → {id} | layers[0].children[2].kind.path.subpaths[].anchors: {id:4}; 6 anchors, y 240..360, x 148.0..252.0 |
+| `addon.shapes.rectangle` | verified | {x, y, width, height, radius?: pt, radii?: [tl,tr,br,bl], startAngle?, endAngle?, arcMode?: whole\|pie\|chord\|arc, rotation?: deg} → {id} | layers[0].children[0].kind.path.subpaths[].anchors: {id:2} with kind.live shape rectangle w200 h120 radii [10,10,10,10]; anchors span x 100..300, y 100..220 |
+| `addon.shapes.spiral` | verified | {cx, cy, radius, turns=3, divergence=1, innerRadius=0, clockwise=true} → {id} | layers[0].children[4].kind.path.subpaths[].anchors: {id:6}; 13 anchors, x 158.3..250.0, y 454.2..537.5 |
+| `addon.shapes.star` | verified | {cx, cy, radius1, radius2?, points=5, rounded=0, randomized=0, startAngle?, endAngle?, arcMode?: whole\|pie\|chord\|arc, rotation?: deg} → {id} | layers[0].children[3].kind.path.subpaths[].anchors: {id:5}; 10 anchors, x 342.9..457.1, y 240..348.5 |
+| `addon.type.releasePath` | verified | {mode?: "both" (point type and the path) \| "path" (the path only) \| "text" (point type only) ("both"), keepOriginal?: false (true: the type on a path stays and the r… | layers[0].children[].kind.kind: result {ids:[4,3], paths:[4], texts:[3]}; object 3 kind point, object 4 path |
 ## select (55)
 
 | id | status | params doc (short) | evidence |
@@ -288,7 +300,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `select.globalEditExclude` | verified | {id} while Global Edit is on, leave that object out | Global Edit on 3 rects (ids 2,3,4); exclude 4 → `{active:true,count:2}`; exclude 3 → `{active:false,count:0}` (ends below two) |
 | `select.same.textFillAndStrokeColor` | verified | {} | three texts, two red: select the first → `{count:2}` |
 
-## document (35)
+## document (36)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -304,8 +316,8 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `document.resetRulerOrigin` | ran | {artboard?: index=0} reset the rulers' zero point to that artboard's top-left corner (with artboard rulers, that artboard's own zero point) | no change in inspect/json; result={"x": 0.0, "y": 0.0} |
 | `document.open` | verified | {path \| name \| dataBase64 (a file's path, or its name with its bytes), pages?: "2-3, 5" (PDF/.ai: 1-based, default all; one artboard each)… | `inspect.artboards[0].height`: 792.0 → 200.0 |
 | `document.serialize` | ran | {format?: vectorcraft (default)\|template\|svg\|svgz\|pdf\|ai\|png\|jpg\|webp\|gif\|png8\|txt\|dxf\|eps\|emf\|wmf\|tiff\|bmp\|tga\|psd (ait,… | no change in inspect/json; result={"dataBase64": "ewogICJmb3JtYXQiOiAidmVjdG9yY3JhZnQiLAogICJ2ZXJzaW |
-| `document.export` | ran | {path?, format?: svg\|svgz\|pdf\|ai\|png\|jpg\|webp\|gif\|png8\|txt\|dxf\|eps\|emf\|wmf\|tiff\|bmp\|tga\|psd\|vectorcraft\|template (default… | no change in inspect/json; result={"bytes": 5975, "dataBase64": "iVBORw0KGgoAAAANSUhEUgAAAmQAAAMYCAY |
-| `document.exportSelection` | ran | {path?, format?: png\|jpg\|webp\|svg\|svgz\|pdf\|ai\|gif\|png8\|tiff\|bmp\|tga\|psd\|txt\|dxf\|eps\|emf\|wmf\|vectorcraft\|template (default… | no change in inspect/json; result={"bounds": [99.5, 99.5, 401.0, 121.0], "bytes": 2482, "dataBase64" |
+| `document.export` | verified | {path?, format?: svg\|svgz\|pdf\|ai\|png\|jpg\|webp\|gif\|png8\|txt\|dxf\|eps\|emf\|wmf\|tiff\|bmp\|tga\|psd\|vectorcraft\|template (default: from the path's extension… | image size / resolution: ppi 144 -> 1224x1584 at 56.69 px/cm |
+| `document.exportSelection` | verified | {path?, format?: png\|jpg\|webp\|svg\|svgz\|pdf\|ai\|gif\|png8\|tiff\|bmp\|tga\|psd\|txt\|dxf\|eps\|emf\|wmf\|vectorcraft\|template (default: from the extension, else … | image size / resolution: 402x202 at 56.69 px/cm |
 | `document.exportForScreens` | ran | {folder?, zip?: false (one .zip of every file, each deflated or stored, whichever is smaller: no folder → {name, dataBase64, bytes, files: [… | no change in inspect/json; result={"files": [{"dataBase64": "iVBORw0KGgoAAAANSUhEUgAAAmQAAAMYCAYAAAB |
 | `document.exportPresets.list` | read-ok | {} → {presets: [{name, builtIn, settings}]} the built-in batch export presets (Logo Package, Print-Ready PDF), then the saved ones; any name… | no change in inspect/json; result={"presets": [{"builtIn": true, "name": "Logo Package", "settings": |
 | `document.exportPresets.save` | ran | {name, settings: {formats, settings, preset, name, prefix, counterStart, counterPer, folders, subfolders, includeBleed, includeArtboardFill,… | no change in inspect/json; result={"created": true, "name": "Test", "settings": {}} |
@@ -328,6 +340,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `document.exportForWeb` | ran | {path?, preset?: a webExport.presets name (its settings, then these keys), format?: gif (default)\|jpg\|png8\|png24, reduction?: perceptual\… | no change in inspect/json; result={"bytes": 3721, "files": [{"dataBase64": "R0lGODlhZAIYA8QAAP////// |
 | `document.exportForWeb.preview` | ran | {…the settings of document.exportForWeb (preset?, format?…), slice?: n (1-based, from slice.list; default the whole image), kbps?: 56.6 (con… | no change in inspect/json; result={"bytes": 3721, "colors": [{"color": "#ffffff", "locked": false, " |
 
+| `document.move` | verified | {from?: index (default: the current document), to: index (0 = the first tab; past the last document = the last tab)} → {index}: moves the document to tab `to`, as drag… | document.inspect.title: document.activate 0 -> title DocB; index 1 -> DocA |
 ## path (34)
 
 | id | status | params doc (short) | evidence |
@@ -348,7 +361,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `path.reshape` | verified | {id, x, y, dx, dy, tol=3, radius?} Reshape tool: grab the path at (x, y) (adding an anchor there unless one is within tol) and drag it by (d… | `inspect.layers{id=1}.children{id=4}.anchors`: 3 → 4 |
 | `path.insertAnchor` | verified | {id, subpath?, segment, t: 0..1} | `inspect.layers{id=1}.children{id=4}.anchors`: 3 → 4 |
 | `path.cutAtAnchors` | refused | {} cut the paths at their direct-selected anchors (one undo step): a closed path opens there, an open one becomes one path per piece; one of… | vectorcraft-cli: step 9 (path.cutAtAnchors): command `path.cutAtAnchors` is not available right now: |
-| `path.freehand` | verified | {points: [[x,y]…] or [[x,y,pressure]…] or [[x,y,pressure,tiltX,tiltY,rotation]…] (pen pressure 0..1: the stroke keeps it, for Calligraphic a… | `inspect.objects`: 6 → 7 |
+| `path.freehand` | verified | {points: [[x,y]…] or [[x,y,pressure]…] or [[x,y,pressure,tiltX,tiltY,rotation]…] (pen pressure 0..1: the stroke keeps it, for Calligraphic and Scatter brushes with Pre… | kind.path.subpaths[0].anchors: path created (id 2 in that run) with anchors [[100,400],[220,400]] after smoothing |
 | `path.curvature` | verified | {points: [{x, y, corner?}], closed?, id?} create (or with id: replace) a path curving through the points → {id} | `inspect.objects`: 6 → 7 |
 | `path.curvatureEdit` | refused | {id, subpath?, op: "move"\|"insert"\|"extend"\|"close", anchor?, segment?, t?, end?: "start"\|"end", from?: "keep"\|"smooth"\|"corner", corn… | vectorcraft-cli: step 9 (path.curvatureEdit): invalid parameters for `path.curvatureEdit`: x and y m |
 | `path.removeAnchor` | verified | {id, subpath?, anchor, curvature?} remove one anchor, re-fitting the curve (with curvature: true, the curve where it was follows the remaini… | `inspect.layers{id=1}.children{id=4}.anchors`: 3 → 2 |
@@ -360,7 +373,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `path.eraseRegion` | ran | {points: [[x,y]…] or [[x,y,pressure]…] (pen pressure 0..1), size?: pt (10), sizeMode?: "fixed" (default) \| "pressure" (Eraser Tool Options'… | no change in inspect/json; result={"ids": []} |
 | `path.eraseSegments` | ran | {points: [[x,y]…], width?: pt (8)} erase the parts of selected paths under the drag → {ids} | no change in inspect/json; result={"ids": []} |
 | `path.smoothRegion` | ran | {points: [[x,y]…], radius?: pt (12), fidelity?: pt (2.5)} smooth selected paths near the drag → {ids, before, after} | no change in inspect/json; result={"after": 0, "before": 0, "ids": []} |
-| `path.joinScrub` | ran | {points: [[x,y]…], tolerance?: pt (12)} join the open-path endpoints scrubbed over → {id} | no change in inspect/json; result={"id": null} |
+| `path.joinScrub` | verified | {points: [[x,y]…], tolerance?: pt (12)} join the open-path endpoints scrubbed over, or trim two crossing open paths whose overhanging ends are scrubbed and join them a… | layers[0].children: result {id:2}; 1 path with 3 anchors |
 | `path.blob` | verified | {points: [[x,y]…] or [[x,y,pressure]…] (pen pressure 0..1), size?: pt (10), sizeMode?: "fixed" (default) \| "pressure" (Blob Brush Tool Opti… | `inspect.objects`: 6 → 7 |
 | `path.setFillRule` | ran | {rule: "nonZero"\|"evenOdd", ids?\|id?} the fill rule of the paths and compound paths in ids or the selection (groups: those inside), as one… | no change in inspect/json; result={"changed": 0} |
 | `path.mirrorCut` | verified | {axis?: "vertical"\|"horizontal"\|"free" (vertical), from?: [x,y], to?: [x,y] (free: the axis through both; vertical/horizontal: the axis th… | `inspect.layers{id=1}.children{id=4}.anchors`: 3 → 4 |
@@ -399,11 +412,11 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `text.thread.remove` | refused | {} break the selected frames' threads; each frame keeps the text it shows | vectorcraft-cli: step 10 (text.thread.remove): command `text.thread.remove` is not available right n |
 | `text.thread.break` | refused | {id, port: "in"\|"out"} break the thread of area type or type on a path `id` before it (its in port) or after it (its out port), as a double… | vectorcraft-cli: step 10 (text.thread.break): invalid parameters for `text.thread.break`: no such ob |
 | `text.thread.info` | ran | {} → [[id…]] every thread in order | no change in inspect/json; result=[] |
-| `text.tabs.set` | refused | {stops: [{position: pt, align?: left\|center\|right\|decimal, leader?: ". ", alignOn?: "."}], ids?\|id?, start?: byte, end?: byte} replace t… | vectorcraft-cli: step 9 (text.tabs.set): invalid parameters for `text.tabs.set`: missing stops |
+| `text.tabs.set` | verified | {stops: [{position: pt, align?: left\|center\|right\|decimal, leader?: ". ", alignOn?: "."}], ids?\|id?, start?: byte, end?: byte} replace the tab stops of the selecte… | text.tabs.get.stops: result {stops:2}; tabs.get [{decimal, alignOn '.', 100},{center, leader '.', 200}] |
 | `text.tabs.get` | ran | {ids?\|id?, start?: byte} → {stops} of the first selected text object (its paragraph at `start`; default the first) | no change in inspect/json; result={"stops": []} |
 | `text.tabs.clear` | ran | {ids?\|id?, start?: byte, end?: byte} | no change in inspect/json; result={"stops": 0} |
 | `text.setFormat` | refused | {ids?\|id?, kerning?: 1/1000 em\|"auto"\|"optical", baselineShift?: pt, hScale?: %, vScale?: %, rotation?: deg, underline?, strikethrough?, … | vectorcraft-cli: step 9 (text.setFormat): invalid parameters for `text.setFormat`: nothing to change |
-| `text.convertListToText` | ran | {ids?\|id?, start?: byte, end?: byte} (Type › Bullets and Numbering › Convert to Text: the paragraphs of the selected type, or of `ids`, or … | no change in inspect/json; result={"converted": 0, "ids": [], "inserted": []} |
+| `text.convertListToText` | ran | {ids?\|id?, start?: byte, end?: byte} (Type › Bullets and Numbering › Convert to Text: the paragraphs of the selected type, or of `ids`, or those a start/end range tou… | result.converted: result {converted:0, ids:[], inserted:[]} |
 | `text.glyphAlternates` | read-ok | {id, start: byte} → {char, font, style, default, chosen, alternates:[{gid, feature}]} | Source Sans 3 "g" → aalt 769, 1504; "a" → 710, 739, 1498; "1" → 4 alternates |
 | `text.setGlyphAlternate` | verified | {id, start: byte, gid: glyph id\|null} | g→769, a→710, 1→1378: `chosen` 34 → 769; render shows single-storey g and a; gid 999 refused: `glyph 999 is not an alternate of g in Source Sans 3 Regular` |
 
@@ -765,13 +778,13 @@ The params column is the first part of the command's own parameter doc; run `vec
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `library.list` | read-ok | {} → {libraries: [{id, name, graphics, colors, gradients, patterns, charStyles, paraStyles, groups} (counts)], current: the current library'… | no change in inspect/json; result={"current": "MyLib", "folder": null, "libraries": [{"charStyles":  |
-| `library.get` | read-ok | {library?: id or name (default: the current library)} → {id, name, graphics: [{id, name, width, height, thumbnail: PNG base64}], colors: [{n… | no change in inspect/json; result={"charStyles": [], "colors": [], "gradients": [], "graphics": [{"h |
+| `library.get` | read-ok | {library?: id or name (default: the current library)} → {id, name, graphics: [{id, name, width, height, thumbnail: PNG base64}], colors: [{name, hex, color, spot: ink … | result.colors: colors [{name:'LibGreen', hex:'#00ff00', spot:null, tint:1.0}, {name:'SpotTint', hex:'#00aa00', spot:'SpotGreen', tint:0.5}] |
 | `library.setCurrent` | refused | {library: id or name} the library the Libraries panel shows, which library commands without a `library` act on → {id} | vectorcraft-cli: step 12 (library.setCurrent): invalid parameters for `library.setCurrent`: no libra |
 | `library.create` | ran | {name?: "My Library"} a new empty library (its file in the library folder), made the current one → {id, name} | no change in inspect/json; result={"id": "My Library", "name": "My Library"} |
 | `library.rename` | ran | {library?, name} rename a library (default: the current one) → {id, name} | no change in inspect/json; result={"id": "MyLib", "name": "MyLib"} |
 | `library.delete` | ran | {library?} delete a library (default: the current one) and its file; not undoable → null | no change in inspect/json; result=null |
-| `library.add` | ran | {library?: id or name (default: the current library, made when there is none), kind: graphic\|fillColor\|strokeColor\|fillGradient\|strokeGr… | no change in inspect/json; result={"existing": true, "id": "graphic", "kind": "graphic", "library":  |
-| `library.use` | refused | {library?, kind, item: name (graphic: id or name), center?: [x, y] (graphic; default: the first artboard's centre), to?: fill\|stroke (color… | vectorcraft-cli: step 12 (library.use): invalid parameters for `library.use`: kind must be graphic,  |
+| `library.add` | verified | {library?: id or name (default: the current library, made when there is none), kind: graphic\|fillColor\|strokeColor\|fillGradient\|strokeGradient\|fillPattern\|stroke… | library.get.colors[].spot: library.get colors: SpotTint hex #00aa00 spot "SpotGreen" tint 0.5 |
+| `library.use` | verified | {library?, kind, item: name (graphic: id or name), center?: [x, y] (graphic; default: the first artboard's centre), to?: fill\|stroke (colors, gradients, patterns; def… | appearance.items[fill].paint.color: fill rgb(0,1,0) #00ff00 |
 | `library.removeItem` | refused | {library?, kind, item: name (graphic: id or name)} delete an item (out of its group too) → null | vectorcraft-cli: step 12 (library.removeItem): invalid parameters for `library.removeItem`: kind mus |
 | `library.createGroup` | ran | {library?, name?: "Group" (a name the library's groups have, ignoring case, gets a number), items?: [{kind, item}] (moved into it out of the… | no change in inspect/json; result={"group": "Group", "library": "MyLib"} |
 | `library.renameGroup` | refused | {library?, group: name, name} rename a group (another group's name, ignoring case, is an error) → {library, group: the new name} | vectorcraft-cli: step 12 (library.renameGroup): invalid parameters for `library.renameGroup`: the li |
@@ -797,7 +810,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `variable.unbind` | ran | {ids?, variable?} drop bindings (default: the selection): `variable` drops that one, else every variable the object has | no change in inspect/json; result={"unbound": 0} |
 | `variable.lock` | verified | {locked?: bool} lock or unlock the variables (default: toggle); saved with the document; a change is one undo step. While locked, variable.d… | `doc.variables.locked`: <absent> → True |
 | `variable.highlight` | ran | {variable?} highlight one Variables panel row (a click); what the panel's Delete, Options… and Select Bound Object act on. An empty or missi… | no change in inspect/json; result={"variable": null} |
-| `variable.loadLibrary` | refused | {path? \| xml? \| dataBase64?} replace the document's variables and data sets with a variable library's (XML: `variableSets` › `variableSet`… | vectorcraft-cli: step 10 (variable.loadLibrary): invalid parameters for `variable.loadLibrary`: the  |
+| `variable.loadLibrary` | verified | {path? \| xml? \| dataBase64?} replace the document's variables and data sets with a variable library's (XML: `variableSets` › `variableSet` › `variables` of `variable… | variable.list.variables: result {variables:['Title']}; variable.list [{name:'Title', kind:'text'}] |
 | `variable.saveLibrary` | ran | {path?} write the document's text variables and every data set as a variable library, the XML that variable.loadLibrary reads: a `variable` … | no change in inspect/json; result={"datasets": 0, "skipped": [], "variables": ["v1"], "xml": "<?xml  |
 
 ## artboard (13)
@@ -866,7 +879,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `links.unembed` | refused | {id?: an embedded image (default: the one selected), path?} write the image's pixels to the file at path (PNG, JPEG, GIF or WebP as stored, … | vectorcraft-cli: step 11 (links.unembed): invalid parameters for `links.unembed`: image 8 is linked  |
 | `links.info` | read-ok | {id?} an image's or placed document's Link Info (default: the one selected) → image.info's fields (id, name, linked, link, colorMode, pixelW… | no change in inspect/json; result={"colorMode": "RGB", "created": 1793852841689, "effectivePpi": [72 |
 | `links.placementOptions` | refused | {ids?: [image or placed document ids] (default: the selected ones), preserve?: transforms\|bounds (default)\|fileDimensions\|fit\|fill, alig… | vectorcraft-cli: step 9 (links.placementOptions): invalid parameters for `links.placementOptions`: o |
-| `links.findFiles` | ran | {folder?: an absolute path, ids?: [image or placed document ids] (default: the active document's missing links), maxSeconds?: 60 (1 to 600),… | no change in inspect/json; result={"links": [], "state": "idle"} |
+| `links.findFiles` | ran | {folder?: an absolute path, ids?: [image or placed document ids] (default: the active document's missing links), maxSeconds?: 60 (1 to 600), stop?: false (true: stop t… | result.state: result {state:'searching', searched:{files:0,folders:0}, links:[{name:'photo.png', files:[]}]}; a later poll in the same run stayed 'searching' |
 
 ## shape (10)
 
@@ -883,7 +896,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `shape.rectangularGrid` | verified | {x, y, width, height, rows=5, columns=5, rowSkew=0, columnSkew=0 (−500…500 %: + crowds the horizontal dividers toward the top, the vertical … | `inspect.objects`: 6 → 18 |
 | `shape.polarGrid` | verified | {x, y, width, height, concentric=5, radial=5, concentricSkew=0, radialSkew=0 (−500…500 %: + crowds the ellipses toward the outside, the radi… | `inspect.objects`: 6 → 18 |
 
-## stroke (10)
+## stroke (12)
 
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
@@ -898,6 +911,8 @@ The params column is the first part of the command's own parameter doc; run `vec
 | `stroke.widthPoint.copy` | verified | {id, index: the width point to copy, t: 0..1 where the copy goes} → {index} (Alt-drag with the Width tool). Landing on another point makes a… | `inspect.layers{id=1}.children{id=2}.strokeOptions.profile`: uniform → custom |
 | `stroke.widthProfile.set` | refused | {ids?\|id?, points: [[t, left, right]…] (width factors, 1 = the stroke weight) \| null = uniform} | vectorcraft-cli: step 9 (stroke.widthProfile.set): invalid parameters for `stroke.widthProfile.set`: |
 
+| `stroke.weightUp` | verified | {ids?\|id?} raise each selected stroke's weight by one step of Units › Stroke (a quarter unit below one unit, then whole units; up to 1000 pt), each from its own weigh… | appearance.items[stroke].width: width 2.0, again 3.0 |
+| `stroke.weightDown` | verified | {ids?\|id?} lower each selected stroke's weight by one step, as stroke.weightUp raises it, down to a quarter unit (a thinner weight is kept) → {objects} | appearance.items[stroke].width: width 2.0 |
 ## charStyle (10)
 
 | id | status | params doc (short) | evidence |
@@ -1186,7 +1201,7 @@ The params column is the first part of the command's own parameter doc; run `vec
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `attributes.info` | read-ok | {ids?\|id?, item?, target?: "object"\|"contents"} → {ids, overprintFill, overprintStroke, showCenter, imageMap: "none"\|"rectangle"\|"polygo… | no change in inspect/json; result={"fillRule": "nonZero", "ids": [2, 3], "imageMap": "none", "note": |
-| `attributes.set` | ran | {overprintFill?: bool, overprintStroke?: bool (aimed as object.setOverprint's fill and stroke, item? too), showCenter?: bool (the canvas sho… | no change in inspect/json; result={"changed": 0} |
+| `attributes.set` | verified | {overprintFill?: bool, overprintStroke?: bool (aimed as object.setOverprint's fill and stroke, item? too), showCenter?: bool (the canvas shows the selected object's ce… | attributes.info.url: attributes.info url "https://example.com/a", imageMap "rectangle", recentUrls [it] |
 
 ## tool (2)
 
