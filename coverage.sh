@@ -34,12 +34,12 @@ print("\n".join(out))
 EOF
 }
 
-for app in wordcraft gridcraft deckcraft photocraft cadcraft pdfcraft filmcraft lightcraft vectorcraft designcraft; do
+for app in wordcraft gridcraft deckcraft photocraft cadcraft pdfcraft filmcraft lightcraft vectorcraft designcraft soundcraft; do
     cli="$dir/$app-cli"; [ -x "$cli" ] || { echo "$app: no CLI at $cli" >&2; continue; }
     ver=$("$cli" --version 2>/dev/null | sed -n '1s/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p')
     if [ "$app" = pdfcraft ]; then
         "$cli" tools 2>/dev/null | python3 -c 'import json,sys;print("\n".join(x["name"] for x in json.load(sys.stdin)))'   # PdfCraft: tools, not commands
-    elif [ "$app" = filmcraft ]; then
+    elif [ "$app" = filmcraft ] || [ "$app" = soundcraft ]; then
         "$cli" commands --json 2>/dev/null | python3 -c 'import json,sys;d=json.load(sys.stdin);d=d if isinstance(d,list) else d["commands"];print("\n".join(x["id"] for x in d))'
     elif [ "$app" = photocraft ] || [ "$app" = cadcraft ] || [ "$app" = vectorcraft ] || [ "$app" = designcraft ]; then
         if [ "$app" = cadcraft ] || [ "$app" = vectorcraft ] || [ "$app" = designcraft ]; then cargs=commands; else cargs="commands --json"; fi   # cadcraft-cli prints JSON from plain `commands`

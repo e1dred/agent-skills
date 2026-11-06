@@ -1,0 +1,18 @@
+Start a new session | session.new session.inspect
+Open, save and reopen a session | session.open session.save session.save_as session.save_copy session.revert
+Check a session's health | session.audio_health session.inspect
+Import audio onto new tracks | file.import_audio file.import_midi file.import_video
+Bounce the mix or stems | file.bounce_mix file.bounce_stems
+Export MIDI, score or session text | file.export_midi file.export_sibelius file.print_score file.export_session_text
+Set a track's level, pan, mute or solo | mix.volume mix.pan mix.mute mix.solo mix.clear_solos
+Route a send to a reverb bus | mix.send mix.send_level mix.new_bus
+Insert, bypass or reorder a plugin | mix.insert mix.insert_remove mix.insert_bypass mix.insert_param mix.insert_move
+Automate a fader | automation.set_point automation.write_range automation.thin
+Edit clips: split, trim, move, fade | edit.separate edit.trim_clip edit.move_clips edit.fades_create
+Copy, paste, duplicate, repeat | edit.copy edit.paste edit.duplicate edit.repeat edit.duplicate_extend
+Select and navigate | edit.select edit.select_all edit.select_none edit.tab edit.nudge transport.locate
+Add and recall markers | markers.add markers.edit markers.recall markers.next markers.previous
+Create a MIDI track and notes | track.new midi.new_clip midi.note_add midi.notes midi.note_edit
+Change tempo and meter | event.tempo event.meter event.tempo_linear event.tempo_remove
+Turn a track into a folder or VCA | track.move_to_new_folder track.vca track.convert_aux_to_folder
+Change a clip's gain or render it into the audio | clip.gain clip.gain_render
