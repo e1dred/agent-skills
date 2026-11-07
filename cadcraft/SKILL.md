@@ -30,6 +30,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `dwg-files.md` | Opening, editing and saving real AutoCAD DWGs: dynamic blocks, layouts, save versions, constraints | Round 10: a real AutoCAD DWG from another program; Round 11: save versions and the last open items; Round 12: two more AutoCAD DWGs, 2010 format |
 | `command-sweeps.md` | Probes of every remaining command id and the last 62 smoke-tested ids | Round 13: the remaining command ids; The last 62 command ids; Verified in detail, CadCraft phase 2; Verified in detail, CadCraft second pass; Verified in detail, CadCraft last id; Ten ids that were only named as ordinary words |
 | `newer-commands.md` | What each version added or changed, with exact parameters: oops, -wblock, plot devices, portable fonts, layout save-as, named viewports | 0.15 changes; 0.17 changes; Newer commands |
+| `command-catalogue.md` | Every ids's status in one place (457, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)

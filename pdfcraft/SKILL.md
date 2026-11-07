@@ -38,6 +38,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `editing-signing-tools.md` | Added content (copy/update/delete), page objects, image crop/export, stamps, editing original text and fonts, revisions and undo, bookmark copy/export/import, actions, the UI command registry headless, measurement, printers (list only), digital IDs and signing, accessibility tag editing and review files; tools that could not be run | Documents and revisions; Added content, page objects, images; Editing original text; Bookmarks, links, actions, commands; Measurement, printing; Signing; Accessibility tags and review; View and preview; Not exercised |
 | `live-app.md` | Driving the running app: control methods (state, inspect, command, open, set, key, click, drag, screenshot), the UI command ids and what each opens, commands that open a native file chooser, running the app on a hidden display | Connecting; Running the app where the user cannot see it; UI commands verified |
 | `newer-commands.md` | What each version added or changed | 0.18.1; 0.18.2; 0.19.0 |
+| `command-catalogue.md` | Every tools's status in one place (195, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
