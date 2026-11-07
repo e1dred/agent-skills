@@ -46,7 +46,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `shapes-text-tables.md` | Shapes, text and character formatting, tables, photo album, shape actions and action buttons (listing a slide's links: `slide.actions` in `newer-commands.md`), sections, media, navigation, alignment, ink | Shapes, text formatting, tables, photo album, actions, sections, masters and files; Text editing, character formats, arranging, media, navigation and data commands; Ink in DeckCraft; Alignment and redo |
 | `newer-commands.md` | What each version added or changed (0.11 onward), with exact parameters: motion paths, slide actions, gradient kinds | New in 0.11.x; Newer commands; 0.13 changes; 0.14 changes; 0.15 changes |
 | `command-sweep.md` | The last 28 command ids, smoke-tested | The last 28 command ids; Verified in detail, DeckCraft phase 2; Verified in detail, DeckCraft second pass |
-| `command-catalogue.md` | Every ids's status in one place (331, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
+| `command-catalogue.md` | The status of every id in one place (331, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## Command formats (verified)

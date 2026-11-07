@@ -52,7 +52,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `photo-restoration-and-colorization.md` | Use when a photo must be restored or enlarged, graded to match a reference, colorized (with or without a colour version), grey hair or skin comes out wrong, or a hero image needs non-destructive retouching (Smart Objects, masked group, frequency separation) | Which recipe; A. Non-destructive retouch; B. Restore to match a reference; C. Colorize from a colour reference; D. Colorize by hand |
 | `command-sweeps.md` | How every command id was smoke-tested and verified, in batches; look here to see exactly what one id does | Round: every remaining command id swept on a scratch document; The last 28 command ids; Verified in detail, PhotoCraft phase 2 batch; Verified in detail, PhotoCraft phase 2 batch 3; Verified in detail, PhotoCraft background jobs; Verified in detail, PhotoCraft linked smart objects; Verified in detail, PhotoCraft plug-ins and .grd import; Verified in detail, PhotoCraft migratePresets; Verified in detail, PhotoCraft printing; Verified in detail, PhotoCraft artboard guides |
 | `painting-a-portrait.md` | The portrait painted from code: passes, tools and lessons | Painting a portrait from code |
-| `command-catalogue.md` | Every ids's status in one place (993, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
+| `command-catalogue.md` | The status of every id in one place (993, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)

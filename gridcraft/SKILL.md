@@ -53,7 +53,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `auditing-and-helpers.md` | Formula auditing, selection, scripts, comments, grouping, print helpers, ink | Formula auditing, selection, scripts, ink, comments, grouping and print helpers; Ink in GridCraft |
 | `newer-commands.md` | What each version added or changed (0.12 onward), with exact parameters: Python cells, Trace Error, Solver models, equations, chart data tables | New in 0.12.x; Newer commands; 0.15 changes; 0.16 changes; 0.17.0 changes |
 | `command-sweep.md` | The last 58 command ids, smoke-tested on a blank workbook | The last 58 command ids; Verified in detail, GridCraft phase 2; Verified in detail, GridCraft second pass; Checked, no effect in this version; Verified in detail, GridCraft show objects; Verified in detail, GridCraft formula bar and ruler; Checked, no effect on Wayland |
-| `command-catalogue.md` | Every ids's status in one place (385, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
+| `command-catalogue.md` | The status of every id in one place (385, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## Command formats (verified)
