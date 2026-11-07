@@ -29,7 +29,7 @@ Unofficial: not affiliated with any of the app projects.
 
 | Skill | App | Last tested on | Commands documented (measured) | Everyday tasks covered (checklist) |
 |---|---|---|---|---|
-| [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: Word, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 | 34 of 34 (100%) |
+| [`onlyoffice/`](onlyoffice/) | [ONLYOFFICE Desktop Editors](https://www.onlyoffice.com/desktop.aspx) through its AI-tools MCP server: documents, spreadsheets, slides (incl. designed decks), PDFs, forms, live editing | 10.0.0, Linux flatpak | 93 of 93 | 34 of 34 (100%) |
 | [`genoffice-supplement/`](genoffice-supplement/) | [GenOffice](https://github.com/genspark-ai/genoffice) (`genoffice` CLI and MCP). **Supplementary only:** what GenOffice's own skills do not cover (none of them are copied here): the Word, Excel and PowerPoint ops, their traps and units, and the document styles rebuilt in GenOffice | 0.12.852, Linux AppImage; headless, plus the live editor | 153 of 153 ops from `genoffice guide` (all run and checked except `moveSection`) | 50 of 50 (100%) across Docs, Sheets and Slides plus convert, merge and render |
 
 Where part of a section was not re-run on the version a skill names, a `> Not re-checked:` line says what, so treat those parts as tested on an earlier version only. What changed and when: [CHANGELOG.md](CHANGELOG.md).
