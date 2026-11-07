@@ -5,9 +5,9 @@ These are the scripts behind the results in `../SKILL.md`, kept so the checks ca
 | File | What it does |
 |---|---|
 | `run_sweeps.sh` | Sets up a scratch folder (sample .docx, .xlsx, .pptx, a small picture) and runs the three sweeps |
-| `sweep_docs.py`, `check_docs_xml.py`, `sweep_docs_staged.py` | About 45 Word ops, one fresh copy per case; the second script prints what the saved XML says (fonts, borders, fields, headers, sections, comments, notes); the third runs the cases that need two `apply` calls (table style, wrap then unwrap a content control) and checks the XML |
-| `sweep_sheets.py`, `sweep_sheets_staged.py` | About 40 Excel ops, then the ones that need two `apply` calls (convert to values, table, pivots, chart edit, sheet copy and move, protection) |
-| `sweep_slides.py` | About 30 PowerPoint cases (text, shapes, tables, charts, SmartArt, slides, animations, deck ops) |
+| `sweep_docs.py`, `check_docs_xml.py`, `sweep_docs_staged.py` | About 45 Docs ops, one fresh copy per case; the second script prints what the saved XML says (fonts, borders, fields, headers, sections, comments, notes); the third runs the cases that need two `apply` calls (table style, wrap then unwrap a content control) and checks the XML |
+| `sweep_sheets.py`, `sweep_sheets_staged.py` | About 40 Sheets ops, then the ones that need two `apply` calls (convert to values, table, pivots, chart edit, sheet copy and move, protection) |
+| `sweep_slides.py` | About 30 Slides cases (text, shapes, tables, charts, SmartArt, slides, animations, deck ops) |
 | `build_pair.sh`, `compare_styles.py` | Build a style x kind with WordCraft and with GenOffice (`REPO` is the agent-skills folder; `WORDCRAFT_CLI` the CLI path) and compare the renders page by page (needs Pillow) |
 | `../op_names.py` | Lists the ops `genoffice guide` documents (used by `../../coverage.sh`) |
 

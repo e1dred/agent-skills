@@ -1,6 +1,6 @@
 ---
 name: genoffice-supplement
-description: Use when editing .docx or other Office files with GenOffice (Docs editor, genoffice CLI/MCP) and its own bundled skill leaves a Word op, unit, page-count difference or document-style rebuild unclear; load next to GenOffice's own skill
+description: Use when editing .docx or other Office files with GenOffice (Docs editor, genoffice CLI/MCP) and its own bundled skill leaves a Docs op, unit, page-count difference or document-style rebuild unclear; load next to GenOffice's own skill
 ---
 
 # GenOffice supplement
@@ -19,7 +19,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `docs-ops.md` | Word ops (`docs apply`): the sweep results, gaps closed, and the index of every op | Word-op sweep, 2026-10-27, GenOffice 0.12.117; Docs gaps closed; Op index; New in 0.12.600: `remove_parts` (strip customXml / webExtensions metadata before filing) |
+| `docs-ops.md` | Docs ops (`docs apply`): the sweep results, gaps closed, and the index of every op | Docs-op sweep, 2026-10-27, GenOffice 0.12.117; Docs gaps closed; Op index; New in 0.12.600: `remove_parts` (strip customXml / webExtensions metadata before filing) |
 | `sheets.md` | Spreadsheet ops (`sheet apply`) | Sheets sweep |
 | `slides.md` | Presentation ops (`slides apply`) | Slides sweep |
 | `markdown-html-pdf.md` | Converting and creating Markdown, HTML and PDF with the CLI | Markdown, HTML and PDF through the CLI |

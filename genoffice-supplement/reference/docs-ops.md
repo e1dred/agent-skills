@@ -1,8 +1,8 @@
-# GenOffice supplement reference: Docs (Word) ops
+# GenOffice supplement reference: Docs ops
 
 Part of the genoffice-supplement skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
-## Word-op sweep, 2026-10-27, GenOffice 0.12.117 (headless CLI `genoffice docs apply`)
+## Docs-op sweep, 2026-10-27, GenOffice 0.12.117 (headless CLI `genoffice docs apply`)
 Method (scripts in `tools/`, re-run with `bash tools/run_sweeps.sh`): fresh copy of a 9-block docx per op, apply, then read back with `docs read` flags, unzip the XML, and render (`genoffice render x.docx --out dir`, one PNG per page) and look.
 
 Status "ok" only means the op was accepted. Check the XML or the render.
