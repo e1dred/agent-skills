@@ -81,9 +81,10 @@ def path_points(items, close):
         if op == "l":
             add(it[1]); add(it[2])
         elif op == "c":
-            p0 = pts[-1] if pts else (it[1].x, it[1].y)
-            for q in bezier((p0[0], p0[1]), (it[1].x, it[1].y),
-                            (it[2].x, it[2].y), (it[3].x, it[3].y)):
+            # pymupdf gives ("c", start, control1, control2, end)
+            add((it[1].x, it[1].y))
+            for q in bezier((it[1].x, it[1].y), (it[2].x, it[2].y),
+                            (it[3].x, it[3].y), (it[4].x, it[4].y)):
                 add(q)
         elif op == "re":
             r = it[1]
