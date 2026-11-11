@@ -1,4 +1,4 @@
-# GridCraft command catalogue (0.17.0)
+# GridCraft command catalogue (0.19.0; ids unchanged since the previous label)
 
 Built 2026-11-06 from the skill's own text (SKILL.md, reference/ and tools/); no command was run and nothing was re-tested. Ids come from `gridcraft-cli` 0.17.0 (385 ids); the skill's version label: last tested on gridcraft-cli 0.17.0; evidence sections cite 0.14-0.17.0.
 Status: **V** verified - the hit is under a heading naming verification or records an observed result (arrow, before/after, read-back, checked file, confirmed); **d** documented - named with parameters or usage, no recorded evidence; **n** named only - a bare list or command index; **s** skipped on purpose - the skill says skipped/not run/not tested/not exercised; **x** known no-op, broken or refused - the line says so; **V+** verified, but another line records a limit (refused or skipped in some state or version); the note quotes both. When a command has verified evidence anywhere, it counts as verified: a refusal or skip recorded elsewhere usually names a precondition or an older round.

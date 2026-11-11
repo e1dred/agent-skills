@@ -1,4 +1,4 @@
-# DesignCraft command catalogue (0.18.0) — 555 ids
+# DesignCraft command catalogue (0.20.0; ids unchanged since the previous label) — 555 ids
 
 Generated from `designcraft-cli commands` and this round's headless run (0.18.0, 2026-11-06). Status per id: **verified** = the same field read before/after (document.inspect, type.selectionAttrs, transform.info or the family read-back named in the evidence); **read-ok** = a list/get/export returned real data; **ran** = accepted, no readable field changed (UI-only, view, effects not exposed by inspect); **refused** = the exact error is quoted. The params column is the first part of the command's own parameter doc (run `designcraft-cli commands` for the full text).
 

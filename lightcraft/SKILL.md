@@ -5,7 +5,7 @@ description: Use when managing a photo library or developing raw/JPEG photos: im
 
 # LightCraft
 
-Field notes from a first full headless round, last tested on **LightCraft 0.19.0** (Linux AppImage
+Field notes from a first full headless round, last tested on **LightCraft 0.21.0** (Linux AppImage
 `lightcraft-cli`). LightCraft is a non-destructive photo library and raw developer in Rust; the CLI, the MCP
 server and the app's control channel run the same engine commands. If `lightcraft-cli --version` is newer,
 re-check anything here before relying on it.

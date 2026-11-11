@@ -1,4 +1,4 @@
-# LightCraft command catalogue (0.19.0)
+# LightCraft command catalogue (0.21.0)
 
 Every id from `lightcraft-cli commands` (389 in 0.19.0; the 0.18.1 sweep covered 376 here and left out the 5 beforeAfter.* and 2 pointColor.* ids; the 6 ids new in 0.19.0 are added below with their 0.19.0 evidence). Status is the evidence in results.jsonl: **V** verified (same field read before/after), **R** read-ok, **r** ran (accepted, no read-back field), **x** refused (error in REPORT.md), **s** skipped. Parameters live in `commands` / commands.json.
 
@@ -573,3 +573,11 @@ Every id from `lightcraft-cli commands` (389 in 0.19.0; the 0.18.1 sweep covered
 | `version.rename` | V | versions[0].name v1 → renamed |
 | `version.restore` | V | develop.light.exposure -1.0 → 1.0 |
 | `version.update` | V | versions[0].settings.light.contrast 0.0 → 40.0 |
+
+## New in 0.21.0 (3, tested 2026-11-11)
+
+| id | status | note |
+|---|---|---|
+| `lensBlur.brushReset` | V | reference/newer-commands.md#0.21.0: develop.get after brushReset mode=focus shows blur_strokes:1 and no focus_strokes; a second run with {} clears |
+| `lensBlur.brushStroke` | V | reference/newer-commands.md#0.21.0: develop.get after the stroke returns the stored focus stroke with the exact points/size |
+| `lensBlur.findSubject` | x | reference/newer-commands.md#0.21.0: error: The SAM 3 model is not installed. Download it (about 3.4 GB, SAM License (Meta)) when LightCraft offers |

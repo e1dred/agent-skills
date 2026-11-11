@@ -9,7 +9,7 @@ description: Use when writing, formatting or converting Word documents (.docx), 
 
 **Start of a session:** run `../check-versions.sh` (read-only; app vs CLI versions, ONLYOFFICE flatpak updates; only present in a full clone of the repo, otherwise compare `wordcraft-cli --version` with the app's version in its About box or on its releases page by hand; `--version` on an AppImage can open the app). A CLI older than its app has caused real failures. In a full clone, `../coverage.sh` shows how much of the app this skill names.
 
-Field notes from real tasks, last tested on **WordCraft 0.16.0** (Linux AppImage). If `wordcraft-cli --version`
+Field notes from real tasks, last tested on **WordCraft 0.18.0** (Linux AppImage). If `wordcraft-cli --version`
 reports something newer, treat anything in this skill as "probably still true" and re-check it before relying on it.
 
 ## Keep this file growing
@@ -89,7 +89,7 @@ wordcraft-cli info f.docx         # pages, words, paragraphs, properties
 wordcraft-cli text f.docx
 wordcraft-cli render f.docx out.png --page N --scale S
 wordcraft-cli convert in.docx out.pdf
-wordcraft-cli commands [--json]   # ~640 commands; --json gives each command's params string
+wordcraft-cli commands [--json]   # ~670 commands; --json gives each command's params string
 ```
 Script commands are `{"command": id, "params": {...}}` or a bare id string. Relative paths in the script's
 `save` list resolve against the script's folder, but paths inside command params resolve against the working

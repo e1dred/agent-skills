@@ -1,4 +1,4 @@
-# PhotoCraft command catalogue (0.21.0)
+# PhotoCraft command catalogue (0.23.0)
 
 Built 2026-11-06 from the skill's own text (SKILL.md, reference/ and tools/); no command was run and nothing was re-tested. Ids come from `photocraft-cli` 0.21.0 (993 ids); the skill's version label: last tested on photocraft-cli 0.21.0; evidence sections cite 0.13-0.21.0.
 Status: **V** verified - the hit is under a heading naming verification or records an observed result (arrow, before/after, read-back, checked file, confirmed); **d** documented - named with parameters or usage, no recorded evidence; **n** named only - a bare list or command index; **s** skipped on purpose - the skill says skipped/not run/not tested/not exercised; **x** known no-op, broken or refused - the line says so; **V+** verified, but another line records a limit (refused or skipped in some state or version); the note quotes both. When a command has verified evidence anywhere, it counts as verified: a refusal or skip recorded elsewhere usually names a precondition or an older round.
@@ -1186,3 +1186,24 @@ Counts: V 910, V+ 49, d 1, n 0, s 31, x 2.
 | `view.resetRulerOrigin` | V | reference/everyday-edits.md#Layer arrangement, shape combi…: …,"y":50}`, `view.resetRulerOrigin`, `view.m… |
 | `view.setRulerOrigin` | V | reference/everyday-edits.md#Layer arrangement, shape combi…: `view.setRulerOrigin {"x":100,"y":50}`, `vi… |
 | `view.thirtyTwoBitPreviewOptions` | V | reference/everyday-edits.md#Layer arrangement, shape combi…: `view.thirtyTwoBitPreviewOptions` only on a… |
+
+## New in 0.23.0 (16, tested 2026-11-11)
+
+| id | status | note |
+|---|---|---|
+| `actions.allowToolRecording` | V | reference/workflows-and-tools.md#0.23.0: actions.list {toolRecording:true}; a fresh CLI process reports false |
+| `actions.duplicate` | V | reference/workflows-and-tools.md#0.23.0: duplicate result {action:'TestA copy',index:1,steps:1}; actions.list confirms the copy |
+| `actions.insertMenuItem` | V | reference/workflows-and-tools.md#0.23.0: insertMenuItem {action:'TestA',id:'actions.menuItem',step:1,steps:2}; actions.get shows the actions.menuItem s |
+| `actions.insertPath` | V | reference/workflows-and-tools.md#0.23.0: insertPath {action:'TestB',id:'path.set',step:3,steps:4}; the inserted step holds the absolute path JSON |
+| `actions.menuItem` | x | reference/workflows-and-tools.md#0.23.0: error: `actions.menuItem`: interactive-required: `image.imageSize` needs its menu item dialog; no recorded set |
+| `actions.recordAgain` | V | reference/workflows-and-tools.md#0.23.0: recordAgain result {id:'image.imageSize',result:{width:350,height:263},step:1}; actions.get stores width 350 |
+| `brush.mixer.autoClean` | V | reference/workflows-and-tools.md#0.23.0: brush.mixer.autoClean {} -> {on:false} then {on:true}; {"on":true} is idempotent |
+| `brush.mixer.autoLoad` | V | reference/workflows-and-tools.md#0.23.0: brush.mixer.autoLoad {} -> {on:false} then {on:true} |
+| `brush.mixer.sampleAllLayers` | V | reference/workflows-and-tools.md#0.23.0: brush.mixer.sampleAllLayers {} -> {on:true} then {on:false} |
+| `file.openAsSmartObject` | V | reference/workflows-and-tools.md#0.23.0: document.inspect: name logo-1, width 120, height 80, history ['Open As Smart Object']; open result {layer:7,sm |
+| `layer.copyCSS` | V | reference/workflows-and-tools.md#0.23.0: result css quotes the layer's actual fill rgb(255,0,0) and bounds 40/40/120/80 |
+| `layer.layerMask.moveTo` | V | reference/workflows-and-tools.md#0.23.0: moveTo result {copy:false,layer:3,to:4}; document.inspect before/after hasMask flags swap |
+| `layer.smartObjects.resetTransform` | V | reference/workflows-and-tools.md#0.23.0: resetTransform {layer:6,transform:[1,0,0,1,40,40]}; document.inspect bounds restored |
+| `path.intersectWithSelection` | V | reference/workflows-and-tools.md#0.23.0: intersectWithSelection result {selected:true}; document.inspect selectionBounds shrunk to the overlap |
+| `path.toShape` | V | reference/workflows-and-tools.md#0.23.0: result {layer:3,bounds:[20,20,100,100],fill:'#ff0000',kind:'path'}; document.inspect layers[0].kind='Shape' |
+| `type.setPathPlacement` | V | reference/workflows-and-tools.md#0.23.0: setPathPlacement {start:10,end:120}; type.info Path {start:10.0,end:120.0} and shortened bounds |

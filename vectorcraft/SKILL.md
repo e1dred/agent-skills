@@ -5,11 +5,11 @@ description: Use when drawing, editing, tracing or converting vector artwork —
 
 # VectorCraft
 
-Field notes from the first full headless round, last tested on **VectorCraft 0.22.0**
+Field notes from the first full headless round, last tested on **VectorCraft 0.24.0**
 (Linux binary `vectorcraft-cli`). VectorCraft is a vector illustration app written in Rust; the
 CLI, the MCP server and the app's control channel run the same engine commands. If
 `vectorcraft-cli --version` reports a newer build, re-check the ids and params here before relying
-on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918, 0.22.0 933; see
+on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918, 0.22.0 933, 0.24.0 1421; see
 `reference/newer-commands.md`).
 
 ## Setup
@@ -28,9 +28,11 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918
 - **MCP:** `vectorcraft-cli mcp [--connect ADDR | --headless] [--automation-read-root DIR]
   [--automation-write-root DIR]`. The roots confine what open/place/link saves can touch and imply
   `--headless`.
-- **Live app:** `vectorcraft --control PORT`, then `--connect` on the CLI. Not exercised in this
-  round; do not open a window on the user's screen without being asked. There is no
-  `--keep-going` on `run`, so live scripting should go through MCP.
+- **Live app:** `vectorcraft --control PORT`, then `vectorcraft-cli mcp --connect 127.0.0.1:PORT`
+  (tested on 0.24.0). The 443 `ui: true` ids (view, window, panels, align buttons, recent files…)
+  run only there. Refusals arrive as `isError` tool results; a native file dialog cannot be
+  cancelled and blocks later commands (see `cli.md`). Do not open a window on the user's screen
+  without being asked.
 - **Isolate state:** the CLI writes preferences/libraries under `$HOME`. For tests set
   `HOME`, `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, `XDG_CACHE_HOME` to a scratch folder (this round
   did exactly that).
@@ -46,7 +48,7 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918
 | `layers-artboards-symbols.md` | Layers/sublayers, artboards, symbols and instances, datasets/variables, guides |
 | `transform-align.md` | move/rotate/scale/reflect/shear/transform, setBounds, align, distribute, pathfinder-style stacking |
 | `import-export.md` | open, save, export and convert in every readable/writable format, place, PDF, print, package |
-| `command-catalogue.md` | Every id (933), grouped by family, with this round's status and the field that changed |
+| `command-catalogue.md` | Every id (1421), grouped by family, with this round's status and the field that changed |
 | `newer-commands.md` | What 0.17.0 → 0.21.0 → 0.21.1 added and changed |
 | `log.md` | Dated log of what was tested when, and what is still unverified |
 
@@ -67,7 +69,7 @@ on them — the catalogue grows fast (0.17.0 had 811 ids, 0.21.0 911, 0.21.1 918
 ## CLI essentials (verified)
 
 ```
-vectorcraft-cli commands                     # the whole catalogue as JSON (933 entries)
+vectorcraft-cli commands                     # the whole catalogue as JSON (1421 entries)
 vectorcraft-cli info drawing.svg             # warnings, artboards, object counts, fonts
 vectorcraft-cli convert in.svg out.pdf --artboard 0
 # a script of steps, one JSON object per line:

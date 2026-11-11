@@ -1,5 +1,95 @@
 # Version notes
 
+## 0.24.0 (tested 2026-11-11, from 0.22.0; 0.23.0 was not tested on its own)
+
+Catalogue: **1421 ids** (+488, 0 removed, 134 changed). Regression (5 scripted cases + 5
+conversions, 0.22.0 vs 0.24.0): identical apart from the items under "Behaviour".
+
+**443 of the new ids are desktop UI commands** (`"ui": true` in `commands`): `window.*`, `view.*`,
+`ui.*`, `file.openRecent1…30`, `align.*` buttons, `select.recall*`, `type.recentFont*`,
+`shortcuts.*`, toolbar items. Headless they refuse with
+`` `<id>` is a desktop UI command (`ui: true`); start `vectorcraft --control 7979` and use `vectorcraft-cli mcp --connect` ``.
+Run them only against a live app (see `cli.md`, "Live app"). Live round on a hidden display:
+98 verified, 67 returned data, 113 ran, 156 refused, 9 skipped. Refusals are mostly empty slots
+in a fresh profile (`no such user library`, `no such recent file`, `no such recent font`).
+
+### Desktop UI ids that work live (state read back with `inspect_ui`)
+- **View:** `view.grid`, `view.rulers`, `view.outline`, `view.artboards`, `view.boundingBox`,
+  `view.snapToPoint`, `view.trimView`, `view.presentation`; `view.setZoom {zoom:200}` → zoom 2.0;
+  `view.zoomIn/zoomOut`, `view.goToArtboard`, `view.firstArtboard`; `view.goto1…25` jump to views
+  saved with `view.saved.new {name, center:[x,y], zoom}`.
+- **Align buttons:** `align.horizontalLeft/Center/Right`, `align.verticalTop/Center/Bottom`,
+  `align.horizontalVerticalCenter` move the selection (history "Align"). The 8
+  `align.distribute*` buttons refused even with two objects selected: use `object.distribute`.
+- **Selections:** `select.save {name}` then `select.recall1…25` → `{count}`.
+- **Panels and toolbars:** `window.panel.activate|close|dock|float {panel:"layers"}`,
+  `window.panel.collapse`, `window.toolbar.new {name}` / `.rename {name, to}` / `.duplicate`,
+  `window.taskBar`, `window.helpBar`, `window.toolbarAdvanced`, workspaces.
+- **Type buttons** (type selected): `type.bold`, `type.alignCenter/Right`, `type.justifyLeft`,
+  `type.applyBullets {bullet:"dot"}`, `type.applyNumbers {numbers:"arabicPeriod"}`, hyphenate.
+  `type.italic` after `type.bold` is refused when the family has no Bold Italic.
+- **Shortcuts:** `shortcuts.set {id:"view.zoomIn", shortcut:"Cmd+Shift+9"}` switches the set to
+  "Custom"; `shortcuts.reset`; `shortcuts.preset {name:"Classic Defaults"}`.
+- `addon.pathtools.cornerTool` / `sharedEdgeTool` select those tools with their options.
+
+### New ids that work headless (each read back)
+- **SVG filters:** `svgFilter.define {xml:"<filter id=\"f1\">…</filter>"}` → `{name}`;
+  `svgFilter.apply {name}` on the selection wraps it in `<g filter="url(#filter-1)">` with the
+  filter in `<defs>`; `svgFilter.list`, `svgFilter.delete {name}`, `svgFilter.import`.
+- **Spelling:** `text.spelling.check` → `{words, more}`; `text.spelling.suggest {word}` →
+  `{suggestions}`; `addWord`, `removeWord`, `changeWord`, `editDictionary`, `ignoreAll`,
+  `dictionary` (the user dictionary lives in the app's config folder: use an isolated HOME for tests).
+- **Composite fonts:** `type.compositeFonts.set {fonts:[{name, parts:{roman:{font}, kanji:{font}, …}}]}`,
+  `.list`, `.export {path}` (`.vccomposite`), `.import {path}`.
+- **Style libraries:** `charStyle.load`, `paraStyle.load`, `textStyle.loadAll` copy styles from
+  another document → `{added, existing, skipped}`.
+- **Scripts:** `script.run {source}` → `{changed, console, log, fuelUsed, hostCalls, dialogs…}`;
+  `script.console`, `script.console.clear`, `script.listInstalled` (Scripts folder), `script.stop`.
+- **Preferences:** `prefs.export {}` → `{count, data}` (JSON text); `prefs.import {path}` →
+  `{imported}`. Trap: `prefs.export {path}` failed with "No such file or directory" for an existing
+  folder; export without `path` and write `data` yourself.
+- `engine.apiReference` → Markdown reference of every command that has a parameter schema.
+- `object.setPixelAligned {ids}` snaps to the pixel grid: a 1 pt-stroked rect at 100,100 exports
+  at `x="100.5" y="100.5"`.
+- `document.compare {path: png}` compares the artboard render with a PNG → `{rmse, over, total,
+  threshold}` (visual regression check).
+- **3D assets:** after `effect.apply {effect:"threeD.revolve"}`, `assets.add3D {ids}` →
+  `{assets:[id]}`, `assets.set3DFormat {assets, format:"obj"}`, `assets.export3D` writes
+  `.obj` + `.mtl`.
+- `actionSet.read {path | data}` parses an `.aia` action set without running it → `{set,
+  version, actions:[{name, steps}], unread}` (unread lines are listed, so a broken file is diagnosable).
+- `symbol.instance.resetTransform {ids}` undoes scaling of an instance (250×120 → 100×80);
+  `symbol.instance.selectPart` needs `symbol.options {type:"dynamic"}` first, and a one-shape
+  symbol's art is the root path `[]` (`[0]` is refused).
+- `text.setPathHandle {id, anchor, which:"in"|"out", x, y}` reshapes the path under type on a path.
+- `artboard.rename {index, name}`, `artboard.switchOrientation` (612×792 → 792×612).
+- `edit.newDocumentFromState` makes a new document from a history state.
+- `plugin.safeMode`, `plugin.setEnabled {id, enabled}`, `plugin.clearCache`, `effect.deferredStatus`.
+
+### Behaviour and parameter changes
+- **CMYK display color changed:** CMYK `{c:0,m:60,y:90,k:0}` renders `#f88538` (0.22.0:
+  `#f17921`). Exports of CMYK art to SVG/PNG differ by up to 23 per channel.
+- **`.ai` save keeps live type** in the editing data: 0.22.0 warned "type is written as its
+  outlines"; 0.24.0 has no warning (file 17.9 → 16.3 KB in the test).
+- **Artboards:** `artboard.new {side:"right"|"left"|…, beside: index}`,
+  `artboard.duplicate {selectedArtboards, side}`; `edit.copy/cut {selectedArtboards}` and
+  `edit.paste {artboardsAt}` move artboards with their art (0.22.0 refused these params).
+- `select.font {family, style?, scope:{artboards:[…]}}`.
+- `text.setFormat` gained `antiAlias`, `listLevel`, `listAlign`, `numbers`, `bullets`, `kinsokuType`.
+- `type.insert` gained `code` / `unicode` (insert a character by code point).
+- `effect.setParams {index, threeDType: plane|extrude|revolve|inflate}`.
+- `print.setup` settings keep `copiesPerSheet`, `gutter`, `tiling` (0.22.0 dropped them silently).
+- `prefs.set {documentUnits}`; `document.exportDxf {dxfPreset: "cnc"}` writes AC1015 (default AC1032).
+- New result fields: `document.info.patternObjects`, `assets.list[].format3D`, `plugin.list`
+  (`safeMode`, `disabled`, `settings`, `permissions`, `commands`), `clipboard.importText`
+  (`columns`, `rows`), and `notChanged:{hidden, locked}` on `edit.colors.*`, `paint.invert`,
+  `paint.complement`, `recolor.apply`.
+- `document.open` documents `importer`, `params`, `legacyNameEncoding` (Shift-JIS/GBK/Big5 names);
+  not exercised.
+- Trap: 12 appearance/paint/transparency ids mention `exceptions` in their parameter text, but
+  `exceptions` is refused as a parameter on both builds. It describes skipped objects only.
+- `text.createInPath` returns the path's bounds, not the new type's.
+
 ## 0.21.1 (tested 2026-11-05)
 
 Catalogue: **918 ids** (+7, 0 removed, 67 `params` doc strings changed). Regression (5 scripted

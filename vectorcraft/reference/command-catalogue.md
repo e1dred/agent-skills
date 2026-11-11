@@ -1,4 +1,4 @@
-# VectorCraft command catalogue (0.22.0) — 933 ids
+# VectorCraft command catalogue (0.24.0) — 1421 ids
 
 Generated from `vectorcraft-cli commands` and this round's evidence (0.21.0, 2026-11-04); the fifteen ids new in 0.22.0 and the sixteen whose parameter docs changed were run on 2026-11-06. Status per id:
 **verified** = the same field read before/after (inspect + document model); **read-ok** = a read/list returned real data;
@@ -1257,3 +1257,680 @@ The params column is the first part of the command's own parameter doc; run `vec
 | id | status | params doc (short) | evidence |
 |---|---|---|---|
 | `shortcutSet.read` | refused | {path? \| data?: the file's text \| dataBase64?, name?: the file's name (default: the path's)} read a shortcut set another app saved as text… | vectorcraft-cli: step 9 (shortcutSet.read): This shortcut file is in a form VectorCraft can't read. |
+
+## New in 0.24.0 (488 ids, tested 2026-11-11)
+
+Headless ids were run with `vectorcraft-cli run`; the 443 `ui: true` ids live on a hidden display through `vectorcraft-cli mcp --connect`. ui = desktop-only.
+
+### ui (119)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `ui.action.continue` | refused | yes | {} play on from the stop the Actions panel's playing action waits at, on the document active now, and close the stop's message box (dialog … | "run_command: no action is waiting at a stop" |
+| `ui.action.deleteStep` | refused | yes | {set: index, action: index, step: index} delete one step, a stop or a command, of the Actions panel's action at action in set (0 is the top… | "run_command: no such action" |
+| `ui.action.insertStop` | refused | yes | {set?: index, action?: index, step?: index, message?, allowContinue?: bool} insert a stop, at which a playing action waits and shows messag… | "run_command: no such action" |
+| `ui.action.new` | refused | yes | {set: index, name, key?: 0-15, cmd?, shift?, color?: red\|yellow\|green\|blue\|violet} add an action named name (spaces trimmed from both e… | "run_command: no such action set" |
+| `ui.action.options` | refused | yes | {set: index, action: index, name?, key?: 0-15, cmd?, shift?, color?: red\|yellow\|green\|blue\|violet} change the Actions panel's action at… | "run_command: no such action" |
+| `ui.action.play` | refused | yes | {action: name, set?: name} play the Actions panel's action named action at the speed ui.action.playbackOptions sets; set names the set to l… | "run_command: no such action" |
+| `ui.action.playbackOptions` | read-ok | yes | {speed?: accelerated\|step\|pause, seconds?: 1-60} set how the Actions panel plays actions: accelerated (the default) plays every step at o… | {"seconds": 1, "speed": "accelerated"} |
+| `ui.action.record` | read-ok | yes | {set?: index} begin recording an automatically named Action N in the Actions panel's set at set (0 is the top set), by default the current … | {"name": "Action 1", "set": 0} |
+| `ui.action.rename` | refused | yes | {set: index, action: index, name} rename the Actions panel's action at action in set (0 is the top set) to name, with spaces trimmed from b… | "run_command: no such action" |
+| `ui.action.stepsIncluded` | refused | yes | {set: index, action?: index, step?: index, included: bool, others?: bool} include or exclude the playback of every step in a set, every ste… | "run_command: no such action set" |
+| `ui.action.stop` | read-ok | yes | {} end the Actions panel's recording and keep its steps, in the action ui.action.new made for it, else in a new action after the last actio… | {"stopped": true} |
+| `ui.actionSet.delete` | read-ok | yes | {sets?: [index], ids?: [id]} delete the Actions panel's sets at these indexes (0 is the top set), with their actions (default: the current … | {"deleted": 1} |
+| `ui.actionSet.duplicate` | refused | yes | {set?: index, action?: index} copy the Actions panel's action at action in set (0 is the top set) to right after it in the same set; withou… | "run_command: no action set is current" |
+| `ui.actionSet.load` | ran | yes | {path? \| data?: the file's text} read an action set file (.vcactions) at path, else a picked one, and add its set after the Actions panel'… | native file dialog `open` opened; the app is restarted to close it |
+| `ui.actionSet.save` | refused | yes | {set?: index, id?, path?} write the Actions panel's set at set (0 is the top set; default: the current set) with its actions to an action s… | "run_command: no action set to save" |
+| `ui.batchDialog` | refused | yes | {set?: index, action?: index} open Batch (dialog `actionBatch`) for the action at set/action (default: the first action of the first set); … | "run_command: no such action" |
+| `ui.blendOptions` | ran | yes | {} open Blend Options (Object › Blend › Blend Options…, the Blend tool's double-click, Alt-click and toolbar button; dialog `blendOptions`:… | dialog: {"fields": {"__target": "defaults", "distance": 10.0, "orientation": "page", "preview": true, "spacing": "smooth", "steps": 5}, "ki… |
+| `ui.brushOptions` | refused | yes | {name?} (default: the selected path's brush, else the current brush) open its Brush Options, what double-clicking a brush in the Brushes pa… | "run_command: no brush selected" |
+| `ui.bulletsAndNumbering` | refused | yes | {tab?: "bullets"\|"numbers"} open Bullets and Numbering (More Options in the Paragraph panel's Bullets and Numbered List presets) on the pa… | "run_command: select some type first" |
+| `ui.charStyleOptions` | refused | yes | {name} open Character Style Options (dialog `charStyleOptions`); OK runs charStyle.edit with name, to and sparse attrs in one undo step; Ca… | "run_command: no character style `Test`" |
+| `ui.charStyleOptions.resetPanel` | refused | yes | {} clear the settings of the section shown, Basic Character Formats, Advanced Character Formats, Character Color or OpenType Features, in t… | "run_command: no dialog open" |
+| `ui.checkScript` | ran | yes | {path? \| data? \| dataBase64?, name?, includes?: true with a path} check a script written for the reference app without running it (script… | native file dialog `open` opened; the app is restarted to close it |
+| `ui.colorBalanceDialog` | ran | yes | {} open Adjust Colors for the selection (dialog `colorBalance`, fields `mode` gray\|rgb\|cmyk\|global, channels r g b / c m y k / gray / ti… | dialog: {"fields": {"__previewed": {"b": 0.0, "convert": false, "fill": true, "g": 0.0, "mode": "rgb", "r": 0.0, "stroke": true}, "b": 0, "… |
+| `ui.colorGuideLimit` | read-ok | yes | {library: swatch library id or name (see swatch.library.list) \| "document" (the document's swatches) \| "" or null (no limit)} limit the C… | {"limitTo": "", "name": null} |
+| `ui.colorGuideOptions` | ran | yes | {} open Color Guide Options (dialog `colorGuideOptions`, fields `steps` 1–20 and `amount` 0–100): OK sets the Color Guide panel's variation… | dialog: {"fields": {"amount": 50.0, "steps": 4}, "kind": "colorGuideOptions"} |
+| `ui.colorPanel` | read-ok | yes | {mode?: grayscale\|rgb\|hsb\|cmyk\|websafe, options?: bool} pick the Color panel's mode as its panel menu does (the active color converts t… | {"mode": null, "options": true, "shown": "rgb"} |
+| `ui.colorPicker` | ran | yes | {stroke?: bool (default: the active proxy), artboard?: index (the picker is for that artboard's background color instead), color?: "#rrggbb… | dialog: {"fields": {"__hex": "FFFFFF", "__hsb": [0.0, 0.0, 1.0], "__pickerId": 0, "channel": "hue", "color": [1.0, 1.0, 1.0], "hex": "FFFFF… |
+| `ui.copyScriptConsole` | read-ok | yes | {first?, last?: numbers of lines the Script Console holds, both or neither} copy those lines of the Script Console to the clipboard as the … | {"lines": 0} |
+| `ui.corners` | ran | yes | {id?, corners?: [i…]} open Corners for path `id` (default: the selected one) and its corners (anchor indices of the path with its corners u… | dialog: {"fields": {"corners": [0, 1, 2, 3], "id": 2, "kind": "round", "radius": 0.0, "relativeRadii": false}, "kind": "corners"} |
+| `ui.cropImage` | refused | yes | {} show a crop box on the selected image (tool `cropImage`): it starts on the part over the image's artboard; drag its handles or inside it… | "run_command: select an image" |
+| `ui.dialogReset` | refused | yes | {} the open dialog's Reset, which its Cancel button reads while Alt (Option on macOS) is held (Flare Tool Options, dialog `flareOptions`): … | "run_command: no dialog open" |
+| `ui.dxfOptionsDialog` | ran | yes | {path?, useArtboards?, range?, …document.exportDxf options} open DXF Options (dialog `dxfOptions`: fields = these options over the ones use… | dialog: {"fields": {"__shownPreset": "custom", "alterPaths": false, "colors": "true", "dxfPreset": "custom", "format": "dxf", "outlineText"… |
+| `ui.effectGalleryDialog` | ran | yes | {} open Effect Gallery (dialog `effectGallery`: browse raster filters, build a stack, OK applies it as separate effects in one undo step). … | dialog: {"fields": {"browseEffect": "artistic.coloredPencil", "browseParams": {"paperBrightness": 25.0, "pencilWidth": 5.0, "strokePressure… |
+| `ui.epsOptionsDialog` | ran | yes | {path?, useArtboards?, range?, …document.exportEps options} open EPS Options (dialog `epsOptions`: fields = these options over the ones use… | dialog: {"fields": {"cmykPostScript": true, "compatibleGradients": false, "flattenerPreset": "Medium Resolution", "format": "eps", "include… |
+| `ui.expandDialog` | ran | yes | {} open Expand for the selection (dialog `expand`, fields object, fill, stroke (all on; one the selection has nothing for is disabled, see … | dialog: {"fields": {"__fill": false, "__fill_symbol": false, "__gradient": false, "__gradient_symbol": false, "__object": true, "__stroke":… |
+| `ui.fileInfoDialog` | ran | yes | {} open File Info (dialog `fileInfo`: the file.info fields, plus __keyword, keywords typed but not added yet); OK runs file.info. The File … | dialog: {"fields": {"__keyword": "", "artboards": 2, "author": "", "authorTitle": "", "colorMode": "rgb", "copyrightNotice": "", "copyright… |
+| `ui.findFontsInFolder` | refused | yes | {folder?} Type › Find Font's Find in Folder…: asks for a folder (or takes folder), then opens Missing Fonts looking there for the files of … | "run_command: No fonts are missing in this document" |
+| `ui.findLinksInFolder` | refused | yes | {folder?, ids?: [image or placed document ids]} the Links panel's Find in Folder…: asks for a folder (or takes folder), then opens Find Lin… | "run_command: No linked files to look for" |
+| `ui.flattenTransparencyDialog` | ran | yes | {} open Flatten Transparency for the selection (dialog `flattenTransparency`, fields `preset` (a preset name: setting it loads its options)… | dialog: {"fields": {"__applied": "Medium Resolution", "antiAlias": true, "balance": 75.0, "clipComplexRegions": false, "gradientPpi": 300.0… |
+| `ui.flattenerPresetsDialog` | ran | yes | {selected?: preset name} open the presets manager (dialog `flattenerPresets`, fields `selected`, then the selected preset's `name` and opti… | dialog: {"fields": {"__shown": "High Resolution", "antiAlias": false, "balance": 100.0, "clipComplexRegions": true, "gradientPpi": 300.0, "… |
+| `ui.flattenerPreview` | read-ok | yes | {highlight?: none\|rasterizedRegions\|transparentObjects\|allAffected\|expandedPatterns\|outlinedStrokes\|outlinedText\|allRasterized, over… | {"counts": {"allAffected": 0, "allRasterized": 0, "expandedPatterns": 0, "outlinedStrokes": 0, "outlinedText": 0, "rasterizedRegions": 0, "… |
+| `ui.graphicStyleOptions` | ran | yes | {name?} open Graphic Style Options (dialog `graphicStyleOptions`, field `name`): for style `name` OK renames it (graphicStyle.rename); with… | dialog: {"fields": {"__style": "", "name": "Graphic Style 5"}, "kind": "graphicStyleOptions"} |
+| `ui.hyphenation` | refused | yes | {} open Hyphenation (the Paragraph panel menu's Hyphenation…) on the paragraphs the Paragraph panel acts on, filled in with the values it s… | "run_command: select some type first" |
+| `ui.imageTracePresetDialog` | ran | yes | {params?: tracing settings (default: the Default preset's), rename?: a saved preset's name} the Image Trace panel's Manage Presets: open Sa… | dialog: {"fields": {"name": "Tracing Preset 1", "params": null, "rename": ""}, "kind": "imageTracePreset"} |
+| `ui.importSvgFilter` | ran | yes | {} pick an SVG file and add its filters to the active document's SVG filters (svgFilter.import) → svgFilter.import's result | native file dialog `open` opened; the app is restarted to close it |
+| `ui.installPlugin` | skipped | yes | {path?: a .wasm file \| dataBase64?: the module, name?: the file name shown as its source (with dataBase64), replace?: bool (true: the user… | never run (installs plug-in code; same as plugin.install) |
+| `ui.javascriptFilesDialog` | ran | yes | {} open JavaScript Files for the active document (dialog `javascriptFiles`, fields `file`: a path or URL and `selected`: a linked file; the… | dialog: {"fields": {"file": "", "selected": ""}, "kind": "javascriptFiles"} |
+| `ui.justification` | refused | yes | {} open Justification (the Paragraph panel menu's Justification…) on the paragraphs the Paragraph panel acts on, filled in with the values … | "run_command: select some type first" |
+| `ui.layerOptions` | ran | yes | {ids?\|id?} open Layer Options for Layers panel rows (default: the highlighted rows, else the current layer), filled in from the first: dia… | dialog: {"fields": {"color": "Light Blue", "dimImages": false, "dimPercent": 50, "ids": [1], "layer": true, "locked": false, "mode": "edit"… |
+| `ui.layersExpand` | read-ok | yes | {ids?: [id…] (default: every row that holds others), open?: bool (default true)} open or close rows of the Layers panel, as clicking their … | {"count": 1} |
+| `ui.layersFilter` | read-ok | yes | {objects?: [paths\|shapes\|text\|images\|effects\|groups\|linkedFiles\|guides], layers?: [locked\|hidden]} set the Layers panel's Filter (B… | {"layers": [], "objects": []} |
+| `ui.layersPanelOptions` | ran | yes | {} open the Layers panel's Panel Options: dialog `layersPanelOptions`, fields layersOnly, locateSelected (Locate Selected Objects, off by d… | dialog: {"fields": {"layersOnly": false, "locateSelected": false, "otherSize": 26.0, "rowSize": "medium", "thumbGroups": true, "thumbLayers… |
+| `ui.libraryPanel` | refused | yes | {panel: a library panel's id (`library:swatches:pastels`, as window.swatchLibrary answers), library?: id or name of another library of its … | "run_command: `` isn't a library panel (see window.swatchLibrary)" |
+| `ui.libraryPanel.locate` | refused | yes | {panel: an open library panel's id, path?} (default: pick a file) Locate Library… of a persistent library panel whose library's file is mis… | "run_command: `` isn't a library panel (see window.swatchLibrary)" |
+| `ui.livePaintGapOptions` | refused | yes | {} open Gap Options (Object › Live Paint › Gap Options…; dialog `livePaintGapOptions`: detect, size small\|medium\|large\|custom, custom (p… | "run_command: select a Live Paint group" |
+| `ui.loadAllStyles` | ran | yes | {path?} (default: pick a document in an open dialog; cancelling it loads nothing) add that document's character and paragraph styles to the… | native file dialog `open` opened; the app is restarted to close it |
+| `ui.loadCharStyles` | ran | yes | {path?} (default: pick a document in an open dialog; cancelling it loads nothing) add that document's character styles to the active one (e… | dialog: {"fields": {"copies": [{"file": "1794439735-1/Untitled-1-1", "format": "vectorcraft", "open": false, "path": null, "running": false… |
+| `ui.loadParaStyles` | ran | yes | {path?} (default: pick a document in an open dialog; cancelling it loads nothing) add that document's paragraph styles to the active one (e… | native file dialog `open` opened; the app is restarted to close it |
+| `ui.menuDialog` | refused | yes | {command: object.move\|object.rotate\|object.scale\|object.reflect\|object.shear\|object.transformEach\|path.average\|path.averageJoin\|obj… | "run_command: `command` must be a command whose menu item opens a dialog (see ui.menuDialog)" |
+| `ui.mergeGraphicStyles` | refused | yes | {names: [two or more styles]} open Graphic Style Options (dialog `graphicStyleOptions`, field `name`) to name the style OK merges from them… | "run_command: select two or more graphic styles to merge" |
+| `ui.missingFontsDialog` | refused | yes | {folder?} open Missing Fonts (dialog `missingFonts`) for the fonts the active document uses that aren't available (text.missingFonts); with… | "run_command: No fonts are missing in this document" |
+| `ui.navigatorPanelOptions` | ran | yes | {color?: #rrggbb or a preset name (Light Red, the default, then the layer colors such as "Light Blue"), solidDashes?: bool (Draw Dashed Lin… | dialog: {"fields": {"color": "#ff3030", "solidDashes": false}, "kind": "navigatorPanelOptions"} |
+| `ui.newArtboard` | ran | yes | {} open Artboard Options for a new artboard, filled in as artboard.new {} would make it (Artboard N, the last artboard's size, 20 pt to its… | dialog: {"fields": {"artboardUpdateWhileDragging": true, "fadeRegionOutsideArtboard": true, "height": 792.0, "name": "Artboard 3", "new": t… |
+| `ui.newBrush` | ran | yes | {ids?} (default: the selected art) open New Brush, what the Brushes panel's New Brush button and art dropped on the panel open (dialog `new… | dialog: {"fields": {"__art": true, "type": "art"}, "kind": "newBrush"} |
+| `ui.newCharStyle` | ran | yes | {} open New Character Style (dialog `newTextStyle`, field `name`, filled in with the name charStyle.new {} would give the style), what Alt-… | dialog: {"fields": {"__attrs": {}, "__para": false, "__smallCapsSize": 70.0, "__subscript": {"position": 33.3, "size": 58.3}, "__superscrip… |
+| `ui.newColorGroup` | ran | yes | {swatches?: [names]} open New Color Group, from those swatches or the selected artwork (dialog `newColorGroup`, engine: swatch.newGroup) | dialog: {"fields": {"__art": true, "fromArtwork": true, "includeTints": false, "name": "Color Group", "swatches": [], "toGlobal": true}, "k… |
+| `ui.newLayer` | ran | yes | {sublayer?: bool} open Layer Options for a new layer (or a sublayer of the current layer), named and coloured as it would be: dialog `layer… | dialog: {"fields": {"color": "Red", "dimImages": false, "dimPercent": 50, "layer": true, "locked": false, "mode": "new", "name": "Layer 2",… |
+| `ui.newParaStyle` | ran | yes | {} open New Paragraph Style (dialog `newTextStyle`, field `name`, filled in with the name paraStyle.new {} would give the style), what Alt-… | dialog: {"fields": {"__para": true, "__target": {}, "name": "Paragraph Style 1"}, "kind": "newTextStyle"} |
+| `ui.newSwatch` | ran | yes | {spot?, global?, group?: colour group name} open New Swatch for the active fill or stroke (dialog `newSwatch`, engine: swatch.new); a color… | dialog: {"fields": {"__auto": "R=255 G=255 B=255", "color": {"b": 1.0, "g": 1.0, "model": "rgb", "r": 1.0}, "global": false, "group": "", "… |
+| `ui.packageDialog` | ran | yes | {} open Package for the saved document (dialog `package`: folder, name, copyLinks, linksFolder, relink, copyFonts, report; a document never… | dialog: {"fields": {"__command": "file.saveAs", "__params": {}, "detail": "Package collects a saved document with its linked files and font… |
+| `ui.paramDialog` | ran | yes | {command, label?, params} open a parameter dialog for any command | dialog: {"fields": {"__command": "", "__label": ""}, "kind": "command"} |
+| `ui.pdfPresetDialog` | ran | yes | {name?: a saved preset to edit \| preset?: the preset a new one starts from (default VectorCraft Default)} open the preset editor (dialog `… | dialog: {"fields": {"__editing": "", "__section": "General", "advanced": {"fontSubsetPercent": 100.0, "outlineText": false, "overprint": "p… |
+| `ui.pdfPresetsDialog` | ran | yes | {selected?: preset name} open Edit → PDF Presets (dialog `pdfPresets`, field `selected`): the built-in presets (read-only) and the saved on… | dialog: {"fields": {"selected": "VectorCraft Default"}, "kind": "pdfPresets"} |
+| `ui.perspectiveGridDialog` | ran | yes | {} open View › Perspective Grid › Define Grid (dialog `perspectiveGrid`, prefilled from the grid: the fields of perspective.grid.define); O… | dialog: {"fields": {"__mode": "", "__units": "points", "angle": 45.0, "distance": 293.76, "gridline": 20.0, "groundColor": "#2eb84a", "hori… |
+| `ui.perspectivePlane` | ran | yes | {plane?: left\|right\|ground (default: the active plane)} open the plane's options, as double-clicking its plane widget does (dialog `persp… | dialog: {"fields": {"location": 0.0, "objects": "none", "plane": "left"}, "kind": "perspectivePlane"} |
+| `ui.perspectivePresetsDialog` | ran | yes | {selected?} open Edit › Perspective Grid Presets (dialog `perspectiveGridPresets`, field `selected`): New… and Edit… open the preset editor… | dialog: {"fields": {"selected": "[1P-Normal View]"}, "kind": "perspectiveGridPresets"} |
+| `ui.perspectiveUserPreset1.1` | refused | yes | {} apply the 1. saved 1-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset1.2` | refused | yes | {} apply the 2. saved 1-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset1.3` | refused | yes | {} apply the 3. saved 1-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset1.4` | refused | yes | {} apply the 4. saved 1-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset1.5` | refused | yes | {} apply the 5. saved 1-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset2.1` | refused | yes | {} apply the 1. saved 2-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset2.2` | refused | yes | {} apply the 2. saved 2-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset2.3` | refused | yes | {} apply the 3. saved 2-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset2.4` | refused | yes | {} apply the 4. saved 2-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset2.5` | refused | yes | {} apply the 5. saved 2-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset3.1` | refused | yes | {} apply the 1. saved 3-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset3.2` | refused | yes | {} apply the 2. saved 3-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset3.3` | refused | yes | {} apply the 3. saved 3-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset3.4` | refused | yes | {} apply the 4. saved 3-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.perspectiveUserPreset3.5` | refused | yes | {} apply the 5. saved 3-point perspective grid preset (perspective.grid.preset) | "run_command: no such perspective grid preset" |
+| `ui.placementOptionsDialog` | refused | yes | {ids?} open Placement Options for images `ids` (default: the selected ones; dialog `placementOptions`: ids, preserve, align, clip, see link… | "run_command: invalid parameters for `links.placementOptions`: select the images, or pass ids" |
+| `ui.printPresetDialog` | ran | yes | {name?: a saved preset to edit \| preset?: the preset a new one starts from (default [Default])} open the preset editor (dialog `printPrese… | dialog: {"fields": {"__editing": "", "__section": "General", "__sheet": 0, "advanced": {"flattenerPreset": "", "overprints": "preserve", "p… |
+| `ui.printPresetsDialog` | ran | yes | {selected?: preset name} open Edit → Print Presets (dialog `printPresets`, field `selected`): [Default] (protected) and the saved presets, … | dialog: {"fields": {"selected": "[Default]"}, "kind": "printPresets"} |
+| `ui.rasterEffectsSettingsDialog` | ran | yes | {} open Document Raster Effects Settings (dialog `rasterEffectsSettings`: the document.rasterEffectsSettings fields); OK runs it. The menu … | dialog: {"fields": {"addAround": 0.0, "antiAlias": true, "background": "transparent", "clippingMask": false, "colorModel": "rgb", "preserve… |
+| `ui.recolorDialog` | ran | yes | {colors?: n (an n-colour job: n rows, Scale Tints) \| [colour] (new colours to assign, in order; with no art selected and no group they are… | dialog: {"fields": {"__art": true, "__assign": [], "__newGroup": false, "__previewed": {"limitTo": "", "map": [], "method": "scaleTints"}, … |
+| `ui.relinkDialog` | refused | yes | {ids?: [image or placed document ids]} open Relink for `ids` (default: the selected ones; dialog `relink`: ids, links ([{name, ids}], one r… | "run_command: select the images to relink, or pass ids" |
+| `ui.rename` | read-ok | yes | {id?} open the Layers panel's name field on the row of layer, group or object id, as double-clicking the row's name does (the panel is show… | {"id": 2, "name": "<Rectangle>"} |
+| `ui.runInstalledScript` | refused | yes | {path: a script's path as script.listInstalled gives it} run a script of the Scripts folder, as its File › Scripts item does (the script is… | "run_command: missing `path`" |
+| `ui.runScript` | ran | yes | {path? \| source?, name?} run a .js or .jsx file (script.run), after the warning unless Preferences › General › Show External Script Warnin… | native file dialog `open` opened; the app is restarted to close it |
+| `ui.sampleScreenColor` | refused | yes | {} or {stroke?: bool (default: the active proxy), picker?: bool (the open Color Picker instead)} show the system's color sampler (macOS; br… | "run_command: this system has no screen color sampler" |
+| `ui.saturateDialog` | ran | yes | {} open Saturate for the selection (dialog `saturate`, fields `intensity` −100..100, `preview`): previews live, OK runs edit.colors.saturat… | dialog: {"fields": {"__previewed": {"intensity": 0.0}, "intensity": 0, "preview": true}, "kind": "saturate"} |
+| `ui.saveBrushLibrary` | ran | yes | {names?: [the brushes selected in the Brushes panel]} open Save Brush Library (dialog `saveBrushLibrary`: name, user: save to the user libr… | dialog: {"fields": {"__user": true, "name": "Untitled-1", "names": [], "selectedOnly": false, "user": true}, "kind": "saveBrushLibrary"} |
+| `ui.saveGraphicStyleLibrary` | ran | yes | {names?: [the styles selected in the Graphic Styles panel]} open Save Graphic Style Library (dialog `saveGraphicStyleLibrary`: name, user: … | dialog: {"fields": {"__user": true, "name": "Untitled-1", "names": [], "selectedOnly": false, "user": true}, "kind": "saveGraphicStyleLibra… |
+| `ui.savePdfDialog` | ran | yes | {path?, preset?, range?, …document.exportPdf options} open the Save PDF dialog with these options (fields = the options, sections are objec… | dialog: {"fields": {"__allArtboards": true, "__presets": ["VectorCraft Default", "High Quality Print", "Press Quality", "Smallest File Size… |
+| `ui.savePerspectivePreset` | ran | yes | {} open View › Perspective Grid › Save Grid as Preset (dialog `perspectiveGrid` with `__mode` save, `name` a new preset name): OK runs pers… | dialog: {"fields": {"__mode": "save", "__units": "points", "angle": 45.0, "distance": 293.76, "gridline": 20.0, "groundColor": "#2eb84a", "… |
+| `ui.saveSwatchLibrary` | ran | yes | {names?: [the swatches selected in the Swatches panel]} open Save Swatch Library (dialog `saveSwatchLibrary`: name, format: vcswatches\|gpl… | dialog: {"fields": {"__user": true, "format": "vcswatches", "name": "Untitled-1", "names": [], "selectedOnly": false, "user": true}, "kind"… |
+| `ui.saveSymbolLibrary` | ran | yes | {names?: [the symbol selected in the Symbols panel]} open Save Symbol Library (dialog `saveSymbolLibrary`: name, user: save to the user lib… | dialog: {"fields": {"__user": true, "name": "Untitled-1", "names": [], "selectedOnly": false, "user": true}, "kind": "saveSymbolLibrary"} |
+| `ui.shortcutImportDialog` | ran | yes | {path? \| dataBase64?, name?} open Import Shortcut Set for a shortcut set another app saved as text (.kys; without a file, pick one): each … | native file dialog `open` opened; the app is restarted to close it |
+| `ui.simplifyAuto` | refused | yes | {} the open Simplify slider (Object › Path › Simplify opens it: dialog `simplifySlider` with field `level` 0..100, object.path.simplify's l… | "run_command: the Simplify slider is not open" |
+| `ui.simplifyMoreOptions` | refused | yes | {} the Simplify dialog (dialog `simplify`: tolerance (pt), angleThreshold, straightLines, showOriginal, retain: ticked, OK makes Object › P… | "run_command: the Simplify slider is not open" |
+| `ui.smoothAuto` | refused | yes | {} the open Smooth slider (Object › Path › Smooth opens it: dialog `smoothSlider` with field `level` 0..100, object.path.smooth's level, op… | "run_command: the Smooth slider is not open" |
+| `ui.spotColors` | ran | yes | {} open Spot Colors (dialog `spotColors`, field `useLab`: true shows and separates Lab spot colours from their Lab values, false from their… | dialog: {"fields": {"useLab": true}, "kind": "spotColors"} |
+| `ui.svgFilterDialog` | ran | yes | {index?, item?} open Apply SVG Filter for the active document (dialog `svgFilter`, fields `selected`: a filter's name, `code`: the code bei… | dialog: {"fields": {"code": "", "editing": "", "selected": ""}, "kind": "svgFilter"} |
+| `ui.swatchOptions` | refused | yes | {name} edit a swatch: Swatch Options for a colour (dialog `swatchOptions`, engine: swatch.edit) or a gradient (the same dialog with `name` … | "run_command: no swatch `Test`" |
+| `ui.symbolOptions` | ran | yes | {name?} open Symbol Options (dialog `symbolOptions`, fields `name`, `exportType`: movieClip\|graphic, `registration` 0..8). Without `name` … | dialog: {"fields": {"__edit": false, "exportType": "movieClip", "name": "New Symbol", "nineSlice": false, "registration": 4, "sliceBottom":… |
+| `ui.tateChuYokoSettings` | refused | yes | {} open Tate-chu-yoko Settings (the Character panel menu's Tate-chu-yoko Settings…, with Show East Asian Options) on the characters the Cha… | "run_command: select some type first" |
+| `ui.tileEdgeColor` | ran | yes | {} open Tile Edge Color (dialog `tileEdgeColor`, field `color`: #rrggbb or a preset name such as "Light Blue"); OK sets the preference patt… | dialog: {"fields": {"color": "#4f80ff"}, "kind": "tileEdgeColor"} |
+| `ui.widthPointEdit` | refused | yes | {id, index?: existing width point, t?: 0..1 for a new point, adjustAdjoining?: bool (false)} open Width Point Edit on path `id` (dialog `wi… | "run_command: give the path `id`" |
+
+### window (95)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `window.arrange.cascade` | verified | yes | {} put every open document in a floating window of its own and stack the windows from the upper left of the document area to its lower righ… | view.zoom: 2.0 -> 0.4532828282828283; view.center.x: 200.0 -> 306.0; view.center.y: 160.0 -> 396.0 |
+| `window.arrange.consolidateAllWindows` | verified | yes | {index?, view?} show one document at a time again, under its tab, after Tile, Float in Window, Float All in Windows or Cascade; returns {ti… | view.zoom: 0.4532828282828283 -> 0.8724747474747475 |
+| `window.arrange.floatAllInWindows` | verified | yes | {} move every document under the tab strip into a floating window of its own, at the next places of a cascade; returns {floating} (document… | view.zoom: 0.8724747474747475 -> 0.4532828282828283 |
+| `window.arrange.floatInWindow` | read-ok | yes | {index?, view?, at?: [x, y]} move the current window, or document `index`'s view `view` (its current view without one; it becomes the curre… | {"floating": [0]} |
+| `window.arrange.tile` | read-ok | yes | {} show every open document and each further view of one (window.newWindow) at once, edge to edge in the document area, one pane each in a … | {"panes": 1, "tiled": false} |
+| `window.brightness` | refused | yes | {brightness: dark\|mediumDark\|mediumLight\|light} | "run_command: brightness must be dark\|mediumDark\|mediumLight\|light" |
+| `window.brushLibrary` | read-ok | yes | {library: id or name (see brush.libraries) \| null (close)} open a brush library in a library panel of its own (UI state `library_panels`, … | {"open": null} |
+| `window.brushLibrary.other` | ran | yes | {path?} (default: pick a file) load the brushes of another document or a saved brush library (engine: brush.loadLibrary), and open them in … | native file dialog `open` opened; the app is restarted to close it |
+| `window.collapseDock` | ran | yes | {collapsed?: bool} collapse every expanded dock column to icons (true), expand the outer dock column, Properties \| Layers \| Libraries (fa… | dialog: {"fields": {"copies": [{"file": "1794439735-1/Untitled-1-1", "format": "vectorcraft", "open": false, "path": null, "running": false… |
+| `window.control` | verified | yes | {} | view.zoom: 0.8724747474747475 -> 0.8295454545454546 |
+| `window.control.dock` | refused | yes | {edge: "top"\|"bottom"} dock the Control bar to the top of the window, under the menu bar, or to its bottom, as the bar's panel menu (Dock … | "run_command: `edge` must be one of top, bottom" |
+| `window.dock` | verified | yes | {} hide the panels, the toolbar and the Control bar, or show again the ones the last Tab hid (all three when none of them shows and Tab hid… | ui.dock: true -> false; view.zoom: 0.8295454545454546 -> 0.8724747474747475; ui.toolbar: true -> false |
+| `window.editToolbar` | verified | yes | {open?: bool, toolbar?: name} open (true), close (false) or toggle (omitted) the All Tools drawer beside the toolbar (with `toolbar`, besid… | ui.toolbar: false -> true |
+| `window.floatTools` | refused | yes | {tool: id, floating?: bool, toolbar?: name} float the toolbar group holding `tool` (in the current Basic or Advanced layout; with `toolbar`… | "run_command: tool (a tool id) is required" |
+| `window.graphicStyleLibrary` | read-ok | yes | {library: id or name (see graphicStyle.libraries), or the id of a persistent panel's missing library \| null (close every graphic style lib… | {"open": null} |
+| `window.graphicStyleLibrary.other` | ran | yes | {path?} (default: pick a file) load a .vcstyles library, or another document's graphic styles (engine: graphicStyle.loadLibrary), and open … | native file dialog `open` opened; the app is restarted to close it |
+| `window.helpBar` | ran | yes | {} toggle the tool-help strip independently of the status bar; returns the new visibility | dialog: {"fields": {"copies": [{"file": "1794439735-1/Untitled-1-1", "format": "vectorcraft", "open": false, "path": null, "running": false… |
+| `window.newWindow` | verified | yes | {} open another view of the current document, with its own zoom, center, rotation, artboard and Outline or Preview, as a tab of its own (ti… | windows[1][0]: null -> 0; windows[1][1]: null -> 2; currentWindow[1]: 1 -> 2 |
+| `window.nextDocument` | verified | yes | {} make the open document after the current one in tab order the current one, as a click on its tab does (after the last document it goes t… | currentWindow[1]: 2 -> 1 |
+| `window.panel` | read-ok | yes | {panel: id, toggle?: bool} e.g. layers, swatches, stroke (case-insensitive; display labels like "Layers" work too); toggle (the Window menu… | {"open": "layers"} |
+| `window.panel.activate` | verified | yes | {panel} show and select a panel in its current group | ui.dock_tab: "Properties" -> "Layers" |
+| `window.panel.close` | verified | yes | {panel} hide a panel | ui.dock_tab: "Layers" -> "Libraries" |
+| `window.panel.collapse` | read-ok | yes | {panel, collapsed?: bool} minimize the group holding a panel to its tabs (in a floating window, the window to its title bar), or restore it… | {"closed": [], "collapsed": true, "floating": ["layers"], "layout": {"floating": [{"id": 5511659720260499389, "monitor": {"name": "Meta-0",… |
+| `window.panel.dock` | verified | yes | {panel: id or "tools", anchor?: id, zone?: tab\|center\|left\|right\|top\|bottom\|above\|below, before?: id, group?: bool, column?: bool or… | ui.dock_tab: "Libraries" -> "Layers" |
+| `window.panel.float` | verified | yes | {panel: id or "tools", x?, y?, width?, height?, group?: bool, column?: bool or n, onto?: id, above?: id, below?: id, collapsed?: bool} floa… | ui.dock_tab: "Layers" -> "Libraries" |
+| `window.panel.layout` | refused | yes | {action} serialized docking action, including floating geometry, divider sizes and accordion state | run_command: missing field `rect` (action Float takes {panel, rect}; plain "Float" gives "invalid type: unit variant, expected struct varia… |
+| `window.panel.move` | ran | yes | {panel, anchor, zone?: tab\|center\|left\|right\|top\|bottom\|above\|below, before?: panel, group?: bool, placement?} move a panel (with `g… | {"closed": [], "floating": [], "layout": {"floating": [], "root": {"Split": {"axis": "Horizontal", "first": {"Tabs": {"active": 0, "panels"… |
+| `window.panels` | verified | yes | {} show/hide the dock and the floating panels (hiding them closes a panel popped out of the icon column), leaving the toolbar and the Contr… | ui.dock: true -> false |
+| `window.pathfinder.compoundShapes` | ran | yes | {} toggles the Compound Shapes add-on's setting: on, the Pathfinder panel's Shape Mode buttons make a compound shape and Alt-click gives th… | false |
+| `window.previousDocument` | verified | yes | {} make the open document before the current one in tab order the current one, as a click on its tab does (before the first document it goe… | currentWindow[1]: 1 -> 2 |
+| `window.swatchLibrary` | read-ok | yes | {library: id or name (see swatch.library.list), or the id of a persistent panel's missing library \| null (close every swatch library panel… | {"open": null} |
+| `window.swatchLibrary.other` | ran | yes | {path?} (default: pick a file) load a .vcswatches, .gpl, .ase or .acb (color book) library, or another document's swatches (engine: swatch.… | native file dialog `open` opened; the app is restarted to close it |
+| `window.symbolLibrary` | ran | yes | {library: id or name (see symbol.libraries) \| null (close)} open a symbol library in a library panel of its own (UI state `library_panels`… | dialog: {"fields": {"copies": [{"file": "1794439735-1/Untitled-1-1", "format": "vectorcraft", "open": false, "path": null, "running": false… |
+| `window.symbolLibrary.other` | ran | yes | {path?} (default: pick a file) load the symbols of another document or a saved symbol library (engine: symbol.loadLibrary), and open them i… | native file dialog `open` opened; the app is restarted to close it |
+| `window.taskBar` | ran | yes | {} | dialog: {"fields": {"copies": [{"file": "1794439735-1/Untitled-1-1", "format": "vectorcraft", "open": false, "path": null, "running": false… |
+| `window.taskBar.pin` | ran | yes | {pinned?: bool} keep the Contextual Task Bar where it is instead of following the selection (true), let it follow the selection again from … | true |
+| `window.taskBar.reset` | ran | yes | {} unpin the Contextual Task Bar and put it back under the selection | null |
+| `window.toolbar` | verified | yes | {} | ui.toolbar: true -> false |
+| `window.toolbar.custom` | ran | yes | {name: string, show?: bool} show (true), hide (false) or toggle (omitted) the toolbar made with New Toolbar called `name`, as its item unde… | false |
+| `window.toolbar.delete` | ran | yes | {name: string} delete the toolbar made with New Toolbar called `name`, and the groups torn off it, from the current workspace, as Manage To… | null |
+| `window.toolbar.duplicate` | read-ok | yes | {name?: string} copy the toolbar made with New Toolbar called `name`, with its tools, as "`name` Copy" (omitted: make a blank toolbar calle… | {"toolbar": "DSA Copy"} |
+| `window.toolbar.list` | ran | yes | {} the toolbars made with New Toolbar in the current workspace: [{name, shown, double, slots}] | [{"double": false, "name": "Toolbar 1", "shown": false, "slots": []}, {"double": false, "name": "DSB", "shown": false, "slots": []}, {"doub… |
+| `window.toolbar.manage` | ran | yes | {} open the Manage Toolbars dialog, which lists the toolbars made with New Toolbar: a name typed for the selected one renames it, + copies … | dialog: {"fields": {"name": "", "selected": ""}, "kind": "manageToolbars"} |
+| `window.toolbar.new` | verified | yes | {name?: string} make a blank toolbar called `name`, of at most 200 characters (omitted: a dialog asks for the name), floating beside the To… | ui.status: "" -> "invalid parameters for `document.inspect`: no suc… |
+| `window.toolbar.rename` | read-ok | yes | {name: string, to: string} give the toolbar made with New Toolbar called `name` the name `to` (not empty, at most 200 characters, not anoth… | {"toolbar": "DSB"} |
+| `window.toolbarAdvanced` | ran | yes | {} | true |
+| `window.toolbarColumns` | ran | yes | {double?: bool, toolbar?: name} show the toolbar's tools (with `toolbar`, that toolbar made with New Toolbar's) in two columns (true), one … | true |
+| `window.toolsBesideCanvas` | ran | yes | {on?: bool} dock the Tools panel between the left-side panels and the canvas (true) or at the window's left edge (false, the default), or t… | true |
+| `window.userBrushLibrary1` | refused | yes | {} open the 1. User Defined brush library (brush.libraries, category user) | "run_command: no such user library" |
+| `window.userBrushLibrary10` | refused | yes | {} open the 10. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary2` | refused | yes | {} open the 2. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary3` | refused | yes | {} open the 3. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary4` | refused | yes | {} open the 4. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary5` | refused | yes | {} open the 5. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary6` | refused | yes | {} open the 6. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary7` | refused | yes | {} open the 7. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary8` | refused | yes | {} open the 8. User Defined brush library | "run_command: no such user library" |
+| `window.userBrushLibrary9` | refused | yes | {} open the 9. User Defined brush library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary1` | refused | yes | {} open the 1. User Defined graphic style library (graphicStyle.libraries, category user) | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary10` | refused | yes | {} open the 10. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary2` | refused | yes | {} open the 2. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary3` | refused | yes | {} open the 3. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary4` | refused | yes | {} open the 4. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary5` | refused | yes | {} open the 5. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary6` | refused | yes | {} open the 6. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary7` | refused | yes | {} open the 7. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary8` | refused | yes | {} open the 8. User Defined graphic style library | "run_command: no such user library" |
+| `window.userGraphicStyleLibrary9` | refused | yes | {} open the 9. User Defined graphic style library | "run_command: no such user library" |
+| `window.userSwatchLibrary1` | refused | yes | {} open the 1. User Defined swatch library (swatch.library.list, category user) | "run_command: no such user library" |
+| `window.userSwatchLibrary10` | refused | yes | {} open the 10. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary2` | refused | yes | {} open the 2. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary3` | refused | yes | {} open the 3. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary4` | refused | yes | {} open the 4. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary5` | refused | yes | {} open the 5. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary6` | refused | yes | {} open the 6. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary7` | refused | yes | {} open the 7. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary8` | refused | yes | {} open the 8. User Defined swatch library | "run_command: no such user library" |
+| `window.userSwatchLibrary9` | refused | yes | {} open the 9. User Defined swatch library | "run_command: no such user library" |
+| `window.userSymbolLibrary1` | refused | yes | {} open the 1. User Defined symbol library (symbol.libraries, category user) | "run_command: no such user library" |
+| `window.userSymbolLibrary10` | refused | yes | {} open the 10. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary2` | refused | yes | {} open the 2. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary3` | refused | yes | {} open the 3. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary4` | refused | yes | {} open the 4. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary5` | refused | yes | {} open the 5. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary6` | refused | yes | {} open the 6. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary7` | refused | yes | {} open the 7. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary8` | refused | yes | {} open the 8. User Defined symbol library | "run_command: no such user library" |
+| `window.userSymbolLibrary9` | refused | yes | {} open the 9. User Defined symbol library | "run_command: no such user library" |
+| `window.workspace` | refused | yes | {name} switch workspace (Essentials, Essentials Classic, Painting, …): the one left keeps its layout changes, and the one switched to comes… | "run_command: unknown workspace (one of Essentials, Essentials Classic, Automation, Layout, Painting, Printing and Proofing, Tracing, Typog… |
+| `window.workspace.delete` | refused | yes | {name} | "run_command: no workspace ``" |
+| `window.workspace.list` | read-ok | yes | {} | {"current": "Essentials", "custom": [], "workspaces": ["Essentials", "Essentials Classic", "Automation", "Layout", "Painting", "Printing an… |
+| `window.workspace.manage` | ran | yes | {} | dialog: {"fields": {"name": "", "selected": ""}, "kind": "manageWorkspaces"} |
+| `window.workspace.new` | ran | yes | {name?} save the current layout | dialog: {"fields": {"name": "Workspace 1"}, "kind": "newWorkspace"} |
+| `window.workspace.rename` | refused | yes | {name, to} | "run_command: `` is not an available name" |
+| `window.workspace.reset` | verified | yes | {} reset the current workspace to the way it was saved, dropping the layout changes made in it | ui.dock_collapsed: true -> false; ui.view.rulers: true -> false; ui.dock_tab: "Layers" -> "Properties"; view.zoom: 0.9078282828282829 -> 0.… |
+
+### view (62)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `view.actualSize` | verified | yes | {} 100%: with Display Print Size at 100% Zoom off, one document point per screen point; on, one document inch fills 96 screen points (an in… | view.zoom: 0.8926767676767676 -> 1.0 |
+| `view.artboards` | verified | yes | {} | ui.view.artboards: false -> true |
+| `view.boundingBox` | verified | yes | {} | ui.view.bounding_box: false -> true |
+| `view.cornerWidget` | verified | yes | {} toggle the live corner widgets | ui.view.corner_widgets: false -> true |
+| `view.edges` | verified | yes | {} | ui.view.edges: false -> true |
+| `view.firstArtboard` | verified | yes | {} the status bar navigator's First Artboard button: view.goToArtboard {index: "first"} → {index} | view.zoom: 1.0 -> 0.8926767676767676 |
+| `view.fitAll` | verified | yes | {} | view.zoom: 0.8926767676767676 -> 0.7733118971061094; view.center.x: 306.0 -> 622.0 |
+| `view.fitArtboard` | verified | yes | {} | view.zoom: 0.7733118971061094 -> 0.8926767676767676; view.center.x: 622.0 -> 306.0 |
+| `view.goToArtboard` | verified | yes | {index: 0-based number \| "first" \| "previous" \| "next" \| "last"} make that artboard the status bar navigator's (the one Fit Artboard in… | view.artboard: 0 -> 1; view.center.x: 306.0 -> 938.0 |
+| `view.goto1` | verified | yes | {} go to the 1. saved view | view.center.y: 396.0 -> 160.0; view.center.x: 306.0 -> 120.0; view.zoom: 0.8926767676767676 -> 0.55 |
+| `view.goto10` | verified | yes | {} go to the 10. saved view | view.center.y: 240.0 -> 250.0; view.center.x: 280.0 -> 300.0; view.zoom: 0.95 -> 1.0 |
+| `view.goto11` | verified | yes | {} go to the 11. saved view | view.center.y: 250.0 -> 260.0; view.center.x: 300.0 -> 320.0; view.zoom: 1.0 -> 1.05 |
+| `view.goto12` | verified | yes | {} go to the 12. saved view | view.center.y: 260.0 -> 270.0; view.center.x: 320.0 -> 340.0; view.zoom: 1.05 -> 1.1 |
+| `view.goto13` | verified | yes | {} go to the 13. saved view | view.center.y: 270.0 -> 280.0; view.center.x: 340.0 -> 360.0; view.zoom: 1.1 -> 1.15 |
+| `view.goto14` | verified | yes | {} go to the 14. saved view | view.center.y: 280.0 -> 290.0; view.center.x: 360.0 -> 380.0; view.zoom: 1.15 -> 1.2000000000000002 |
+| `view.goto15` | verified | yes | {} go to the 15. saved view | view.center.y: 290.0 -> 300.0; view.center.x: 380.0 -> 400.0; view.zoom: 1.2000000000000002 -> 1.25 |
+| `view.goto16` | verified | yes | {} go to the 16. saved view | view.center.y: 300.0 -> 310.0; view.center.x: 400.0 -> 420.0; view.zoom: 1.25 -> 1.3 |
+| `view.goto17` | verified | yes | {} go to the 17. saved view | view.center.y: 310.0 -> 320.0; view.center.x: 420.0 -> 440.0; view.zoom: 1.3 -> 1.35 |
+| `view.goto18` | verified | yes | {} go to the 18. saved view | view.center.y: 320.0 -> 330.0; view.center.x: 440.0 -> 460.0; view.zoom: 1.35 -> 1.4 |
+| `view.goto19` | verified | yes | {} go to the 19. saved view | view.center.y: 330.0 -> 340.0; view.center.x: 460.0 -> 480.0; view.zoom: 1.4 -> 1.4500000000000002 |
+| `view.goto2` | verified | yes | {} go to the 2. saved view | view.center.y: 160.0 -> 170.0; view.center.x: 120.0 -> 140.0; view.zoom: 0.55 -> 0.6 |
+| `view.goto20` | verified | yes | {} go to the 20. saved view | view.center.y: 340.0 -> 350.0; view.center.x: 480.0 -> 500.0; view.zoom: 1.4500000000000002 -> 1.5 |
+| `view.goto21` | verified | yes | {} go to the 21. saved view | view.center.y: 350.0 -> 360.0; view.center.x: 500.0 -> 520.0; view.zoom: 1.5 -> 1.55 |
+| `view.goto22` | verified | yes | {} go to the 22. saved view | view.center.y: 360.0 -> 370.0; view.center.x: 520.0 -> 540.0; view.zoom: 1.55 -> 1.6 |
+| `view.goto23` | verified | yes | {} go to the 23. saved view | view.center.y: 370.0 -> 380.0; view.center.x: 540.0 -> 560.0; view.zoom: 1.6 -> 1.6500000000000001 |
+| `view.goto24` | verified | yes | {} go to the 24. saved view | view.center.y: 380.0 -> 390.0; view.center.x: 560.0 -> 580.0; view.zoom: 1.6500000000000001 -> 1.7000000000000002 |
+| `view.goto25` | verified | yes | {} go to the 25. saved view | view.center.y: 390.0 -> 400.0; view.center.x: 580.0 -> 600.0; view.zoom: 1.7000000000000002 -> 1.75 |
+| `view.goto3` | verified | yes | {} go to the 3. saved view | view.center.y: 170.0 -> 180.0; view.center.x: 140.0 -> 160.0; view.zoom: 0.6 -> 0.65 |
+| `view.goto4` | verified | yes | {} go to the 4. saved view | view.center.y: 180.0 -> 190.0; view.center.x: 160.0 -> 180.0; view.zoom: 0.65 -> 0.7 |
+| `view.goto5` | verified | yes | {} go to the 5. saved view | view.center.y: 190.0 -> 200.0; view.center.x: 180.0 -> 200.0; view.zoom: 0.7 -> 0.75 |
+| `view.goto6` | verified | yes | {} go to the 6. saved view | view.center.y: 200.0 -> 210.0; view.center.x: 200.0 -> 220.0; view.zoom: 0.75 -> 0.8 |
+| `view.goto7` | verified | yes | {} go to the 7. saved view | view.center.y: 210.0 -> 220.0; view.center.x: 220.0 -> 240.0; view.zoom: 0.8 -> 0.8500000000000001 |
+| `view.goto8` | verified | yes | {} go to the 8. saved view | view.center.y: 220.0 -> 230.0; view.center.x: 240.0 -> 260.0; view.zoom: 0.8500000000000001 -> 0.9 |
+| `view.goto9` | verified | yes | {} go to the 9. saved view | view.center.y: 230.0 -> 240.0; view.center.x: 260.0 -> 280.0; view.zoom: 0.9 -> 0.95 |
+| `view.gradientAnnotator` | verified | yes | {} toggle the Gradient tool's annotator | ui.view.gradient_annotator: false -> true |
+| `view.grid` | verified | yes | {} | ui.view.grid: true -> false |
+| `view.guides` | verified | yes | {} | ui.view.guides: false -> true |
+| `view.lastArtboard` | read-ok | yes | {} the navigator's Last Artboard button: view.goToArtboard {index: "last"} → {index} | {"index": 1} |
+| `view.livePaintGaps` | verified | yes | {} toggle drawing the gaps of the selected Live Paint groups (those livePaint.info lists) in each group's Gap Preview Color while edges sho… | ui.view.live_paint_gaps: true -> false |
+| `view.nextArtboard` | read-ok | yes | {} the navigator's Next Artboard button: view.goToArtboard {index: "next"} → {index} | {"index": 1} |
+| `view.outline` | verified | yes | {} toggle Outline/Preview | view.outline: false -> true |
+| `view.pixelPreview` | verified | yes | {} | ui.view.pixel_preview: true -> false |
+| `view.preciseCursors` | ran | yes | {} toggle General › Use Precise Cursors: the drawing tools' pointers become a crosshair → true when on | false |
+| `view.presentation` | verified | yes | {} | view.zoom: 0.8926767676767676 -> 1.0606060606060606; screenMode: 0 -> 3 |
+| `view.previousArtboard` | verified | yes | {} the navigator's Previous Artboard button: view.goToArtboard {index: "previous"} → {index} | view.artboard: 1 -> 0; view.center.x: 938.0 -> 306.0 |
+| `view.rotate` | refused | yes | {angle: degrees, clockwise on screen as the status bar shows it} turn the view to that angle about the center of the canvas; returns {angle… | "run_command: `angle` must be a number" |
+| `view.rotateReset` | ran | yes | {} | null |
+| `view.rotateToSelection` | read-ok | yes | {} turn the view about the center of the canvas to the angle the selected objects share (selectionRotation in document.inspect, 0 when they… | {"angle": 0.0} |
+| `view.rulers` | verified | yes | {} | ui.view.rulers: false -> true |
+| `view.screenMode` | verified | yes | {mode?: 0..2} (no param cycles) | screenMode: 3 -> 0 |
+| `view.setZoom` | verified | yes | {zoom: percent, center?: [x,y]} | view.zoom: 1.2878787878787878 -> 2.0 |
+| `view.smartGuides` | verified | yes | {} | ui.view.smart_guides: false -> true |
+| `view.snapToGlyph` | verified | yes | {} toggle: drawing snaps to live-text glyph bounds, and on a single line of type to its baseline, x-height, character widths and glyph anch… | ui.view.snap_to_glyph: true -> false |
+| `view.snapToGrid` | verified | yes | {} | ui.view.snap_to_grid: true -> false |
+| `view.snapToPixel` | verified | yes | {} toggle: drawing and moving land on whole pixels | ui.view.snap_to_pixel: true -> false |
+| `view.snapToPoint` | verified | yes | {} | ui.view.snap_to_point: false -> true |
+| `view.template` | verified | yes | {} template layers left off the canvas (Show Template draws them again, dimmed as before) → shown | ui.view.templates: false -> true |
+| `view.textThreads` | verified | yes | {} toggle the thread lines between threaded text frames | ui.view.text_threads: false -> true |
+| `view.trimView` | verified | yes | {} toggle: hide everything outside the artboards | ui.view.trim_view: true -> false |
+| `view.videoRulers` | verified | yes | {} the rulers show (as Show Rulers shows them) and count the active artboard in video pixels from its top-left corner, a pixel as wide as i… | ui.view.video_rulers: true -> false |
+| `view.zoomIn` | verified | yes | {} | view.zoom: 2.0 -> 3.0; view.center.x: 306.0 -> 200.0; view.center.y: 396.0 -> 160.0 |
+| `view.zoomOut` | verified | yes | {} | view.zoom: 3.0 -> 2.0 |
+
+### file (49)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `file.cancelExport` | read-ok | yes | {} stop every export running in the background (Background Export): an export stops between artboards and writes no file once cancelled → {… | {"cancelled": 0} |
+| `file.cancelOpen` | read-ok | yes | {} stop opening every file being read in the background (its progress window's Cancel): the files don't open → {cancelled: n} | {"cancelled": 0} |
+| `file.clearRecent` | ran | yes | {} | null |
+| `file.documentSetup` | ran | yes | {} | dialog: {"fields": {"backgroundContents": "transparent", "bleed": [0.0, 0.0, 0.0, 0.0], "bleedLinked": true, "discardWhiteOverprint": true,… |
+| `file.export.pdf` | ran | yes | {} opens the Save PDF dialog; with params = document.exportPdf options written to path (asked when missing; viewAfterSaving opens the file)… | dialog: {"fields": {"__allArtboards": true, "__presets": ["VectorCraft Default", "High Quality Print", "Press Quality", "Smallest File Size… |
+| `file.export.png` | ran | yes | {path?, …document.export options}; no path: pick the file, then PNG Options | native file dialog `save` opened; the app is restarted to close it |
+| `file.export.svg` | ran | yes | {} opens SVG Options; with params = document.export {path?, svg?: {…SVG options}, range?…} (a .svgz path writes it gzipped) | dialog: {"fields": {"allArtboards": true, "decimals": 3, "embedFonts": false, "encoding": "utf8", "fewerTspans": false, "images": "embed", … |
+| `file.exportAs` | ran | yes | {format?, useArtboards?, range?} opens Export As (then the format's options); with {path, …document.export options} writes the file(s) → {p… | dialog: {"fields": {"all": true, "format": "png", "range": "1-2", "useArtboards": false}, "kind": "exportAs"} |
+| `file.exportInBackground` | read-ok | yes | {} close the export progress dialog; the exports go on, shown in the status bar → {hidden: n} | {"hidden": 0} |
+| `file.exportSelection` | ran | yes | {multiple?: false} collect the selected objects as assets (assets.add: one of them all, as one image; true: one per object) and open Export… | dialog: {"fields": {"__exportPresets": [{"builtIn": true, "name": "Logo Package", "settings": {"folders": "format", "formats": [{"format": … |
+| `file.newDialog` | ran | yes | {} opens the New Document dialog | dialog: {"fields": {"__applied": {"artboardLayout": {"columns": 1, "layout": "gridByRow", "rightToLeft": false, "spacing": 20.0}, "artboard… |
+| `file.newWithoutDialog` | verified | yes | {} makes a document with the settings the New Document dialog opens on (the first Recent entry, else the Print category's Letter), named af… | windows[1][0]: null -> 1; node2.bounds.width: 200.0 -> null; historyLast: "Collect for Export" -> null; windows[1][1]: null -> 1; node2.bou… |
+| `file.openInBackground` | read-ok | yes | {} close the progress window of the files being opened; they go on being read, shown in the status bar → {hidden: n} | {"hidden": 0} |
+| `file.openRecent1` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent10` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent11` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent12` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent13` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent14` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent15` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent16` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent17` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent18` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent19` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent2` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent20` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent21` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent22` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent23` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent24` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent25` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent26` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent27` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent28` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent29` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent3` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent30` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent4` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent5` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent6` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent7` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent8` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openRecent9` | refused | yes | {} | "run_command: no such recent file" |
+| `file.openWith` | skipped | yes | {importer: "plugin.<id>" (an importer plug-in's format id, see document.formats), path?} File › Open With: open the file with that importer… | never run (launches another application) |
+| `file.recentFiles` | ran | yes | {} → [path…] most recent first; under an automation read root, only the files inside it | [] |
+| `file.reveal` | skipped | yes | {} show the document's file in the system file manager (desktop) → {path} | never run (opens the file manager) |
+| `file.saveForWeb` | ran | yes | {} open Save for Web (dialog `saveForWeb`: fields = the webExport.settings settings, `preset` loads a preset, __view: original\|optimized\|… | dialog: {"fields": {"__hasSlices": false, "__kbps": 56.6, "__view": "2up", "__zoom": "100", "antiAlias": "art", "artboard": 0, "clipToArtbo… |
+| `file.saveForWeb.browser` | refused | yes | {…document.exportForWeb settings} write the HTML page and its images to a temporary folder and open the page in the default browser (deskto… | "run_command: file.saveForWeb.browser opens another app: only the person at the keyboard can run it" |
+| `file.showPackage` | skipped | yes | {folder} show a package folder (file.package's folder) in the file manager → {folder} | never run (opens the package in the file manager) |
+
+### type (37)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `type.alignCenter` | verified | yes | {} align the selected type's paragraphs (or those the Type tool's selection touches) centred | node4.bounds.x: 100.0 -> 38.27200000000001; node4.bounds.width: 123.45599999999996 -> 123.45599999999999 |
+| `type.alignLeft` | ran | yes | {} align the selected type's paragraphs (or those the Type tool's selection touches) left | null |
+| `type.alignRight` | verified | yes | {} align the selected type's paragraphs (or those the Type tool's selection touches) right | node4.bounds.x: 38.27200000000001 -> -23.455999999999975; node4.bounds.width: 123.45599999999999 -> 123.45600000000002 |
+| `type.applyBullets` | verified | yes | {bullet?: "dot"\|"dash"\|"circle"\|"square"\|"none"} Type › Bullets and Numbering › Apply Bullets: the selected type's paragraphs (or those… | node4.bounds.width: 123.45599999999996 -> 141.45600000000002 |
+| `type.applyNumbers` | verified | yes | {number?: "arabic"\|"upperLetters"\|"lowerLetters"\|"upperRoman"\|"lowerRoman"\|"twoDigits"\|"threeDigits"\|"none"} Type › Bullets and Numb… | node4.bounds.width: 141.45600000000002 -> 159.45600000000002 |
+| `type.bold` | verified | yes | {} the selected type (or the Type tool's selection) in its family's Bold face, or back to the regular face when it is bold; keeps italics. … | historyLast: "Save Selection" -> "Character"; node4.bounds.width: 117.24000000000001 -> 123.45599999999996 |
+| `type.compositeFonts.export` | verified |  | {path?: .vccomposite file, names?: [name] (default: all), fonts?: [{name, parts}] (as type.compositeFonts.set takes them)} write the active… | {"count":1,"path":".../cf.vccomposite"}; the file exists |
+| `type.compositeFonts.import` | verified |  | {path: .vccomposite file \| data: its text \| dataBase64: its bytes (at most 4 MB), apply?: bool = true} read the composite fonts a file ho… | {"fonts":[{"name":"CFTest", ...}]}; type.compositeFonts.list then shows CFTest |
+| `type.compositeFonts.list` | read-ok |  | {} the active document's composite fonts → {fonts: [{name, parts: {kanji, kana, punctuation, symbols, roman, numerals: {font, style, size: … | {"fonts":[{"name":"CFTest","parts":{"kana":{"baseline":0.0,"font":"Source Sans 3",...}}}]} |
+| `type.compositeFonts.set` | verified |  | {fonts: [{name, parts: {kanji: {font, style?: "Regular", size?: % 10..400 = 100, baseline?: % -100..100 = 0}, kana?, punctuation?, symbols?… | type.compositeFonts.list -> {"fonts":[{"name":"CFTest","parts":{"kana":{"font":"Source Sans 3",...}, ...}}]} |
+| `type.convertListToText` | verified | yes | {} Type › Bullets and Numbering › Convert to Text: the bullets and numbers of the selected type's list paragraphs (or of those the Type too… | historyLast: "Character" -> "Convert to Text" |
+| `type.findFont` | ran | yes | {} open the Find Font dialog (engine: text.fonts / text.replaceFont / select.font) | dialog: {"fields": {"family": "Source Sans 3", "findIn": "document", "replaceFrom": "system", "rows": [{"family": "Adwaita Mono", "style": … |
+| `type.hiddenCharacters` | verified | yes | {} toggle markers for spaces, paragraph ends and story ends | ui.view.hidden_chars: true -> false |
+| `type.highlightFontName` | read-ok | yes | {} show the Character panel if it is hidden and open its font family menu, whose search field takes the keyboard focus: type to search, Ent… | {"field": "fontName"} |
+| `type.highlightKerning` | read-ok | yes | {} show the Character panel if it is hidden and give its Kerning field the keyboard focus with its value selected: type a value and press E… | {"field": "kerning"} |
+| `type.highlightTracking` | read-ok | yes | {} show the Character panel if it is hidden and give its Tracking field the keyboard focus with its value selected: type a value and press … | {"field": "tracking"} |
+| `type.hyphenate` | verified | yes | {} the Paragraph panel's Hyphenate checkbox: hyphenation off for the selected type's paragraphs (or those the Type tool's selection touches… | historyLast: "Convert to Text" -> "Character" |
+| `type.italic` | refused | yes | {} the selected type (or the Type tool's selection) in its family's Italic (or Oblique) face, or back upright when it is italic; keeps the … | "run_command: Source Sans 3 has no Bold Italic style" |
+| `type.justifyAll` | ran | yes | {} justify every line of the selected type's paragraphs | null |
+| `type.justifyLeft` | verified | yes | {} justify the selected type's paragraphs, last line aligned left | node4.bounds.x: -23.455999999999975 -> 100.0; node4.bounds.width: 123.45600000000002 -> 123.45599999999996 |
+| `type.lineComposer` | ran | yes | {} the selected type's paragraphs (or those the Type tool's selection touches) use the Single-line Composer when they all use the Every-lin… | "singleLine" |
+| `type.recentFont1` | refused | yes | {} apply the 1. most recently used font | "run_command: no such recent font" |
+| `type.recentFont10` | refused | yes | {} apply the 10. most recently used font | "run_command: no such recent font" |
+| `type.recentFont11` | refused | yes | {} apply the 11. most recently used font | "run_command: no such recent font" |
+| `type.recentFont12` | refused | yes | {} apply the 12. most recently used font | "run_command: no such recent font" |
+| `type.recentFont13` | refused | yes | {} apply the 13. most recently used font | "run_command: no such recent font" |
+| `type.recentFont14` | refused | yes | {} apply the 14. most recently used font | "run_command: no such recent font" |
+| `type.recentFont15` | refused | yes | {} apply the 15. most recently used font | "run_command: no such recent font" |
+| `type.recentFont2` | refused | yes | {} apply the 2. most recently used font | "run_command: no such recent font" |
+| `type.recentFont3` | refused | yes | {} apply the 3. most recently used font | "run_command: no such recent font" |
+| `type.recentFont4` | refused | yes | {} apply the 4. most recently used font | "run_command: no such recent font" |
+| `type.recentFont5` | refused | yes | {} apply the 5. most recently used font | "run_command: no such recent font" |
+| `type.recentFont6` | refused | yes | {} apply the 6. most recently used font | "run_command: no such recent font" |
+| `type.recentFont7` | refused | yes | {} apply the 7. most recently used font | "run_command: no such recent font" |
+| `type.recentFont8` | refused | yes | {} apply the 8. most recently used font | "run_command: no such recent font" |
+| `type.recentFont9` | refused | yes | {} apply the 9. most recently used font | "run_command: no such recent font" |
+| `type.underline` | ran | yes | {} the Character panel's Underline button: underline the selected type (or the Type tool's selection), or remove the underline when the tex… | true |
+
+### select (25)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `select.recall1` | read-ok | yes | {} select the 1. saved selection | {"count": 1} |
+| `select.recall10` | read-ok | yes | {} select the 10. saved selection | {"count": 2} |
+| `select.recall11` | read-ok | yes | {} select the 11. saved selection | {"count": 1} |
+| `select.recall12` | read-ok | yes | {} select the 12. saved selection | {"count": 2} |
+| `select.recall13` | read-ok | yes | {} select the 13. saved selection | {"count": 1} |
+| `select.recall14` | read-ok | yes | {} select the 14. saved selection | {"count": 2} |
+| `select.recall15` | read-ok | yes | {} select the 15. saved selection | {"count": 1} |
+| `select.recall16` | read-ok | yes | {} select the 16. saved selection | {"count": 2} |
+| `select.recall17` | read-ok | yes | {} select the 17. saved selection | {"count": 1} |
+| `select.recall18` | read-ok | yes | {} select the 18. saved selection | {"count": 2} |
+| `select.recall19` | read-ok | yes | {} select the 19. saved selection | {"count": 1} |
+| `select.recall2` | read-ok | yes | {} select the 2. saved selection | {"count": 2} |
+| `select.recall20` | read-ok | yes | {} select the 20. saved selection | {"count": 2} |
+| `select.recall21` | read-ok | yes | {} select the 21. saved selection | {"count": 1} |
+| `select.recall22` | read-ok | yes | {} select the 22. saved selection | {"count": 2} |
+| `select.recall23` | read-ok | yes | {} select the 23. saved selection | {"count": 1} |
+| `select.recall24` | read-ok | yes | {} select the 24. saved selection | {"count": 2} |
+| `select.recall25` | read-ok | yes | {} select the 25. saved selection | {"count": 1} |
+| `select.recall3` | read-ok | yes | {} select the 3. saved selection | {"count": 1} |
+| `select.recall4` | read-ok | yes | {} select the 4. saved selection | {"count": 2} |
+| `select.recall5` | read-ok | yes | {} select the 5. saved selection | {"count": 1} |
+| `select.recall6` | read-ok | yes | {} select the 6. saved selection | {"count": 2} |
+| `select.recall7` | read-ok | yes | {} select the 7. saved selection | {"count": 1} |
+| `select.recall8` | read-ok | yes | {} select the 8. saved selection | {"count": 2} |
+| `select.recall9` | read-ok | yes | {} select the 9. saved selection | {"count": 1} |
+
+### align (15)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `align.distributeHorizontalCenter` | ran | yes | {} the Align panel's Horizontal Distribute Center button: object.distribute {horizontal: "center"} with to: "key" while there is a key, els… | null |
+| `align.distributeHorizontalLeft` | ran | yes | {} the Align panel's Horizontal Distribute Left button: object.distribute {horizontal: "left"} with to: "key" while there is a key, else th… | null |
+| `align.distributeHorizontalRight` | ran | yes | {} the Align panel's Horizontal Distribute Right button: object.distribute {horizontal: "right"} with to: "key" while there is a key, else … | null |
+| `align.distributeHorizontalSpace` | ran | yes | {} the Align panel's Horizontal Distribute Space button: object.distributeSpacing {axis: "horizontal"} with to: "key" while there is a key,… | null |
+| `align.distributeVerticalBottom` | ran | yes | {} the Align panel's Vertical Distribute Bottom button: object.distribute {vertical: "bottom"} with to: "key" while there is a key, else th… | null |
+| `align.distributeVerticalCenter` | ran | yes | {} the Align panel's Vertical Distribute Center button: object.distribute {vertical: "center"} with to: "key" while there is a key, else th… | null |
+| `align.distributeVerticalSpace` | ran | yes | {} the Align panel's Vertical Distribute Space button: object.distributeSpacing {axis: "vertical"} with to: "key" while there is a key, els… | null |
+| `align.distributeVerticalTop` | ran | yes | {} the Align panel's Vertical Distribute Top button: object.distribute {vertical: "top"} with to: "key" while there is a key, else the Alig… | null |
+| `align.horizontalCenter` | verified | yes | {} the Align panel's Horizontal Align Center button: object.align {horizontal: "center"} with to: "key" while there is a key, else "artboar… | historyLast: "Ellipse" -> "Align"; node2.bounds.x: 100.0 -> 206.0 |
+| `align.horizontalLeft` | verified | yes | {} the Align panel's Horizontal Align Left button: object.align {horizontal: "left"} with to: "key" while there is a key, else "artboard" f… | node2.bounds.x: 206.0 -> 0.0 |
+| `align.horizontalRight` | verified | yes | {} the Align panel's Horizontal Align Right button: object.align {horizontal: "right"} with to: "key" while there is a key, else "artboard"… | node2.bounds.x: 0.0 -> 412.0 |
+| `align.horizontalVerticalCenter` | verified | yes | {} the Align panel's Horizontal & Vertical Align Center button: object.align {horizontal: "center", vertical: "center"} with to: "key" whil… | node2.bounds.x: 412.0 -> 206.0; node2.bounds.y: 100.0 -> 336.0 |
+| `align.verticalBottom` | verified | yes | {} the Align panel's Vertical Align Bottom button: object.align {vertical: "bottom"} with to: "key" while there is a key, else "artboard" f… | node2.bounds.y: 336.0 -> 672.0 |
+| `align.verticalCenter` | verified | yes | {} the Align panel's Vertical Align Center button: object.align {vertical: "center"} with to: "key" while there is a key, else "artboard" f… | node2.bounds.y: 672.0 -> 336.0 |
+| `align.verticalTop` | verified | yes | {} the Align panel's Vertical Align Top button: object.align {vertical: "top"} with to: "key" while there is a key, else "artboard" for one… | node2.bounds.y: 336.0 -> 0.0 |
+
+### text (9)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `text.setPathHandle` | verified |  | {id, subpath?, anchor, which: "in"\|"out", x, y, independent?: bool} move a direction handle of an anchor of type on a path's path to (x, y… | SVG before: <path id="text-path-1" d="M50 600 L150 550 L250 650"/>; after: d="M50 600 C60 620 150 550 150 550 L250 650" |
+| `text.spelling.addWord` | verified |  | {word} adds word (one word, at most 64 characters; kept in lower case) to the custom dictionary, which every language's check takes as righ… | {"added":true,"word":"zcqw"}; text.spelling.dictionary then contains "zcqw" |
+| `text.spelling.changeWord` | verified |  | {word, to} replaces word in the custom dictionary with to and saves it (an error when word isn't there) → {word: to} | {"word":"zcqx"}; dictionary then holds "zcqx", not "zcqw" |
+| `text.spelling.check` | read-ok |  | {ids?: [id…] (type objects, or groups holding them; default: every visible, unlocked type object)} the words the dictionaries don't know, e… | {"more": false, "words": []} |
+| `text.spelling.dictionary` | read-ok |  | {} the words of the custom dictionary, sorted (lower case, as they are kept) → {words: [word…]} | {"words": []} |
+| `text.spelling.editDictionary` | verified |  | {remove?: [word…], add?: [word…] (each one word, at most 64 characters; at most 10000 of each)} deletes the words of remove that are there … | {"added":["zzyw"],"removed":[]}; dictionary then lists "zzyw" |
+| `text.spelling.ignoreAll` | ran |  | {word} the active document's spelling checks skip word from now on, until it closes (not saved, not undoable) → {word} | {"word": "hello"} |
+| `text.spelling.removeWord` | verified |  | {word} deletes word from the custom dictionary and saves it (an error when it isn't there) → {word} | {"word":"zzyw"}; dictionary no longer lists "zzyw" |
+| `text.spelling.suggest` | read-ok |  | {word, max?: 1..20 (default 5), lang?: language tag (default English)} the words the dictionary of lang suggests instead of word, best firs… | {"suggestions": ["hello", "helot", "halo", "hero", "hell"]} |
+
+### shortcuts (8)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `shortcuts.conflicts` | ran | yes | {} → [{shortcut, ids}] | [] |
+| `shortcuts.export` | ran | yes | {path?} | native file dialog `save` opened; the app is restarted to close it |
+| `shortcuts.exportText` | read-ok | yes | {path?} save the current set's tools and menu commands with their shortcuts as a UTF-8 text file (Keyboard Shortcuts › Export Text…): the s… | {"path": "<scratch>"} |
+| `shortcuts.import` | ran | yes | {path? \| data?} | native file dialog `save` opened; the app is restarted to close it |
+| `shortcuts.list` | read-ok | yes | {query?} → [{id, label, group, shortcut, default, overridden}] | [{"default": "V", "group": "Tools", "id": "tool:selection", "label": "Selection Tool", "overridden": false, "shortcut": "V"}, {"default": "… |
+| `shortcuts.preset` | verified | yes | {name: "VectorCraft Defaults" \| "Classic Defaults"} (names of earlier versions are accepted) | ui.shortcut_set: "VectorCraft Defaults" -> "Classic Defaults" |
+| `shortcuts.reset` | verified | yes | {} | ui.shortcut_set: "Custom" -> "VectorCraft Defaults"; ui.shortcut_overrides.view.zoomIn: "Cmd+Shift+9" -> null |
+| `shortcuts.set` | verified | yes | {id: command id or tool:<id>, shortcut: "Cmd+Shift+K" \| "" (none) \| null (default), force?} | ui.shortcut_set: "VectorCraft Defaults" -> "Custom"; ui.shortcut_overrides.view.zoomIn: null -> "Cmd+Shift+9" |
+
+### plugin (6)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `plugin.cancelRuns` | read-ok | yes | {} stop every heavy filter running in the background (its progress window's Cancel): it stops at the next slice of its budget and changes n… | {"cancelled": 0} |
+| `plugin.clearCache` | ran |  | {id?} delete every entry in the cache of plug-in id (default: of every installed plug-in); its settings stay → {cleared: [id], bytesFreed} | {"bytesFreed": 0, "cleared": []} |
+| `plugin.dialog` | refused | yes | {id: an object filter plug-in (plugin.list), params?: {…}} Object › Plug-ins: run the filter at once when it takes no parameters or params … | "run_command: missing `id` (see plugin.list)" |
+| `plugin.hideRuns` | read-ok | yes | {} close the progress window of the heavy filters running in the background; they go on, shown in the status bar → {hidden: n} | {"hidden": 0} |
+| `plugin.safeMode` | read-ok |  | {} → {active: bool (no plug-in loads or runs: plugin.install, .run, .reload and exporters fail, live effects draw their object's geometry u… | {"active": false, "disabled": [], "pendingItem": null, "source": null} |
+| `plugin.setEnabled` | ran |  | {id \| file: a plug-in as plugin.safeMode's disabled lists it, enabled: bool} turn a plug-in on or off for the next launch (Help › Safe Mod… | {"changed":true,"saved":true}; plugin.safeMode afterwards still lists no disabled plug-in (no plug-in is installed) |
+
+### effect (5)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `effect.applyLast` | refused | yes | {} | "run_command: no effect applied yet" |
+| `effect.deferredStatus` | read-ok |  | {} the live-effect plug-in stages the active document left undrawn: while a document is drawn on screen, the plug-in effects of its first v… | {"budgetMs": 2000, "effects": []} |
+| `effect.dialog` | refused | yes | {effect: id, index?: int (edit that applied effect in place, prefilled; OK runs effect.setParams), item?: appearance item index\|null (the … | "run_command: unknown effect ``" |
+| `effect.last` | refused | yes | {} open the dialog of the last effect applied | "run_command: no effect applied yet" |
+| `effect.refreshDeferred` | refused |  | {ids?: [object id] (objects of the document; `id` names one; default: every object with a deferred stage)} run the deferred live-effect plu… | command `effect.refreshDeferred` is not available right now: no plug-in effect is deferred |
+
+### script (5)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `script.console` | read-ok |  | {} the Script Console's lines, oldest first: each run's start, its $.write and $.writeln output, its vc.log entries, its uncaught error as … | {"droppedLines": 0, "lines": [], "truncatedLines": 0} |
+| `script.console.clear` | ran |  | {} empty the Script Console and set its dropped and cut counts to zero; a running script goes on writing, and scriptReport keeps the last r… | {"cleared": 0} |
+| `script.listInstalled` | read-ok |  | {} list the .js and .jsx files of the Scripts folder next to the settings, which File › Scripts lists, each subfolder as a submenu, in menu… | {"folder": "<scratch>", "scripts": [], "truncated": false, "unreadable": false} |
+| `script.run` | ran |  | {path?: a .js or .jsx file \| source?: the script's text (exactly one of the two), name?: the name errors and the report use (default: the … | {"changed": [], "console": {"droppedLines": 0, "lines": [], "truncatedLines": 0}, "dialogCount": 0, "dialogs": [], "dialogsTruncated": fals… |
+| `script.stop` | ran |  | {} stop the running script, which puts every document back as it was before the run; asking again while it stops is harmless → {stopped: wh… | {"stopped": false} |
+
+### svgFilter (5)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `svgFilter.apply` | verified |  | {name, ids?\|id?, item?} apply the document's SVG filter `name` (svgFilter.list) to ids or the selection as a live svg.filter effect, as on… | +  <defs> +    <filter id="filter-1"><feGaussianBlur stdDeviation="4"/></filter> +  </defs> -    <rect x="100" y="100" width="200" height="… |
+| `svgFilter.define` | verified |  | {xml: one SVG <filter> element (its id is its name; 1..64 primitives; at most 64 KB), replace?: the name of the filter it replaces and keep… | returned {"name":"f2"}; svgFilter.list after it: [{"name":"f2","xml":"<filter id="f2"><feGaussianBlur stdDeviation="3"/></filter>"}] |
+| `svgFilter.delete` | verified |  | {name} remove an SVG filter from the document, as one undo step; objects whose svg.filter effect names it keep the effect, which draws noth… | svgFilter.list before delete: ["f2"]; after: {"filters": []} |
+| `svgFilter.import` | verified |  | {path?\|svg?} add the <filter> elements of an SVG file (at most 16 MB; not SVGZ; its first 256 filters) or of SVG text to the document's SV… | {"added":["imp1"], "skipped":0}; svgFilter.list then shows [{"name":"imp1","xml":"<filter id="imp1"><feBlend in="SourceGraphic"/></filter>"… |
+| `svgFilter.list` | read-ok |  | {} → {filters: [{name, xml}…]} the SVG filters the document holds, in the SVG Filters submenu's order | {"filters":[{"name":"f1","xml":"<filter id=\"f1\"><feGaussianBlur stdDeviation=\"4\"/></filter>"}]} |
+
+### edit (4)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `edit.autoSpellCheck` | ran | yes | {} toggle a red underline under the words of the document's type its dictionaries don't know (text.spelling.check lists them), kept up to d… | native file dialog `save` opened; the app is restarted to close it |
+| `edit.keyboardShortcuts` | ran | yes | {} | dialog: {"fields": {"__conflict": "", "__message": "", "__recording": "", "__selected": "", "overrides": {}, "query": "", "set": "VectorCra… |
+| `edit.newDocumentFromState` | verified |  | {index?: a row of the History panel (0: the oldest state kept; default: the current state), created?: Unix seconds\|null (File Info's creat… | -  <title>Untitled-1</title> +  <title>Untitled-2</title> -    <rect x="100" y="100" width="200" height="120" fill="#ffffff" stroke="#00000… |
+| `edit.preferences` | ran | yes | {category?} open Preferences (engine: prefs.get / prefs.set / prefs.list) | dialog: {"fields": {"__category": "General", "__focusSearch": true, "__search": "", "__smartGuides": false, "__snapToGrid": true, "__taskBa… |
+
+### help (4)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `help.about` | ran | yes | {} | null |
+| `help.checkForUpdates` | skipped | yes | {} | never run (network) |
+| `help.commandPalette` | verified | yes | {} | ui.palette_open: false -> true |
+| `help.safeMode` | ran | yes | {} open the Safe Mode dialog (dialog `safeMode`): whether VectorCraft is in Safe Mode, and the disabled plug-ins, each with Enable on Re-la… | dialog: {"fields": {"items": []}, "kind": "safeMode"} |
+
+### toolbar (4)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `toolbar.addTool` | read-ok | yes | {tool: id, slot?: n, place?: "before"\|"after"\|"group", toolbar?: name} put `tool` in the current (Basic or Advanced) toolbar (with `toolb… | [["selection"], ["directSelection", "groupSelection"], ["lasso", "magicWand"], ["roundedRectangle", "star", "lineSegment", "arc", "spiral",… |
+| `toolbar.removeTool` | read-ok | yes | {tool: id, group?: bool, toolbar?: name} take `tool` (with `group`, its whole group) out of the current toolbar (with `toolbar`, out of tha… | [["selection"], ["directSelection", "groupSelection"], ["lasso", "magicWand"], ["roundedRectangle", "star", "lineSegment", "arc", "spiral",… |
+| `toolbar.reset` | read-ok | yes | {toolbar?: name} put the current (Basic or Advanced) toolbar back as it ships, undoing Edit Toolbar's changes (with `toolbar`, make that to… | [["selection"], ["directSelection", "groupSelection"], ["lasso", "magicWand"], ["rectangle", "roundedRectangle", "star", "lineSegment", "ar… |
+| `toolbar.show` | read-ok | yes | {control?: "fillStroke"\|"coloring"\|"drawMode"\|"screenMode", on?: bool} show (true), hide (false) or toggle (omitted) one of the controls… | {"coloring": true, "drawMode": true, "fillStroke": true, "screenMode": true} |
+
+### addon (3)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `addon.arrange.zoomSelection` | ran | yes | {} zoom and centre the active view so the selection's visual bounds fill the window, with a margin (as view.fitArtboard fits the artboard);… | dialog: {"fields": {"copies": [{"file": "1794439735-1/Untitled-1-1", "format": "vectorcraft", "open": false, "path": null, "running": false… |
+| `addon.pathtools.cornerTool` | verified | yes | {} choose the Corner Tool and show the Anchor Inspector panel with its radius and kind | tool: "selection" -> "cornerTool"; toolOptions: "null" -> "{\"kind\": \"round\", \"radius\": 10.0}" |
+| `addon.pathtools.sharedEdgeTool` | verified | yes | {} choose the Shared Edge Merge Tool and show the Anchor Inspector panel with its brush, coincidence and Keep Shared Points Together | tool: "cornerTool" -> "sharedEdge"; toolOptions: "{\"kind\": \"round\", \"radius\": 10.0}" -> "{\"diameter\": 20.0, \"together\": false, \"… |
+
+### app (3)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `app.home` | skipped | yes | {} shows the Home screen (new file presets, Open) over the open documents; choosing a document tab returns to it | never run (opens the settings folder in the file manager) |
+| `app.language` | refused | yes | {lang: auto\|<code>} the interface language, persisted as the `interfaceLanguage` preference (`auto` follows the system locale; codes: pref… | "run_command: lang must be one of auto, en, hi, el, ja, ko, vi, cs, bs, de, es, fr, it, ka, ru, uk, bg, hu, pl, sv, pt-br, zh-hant, zh-hans… |
+| `app.quit` | skipped | yes | {} | never run (would close the app) |
+
+### artboard (3)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `artboard.rename` | verified |  | {index? \| indices?, selectedArtboards?: [n…] (as artboard.duplicate), name} (default: the artboards the Artboard tool has selected, else i… | document.inspect: artboards[0].name = "Renamed" (setup made "Artboard 1") |
+| `artboard.selectAll` | verified | yes | {} the Artboard tool, chosen first when another tool is in use, selects every artboard, and the active artboard stays active; the art's sel… | tool: "sharedEdge" -> "artboard"; toolOptions: "{\"diameter\": 20.0, \"together\": false, \"tolerance\": 0.002}" -> "{\"active\": 0, \"move… |
+| `artboard.switchOrientation` | verified |  | {index? \| indices?, selectedArtboards?: [n…] (as artboard.duplicate), scaleArt?: bool (default: the Artboard tool's Scale Artwork with Art… | -<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="612" height="792" viewBox="0 0 612 792"> +<svg x… |
+
+### assets (3)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `assets.add3D` | verified |  | {ids?: [id…] (default: the selected objects), format?: usda\|usdz\|gltf\|obj (default usda)} collect each object with an Extrude & Bevel, R… | {"assets":[3],"added":1} |
+| `assets.export3D` | verified |  | {assets?: [asset id…] (default every 3D asset), folder?, zip?} each 3D asset's object as a mesh file in its format (assets.set3DFormat), na… | files: Asset_1.obj (57073 bytes) and Asset_1.mtl written |
+| `assets.set3DFormat` | verified |  | {assets: [asset id…], format: usda\|usdz\|gltf\|obj} the mesh format 3D assets export to (Asset Export's Format for a 3D asset) → {changed:… | {"changed":1} |
+
+### imageTrace (3)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `imageTrace.cancelRuns` | read-ok | yes | {} stop every Image Trace running in the background (its progress window's Cancel): it stops at its next colour and changes nothing → {canc… | {"cancelled": 0} |
+| `imageTrace.hideRuns` | read-ok | yes | {} close the progress window of the Image Traces running in the background; they go on, shown in the status bar → {hidden: n} | {"hidden": 0} |
+| `imageTrace.preview` | ran | yes | {on?: bool} turn the Image Trace panel's Preview on (true), off (false) or toggle it (omitted), as its checkbox does: on, setting changes t… | true |
+
+### css (2)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `css.copy` | verified | yes | {scope?: selection\|all (default selection), …css.selection options} copy the CSS of the selection (css.selection; all: css.generate) to th… | ui.status: "command `object.distribute` is not available right now: select at lea… -> "Copied the CSS of 1 object" |
+| `css.exportFile` | ran | yes | {path?, scope?: selection\|all (default selection), …css.selection options} css.export written to path, else a picked file (the web downloa… | native file dialog `save` opened; the app is restarted to close it |
+
+### links (2)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `links.editOriginal` | skipped | yes | {id?} open the file of linked image `id` (default: the selected linked image) in the system's default app for its type (Links panel, Edit ›… | never run (launches an external application) |
+| `links.reveal` | skipped | yes | {id?} show the file of linked image `id` (default: the selected linked image) in the system's file manager → {path} | never run (opens the file manager) |
+
+### prefs (2)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `prefs.export` | read-ok |  | {path?} write the preferences as a JSON file {format: "vectorcraft-preferences", version: 1, prefs: {key: value, …}}: every preference pref… | {"count":146,"data":"{\n  \"format\": \"vectorcraft-preferences\", ..."} |
+| `prefs.import` | verified |  | {path? \| data?: the file's text} apply the preferences of a file prefs.export wrote (at most 1 MB). Every value is checked first, as prefs… | {"imported":146}; prefs.export after it: prefs.anchorSize = 5 |
+
+### print (2)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `print.printerSetup` | ran | yes | {printer?} open the system's settings of the printer (the Print dialog's Setup…; desktop) | null |
+| `print.printers` | read-ok | yes | {} → {printers: [{name, default}] (the system's printers), service (printing is available; else Print saves a PDF), setup (print.printerSet… | {"printers": [{"default": false, "name": "Virtual_PDF"}], "service": true, "setup": true} |
+
+### symbol (2)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `symbol.instance.resetTransform` | verified |  | {ids?\|id?} give the selected symbol instances (in groups too) their symbol's own scale, without rotation, shear or reflection, keeping the… | object.scale sx:250 sy:150 -> bounds {"width":250.0,"height":120.0}; after resetTransform document.inspect nodes[0].bounds = {"width":100.0… |
+| `symbol.instance.selectPart` | verified |  | {id, path: [i…] (as symbol.instance.setAppearance)} select one path, compound path or type object of a dynamic symbol instance's art, as a … | result {"id":7,"path":[]}; path [0,0]/[0,1]/[1,0] refused: "no object at path [0,0] in the symbol's art"; static symbol refused until symbo… |
+
+### actionSet (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `actionSet.read` | read-ok |  | {path? \| data?: the file's text \| dataBase64?, name?: the file's name (default: the path's)} read an action set another app saved as text… | {"set":"","version":1,"actions":[],"unread":[],"truncated":false} |
+
+### attributes (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `attributes.openUrl` | refused | yes | {url?} open url, else the selection's URL (attributes.info), in the web browser (the Attributes panel's Browser button; http, https and mai… | "run_command: attributes.openUrl opens another app: only the person at the keyboard can run it" |
+
+### charStyle (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `charStyle.load` | verified |  | {path? \| data?: file text \| dataBase64?, name?: file name (default: the path's)} copy the styles of this kind (textStyle.loadAll: charact… | {"added":["CharA"],"existing":[],"skipped":[]} |
+
+### docInfo (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `docInfo.save` | refused | yes | {path?, selectionOnly?, category?} write Document Info's text report (document.info {format: "text"}) to path, else a picked file (the web … | "run_command: cancelled" |
+
+### document (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `document.compare` | verified |  | {path: an image file (PNG, JPEG, WebP, TIFF or BMP), artboard?: index=0, background?: "#rrggbb"="#ffffff" (the render and the image are bot… | {"rmse":0.000162,"over":0,"total":484704,"threshold":0.08,"width":612,"height":792} |
+
+### engine (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `engine.apiReference` | read-ok |  | {} the command API reference in Markdown, written from the built-in commands' parameter schemas: a section for each command that has one, i… | {"markdown": "# VectorCraft command API reference\n\nThis reference lists only the commands that have a parameter schema, in registry order… |
+
+### object (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `object.setPixelAligned` | verified |  | {ids?\|id?, on?: bool (default true)} → {ids (the objects whose property changed)} (Transform panel › Align to Pixel Grid: on, each object'… | -    <rect x="100" y="100" width="200" height="120" fill="#ffffff" stroke="#000000" stroke-miterlimit="10"/> +    <rect x="100.5" y="100.5"… |
+
+### paraStyle (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `paraStyle.load` | verified |  | {path? \| data?: file text \| dataBase64?, name?: file name (default: the path's)} copy the styles of this kind (textStyle.loadAll: charact… | {"added":["ParaA"],"existing":[],"skipped":[]} |
+
+### pathfinder (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `pathfinder.repeat` | refused | yes | {} repeat the last successful Pathfinder panel operation, direct object.pathfinder.* command or command.batch step on the selection with cu… | "run_command: no Pathfinder operation applied yet" |
+
+### textStyle (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `textStyle.loadAll` | verified |  | {path? \| data?: file text \| dataBase64?, name?: file name (default: the path's)} copy the styles of this kind (textStyle.loadAll: charact… | {"charStyles":{"added":["CharA"],...},"paraStyles":{"added":["ParaA"],...}} |
+
+### tool (1)
+
+| id | status | ui | params doc (short) | evidence |
+|---|---|---|---|---|
+| `tool.options` | refused | yes | {tool: id} what double-clicking a tool button opens: hand → fits the artboard in the window (view.fitArtboard), zoom → 100% (view.actualSiz… | "run_command: unknown tool ``" |

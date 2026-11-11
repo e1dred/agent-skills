@@ -127,3 +127,5 @@ Three groups, all honest:
 0.17.0 → 0.21.0: +100 ids (59 of them `addon.*`), 0 removed, 142 parameter docs changed.
 See `newer-commands.md`.
 - 2026-11-06: CLI refreshed (0.21.1 → 0.22.0); 15 new ids (addon.shapes tools and configure, fill/stroke swap, contour, select by link status, type on path release, document.move, stroke weight up/down) and 16 changed ids verified headless; regression 29 of 36 outputs identical (document model version 2 → 3, timestamp, +1 byte PDF, +280 byte .ai, +6 byte .eps). Live channel not re-checked.
+
+- 2026-11-11: CLI refreshed (0.23.0 → 0.24.0; skill last tested on 0.22.0); +488 ids (443 desktop-UI only), 134 changed; regression 31/36 identical (CMYK display color, .ai editing data, EPS creator string). Headless ids run by DeepSeek with read-backs, spot-checked; notes in `newer-commands.md`.

@@ -1,4 +1,4 @@
-# SoundCraft command catalogue (0.18.0) — 483 ids
+# SoundCraft command catalogue (0.20.0; ids unchanged since the previous label) — 483 ids
 
 Totals: **368 verified**, **78 read-ok**, **35 ran**, **2 skipped**.
 `verified` = a named field in `session.inspect` / `setup.preferences`, or a bounce measurement, changed as expected (before taken after setup); `read-ok` = a query returned real data; `ran` = accepted, no independent read-back headless; `skipped` = needs hardware or plugins not installed. Paths `/scratch/…` were test files.

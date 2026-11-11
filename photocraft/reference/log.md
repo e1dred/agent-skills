@@ -63,3 +63,5 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-03: view.clearSelectedArtboardGuides verified via the .pcraft manifest; PhotoCraft smoke-tested list complete and removed.
 - 2026-11-03: retrieval test: isolated-config tip for library commands moved into SKILL.md Traps; section index refreshed.
 - 2026-11-06: 0.21.0 checked headless against 0.20.2 (993 ids, +28 frames/stylistic sets/embed-all-linked); 70-output harness identical but for sub-pixel ellipse AA; new ids and changed parameters recorded in `workflows-and-tools.md`.
+
+- 2026-11-11: 0.23.0 checked headless against 0.21.0 (1009 ids, +16 action editing / mixer toggles / path to shape / copy CSS); 70-output harness identical; notes in `workflows-and-tools.md`. New ids run by DeepSeek with read-backs, spot-checked.

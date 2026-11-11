@@ -2,6 +2,9 @@
 
 Part of the cadcraft skill. The short front page is `../SKILL.md`; the sections below are unchanged from the single-file guide.
 
+## 0.20.0 (checked 2026-11-11, from 0.18.0; 0.19.0 not tested on its own)
+- Catalogue: 457 ids, unchanged (ids and parameter docs). The 28-output regression harness is identical apart from the output path inside `*.info.json`.
+
 ## 0.18.0 changes (verified headless 2026-11-06; geometry read back with `list`)
 - Catalogue: 457 ids, added 0, removed 0, parameters changed 5 (`break`, `breakatpoint`, `chprop`, `properties.set`, `trim`).
 - Regression: seven drawings built with the 0.17.1 and 0.18.0 CLIs (28 outputs); every DXF, PNG and PDF identical. The `info` JSON differs only in the default `view.height` (exactly 0.9375× the old value in all five drawings, a new default window aspect), and the log files differ only in the output path.

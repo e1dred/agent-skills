@@ -5,7 +5,7 @@ description: Use when laying out pages for print or screen — magazines, books,
 
 # DesignCraft
 
-Field notes from the first full round, last tested on **DesignCraft 0.18.0** (Linux binary `designcraft-cli`).
+Field notes from the first full round, last tested on **DesignCraft 0.20.0** (Linux binary `designcraft-cli`).
 DesignCraft is a pre-alpha, InDesign-like page layout app written in Rust; the CLI, the MCP server and the app's
 control channel run the same 555 engine commands. If `designcraft-cli --version` reports a newer build, re-check
 the ids and params here before relying on them (see `reference/newer-commands.md`).

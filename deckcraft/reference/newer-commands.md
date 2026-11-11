@@ -47,3 +47,6 @@ Three newer commands (headless, checked in the saved file):
 - `shape.connect` glues to a shape inside a group, and the connector follows it.
 - The PDF text layer shows evaluated field values (the slide number), not the field code; outlines leave footer, date and slide-number placeholders out.
 - PPTX round trip keeps table cell anchoring, text overflow settings, line spacing, normalized character height, alternate run language, reflection transforms and RTL table direction; reused slides fit the destination size.
+
+## 0.18.0 (checked 2026-11-11, from 0.16.0; 0.17.0 not tested on its own)
+331 ids, ids and parameter docs unchanged. The 188-output regression harness is byte-identical on both CLIs.

@@ -1,8 +1,8 @@
-# PdfCraft command catalogue (0.19.0)
+# PdfCraft command catalogue (0.21.0)
 
 Built 2026-11-06 from the skill's own text (SKILL.md, reference/ and tools/); no command was run and nothing was re-tested. Ids come from `pdfcraft-cli` 0.19.0 (195 ids); the skill's version label: last tested on PdfCraft 0.19.0; evidence sections cite 0.18.1-0.19.0.
 Status: **V** verified - the hit is under a heading naming verification or records an observed result (arrow, before/after, read-back, checked file, confirmed); **d** documented - named with parameters or usage, no recorded evidence; **n** named only - a bare list or command index; **s** skipped on purpose - the skill says skipped/not run/not tested/not exercised; **x** known no-op, broken or refused - the line says so; **V+** verified, but another line records a limit (refused or skipped in some state or version); the note quotes both. When a command has verified evidence anywhere, it counts as verified: a refusal or skip recorded elsewhere usually names a precondition or an older round.
-Counts: V 166, V+ 3, d 7, n 2, s 16, x 1.
+Counts: V 166, V+ 3, d 7, n 2, s 16, x 1 (0.19.0 tools); plus 13 tools new in 0.21.0: V 12, d 1 (table at the end).
 These tool names have no dot; they are grouped by the part before the first underscore (the one without an underscore is in `other`).
 
 ## accessibility (18)
@@ -369,3 +369,21 @@ These tool names have no dot; they are grouped by the part before the first unde
 | id | status | note |
 |---|---|---|
 | `xfa_to_static` | s | reference/editing-signing-tools.md#Not exercised (reason): - `xfa_to_static` — needs an XFA form. |
+
+## New in 0.21.0 (13, tested 2026-11-11)
+
+| id | status | note |
+|---|---|---|
+| `accessibility_layout_table_to_blocks` | V | reference/newer-commands.md#0.21.0: Table/TR/TH tags → Div/P, read back with accessibility_tags |
+| `attachment_edit` | V | reference/newer-commands.md#0.21.0: description changed, read back with doc_info |
+| `comment_popup` | V | reference/newer-commands.md#0.21.0: popup open false → true in comment_list |
+| `doc_convert_colours` | V | reference/newer-commands.md#0.21.0: red → gray (76,76,76) in a render |
+| `doc_fix_hairlines` | V | reference/newer-commands.md#0.21.0: 0.1 pt strokes widened (fixed:2), darker in a 288 dpi render |
+| `doc_printer_marks` | V | reference/newer-commands.md#0.21.0: page 612×792 → 684×864, marks in the margin; doc_remove_marks printer_marks removes them |
+| `form_focus` | V | reference/newer-commands.md#0.21.0: On Focus script set the field value |
+| `js_event` | V | reference/newer-commands.md#0.21.0: mouse_enter script set the field value |
+| `object_copy` | V | reference/newer-commands.md#0.21.0: copied:2, pasted onto another page |
+| `object_paste` | V | reference/newer-commands.md#0.21.0: object_list page 2: 0 → 2 objects |
+| `printer_papers` | d | reference/newer-commands.md#0.21.0: no printer driver here: empty list |
+| `text_prepare` | V | reference/newer-commands.md#0.21.0: text in a Form XObject became a paragraph (0 → 1) |
+| `text_replace` | V | reference/newer-commands.md#0.21.0: Beta → Delta, re-run by Claude with pdfcraft-cli text |

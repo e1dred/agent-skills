@@ -1,4 +1,4 @@
-# WordCraft command catalogue (0.16.0)
+# WordCraft command catalogue (0.18.0)
 
 Built 2026-11-06 from the skill's own text (SKILL.md, reference/ and tools/); no command was run and nothing was re-tested. Ids come from `wordcraft-cli` 0.16.0 (656 ids); the skill's version label: last tested on WordCraft 0.16.0; earlier evidence sections cite 0.11.0-0.15.2.
 Status: **V** verified - the hit is under a heading naming verification or records an observed result (arrow, before/after, read-back, checked file, confirmed); **d** documented - named with parameters or usage, no recorded evidence; **n** named only - a bare list or command index; **s** skipped on purpose - the skill says skipped/not run/not tested/not exercised; **x** known no-op, broken or refused - the line says so; **V+** verified, but another line records a limit (refused or skipped in some state or version); the note quotes both. When a command has verified evidence anywhere, it counts as verified: a refusal or skip recorded elsewhere usually names a precondition or an older round.
@@ -844,3 +844,23 @@ Counts: V 601, V+ 39, d 2, n 0, s 13, x 1.
 | `wordArt.textFill` | V | reference/command-reference.md#Verified in detail, WordCra…: `wordArt.textFill` `{"fill": "FF0000"}` (st… |
 | `wordArt.textOutline` | V | reference/command-reference.md#Verified in detail, WordCra…: `wordArt.textOutline` `{"color": "00FF00", … |
 | `wordArt.transform` | V | reference/command-reference.md#Verified in detail, WordCra…: `wordArt.transform` `{"preset": "textArchUp… |
+
+## New in 0.18.0 (15, tested 2026-11-11)
+
+| id | status | note |
+|---|---|---|
+| `file.strictReport` | V | reference/command-reference.md#0.18.0: strictReport on w1.docx returns strict:'passed' with empty missing lists |
+| `para.blankBetween` | V | reference/command-reference.md#0.18.0: wordcraft-cli inspect out-blankBetween.docx: block count 5 -> 9; a blank inserted between each pair (existing  |
+| `para.convertBreaks` | V | reference/command-reference.md#0.18.0: inspect out-cv.docx block count 3 -> 5 and P0 split into 3 blocks |
+| `para.indentToSpaces` | V | reference/command-reference.md#0.18.0: inspect out-i2s.docx: indentLeft 36->0 and one leading space added per 36pt indent |
+| `para.removeBlank` | V | reference/command-reference.md#0.18.0: inspect out-removeBlank.docx block count 5 -> 3 |
+| `para.removeExtraSpaces` | V | reference/command-reference.md#0.18.0: inspect out-removeExtraSpaces.docx block 0 text quoted above |
+| `para.removeLineBreaks` | V | reference/command-reference.md#0.18.0: inspect out-rlb.docx block 0 text 'Line ALine BLine C'; block count stays 3 |
+| `para.separateParagraphs` | V | reference/command-reference.md#0.18.0: inspect out-sp.docx block count 3 -> 6; blank paragraph inserted after every paragraph including the last |
+| `para.spacesToIndent` | V | reference/command-reference.md#0.18.0: inspect out-s2i.docx: leading spaces removed and indentLeft stays/set 36 |
+| `para.trimLeadingSpaces` | V | reference/command-reference.md#0.18.0: inspect out-trimLeadingSpaces.docx block 1 text quoted above |
+| `text.deleteSentenceBack` | V | reference/command-reference.md#0.18.0: deleteSentenceBack result anchor/focus off 21; inspect w3.docx text 'First sentence here. [MARK]' |
+| `view.arrangeAll` | x | reference/command-reference.md#0.18.0: error: wordcraft-cli: view.arrangeAll: not available: view.arrangeAll: only the desktop app has several window |
+| `view.paperColor` | V | reference/command-reference.md#0.18.0: command returns paperColor:'green' (screen paper colour, view-only state) |
+| `view.sideBySide` | x | reference/command-reference.md#0.18.0: error: wordcraft-cli: view.sideBySide: not available: view.sideBySide: only the desktop app has several window |
+| `view.syncScroll` | x | reference/command-reference.md#0.18.0: error: wordcraft-cli: view.syncScroll: not available: view.syncScroll: turn on View Side by Side first |

@@ -65,7 +65,26 @@ has no sandbox unless roots are given.
 
 ## Live app
 
-`vectorcraft --control PORT` + `vectorcraft-cli mcp --connect 127.0.0.1:PORT`, or
-`vectorcraft-cli --connect` where the build supports it. This round never opened a window, never
-used `--connect` and never called any `ui.*` method (the catalogue has no `ui.*` ids). If the user
-asks for live editing, ask before putting a window on their screen.
+Tested 2026-11-11 (0.24.0) on a hidden display: `vectorcraft --control PORT` (add
+`--automation-read-root DIR --automation-write-root DIR` to confine files), then
+`vectorcraft-cli mcp --connect 127.0.0.1:PORT` and its MCP tools `run_command`, `inspect_ui`,
+`doc_inspect`, `answer_dialog`, `press_key`, `screenshot`. The 443 `ui: true` ids run only here
+(headless they refuse: "is a desktop UI command"). Ask before putting a window on the user's
+screen; for tests use a private headless compositor with its own D-Bus so dialogs stay hidden.
+
+- **Errors:** a refused `run_command` comes back as a tool result with `isError: true`, not as a
+  JSON-RPC error. Check `isError`, or every refusal looks like success.
+- **Read-backs:** `inspect_ui` holds the window state (`view.zoom`, `view.center`, `ui.view.grid`,
+  `ui.dock_tab`, `ui.shortcut_set` …); use it before/after view, window and shortcut commands.
+- **Native file dialogs wedge the channel.** `css.exportFile`, `file.export.png`,
+  `shortcuts.export/import`, `ui.actionSet.load`, `ui.checkScript`, `ui.importSvgFilter`,
+  `ui.loadAllStyles`, `ui.loadParaStyles`, `ui.runScript`, `ui.shortcutImportDialog`,
+  `window.{brush,graphicStyle,swatch,symbol}Library.other` and `edit.autoSpellCheck` open one;
+  `answer_dialog {action:"cancel"}`, Escape, `file.cancelExport` and `file.cancelOpen` do not close
+  it (`{cancelled: 0}`), and every later command reports the dialog. Use the headless command with
+  a `path` instead (`document.export`, `shortcuts`/`prefs` export with data), or restart the app.
+- App dialogs (`ui.newLayer`, `ui.newSwatch`, `window.workspace.new` …) return
+  `{kind, fields}`; fill or cancel them with `answer_dialog`.
+- `ui.preferences` does not exist; the preferences dialog is `edit.preferences`.
+- `window.panel.layout {action: {Float: {panel: "layers", rect: …}}}` — the action is a tagged
+  enum and `Float` needs `rect`.

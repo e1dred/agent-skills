@@ -7,7 +7,7 @@ description: Use when reading, editing, combining, splitting, annotating or secu
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from first headless tasks, last tested on **PdfCraft 0.19.0** (Linux AppImage). PdfCraft is an
+Field notes from first headless tasks, last tested on **PdfCraft 0.21.0** (Linux AppImage). PdfCraft is an
 early-alpha PDF editor in Rust: viewing, page organizing, comments, forms, redaction, PDF/A. Every ribbon action
 is an engine *tool*; the CLI, the MCP server and the app's control channel run the same tools. If
 `pdfcraft-cli --version` is newer, re-check anything here before relying on it.
@@ -38,7 +38,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `editing-signing-tools.md` | Added content (copy/update/delete), page objects, image crop/export, stamps, editing original text and fonts, revisions and undo, bookmark copy/export/import, actions, the UI command registry headless, measurement, printers (list only), digital IDs and signing, accessibility tag editing and review files; tools that could not be run | Documents and revisions; Added content, page objects, images; Editing original text; Bookmarks, links, actions, commands; Measurement, printing; Signing; Accessibility tags and review; View and preview; Not exercised |
 | `live-app.md` | Driving the running app: control methods (state, inspect, command, open, set, key, click, drag, screenshot), the UI command ids and what each opens, commands that open a native file chooser, running the app on a hidden display | Connecting; Running the app where the user cannot see it; UI commands verified |
 | `newer-commands.md` | What each version added or changed | 0.18.1; 0.18.2; 0.19.0 |
-| `command-catalogue.md` | The status of every tool in one place (195, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
+| `command-catalogue.md` | The status of every tool in one place (208, by family): verified, verified with a limit, documented, skipped or broken, and where the skill records it | — |
 | `log.md` | Dated log of what was tested when | Log |
 
 ## CLI essentials (verified)
@@ -64,7 +64,7 @@ pdfcraft-cli run --script steps.json --root DIR --report
 
 ## Traps
 
-- **Tools are not command ids:** `pdfcraft-cli tools` prints JSON (195 tools in 0.19.0 with `input_schema`); `run` takes
+- **Tools are not command ids:** `pdfcraft-cli tools` prints JSON (208 tools in 0.21.0 with `input_schema`; `--help` does not show new ones); `run` takes
   `name=value` pairs. An unknown argument is refused by name.
 - **`doc_set_info` keys are case-sensitive:** `{"key":"Title"}` sets the title; `"title"` is silently ignored.
 - **`doc_save` has no `format` argument and overwrites without asking** (verified: it rewrote an existing

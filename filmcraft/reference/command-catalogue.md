@@ -307,3 +307,9 @@ Ran, no change read back: `trim.cancelDynamic`, `trim.clear`, `trim.extendPrevio
 Returned a result (read tools, or actions whose result was not compared before/after): `tts.voices`
 
 Refused in the test project: `tts.create` (invalid parameters for `tts.create`: `text` is required); `tts.downloadVoices` (invalid parameters for `tts.downloadVoices`: natural voices are not available in this buil); `tts.edit` (command `tts.edit` is not available right now: select a narration clip); `tts.inspect` (invalid parameters for `tts.inspect`: pass `item` or `clip`, or select a narration clip); `tts.preview` (invalid parameters for `tts.preview`: `text` is required); `tts.render` (invalid parameters for `tts.render`: `text` is required)
+
+## New in 0.20.0 (1, tested 2026-11-11)
+
+| id | status | note |
+|---|---|---|
+| `lumetri.exportCube` | V | reference/newer-commands.md#0.20.0: exportCube result {bytes:3411,clip:6,leftOut:[],path:...,size:5}; head/wc of the file show LUT_3D_SIZE 5 and 1 |

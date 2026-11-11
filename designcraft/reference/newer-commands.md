@@ -17,3 +17,7 @@ Catalogue: 547 → 555 ids, added 8, removed 0, parameters changed 6. Regression
 - **Hyperlinks can point at a text anchor:** `hyperlink.create {"anchor":"Target"}` and `hyperlink.edit {"id","anchor":"Other"}` wrote `dest:{kind:"anchor", value:150994945}` and then `150994946` in `hyperlink.list`. IDML import and export keep hyperlinks too.
 - **`file.print`** takes `layouts` (their pages instead of `pages`) and `separateJobs`: with `dryRun` a 6-page document printed as 2 pages for `layouts:["Layout 1"]`, and two layouts gave `jobs:["Mini - Layout 1","Mini - Web"]` with `separateJobs:true`, one job without it.
 - Other: an item a parent overrode and deleted is gone from the pages that use it; a text frame anchored in a copied frame keeps its text; a frame holding pasted-in content draws its own edge; IDML `TextTopInset` cell insets survive import; Esperanto added as a text language.
+
+## 0.20.0 (checked 2026-11-11, from 0.18.0; 0.19.0 not tested on its own)
+555 ids, none added or removed. Two recipes (4-page document with a parent page, swatch specimen) give same-size PDFs and identical `validate-pdf` reports on both CLIs.
+- `layout.pages.applyParent` now returns `{applied:n}` and `layout.pages.delete` returns `{deleted:n}` (both returned null before; the page effect is the same).

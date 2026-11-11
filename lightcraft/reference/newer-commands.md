@@ -31,3 +31,11 @@ slightly (mean 0.35–0.45 of 255 per channel, max 23) — the process-version r
 - **Process version:** `develop.get` reports `"process": 6`, and `develop.updateProcess` answers "already on the current process (version 6)" for a fresh library. Renders change slightly, so compare pixels with a tolerance rather than by hash across versions.
 - **Library and previews:** `library.buildPreviews` takes `force`, `from`, `backward`, `background` and `row` (a build started with `{force:true,from:1,row:true}` → `{total:1, running:true, …}`); `library.previewProgress` gained `skipped`, `shared`, `background`; `library.importPreview` returns `scanLimited` and `skipped {unreadable, unsupported}` (a folder scan of test images: scanned 600, duplicates 55, unsupported 138); `library.smartPreviews` builds the previews of all photos in view only when more than one is selected.
 - `metadata.downloadPlaceNames` no longer takes `dataset`; place names always download into the settings folder (not run: a 3 MB network download).
+
+## 0.21.0 (checked 2026-11-11, from 0.19.0; 0.20.0 not tested on its own)
+
+Catalogue 389 → 392 ids (+3), 4 parameter docs changed. Two recipes (demo develop + JPEG export, 3-panel panorama) give byte-identical output on both CLIs.
+- **Lens Blur brush:** `lensBlur.brushStroke mode=focus points=[[0.3,0.4],[0.5,0.5],[0.7,0.6]] size=0.1` stores a focus stroke (`develop.get` → `lens_blur.focus_strokes`); `mode=blur` stores `blur_strokes`. `lensBlur.brushReset mode=focus` clears one kind, no `mode` clears both.
+- `lensBlur.findSubject` needs the SAM 3 model (3.4 GB, `segment.model.download {"acknowledged": true}`); without it the command is refused with that instruction.
+- `mask.adjust` values take `lens_blur`, `lens_blur_boost`, `lens_blur_transition` (numbers) and `lens_blur_off`, `lens_blur_outside` (**booleans**; an integer is refused). 0.19.0 silently ignored them.
+- `library.importLightroom` / `library.inspectLightroom` accept a Lightroom catalog backup `.zip` (unpacked to a temporary folder; a zip without a `.lrcat` is refused). No real Lightroom catalog was tried.
