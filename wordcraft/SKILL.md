@@ -124,6 +124,7 @@ folder (per docs/mcp.md) — use absolute paths. A failing script command stops 
   multi-word lines were left alone. `tools.autocorrect {"enabled":false}` as the first command keeps your text as typed.
 - **`\n` in `text.insert` does not start a paragraph** — "Line A\nLine B" stays one paragraph with a line break.
 - `--print` output from `run` shows each command's result; without it failures are easy to miss.
+- **Only the first `--save` on a `run --file` line is written** (0.18.1, no error shown): save the .docx, then `convert` it to PDF.
 - Right tab must sit at the text width: page width − left − right margin (612 − 2×43.2 = 525.6 → use 525).
 
 ## Verify before reporting

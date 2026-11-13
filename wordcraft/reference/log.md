@@ -57,3 +57,4 @@ Part of the wordcraft skill. The short front page is `../SKILL.md`; the sections
 - 2026-11-06: CLI refreshed (0.15.2 → 0.16.0); full re-run old vs new: 43 style documents (docx + pdf), 130 outputs; 43 log files differ only in the output path, one PDF page differs by a word wrapping a line earlier; new `select.member` verified headless. Live channel not re-checked.
 
 - 2026-11-11: CLI refreshed (0.17.0 → 0.18.0; skill was last tested on 0.16.0); 43 style documents identical old vs new apart from log paths; 15 new ids (Paragraph Tools, deleteSentenceBack, strictReport, view.*) run with read-backs (DeepSeek, spot-checked).
+- 2026-11-12 (CLI 0.18.1): `run --file in.docx --save a.docx --save a.pdf` wrote only the first `--save` (no error); use one `--save` then `convert a.docx a.pdf`. pandoc Markdown → docx → `run --save` gave a clean 6-page report (headings, pipe tables, lists, links) that rendered correctly.
