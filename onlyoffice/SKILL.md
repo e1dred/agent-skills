@@ -84,6 +84,10 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
   `SetStyle` so typos throw.
 - **The MCP link can drop mid-session** (all `mcp__onlyoffice__*` tools vanish); the wrapper still works, so continue
   with `tools/ooc.py` (it now also takes `new:docx|xlsx|pptx` to start from a blank headless document).
+- **MCP servers added in ONLYOFFICE's own AI settings (flatpak) need an absolute `command` path.** The sandbox PATH is
+  only `/app/bin:/usr/bin`, so `"command": "uvx"` (or `npx`) fails on Linux although it works on Windows. Use the
+  full host path (`which uvx`); host binaries run because the Flathub build has `filesystems=host`. Verified
+  2026-11-15 with `uvx duckduckgo-mcp-server`; restart the app after changing the config.
 - Never pass `discard_unsaved=true` on your own; the server refuses to drop unsaved work for a reason.
 
 ## Verify before reporting
