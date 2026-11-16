@@ -65,3 +65,4 @@ Part of the photocraft skill. The short front page is `../SKILL.md`; the section
 - 2026-11-06: 0.21.0 checked headless against 0.20.2 (993 ids, +28 frames/stylistic sets/embed-all-linked); 70-output harness identical but for sub-pixel ellipse AA; new ids and changed parameters recorded in `workflows-and-tools.md`.
 
 - 2026-11-11: 0.23.0 checked headless against 0.21.0 (1009 ids, +16 action editing / mixer toggles / path to shape / copy CSS); 70-output harness identical; notes in `workflows-and-tools.md`. New ids run by DeepSeek with read-backs, spot-checked.
+- 2026-11-15: 0.23.1 checked headless against 0.23.0 (1009 ids unchanged; shape.create star cornerRadius, path.moveAnchors stepName); 70-output harness identical; notes in `workflows-and-tools.md`. select.subject still fails.

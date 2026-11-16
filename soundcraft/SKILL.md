@@ -5,7 +5,7 @@ description: Use when editing, mixing or bouncing multitrack audio or MIDI sessi
 
 # SoundCraft
 
-Field notes from the first full round, last tested on **SoundCraft 0.20.0** (Linux AppImage, CLI `soundcraft-cli`).
+Field notes from the first full round, last tested on **SoundCraft 0.20.1** (Linux AppImage, CLI `soundcraft-cli`).
 SoundCraft is an alpha, Pro Tools-style DAW in Rust. The CLI, the MCP server and the app's control channel run the
 same 483 engine commands. If `soundcraft-cli --version` reports a newer build, diff `commands --json` against
 `reference/command-catalogue.md` before relying on parameters here.

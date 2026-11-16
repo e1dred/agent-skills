@@ -5,7 +5,7 @@ description: Use when drawing, editing, tracing or converting vector artwork —
 
 # VectorCraft
 
-Field notes from the first full headless round, last tested on **VectorCraft 0.24.0**
+Field notes from the first full headless round, last tested on **VectorCraft 0.24.1**
 (Linux binary `vectorcraft-cli`). VectorCraft is a vector illustration app written in Rust; the
 CLI, the MCP server and the app's control channel run the same engine commands. If
 `vectorcraft-cli --version` reports a newer build, re-check the ids and params here before relying

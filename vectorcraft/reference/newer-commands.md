@@ -1,5 +1,21 @@
 # Version notes
 
+## 0.24.1 (tested 2026-11-15, from 0.24.0)
+
+Catalogue: **1430 ids** (+9, 0 removed, 57 with changed `params` wording). Regression (5 cases + 5 conversions):
+identical apart from `created` timestamps, PDF sizes off by 1-2 bytes and `%%Creator` / XMP ids.
+New ids, all run: `paraStyle.edit` (rename + sparse attributes in one undo step; 0.24.0 only knows `charStyle.edit`),
+`type.dynamicText` (on/off, `wordGap`, `lineGap` on area type, returns `fitScale`), `symbol.sortByName` (case-insensitive),
+`select.object.notAlignedToPixelGrid`, `script.engines` / `script.engine.drop` (named `#targetengine` engines, heap limit 64 MiB, at most 8).
+Not called (ui:true): `ui.paraStyleOptions`, `ui.paraStyleOptions.resetPanel`, `window.control.options`.
+Behaviour:
+- `edit.paste`, `pasteInFront`, `pasteInBack` take `artboards: [index, ...]` (**0-based**); 0.24.0 silently ignored the key and pasted once. An index the document lacks is refused.
+- `document.open` now imports PSD layers (0.24.0: one flat layer). Hidden layers are left out with a warning unless `hiddenLayers: true` (they arrive hidden). `layers: false` still opens the merged image.
+- `document.exportPdf` `longPagesInPoints: true` writes a 20000 pt page as MediaBox 20000 with no UserUnit; the default is unchanged (UserUnit 1.389, MediaBox 14398.848). 0.24.0 rejects the key.
+- `document.info` has a `gradientObjects` section. `graph.create` / `graph.setType` refuse wrong-typed params; `axisMin` / `axisMax` accept `null` (calculated). `text.create` gains `fit: block`, `wordGap`, `lineGap`. `script.run` `maxFuel` defaults to 1,000,000,000.
+- Trap: a key that an older CLI ignored may now be honored or refused, so re-check old recipes.
+Not tested: any `ui.*` id, Energy Beams library, SVG/EPS import hardening, conic gradient sweep, threaded frames, print/package.
+
 ## 0.24.0 (tested 2026-11-11, from 0.22.0; 0.23.0 was not tested on its own)
 
 Catalogue: **1421 ids** (+488, 0 removed, 134 changed). Regression (5 scripted cases + 5

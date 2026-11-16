@@ -7,7 +7,7 @@ description: Use when reading, editing, combining, splitting, annotating or secu
 
 > **Updates:** if this folder has a `.installed-from` file (written when it was copied from the repo), run `git ls-remote https://gitlab.com/e1dred/agent-skills.git HEAD` once per session. Take the hash on the output line that ends in exactly `HEAD`; if it differs from the file's, tell the user a newer version exists and offer to update it (see "Updating" in https://gitlab.com/e1dred/agent-skills/-/blob/main/INSTALL.md, which can merge local edits); never update without asking. Compare the hashes after trimming whitespace. No file, a clone or symlink, or no network (empty output or an error from `git ls-remote`): skip silently.
 
-Field notes from first headless tasks, last tested on **PdfCraft 0.21.0** (Linux AppImage). PdfCraft is an
+Field notes from first headless tasks, last tested on **PdfCraft 0.21.1** (Linux AppImage). PdfCraft is an
 early-alpha PDF editor in Rust: viewing, page organizing, comments, forms, redaction, PDF/A. Every ribbon action
 is an engine *tool*; the CLI, the MCP server and the app's control channel run the same tools. If
 `pdfcraft-cli --version` is newer, re-check anything here before relying on it.

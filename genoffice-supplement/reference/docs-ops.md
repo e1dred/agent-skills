@@ -25,3 +25,12 @@ All ops of the three guides were run at least once and checked, in the sweeps ab
 ## New in 0.12.600: `remove_parts` (2026-11-03, headless, read back from the package)
 - `{"op":"remove_parts","kinds":["customXml"]}` (or `["webExtensions"]`, both, or explicit package-relative `paths`) scrubs metadata parts before filing. On a test .docx with a customXml item, its props and rels it removed all three parts, the relationship in `word/_rels/document.xml.rels` and the `[Content_Types].xml` overrides; `word/document.xml` stayed byte-identical. Content controls bound to a removed customXml store refuse the batch unless `dataBinding:"strip"` (not tested).
 - Also new in 0.12.600 (main `genoffice` skill 2.67.8): `genoffice sheet links <xlsx> [--update] [--break indices]` lists, refreshes or breaks external `[n]` links (checked only on a workbook without links: `{"links":[]}`); typed custom properties in `set_properties`; MCP tool `read_docx_properties` on the app's server.
+
+## New in 0.13.18 (tested headless 2026-11-15, from 0.12.852)
+- `create --type docx ... --no-generator-fields` drops Application / AppVersion from `docProps/app.xml` (the Word-default Template stays). 0.12.852: `unknown_option`.
+- `convert` accepts a legacy `.ppt` source (route `ppt` to `pptx`); only the reject path was tested (a non-OLE file gives `conversion_failed`, reason `not_cfb`).
+- `docs apply` `set_header_footer` takes `section: n` (0-based, see `docs read --sections`; omitted = the trailing section). **0.12.852 silently ignored it**: both ops hit the trailing section and the later one won, so an earlier section's header was lost. `docs read --header-footer` now lists every section; an out-of-range `section` is refused.
+- `sheet apply` `add_chart` takes `columns: ["A","B"]`: **column letters, at least 2**. 0.12.852 silently ignored the key and charted the default columns. The guide says only `columns?: [string]`; the letters and the minimum show up in the error.
+- `mcp install ... --compact-schemas` exists (`mcp list` shows `compactSchemas`); not run, it edits agent configs. The app's MCP list the bundled skill names `check_document` and an opt-in group with `convert_document`; not tested (needs the app running).
+- `.docx` files no longer contain zip directory entries (`word/`, `_rels/`); Office does not care, but `namelist()` counts are lower than before.
+- Unchanged: the three sweeps (docs, sheets, slides), `info`, `render` (byte-identical PNG), `merge`.

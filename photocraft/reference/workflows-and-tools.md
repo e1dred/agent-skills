@@ -207,3 +207,9 @@ Catalogue 993 → 1009 ids (+16, 7 labels renamed: "RAW Defaults…", "RAW Devel
 - `layer.smartObjects.resetTransform {"layer"}` undoes scaling/rotation of a smart object (bounds back to the original).
 - `path.intersectWithSelection {"name":"work"}` → selection = path ∩ current selection; `path.toShape {"name","fill":"#ff0000"}` → a Shape layer from the path.
 - `type.setPathPlacement {"start":10,"end":120}` sets where type on a path starts and ends (after `type.attachToPath {"shape"}`).
+
+## 0.23.1 changes (verified headless 2026-11-15, from 0.23.0)
+1009 ids unchanged; 32-case harness (70 outputs) identical. Two parameter changes, both run:
+- `shape.create` `cornerRadius` on a **star** now rounds only the five outer points (0.23.0 rounded the inner vertices too and gave a puffy blob). Polygons are pixel-identical. A saved star with a large radius will look different when re-rendered.
+- `path.moveAnchors` has an optional `stepName`; the only accepted value is `"Drag Path"` (anything else exits 1, 0.23.0 ignored it). The History label itself is not visible from the CLI.
+- `select.subject` on the test portrait is **still broken** (keeps the background, drops the dark suit); 0.23.0 and 0.23.1 results are byte-identical.
