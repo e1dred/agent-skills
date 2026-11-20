@@ -9,7 +9,9 @@ description: Use when editing .docx or other Office files with GenOffice (Docs e
 
 **Scope rule (strict):** this skill holds only things GenOffice's own bundled skills do not provide. It never copies or restates
 a GenOffice-provided skill (its generated `genoffice` skill, the ~45 recommended app skills). Read those first; this adds
-what running the app showed. Tested on GenOffice 0.13.18 (bundled skill 2.70.0, Linux AppImage), CLI and MCP, headless; the sweeps in `reference/` were re-run on 0.12.446, 0.12.600, 0.12.852 and 0.13.18 with the same results as on 0.12.117 (0.13.x .docx zips carry no directory entries, so file-list counts are shorter), the live-editor checks were not.
+what running the app showed. Tested on GenOffice 0.13.615 (bundled skill 2.70.1, Linux AppImage); the sweeps gave the same results on 0.12.117 to 0.13.615 (re-run on 0.12.446, 0.12.600, 0.12.852, 0.13.18 and 0.13.615; 0.13.x .docx zips carry no directory entries, so file-list counts are shorter), CLI and MCP, headless; the live-editor checks were not.
+
+When GenOffice's own skills start to say something written here, it is removed from this skill (checked 2026-11-19 against 2.70.1).
 
 GenOffice has six editors: Docs, Sheets, Slides, Markdown, HTML and PDF. The Docs (.docx), Sheets (.xlsx) and Slides (.pptx ops and the page-spec build) are covered, plus the conversions that reach the Markdown, HTML and PDF editors. The live editor (`open`, `selection`, writes to an open file) is covered too.
 
@@ -19,7 +21,7 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 
 | File in `reference/` | Read it for | Sections |
 |---|---|---|
-| `docs-ops.md` | Docs ops (`docs apply`): the sweep results, gaps closed, and the index of every op | Docs-op sweep, 2026-10-27, GenOffice 0.12.117; Docs gaps closed; Op index; New in 0.12.600: `remove_parts` (strip customXml / webExtensions metadata before filing) |
+| `docs-ops.md` | Docs ops (`docs apply`): the sweep results, gaps closed, and how far the op list was exercised | Docs-op sweep, 2026-10-27, GenOffice 0.12.117; Docs gaps closed; Coverage of the op lists; New in 0.13.18 |
 | `sheets.md` | Spreadsheet ops (`sheet apply`) | Sheets sweep |
 | `slides.md` | Presentation ops (`slides apply`) | Slides sweep |
 | `markdown-html-pdf.md` | Converting and creating Markdown, HTML and PDF with the CLI | Markdown, HTML and PDF through the CLI |
@@ -27,13 +29,11 @@ Read the file that matches the task; each lists the sections it holds. Use `grep
 | `document-styles.md` | Rebuilding the eight document styles in GenOffice, compared with WordCraft and ONLYOFFICE; headless vs app page counts | All eight styles x doc, report, resume and cv against WordCraft; Style rebuild: `modern` doc via GenOffice vs WordCraft vs ONLYOFFICE; All eight styles, doc kind, GenOffice vs WordCraft; Page count: headless `render` vs the app window |
 
 ## Traps (each one tripped the sweep)
-- Op field names differ from what you guess: `moveBlocks` takes `blockIndexes` (no `target`); `setList` takes `kind: "bullet"|"number"` (not `type`). Rejections name the allowed fields and the whole batch is atomic: nothing applied.
 - Things defined or created earlier in a batch are NOT visible to later ops of the same batch for: `define_style` type table then `setTableStyle`; `wrap_content_control` then `unwrap_content_control`. Split into two `apply` calls. (define_style paragraph then applyStyle in one batch works.)
-- `define_style` for a new style needs paragraph or run formatting (or basedOn); basedOn must exist in the document. A new docx has no table styles (`tableStyles: []`), so create one with a run property and apply it in a second call.
+- `define_style` for a new style needs paragraph or run formatting (or basedOn), and basedOn must already exist. A new document has no table styles to base one on, so a new table style takes a run property and a second `apply` before it can be used.
 - `setTableCellFormat` fill does not change text colour: a dark header fill keeps black text. Set white text separately (setFont on that block does not reach table cells in my sweep; not yet tested how).
-- `insert_text_box` default anchor is the paragraph, so x/y count from the margin, not the page edge: x 15cm + 4cm wide ran off the right side. Use `anchor:"page"` for page coordinates. insert_picture needs `float.anchor:"page"` the same way.
-- Comment ids are small positional strings ("1", "2"); revision ids ("r1"...) are positional and change after every edit, so re-read before accept/reject.
-- Reject-all restored the original text; accept with type filter leaves the other revisions pending.
+- Comment ids are small positional strings ("1", "2").
+- Rejecting all revisions restores the original text; accepting with a type filter leaves the other revisions pending.
 - Table merge concatenates cell text as separate paragraphs; split keeps text in the top-left cell.
 - Watermark is heavy at opacity 0.3 with a large size; use about 0.15 for body-text legibility.
 

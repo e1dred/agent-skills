@@ -20,7 +20,7 @@ Result: title, headings, body, subtitle, margins, header-row fill, page number a
 - Bullet colour: stays black (WordCraft and ONLYOFFICE give teal bullets); bullet indent is larger.
 - Text looks slightly larger than in the other two at the same point sizes (not investigated).
 Traps from this build:
-- `define_style` lengths (spaceBefore/After, indents) are POINTS; twips (pt*20) made 20x gaps and an 8-page document. `setParagraphFormat` lengths are twips. Different units in two ops of the same guide.
+- `define_style` lengths (spaceBefore/After, indents) are POINTS; twips (pt*20) made 20x gaps and an 8-page document. Different units in two ops of the same guide.
 - `insert_content` HTML lists/tables get block indexes: a `<ul>` makes one block per `<li>`, a table is one block.
 - A table header row needs white text set per cell: `setMatchedFont {text: "<cell text>", color, bold, target: table block}` works inside table cells.
 - Create the docx from HTML (`genoffice create --type docx --from in.html`), then define_style in one apply and applyStyle in a second apply.
